@@ -8,9 +8,16 @@ When implementing a change, please do the following:
 - Assign the issue or kanban task to yourself and move it to the Doing column
 - Create a new branch (from master) to develop your changes in
 
-When you have successfully implemented the change in your branch, create a merge/pull request which will then be reviewed by the Release Train Engineers.
+When you have successfully implemented the change in your branch:
+- update the time you've spent on the change in the issue's time tracking system by making a comment with /spend hh (hh = hours spent on task)
+- create a merge/pull request which will then be reviewed by the Release Train Engineers.
+
 
 ## (Reporting/suggesting an issue)
+
+When making an issue, describe it and it's subtasks (via a checklist).
+Then make an estimate of how much time is required for the task by putting /estimate hh (hh = hours spent on task) to initialise the time tracking for the issue
+
 #### Issue labelling conventions
 
 Label issues based on whether they are:
