@@ -21,6 +21,12 @@ const typescript_rest_1 = require("typescript-rest");
 require("./handlers");
 const helpers_1 = require("./helpers");
 exports.app = express_1.default();
+// Configure .env file
+const dotenv = require("dotenv");
+const result = dotenv.config();
+if (result.error) {
+    throw result.error;
+}
 exports.app.use(cors_1.default());
 exports.app.use(body_parser_1.default.json());
 exports.app.use((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,6 +42,9 @@ let port = parseInt(process.env.PORT || "");
 if (isNaN(port) || port === 0) {
     port = 8888;
 }
+console.log(process.env.PORT);
+console.log(process.env.DB_HOST);
+console.log(process.env.DB_NO_SYNC);
 exports.app.listen(port, () => {
     console.log(`🚀 Server Started at PORT: ${port}`);
 });

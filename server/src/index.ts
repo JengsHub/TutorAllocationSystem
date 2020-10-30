@@ -9,6 +9,14 @@ import { TryDBConnect } from "./helpers";
 
 export const app: express.Application = express();
 
+// Configure .env file
+const dotenv = require("dotenv");
+const result = dotenv.config()
+ 
+if (result.error) {
+  throw result.error
+}
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -20,7 +28,6 @@ app.use(async (req: Request, res: Response, next) => {
   }, next);
 });
 
-
 Server.buildServices(app);
 
 // Just checking if given PORT variable is an integer or not
@@ -28,6 +35,10 @@ let port = parseInt(process.env.PORT || "");
 if (isNaN(port) || port === 0) {
   port = 8888;
 }
+
+console.log(process.env.PORT);
+console.log(process.env.DB_HOST);
+console.log(process.env.DB_NO_SYNC);
 
 app.listen(port, () => {
   console.log(`🚀 Server Started at PORT: ${port}`);
