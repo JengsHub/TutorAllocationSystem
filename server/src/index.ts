@@ -1,20 +1,34 @@
-import "reflect-metadata";
-import {createConnection} from "typeorm";
-
-import express, { Express } from "express";
+import express, {Request, Response} from "express";
 import cors from "cors";
-
 import bodyParser from "body-parser";
+import {Server} from "typescript-rest";
 
-createConnection({
-    type:"postgres",
-    database: "local_dev",
-    username: "postgres",
-    password: "empty",
-    port: 5432,
-    host: "localhost",
-    entities: [
-        __dirname + "/entity/*.js"
-    ],
-    synchronize: true
-}).then(() => {console.log("CONNECTED")}).catch(e => console.error());
+// Importing all handlers
+import './handlers';
+import { TryDBConnect } from "./helpers";
+
+export const app: express.Application = express();
+
+app.use(cors());
+app.use(bodyParser.json());
+
+app.use(async (req: Request, res: Response, next) => {
+  await TryDBConnect(() => {
+    res.json({
+      error: 'Database connection error, please try again later',
+    });
+  }, next);
+});
+
+
+Server.buildServices(app);
+
+// Just checking if given PORT variable is an integer or not
+let port = parseInt(process.env.PORT || "");
+if (isNaN(port) || port === 0) {
+  port = 8888;
+}
+
+app.listen(port, () => {
+  console.log(`🚀 Server Started at PORT: ${port}`);
+});
