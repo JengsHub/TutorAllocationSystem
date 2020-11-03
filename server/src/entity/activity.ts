@@ -2,13 +2,13 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, Primary
 import { Unit } from "./unit";
 import {Allocation} from "./allocation";
 
-@Entity()
+@Entity({name: "Activity"})
 export class Activity {
 
     @PrimaryColumn({
         type: "varchar"
     })
-    activity_code!: string;
+    activityCode!: string;
 
     @ManyToOne(() => Unit, unit => unit.activities, {primary: true})
     @JoinColumn({name: "unit_code", referencedColumnName: "unit_code"})
@@ -17,11 +17,11 @@ export class Activity {
     @PrimaryColumn({
         type: "varchar"
     })
-    offering_period!: string;
+    offeringPeriod!: string;
 
 
     @Column({type: "varchar"})
-    activity_group!: string;
+    activityGroup!: string;
 
     @Column({
         type: "varchar",
@@ -39,10 +39,10 @@ export class Activity {
         type: "varchar",
         length: 3
     })
-    day_of_week!: number;
+    dayOfWeek!: number;
 
     @Column({type: "time"})
-    start_time!: Date;
+    startTime!: Date;
 
     @OneToMany(() => Activity, activity => activity.allocations)
     allocations!: Allocation[]

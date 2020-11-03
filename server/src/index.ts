@@ -2,9 +2,8 @@ import express, {Request, Response} from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import {Server} from "typescript-rest";
-
-// Importing all handlers
-import './handlers';
+// Importing all services
+import './services';
 import { TryDBConnect } from "./helpers";
 
 export const app: express.Application = express();

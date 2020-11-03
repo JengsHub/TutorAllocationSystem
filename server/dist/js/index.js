@@ -42,9 +42,6 @@ let port = parseInt(process.env.PORT || "");
 if (isNaN(port) || port === 0) {
     port = 8888;
 }
-console.log(process.env.PORT);
-console.log(process.env.DB_HOST);
-console.log(process.env.DB_NO_SYNC);
 exports.app.listen(port, () => {
     console.log(`🚀 Server Started at PORT: ${port}`);
 });
