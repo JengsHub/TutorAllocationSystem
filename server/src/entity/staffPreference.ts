@@ -21,8 +21,8 @@ export class StaffPreference {
   ])
   unit!: Unit;
 
-  @PrimaryGeneratedColumn()
-  id!: string;
+  @PrimaryGeneratedColumn("uuid")
+  id!: number;
 
   @Column({ type: "int" })
   preferenceScore!: number;

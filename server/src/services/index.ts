@@ -3,3 +3,4 @@ import "./ActivitiesService";
 import "./AllocationsService";
 import "./AvailabilitiesService";
 import "./StaffPreferencesService";
+import "./StaffService";

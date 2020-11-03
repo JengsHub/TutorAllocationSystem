@@ -6,8 +6,8 @@ export class Availability {
   @ManyToOne(() => Staff, (staff) => staff.availability, { primary: true })
   staff!: Staff;
 
-  @PrimaryGeneratedColumn()
-  id!: string;
+  @PrimaryGeneratedColumn("uuid")
+  id!: number;
 
   @Column({ type: "time" })
   timeRanges!: number;
