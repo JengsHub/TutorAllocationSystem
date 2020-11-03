@@ -16,36 +16,38 @@ const staff_1 = require("./staff");
 let Allocation = class Allocation {
 };
 __decorate([
-    typeorm_1.ManyToOne(() => staff_1.Staff, staff => staff.allocations, { primary: true }),
+    typeorm_1.ManyToOne(() => staff_1.Staff, (staff) => staff.allocations, { primary: true }),
     typeorm_1.JoinColumn({ name: "staff_id", referencedColumnName: "id" }),
     __metadata("design:type", staff_1.Staff)
 ], Allocation.prototype, "staff", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => activity_1.Activity, activity => activity.allocations, { primary: true }),
+    typeorm_1.ManyToOne(() => activity_1.Activity, (activity) => activity.allocations, {
+        primary: true,
+    }),
     typeorm_1.JoinColumn({ name: "activity_code", referencedColumnName: "activity_code" }),
     __metadata("design:type", activity_1.Activity)
 ], Allocation.prototype, "activity", void 0);
 __decorate([
     typeorm_1.PrimaryColumn({
         type: "char",
-        length: 7
+        length: 7,
     }),
     __metadata("design:type", String)
-], Allocation.prototype, "unit_code", void 0);
+], Allocation.prototype, "unitCode", void 0);
 __decorate([
     typeorm_1.PrimaryColumn({
-        type: "varchar"
+        type: "varchar",
     }),
     __metadata("design:type", String)
-], Allocation.prototype, "offering_period", void 0);
+], Allocation.prototype, "offeringPeriod", void 0);
 __decorate([
     typeorm_1.Column({ type: "varchar" }),
     __metadata("design:type", String)
-], Allocation.prototype, "activity_group", void 0);
+], Allocation.prototype, "activityGroup", void 0);
 __decorate([
     typeorm_1.Column({
         type: "varchar",
-        length: 2
+        length: 2,
     }),
     __metadata("design:type", String)
 ], Allocation.prototype, "campus", void 0);
@@ -60,14 +62,14 @@ __decorate([
 __decorate([
     typeorm_1.Column({
         type: "varchar",
-        length: 3
+        length: 3,
     }),
     __metadata("design:type", Number)
-], Allocation.prototype, "day_of_week", void 0);
+], Allocation.prototype, "dayOfWeek", void 0);
 __decorate([
     typeorm_1.Column({ type: "time" }),
     __metadata("design:type", Date)
-], Allocation.prototype, "start_time", void 0);
+], Allocation.prototype, "startTime", void 0);
 Allocation = __decorate([
     typeorm_1.Entity()
 ], Allocation);

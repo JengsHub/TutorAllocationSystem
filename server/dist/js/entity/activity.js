@@ -20,7 +20,7 @@ __decorate([
         type: "varchar"
     }),
     __metadata("design:type", String)
-], Activity.prototype, "activity_code", void 0);
+], Activity.prototype, "activityCode", void 0);
 __decorate([
     typeorm_1.ManyToOne(() => unit_1.Unit, unit => unit.activities, { primary: true }),
     typeorm_1.JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" }),
@@ -31,11 +31,11 @@ __decorate([
         type: "varchar"
     }),
     __metadata("design:type", String)
-], Activity.prototype, "offering_period", void 0);
+], Activity.prototype, "offeringPeriod", void 0);
 __decorate([
     typeorm_1.Column({ type: "varchar" }),
     __metadata("design:type", String)
-], Activity.prototype, "activity_group", void 0);
+], Activity.prototype, "activityGroup", void 0);
 __decorate([
     typeorm_1.Column({
         type: "varchar",
@@ -57,11 +57,11 @@ __decorate([
         length: 3
     }),
     __metadata("design:type", Number)
-], Activity.prototype, "day_of_week", void 0);
+], Activity.prototype, "dayOfWeek", void 0);
 __decorate([
     typeorm_1.Column({ type: "time" }),
     __metadata("design:type", Date)
-], Activity.prototype, "start_time", void 0);
+], Activity.prototype, "startTime", void 0);
 __decorate([
     typeorm_1.OneToMany(() => Activity_1, activity => activity.allocations),
     __metadata("design:type", Array)
