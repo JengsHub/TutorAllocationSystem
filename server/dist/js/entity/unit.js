@@ -11,42 +11,46 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Unit = void 0;
 const typeorm_1 = require("typeorm");
-const activity_1 = require("./activity");
-const staff_preference_1 = require("./staff_preference");
+const Activity_1 = require("./Activity");
+const StaffPreference_1 = require("./StaffPreference");
 let Unit = class Unit {
 };
 __decorate([
-    typeorm_1.PrimaryColumn({
-        type: "char",
-        length: 7
-    }),
-    __metadata("design:type", String)
-], Unit.prototype, "unit_code", void 0);
+    typeorm_1.PrimaryGeneratedColumn("uuid"),
+    __metadata("design:type", Number)
+], Unit.prototype, "id", void 0);
 __decorate([
     typeorm_1.PrimaryColumn({
-        type: "varchar"
+        type: "char",
+        length: 7,
     }),
     __metadata("design:type", String)
-], Unit.prototype, "offering_period", void 0);
+], Unit.prototype, "unitCode", void 0);
+__decorate([
+    typeorm_1.PrimaryColumn({
+        type: "varchar",
+    }),
+    __metadata("design:type", String)
+], Unit.prototype, "offeringPeriod", void 0);
 __decorate([
     typeorm_1.Column({
         type: "char",
-        length: 2
+        length: 2,
     }),
     __metadata("design:type", String)
 ], Unit.prototype, "campus", void 0);
 __decorate([
     typeorm_1.Column({ type: "int" }),
     __metadata("design:type", Number)
-], Unit.prototype, "aqf_target", void 0);
+], Unit.prototype, "aqfTarget", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => activity_1.Activity, activity => activity.unit),
+    typeorm_1.OneToMany(() => Activity_1.Activity, (activity) => activity.unit),
     __metadata("design:type", Array)
 ], Unit.prototype, "activities", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => staff_preference_1.Staff_Preference, staff_preference => staff_preference.unit),
+    typeorm_1.OneToMany(() => StaffPreference_1.StaffPreference, (staffPreference) => staffPreference.unit),
     __metadata("design:type", Array)
-], Unit.prototype, "staff_preference", void 0);
+], Unit.prototype, "staffPreference", void 0);
 Unit = __decorate([
     typeorm_1.Entity()
 ], Unit);

@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Allocation } from "./allocation";
-import { StaffPreference } from "./staffPreference";
-import { Availability } from "./availability";
+import { Allocation } from "./Allocation";
+import { StaffPreference } from "./StaffPreference";
+import { Availability } from "./Availability";
 
 @Entity()
 export class Staff {

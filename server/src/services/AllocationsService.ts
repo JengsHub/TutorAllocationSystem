@@ -1,6 +1,6 @@
 import { DeleteResult, getRepository } from "typeorm";
 import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
-import { Allocation } from "../entity/allocation";
+import { Allocation } from "../entity/Allocation";
 
 @Path("/allocations")
 class AllocationsService {

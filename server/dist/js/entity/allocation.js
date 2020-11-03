@@ -11,21 +11,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Allocation = void 0;
 const typeorm_1 = require("typeorm");
-const activity_1 = require("./activity");
-const staff_1 = require("./staff");
+const Activity_1 = require("./Activity");
+const Staff_1 = require("./Staff");
 let Allocation = class Allocation {
 };
 __decorate([
-    typeorm_1.ManyToOne(() => staff_1.Staff, (staff) => staff.allocations, { primary: true }),
+    typeorm_1.ManyToOne(() => Staff_1.Staff, (staff) => staff.allocations, { primary: true }),
     typeorm_1.JoinColumn({ name: "staff_id", referencedColumnName: "id" }),
-    __metadata("design:type", staff_1.Staff)
+    __metadata("design:type", Staff_1.Staff)
 ], Allocation.prototype, "staff", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => activity_1.Activity, (activity) => activity.allocations, {
+    typeorm_1.ManyToOne(() => Activity_1.Activity, (activity) => activity.allocations, {
         primary: true,
     }),
     typeorm_1.JoinColumn({ name: "activity_code", referencedColumnName: "activity_code" }),
-    __metadata("design:type", activity_1.Activity)
+    __metadata("design:type", Activity_1.Activity)
 ], Allocation.prototype, "activity", void 0);
 __decorate([
     typeorm_1.PrimaryColumn({

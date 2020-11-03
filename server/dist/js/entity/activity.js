@@ -12,23 +12,23 @@ var Activity_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Activity = void 0;
 const typeorm_1 = require("typeorm");
-const unit_1 = require("./unit");
+const Unit_1 = require("./Unit");
 let Activity = Activity_1 = class Activity {
 };
 __decorate([
     typeorm_1.PrimaryColumn({
-        type: "varchar"
+        type: "varchar",
     }),
     __metadata("design:type", String)
 ], Activity.prototype, "activityCode", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => unit_1.Unit, unit => unit.activities, { primary: true }),
+    typeorm_1.ManyToOne(() => Unit_1.Unit, (unit) => unit.activities, { primary: true }),
     typeorm_1.JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" }),
-    __metadata("design:type", unit_1.Unit)
+    __metadata("design:type", Unit_1.Unit)
 ], Activity.prototype, "unit", void 0);
 __decorate([
     typeorm_1.PrimaryColumn({
-        type: "varchar"
+        type: "varchar",
     }),
     __metadata("design:type", String)
 ], Activity.prototype, "offeringPeriod", void 0);
@@ -39,7 +39,7 @@ __decorate([
 __decorate([
     typeorm_1.Column({
         type: "varchar",
-        length: 2
+        length: 2,
     }),
     __metadata("design:type", String)
 ], Activity.prototype, "campus", void 0);
@@ -54,7 +54,7 @@ __decorate([
 __decorate([
     typeorm_1.Column({
         type: "varchar",
-        length: 3
+        length: 3,
     }),
     __metadata("design:type", Number)
 ], Activity.prototype, "dayOfWeek", void 0);
@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Activity.prototype, "startTime", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => Activity_1, activity => activity.allocations),
+    typeorm_1.OneToMany(() => Activity_1, (activity) => activity.allocations),
     __metadata("design:type", Array)
 ], Activity.prototype, "allocations", void 0);
 Activity = Activity_1 = __decorate([

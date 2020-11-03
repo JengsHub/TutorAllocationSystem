@@ -6,8 +6,8 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Activity } from "./activity";
-import { Staff } from "./staff";
+import { Activity } from "./Activity";
+import { Staff } from "./Staff";
 
 @Entity()
 export class Allocation {

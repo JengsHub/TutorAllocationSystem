@@ -11,9 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Staff = void 0;
 const typeorm_1 = require("typeorm");
-const allocation_1 = require("./allocation");
-const staff_preference_1 = require("./staff_preference");
-const availability_1 = require("./availability");
+const Allocation_1 = require("./Allocation");
+const StaffPreference_1 = require("./StaffPreference");
+const Availability_1 = require("./Availability");
 let Staff = class Staff {
 };
 __decorate([
@@ -22,16 +22,16 @@ __decorate([
 ], Staff.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column({
-        type: "text"
+        type: "text",
     }),
     __metadata("design:type", String)
-], Staff.prototype, "given_names", void 0);
+], Staff.prototype, "givenNames", void 0);
 __decorate([
     typeorm_1.Column({
-        type: "text"
+        type: "text",
     }),
     __metadata("design:type", String)
-], Staff.prototype, "last_name", void 0);
+], Staff.prototype, "lastName", void 0);
 __decorate([
     typeorm_1.Column({ type: "int" }),
     __metadata("design:type", Number)
@@ -39,24 +39,24 @@ __decorate([
 __decorate([
     typeorm_1.Column({ type: "int" }),
     __metadata("design:type", Number)
-], Staff.prototype, "studying_aqf", void 0);
+], Staff.prototype, "studyingAqf", void 0);
 __decorate([
     typeorm_1.Column({
         type: "text",
-        unique: true
+        unique: true,
     }),
     __metadata("design:type", String)
 ], Staff.prototype, "email", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => allocation_1.Allocation, allocation => allocation.staff),
+    typeorm_1.OneToMany(() => Allocation_1.Allocation, (allocation) => allocation.staff),
     __metadata("design:type", Array)
 ], Staff.prototype, "allocations", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => staff_preference_1.Staff_Preference, staff_preference => staff_preference.staff),
+    typeorm_1.OneToMany(() => StaffPreference_1.StaffPreference, (staffPreference) => staffPreference.staff),
     __metadata("design:type", Array)
-], Staff.prototype, "staff_preference", void 0);
+], Staff.prototype, "staffPreference", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => availability_1.Availability, availability => availability.staff),
+    typeorm_1.OneToMany(() => Availability_1.Availability, (availability) => availability.staff),
     __metadata("design:type", Array)
 ], Staff.prototype, "availability", void 0);
 Staff = __decorate([

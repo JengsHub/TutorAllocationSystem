@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Staff } from "./staff";
-import { Unit } from "./unit";
+import { Staff } from "./Staff";
+import { Unit } from "./Unit";
 
 @Entity()
 export class StaffPreference {

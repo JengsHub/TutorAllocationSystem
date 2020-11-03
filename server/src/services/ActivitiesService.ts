@@ -8,7 +8,7 @@ import {
   DELETE,
   PATCH,
 } from "typescript-rest";
-import { Activity } from "../entity/activity";
+import { Activity } from "../entity/Activity";
 
 @Path("/activities")
 class ActivitiesService {

@@ -5,8 +5,8 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Activity } from "./activity";
-import { StaffPreference } from "./staffPreference";
+import { Activity } from "./Activity";
+import { StaffPreference } from "./StaffPreference";
 
 @Entity()
 export class Unit {

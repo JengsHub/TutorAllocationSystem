@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Staff } from "./staff";
+import { Staff } from "./Staff";
 
 @Entity()
 export class Availability {

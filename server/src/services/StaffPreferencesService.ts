@@ -1,6 +1,6 @@
 import { DeleteResult, getRepository } from "typeorm";
 import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
-import { StaffPreference } from "../entity/staffPreference";
+import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
 class StaffPreferencesService {

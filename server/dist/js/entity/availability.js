@@ -11,25 +11,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Availability = void 0;
 const typeorm_1 = require("typeorm");
-const staff_1 = require("./staff");
+const Staff_1 = require("./Staff");
 let Availability = class Availability {
 };
 __decorate([
-    typeorm_1.ManyToOne(() => staff_1.Staff, staff => staff.availability, { primary: true }),
-    __metadata("design:type", staff_1.Staff)
+    typeorm_1.ManyToOne(() => Staff_1.Staff, (staff) => staff.availability, { primary: true }),
+    __metadata("design:type", Staff_1.Staff)
 ], Availability.prototype, "staff", void 0);
+__decorate([
+    typeorm_1.PrimaryGeneratedColumn("uuid"),
+    __metadata("design:type", Number)
+], Availability.prototype, "id", void 0);
 __decorate([
     typeorm_1.Column({ type: "time" }),
     __metadata("design:type", Number)
-], Availability.prototype, "time_ranges", void 0);
+], Availability.prototype, "timeRanges", void 0);
 __decorate([
     typeorm_1.Column({ type: "int" }),
     __metadata("design:type", Number)
-], Availability.prototype, "max_hours", void 0);
+], Availability.prototype, "maxHours", void 0);
 __decorate([
     typeorm_1.Column({ type: "int" }),
     __metadata("design:type", Number)
-], Availability.prototype, "max_number_activities", void 0);
+], Availability.prototype, "maxNumberActivities", void 0);
 Availability = __decorate([
     typeorm_1.Entity()
 ], Availability);

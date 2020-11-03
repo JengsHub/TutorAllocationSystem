@@ -1,6 +1,6 @@
 import { DeleteResult, getRepository } from "typeorm";
 import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
-import { Availability } from "../entity/availability";
+import { Availability } from "../entity/Availability";
 
 @Path("/availabilities")
 class AvailabilitiesService {

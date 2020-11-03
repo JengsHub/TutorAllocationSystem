@@ -1,50 +1,55 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
-import { Unit } from "./unit";
-import {Allocation} from "./allocation";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Unit } from "./Unit";
+import { Allocation } from "./Allocation";
 
 @Entity()
 export class Activity {
+  @PrimaryColumn({
+    type: "varchar",
+  })
+  activityCode!: string;
 
-    @PrimaryColumn({
-        type: "varchar"
-    })
-    activityCode!: string;
+  @ManyToOne(() => Unit, (unit) => unit.activities, { primary: true })
+  @JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" })
+  unit!: Unit;
 
-    @ManyToOne(() => Unit, unit => unit.activities, {primary: true})
-    @JoinColumn({name: "unit_code", referencedColumnName: "unit_code"})
-    unit!: Unit;
+  @PrimaryColumn({
+    type: "varchar",
+  })
+  offeringPeriod!: string;
 
-    @PrimaryColumn({
-        type: "varchar"
-    })
-    offeringPeriod!: string;
+  @Column({ type: "varchar" })
+  activityGroup!: string;
 
+  @Column({
+    type: "varchar",
+    length: 2,
+  })
+  campus!: string;
 
-    @Column({type: "varchar"})
-    activityGroup!: string;
+  @Column({ type: "varchar" })
+  location!: string;
 
-    @Column({
-        type: "varchar",
-        length: 2
-    })
-    campus!: string;
+  @Column({ type: "int" })
+  duration!: number;
 
-    @Column({type: "varchar"})
-    location!: string;
+  @Column({
+    type: "varchar",
+    length: 3,
+  })
+  dayOfWeek!: number;
 
-    @Column({type: "int"})
-    duration!: number;
+  @Column({ type: "time" })
+  startTime!: Date;
 
-    @Column({
-        type: "varchar",
-        length: 3
-    })
-    dayOfWeek!: number;
-
-    @Column({type: "time"})
-    startTime!: Date;
-
-    @OneToMany(() => Activity, activity => activity.allocations)
-    allocations!: Allocation[]
-
+  @OneToMany(() => Activity, (activity) => activity.allocations)
+  allocations!: Allocation[];
 }
