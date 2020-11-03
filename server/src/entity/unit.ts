@@ -1,34 +1,32 @@
-import {Column, Entity, OneToMany, PrimaryColumn} from "typeorm";
-import {Activity} from "./activity";
-import {Staff_Preference} from "./staff_preference";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Activity } from "./activity";
+import { StaffPreference } from "./staffPreference";
 
 @Entity()
 export class Unit {
+  @PrimaryColumn({
+    type: "char",
+    length: 7,
+  })
+  unit_code!: string;
 
-    @PrimaryColumn({
-        type: "char",
-        length: 7
-    })
-    unit_code!: string;
+  @PrimaryColumn({
+    type: "varchar",
+  })
+  offering_period!: string;
 
-    @PrimaryColumn({
-        type: "varchar"
-    })
-    offering_period!: string;
+  @Column({
+    type: "char",
+    length: 2,
+  })
+  campus!: string;
 
+  @Column({ type: "int" })
+  aqf_target!: number;
 
-    @Column({
-        type: "char",
-        length: 2
-    })
-    campus!: string;
+  @OneToMany(() => Activity, (activity) => activity.unit)
+  activities!: Activity[];
 
-    @Column({type: "int"})
-    aqf_target!: number;
-
-    @OneToMany(() => Activity, activity => activity.unit)
-    activities!: Activity[];
-
-    @OneToMany(() => Staff_Preference, staff_preference => staff_preference.unit)
-    staff_preference!: Staff_Preference[]
+  @OneToMany(() => StaffPreference, (staffPreference) => staffPreference.unit)
+  staffPreference!: StaffPreference[];
 }
