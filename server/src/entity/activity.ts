@@ -2,7 +2,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, Primary
 import { Unit } from "./unit";
 import {Allocation} from "./allocation";
 
-@Entity({name: "Activity"})
+@Entity()
 export class Activity {
 
     @PrimaryColumn({

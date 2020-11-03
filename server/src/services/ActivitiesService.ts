@@ -1,5 +1,5 @@
-import { getRepository } from "typeorm";
-import {Server, Path, GET, PathParam} from "typescript-rest";
+import { DeleteResult, getRepository } from "typeorm";
+import {Server, Path, GET, PathParam, POST, DELETE, PATCH} from "typescript-rest";
 import { Activity } from "../entity/activity";
 
 @Path("/activities")
@@ -24,14 +24,44 @@ class ActivitiesService {
     // TODO: assert return value as Promise<Activity> here
     @GET
     @Path(':activityCode')
-    public getAdmin(@PathParam('activityCode') activityCode: string) {
+    public getActivity(@PathParam('activityCode') activityCode: string) {
         return this.repo.findOne({activityCode: activityCode});
     }
 
-    // Create activity
+    /**
+     * Creates an activity
+     * @param newRecord activity data
+     * @return Activity new activity
+     */
+    @POST
+    public createActivity(newRecord: Activity): Promise<Activity> {
+        return this.repo.save(this.repo.create(newRecord));
+    }
 
-    // Update activity
+    /**
+     * Updates an activity
+     * @param changedActivity new activity object to change existing activity to
+     * @return DeleteResult result of delete request
+     */
+    @PATCH
+    public async updateAdmin(changedActivity: Activity): Promise<Activity> {
 
-    // Delete activity
+    let activityToUpdate = await this.repo.findOne(changedActivity.activityCode);
+    activityToUpdate = changedActivity;
+    return this.repo.save(activityToUpdate);
+
+    }
+
+    /**
+     * Deletes an activity
+     * @param activityCode activity code
+     * @return DeleteResult result of delete request
+     */
+    @DELETE
+    @Path(':activityCode')
+    public deleteAdmin(@PathParam('activityCode') activityCode: string): Promise<DeleteResult> {
+        return this.repo.delete({activityCode: activityCode});
+    }
+
 
 }
