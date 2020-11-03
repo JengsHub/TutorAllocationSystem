@@ -54,8 +54,8 @@ class StaffService {
   }
 
   /**
-   * Deletes an staff
-   * @param id id for the staff
+   * Deletes a staff member
+   * @param id id for the staff member
    * @return DeleteResult result of delete request
    */
   @DELETE

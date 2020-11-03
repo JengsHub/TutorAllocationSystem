@@ -11,18 +11,18 @@ export class Staff {
   @Column({
     type: "text",
   })
-  given_names!: string;
+  givenNames!: string;
 
   @Column({
     type: "text",
   })
-  last_name!: string;
+  lastName!: string;
 
   @Column({ type: "int" })
   aqf!: number;
 
   @Column({ type: "int" })
-  studying_aqf!: number;
+  studyingAqf!: number;
 
   @Column({
     type: "text",
