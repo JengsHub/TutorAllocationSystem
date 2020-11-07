@@ -1,11 +1,5 @@
-import { ConnectionOptions } from "typeorm";
 import path from "path";
-import { Activity } from "./entity/Activity";
-import { Allocation } from "./entity/Allocation";
-import { Availability } from "./entity/Availability";
-import { Staff } from "./entity/Staff";
-import { StaffPreference } from "./entity/StaffPreference";
-import { Unit } from "./entity/Unit";
+import { ConnectionOptions } from "typeorm";
 
 const isCompiled = path.extname(__filename).includes("js");
 
@@ -16,11 +10,12 @@ export default {
   username: process.env.DB_USERNAME || "postgres",
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_NAME || "postgres",
-  synchronize: process.env.DB_SYNC || true, // Defaults to true for development
+  synchronize: process.env.DB_SYNC || false,
   logging: process.env.DB_LOGS || false,
   autoReconnect: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,
+  migrationsRun: true,
   entities: [__dirname + `/entity/*.${isCompiled ? "js" : "ts"}`],
   migrations: [__dirname + `/migrations/*.${isCompiled ? "js" : "ts"}`],
   cli: {
