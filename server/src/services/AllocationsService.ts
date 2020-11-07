@@ -64,7 +64,7 @@ class AllocationsService {
    */
   @DELETE
   @Path(":id")
-  public deleteAdmin(@PathParam("id") id: string): Promise<DeleteResult> {
+  public deleteAllocation(@PathParam("id") id: string): Promise<DeleteResult> {
     return this.repo.delete({
       id: id,
     });

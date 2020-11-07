@@ -66,7 +66,7 @@ class ActivitiesService {
    */
   @DELETE
   @Path(":activityCode")
-  public deleteAdmin(
+  public deleteActivity(
     @PathParam("activityCode") activityCode: string
   ): Promise<DeleteResult> {
     return this.repo.delete({ activityCode: activityCode });
