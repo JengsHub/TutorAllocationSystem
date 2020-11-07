@@ -1,35 +1,24 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Staff } from "./Staff";
 import { Unit } from "./Unit";
 
 @Entity()
 export class StaffPreference {
-  @ManyToOne(() => Staff, (staff) => staff.staffPreference, { primary: true })
-  // @JoinColumn({ name: "staffId", referencedColumnName: "id" })
-  staff!: Staff;
-
-  @ManyToOne(() => Unit, { primary: true })
-  // @JoinColumn([
-  //   { name: "unitCode", referencedColumnName: "unitCode" },
-  //   { name: "offeringPeriod", referencedColumnName: "offeringPeriod" },
-  // ])
-  unit!: Unit;
-
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ type: "int" })
+  @Column()
   preferenceScore!: number;
 
-  @Column({ type: "int" })
+  @Column()
   lecturerScore!: number;
 
-  @Column({ type: "boolean" })
+  @Column()
   isHeadTutorCandidate!: boolean;
+
+  @ManyToOne(() => Staff, (staff) => staff.staffPreference, { primary: true })
+  staff!: Staff;
+
+  @ManyToOne(() => Unit, { primary: true })
+  unit!: Unit;
 }

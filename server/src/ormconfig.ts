@@ -16,8 +16,8 @@ export default {
   username: process.env.DB_USERNAME || "postgres",
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_NAME || "postgres",
-  synchronize: !process.env.DB_NO_SYNC || true,
-  logging: !process.env.DB_NO_LOGS,
+  synchronize: process.env.DB_SYNC || true, // Defaults to true for development
+  logging: process.env.DB_LOGS || false,
   autoReconnect: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,

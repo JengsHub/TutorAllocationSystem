@@ -1,35 +1,24 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
-import { Unit } from "./Unit";
 import { Allocation } from "./Allocation";
+import { Unit } from "./Unit";
 
 @Entity()
+@Unique(["activityCode"])
 export class Activity {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({
-    type: "varchar",
-  })
+  @Column()
   activityCode!: string;
 
-  @ManyToOne(() => Unit, (unit) => unit.activities)
-  // @JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" })
-  unit!: Unit;
-
-  @Column({
-    type: "varchar",
-  })
-  offeringPeriod!: string;
-
-  @Column({ type: "varchar" })
+  @Column()
   activityGroup!: string;
 
   @Column({
@@ -38,10 +27,10 @@ export class Activity {
   })
   campus!: string;
 
-  @Column({ type: "varchar" })
+  @Column()
   location!: string;
 
-  @Column({ type: "int" })
+  @Column()
   duration!: number;
 
   @Column({
@@ -55,4 +44,7 @@ export class Activity {
 
   @OneToMany(() => Activity, (activity) => activity.allocations)
   allocations!: Allocation[];
+
+  @ManyToOne(() => Unit, (unit) => unit.activities)
+  unit!: Unit;
 }

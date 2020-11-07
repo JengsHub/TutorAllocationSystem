@@ -6,15 +6,24 @@ export class Availability {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @ManyToOne(() => Staff, (staff) => staff.availability, { primary: true })
-  staff!: Staff;
+  @Column()
+  day!: string;
 
   @Column({ type: "time" })
-  timeRanges!: number;
+  startTime!: number;
 
-  @Column({ type: "int" })
+  @Column({ type: "time" })
+  endTime!: number;
+
+  @Column()
+  year!: number;
+
+  @Column()
   maxHours!: number;
 
-  @Column({ type: "int" })
+  @Column()
   maxNumberActivities!: number;
+
+  @ManyToOne(() => Staff, (staff) => staff.availability, { primary: true })
+  staff!: Staff;
 }
