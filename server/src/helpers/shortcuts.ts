@@ -1,6 +1,6 @@
 export const resOK = (data: any) => ({
   error: false,
-  message: '',
+  message: "",
   ...data,
 });
 

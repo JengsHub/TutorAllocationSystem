@@ -1,0 +1,15 @@
+stages:
+  - check
+
+server-format:
+  stage: check
+  script:
+    - cd server
+    - prettier --check "src/**/*.ts"
+
+server-build:
+  stage: check
+  script:
+    - cd server
+    - npm install
+    - npm run build

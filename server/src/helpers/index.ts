@@ -1,2 +1,2 @@
-export * from './shortcuts';
-export * from './db';
+export * from "./shortcuts";
+export * from "./db";
