@@ -17,7 +17,7 @@ export = {
   reconnectInterval: 2000,
   migrationsRun: false,
   entities: ["dist/src/entity/**/*.js"],
-  migrations: [`dist/src/migrations/**/*.js`],
+  migrations: ["dist/src/migrations/**/*.js"],
   cli: {
     entitiesDir: "src/entity",
     migrationsDir: "src/migrations",
