@@ -6,13 +6,12 @@ import { Availability } from "./entity/Availability";
 import { Staff } from "./entity/Staff";
 import { StaffPreference } from "./entity/StaffPreference";
 import { Unit } from "./entity/Unit";
-import { SnakeNamingStrategy }from "typeorm-naming-strategies";
-
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 const isCompiled = path.extname(__filename).includes("js");
 
 export default {
-  type:"postgres",
+  type: "postgres",
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
   username: process.env.DB_USERNAME || "postgres",

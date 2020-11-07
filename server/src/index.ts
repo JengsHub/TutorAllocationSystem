@@ -2,20 +2,18 @@
 import dotenv from "dotenv";
 const result = dotenv.config();
 
-import express, {Request, Response} from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import {Server} from "typescript-rest";
+import { Server } from "typescript-rest";
 // Importing all services
-import './services';
+import "./services";
 import { TryDBConnect } from "./helpers";
 
 export const app: express.Application = express();
 
-
- 
 if (result.error) {
-  throw result.error
+  throw result.error;
 }
 
 app.use(cors());
@@ -24,7 +22,7 @@ app.use(bodyParser.json());
 app.use(async (req: Request, res: Response, next) => {
   await TryDBConnect(() => {
     res.json({
-      error: 'Database connection error, please try again later',
+      error: "Database connection error, please try again later",
     });
   }, next);
 });

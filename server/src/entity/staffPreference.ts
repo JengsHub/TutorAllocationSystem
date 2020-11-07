@@ -8,7 +8,6 @@ import {
 import { Staff } from "./Staff";
 import { Unit } from "./Unit";
 
-
 @Entity()
 export class StaffPreference {
   @ManyToOne(() => Staff, (staff) => staff.staffPreference, { primary: true })
