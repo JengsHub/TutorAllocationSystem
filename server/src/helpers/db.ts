@@ -1,12 +1,11 @@
-import {Connection, createConnection, getConnection} from "typeorm";
+import { Connection, createConnection, getConnection } from "typeorm";
 import ORMConfig from "../ormconfig";
 
 export const DBConnect = async () => {
   let connection: Connection | undefined;
   try {
     connection = getConnection();
-  } catch (e) {
-  }
+  } catch (e) {}
 
   try {
     if (connection) {
@@ -18,7 +17,7 @@ export const DBConnect = async () => {
     }
     console.log("🌴 Database connection was successful!");
   } catch (e) {
-    console.error('ERROR: Database connection failed!!', e);
+    console.error("ERROR: Database connection failed!!", e);
     throw e;
   }
 };
@@ -33,4 +32,3 @@ export const TryDBConnect = async (onError: Function, next?: Function) => {
     onError();
   }
 };
-
