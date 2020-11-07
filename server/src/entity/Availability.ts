@@ -3,11 +3,11 @@ import { Staff } from "./Staff";
 
 @Entity()
 export class Availability {
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
+
   @ManyToOne(() => Staff, (staff) => staff.availability, { primary: true })
   staff!: Staff;
-
-  @PrimaryGeneratedColumn("uuid")
-  id!: number;
 
   @Column({ type: "time" })
   timeRanges!: number;

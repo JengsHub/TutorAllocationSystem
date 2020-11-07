@@ -23,7 +23,7 @@ class AvailabilitiesService {
   // TODO: assert return value as Promise<Availability> here
   @GET
   @Path(":id")
-  public getAvailability(@PathParam("id") id: number) {
+  public getAvailability(@PathParam("id") id: string) {
     return this.repo.findOne({
       id: id,
     });
@@ -63,7 +63,7 @@ class AvailabilitiesService {
   @DELETE
   @Path(":id")
   public deleteAvailability(
-    @PathParam("id") id: number
+    @PathParam("id") id: string
   ): Promise<DeleteResult> {
     return this.repo.delete({
       id: id,

@@ -17,7 +17,7 @@ export const DBConnect = async () => {
       // TODO: should synchronize in dev only as this will drop the data
       await connection.synchronize(true);
     }
-    console.log("🌴 Database connection was successful!");
+    console.log("Database connection was successful!");
   } catch (e) {
     console.error("ERROR: Database connection failed!!", e);
     throw e;

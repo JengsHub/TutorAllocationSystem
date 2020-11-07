@@ -36,5 +36,5 @@ if (isNaN(port) || port === 0) {
 }
 
 app.listen(port, () => {
-  console.log(`🚀 Server Started at PORT: ${port}`);
+  console.log(`Server Started at PORT: ${port}`);
 });

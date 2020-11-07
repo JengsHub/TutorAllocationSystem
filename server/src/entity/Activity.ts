@@ -13,7 +13,7 @@ import { Allocation } from "./Allocation";
 @Entity()
 export class Activity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: string;
 
   @Column({
     type: "varchar",

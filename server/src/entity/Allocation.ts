@@ -12,6 +12,9 @@ import { Unit } from "./Unit";
 
 @Entity()
 export class Allocation {
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
+
   @ManyToOne(() => Staff, (staff) => staff.allocations, { primary: true })
   // @JoinColumn({ name: "staff_id", referencedColumnName: "id" })
   staff!: Staff;

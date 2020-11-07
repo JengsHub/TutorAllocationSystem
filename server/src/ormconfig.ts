@@ -6,7 +6,6 @@ import { Availability } from "./entity/Availability";
 import { Staff } from "./entity/Staff";
 import { StaffPreference } from "./entity/StaffPreference";
 import { Unit } from "./entity/Unit";
-import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 
 const isCompiled = path.extname(__filename).includes("js");
 

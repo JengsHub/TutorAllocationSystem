@@ -23,14 +23,10 @@ class AllocationsService {
    */
   // TODO: assert return value as Promise<Allocation> here
   @GET
-  @Path(":unitCode/:offeringPeriod")
-  public getAllocation(
-    @PathParam("unitCode") unitCode: string,
-    @PathParam("offeringPeriod") offeringPeriod: string
-  ) {
+  @Path(":id")
+  public getAllocation(@PathParam("id") id: string) {
     return this.repo.findOne({
-      unitCode: unitCode,
-      offeringPeriod: offeringPeriod,
+      id: id,
     });
   }
 
@@ -54,8 +50,7 @@ class AllocationsService {
     changedAllocation: Allocation
   ): Promise<Allocation> {
     let allocationToUpdate = await this.repo.findOne({
-      unitCode: changedAllocation.unitCode,
-      offeringPeriod: changedAllocation.offeringPeriod,
+      id: changedAllocation.id,
     });
     allocationToUpdate = changedAllocation;
     return this.repo.save(allocationToUpdate);
@@ -68,14 +63,10 @@ class AllocationsService {
    * @return DeleteResult result of delete request
    */
   @DELETE
-  @Path(":unitCode/:offeringPeriod")
-  public deleteAdmin(
-    @PathParam("unitCode") unitCode: string,
-    @PathParam("offeringPeriod") offeringPeriod: string
-  ): Promise<DeleteResult> {
+  @Path(":id")
+  public deleteAdmin(@PathParam("id") id: string): Promise<DeleteResult> {
     return this.repo.delete({
-      unitCode: unitCode,
-      offeringPeriod: offeringPeriod,
+      id: id,
     });
   }
 }

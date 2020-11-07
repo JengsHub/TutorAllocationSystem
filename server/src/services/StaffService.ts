@@ -23,7 +23,7 @@ class StaffService {
   // TODO: assert return value as Promise<Staff> here
   @GET
   @Path(":id")
-  public getStaff(@PathParam("id") id: number) {
+  public getStaff(@PathParam("id") id: string) {
     return this.repo.findOne({
       id: id,
     });
@@ -60,7 +60,7 @@ class StaffService {
    */
   @DELETE
   @Path(":id")
-  public deleteStaff(@PathParam("id") id: number): Promise<DeleteResult> {
+  public deleteStaff(@PathParam("id") id: string): Promise<DeleteResult> {
     return this.repo.delete({
       id: id,
     });

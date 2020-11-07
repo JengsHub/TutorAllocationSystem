@@ -11,7 +11,7 @@ import { StaffPreference } from "./StaffPreference";
 @Entity()
 export class Unit {
   @PrimaryGeneratedColumn("uuid")
-  id!: number;
+  id!: string;
 
   @PrimaryColumn({
     type: "varchar",

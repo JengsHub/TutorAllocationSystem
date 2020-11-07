@@ -6,7 +6,7 @@ import { Availability } from "./Availability";
 @Entity()
 export class Staff {
   @PrimaryGeneratedColumn("uuid")
-  id!: number;
+  id!: string;
 
   @Column({
     type: "text",

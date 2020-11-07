@@ -23,7 +23,7 @@ class UnitsService {
   // TODO: assert return value as Promise<Unit> here
   @GET
   @Path(":id")
-  public getUnit(@PathParam("id") id: number) {
+  public getUnit(@PathParam("id") id: string) {
     return this.repo.findOne({
       id: id,
     });
@@ -60,7 +60,7 @@ class UnitsService {
    */
   @DELETE
   @Path(":id")
-  public deleteUnit(@PathParam("id") id: number): Promise<DeleteResult> {
+  public deleteUnit(@PathParam("id") id: string): Promise<DeleteResult> {
     return this.repo.delete({
       id: id,
     });
