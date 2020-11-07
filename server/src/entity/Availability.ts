@@ -1,13 +1,14 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Staff } from "./Staff";
+import { DayOfWeek } from "../enums/DayOfWeek"
 
 @Entity()
 export class Availability {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column()
-  day!: string;
+  @Column({ type: "enum", enum: DayOfWeek})
+  day!: DayOfWeek;
 
   @Column({ type: "time" })
   startTime!: number;
