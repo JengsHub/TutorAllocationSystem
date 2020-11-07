@@ -8,20 +8,16 @@ export class Staff {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({
-    type: "text",
-  })
+  @Column()
   givenNames!: string;
 
-  @Column({
-    type: "text",
-  })
+  @Column()
   lastName!: string;
 
-  @Column({ type: "int" })
+  @Column()
   aqf!: number;
 
-  @Column({ type: "int" })
+  @Column()
   studyingAqf!: number;
 
   @Column({

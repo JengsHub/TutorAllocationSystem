@@ -2,26 +2,25 @@ import {
   Column,
   Entity,
   OneToMany,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import { Activity } from "./Activity";
 import { StaffPreference } from "./StaffPreference";
 
 @Entity()
+@Unique(["unitCode", "offeringPeriod", "year"])
 export class Unit {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @PrimaryColumn({
+  @Column({
     type: "varchar",
     length: 7,
   })
   unitCode!: string;
 
-  @PrimaryColumn({
-    type: "varchar",
-  })
+  @Column()
   offeringPeriod!: string;
 
   @Column({
@@ -30,7 +29,10 @@ export class Unit {
   })
   campus!: string;
 
-  @Column({ type: "int" })
+  @Column()
+  year!: number;
+
+  @Column()
   aqfTarget!: number;
 
   @OneToMany(() => Activity, (activity) => activity.unit)
