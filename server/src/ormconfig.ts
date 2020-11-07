@@ -12,7 +12,7 @@ import { SnakeNamingStrategy }from "typeorm-naming-strategies";
 const isCompiled = path.extname(__filename).includes("js");
 
 export default {
-  type: process.env.DB_HOST ? "postgres" : "sqlite",
+  type:"postgres",
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
   username: process.env.DB_USERNAME || "postgres",
