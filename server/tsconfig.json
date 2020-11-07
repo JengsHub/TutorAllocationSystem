@@ -4,12 +4,15 @@
     "experimentalDecorators": true,
     "target": "es6",
     "module": "commonjs",
-    "outDir": "dist/js",
-    "rootDir": ".",
+    "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
+    "paths": {
+      "~/*": ["*"]
+    }
   },
   "include": ["src/**/*", "ormconfig.ts", "ormconfig.js"],
-  "exclude": ["node_modules", ".vscode", "**/*.spec.ts", "src/types/*.ts"]
+  "exclude": ["node_modules", ".vscode", "**/*.spec.ts", "src/types/*.ts", "../ormconfig.ts", "./dist"]
 }
