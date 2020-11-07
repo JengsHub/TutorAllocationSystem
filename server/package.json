@@ -27,8 +27,8 @@
     "start": "concurrently \"tsc -w\" \"nodemon dist/js/index.js\"",
     "lint": "prettier --write .",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/.bin/typeorm",
-    "migration:generate": "typeorm -- migration:generate --config src/ormconfig.json --connection  --name ",
-    "migration:run": "typeorm -- migration:run"
+    "migration:generate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n ",
+    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run "
   },
   "author": "Phillip Edbon",
   "license": "MIT"
