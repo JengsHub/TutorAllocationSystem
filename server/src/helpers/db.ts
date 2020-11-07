@@ -1,5 +1,5 @@
 import { Connection, createConnection, getConnection } from "typeorm";
-import ORMConfig from "../ormconfig";
+import ORMConfig from "../../ormconfig";
 
 export const DBConnect = async () => {
   let connection: Connection | undefined;

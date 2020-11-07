@@ -34,13 +34,11 @@ export class Staff {
   email!: string;
 
   @OneToMany(() => Allocation, (allocation) => allocation.staff)
-  @JoinColumn()
   allocations!: Allocation[];
 
   @OneToMany(() => StaffPreference, (staffPreference) => staffPreference.staff)
   staffPreference!: StaffPreference[];
 
   @OneToMany(() => Availability, (availability) => availability.staff)
-  @JoinColumn()
   availability!: Availability[];
 }

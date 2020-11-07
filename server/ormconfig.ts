@@ -3,7 +3,7 @@ import { ConnectionOptions } from "typeorm";
 
 const isCompiled = path.extname(__filename).includes("js");
 
-export default {
+export = {
   type: "postgres",
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
@@ -16,8 +16,8 @@ export default {
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,
   migrationsRun: true,
-  entities: [__dirname + `/entity/*.${isCompiled ? "js" : "ts"}`],
-  migrations: [__dirname + `/migrations/*.${isCompiled ? "js" : "ts"}`],
+  entities: [__dirname + `/src/entity/*.${isCompiled ? "js" : "ts"}`],
+  migrations: [__dirname + `/src/migrations/*.${isCompiled ? "js" : "ts"}`],
   cli: {
     entitiesDir: "src/entity",
     migrationsDir: "src/migrations",
