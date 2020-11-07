@@ -1,8 +1,11 @@
 import path from "path";
 import { ConnectionOptions } from "typeorm";
+// Configure .env file
+import dotenv from "dotenv";
+const result = dotenv.config();
 
 const isCompiled = path.extname(__filename).includes("js");
-
+console.log(__dirname);
 export = {
   type: "postgres",
   host: process.env.DB_HOST || "localhost",
@@ -16,8 +19,10 @@ export = {
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,
   migrationsRun: false,
-  entities: ["dist/src/entity/**/*.js"],
-  migrations: ["dist/src/migrations/**/*.js"],
+  entities: [__dirname + '/entity/**/*{.ts,.js}'],
+  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  seeds: ['src/database/seeds/**/*{.ts,.js}'],
+  factories: ['src/database/factories/**/*{.ts,.js}'],
   cli: {
     entitiesDir: "src/entity",
     migrationsDir: "src/migrations",

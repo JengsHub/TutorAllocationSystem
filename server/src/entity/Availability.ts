@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Staff } from "./Staff";
 import { DayOfWeek } from "../enums/DayOfWeek";
+import { Staff } from "./Staff";
 
 @Entity()
 export class Availability {
