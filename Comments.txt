@@ -28,3 +28,5 @@ And if user name is null, then the message won't appear
 Its pretty straightforward, if anyone has experience with routing they can carry on from there and tweak the code to route to another page (when logged in) and back (when logged out)
 
 The code has been pushed to gitlab: secure login branch along with these comments
+and dont forget to install all the packages used
+yarn add react-google-login shud do the trick

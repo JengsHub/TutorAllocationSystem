@@ -29,7 +29,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
 
  //this is the login function
  login (response: any) {
-   /**
+   /**yarn 
     * param: response from Google
     * output: none
     * desc:
