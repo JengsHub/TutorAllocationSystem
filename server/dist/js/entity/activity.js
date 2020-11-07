@@ -16,18 +16,21 @@ const Unit_1 = require("./Unit");
 let Activity = Activity_1 = class Activity {
 };
 __decorate([
-    typeorm_1.PrimaryColumn({
+    typeorm_1.PrimaryGeneratedColumn(),
+    __metadata("design:type", Number)
+], Activity.prototype, "id", void 0);
+__decorate([
+    typeorm_1.Column({
         type: "varchar",
     }),
     __metadata("design:type", String)
 ], Activity.prototype, "activityCode", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => Unit_1.Unit, (unit) => unit.activities, { primary: true }),
-    typeorm_1.JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" }),
+    typeorm_1.ManyToOne(() => Unit_1.Unit, (unit) => unit.activities),
     __metadata("design:type", Unit_1.Unit)
 ], Activity.prototype, "unit", void 0);
 __decorate([
-    typeorm_1.PrimaryColumn({
+    typeorm_1.Column({
         type: "varchar",
     }),
     __metadata("design:type", String)

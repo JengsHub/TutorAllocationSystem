@@ -21,7 +21,7 @@ __decorate([
 ], Unit.prototype, "id", void 0);
 __decorate([
     typeorm_1.PrimaryColumn({
-        type: "char",
+        type: "varchar",
         length: 7,
     }),
     __metadata("design:type", String)
@@ -34,7 +34,7 @@ __decorate([
 ], Unit.prototype, "offeringPeriod", void 0);
 __decorate([
     typeorm_1.Column({
-        type: "char",
+        type: "varchar",
         length: 2,
     }),
     __metadata("design:type", String)
