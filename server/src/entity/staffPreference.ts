@@ -8,17 +8,18 @@ import {
 import { Staff } from "./Staff";
 import { Unit } from "./Unit";
 
+
 @Entity()
 export class StaffPreference {
   @ManyToOne(() => Staff, (staff) => staff.staffPreference, { primary: true })
-  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
+  // @JoinColumn({ name: "staffId", referencedColumnName: "id" })
   staff!: Staff;
 
   @ManyToOne(() => Unit, { primary: true })
-  @JoinColumn([
-    { name: "unitCode", referencedColumnName: "unitCode" },
-    { name: "offeringPeriod", referencedColumnName: "offeringPeriod" },
-  ])
+  // @JoinColumn([
+  //   { name: "unitCode", referencedColumnName: "unitCode" },
+  //   { name: "offeringPeriod", referencedColumnName: "offeringPeriod" },
+  // ])
   unit!: Unit;
 
   @PrimaryGeneratedColumn("uuid")

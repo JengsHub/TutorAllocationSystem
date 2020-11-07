@@ -12,16 +12,19 @@ import { Allocation } from "./Allocation";
 
 @Entity()
 export class Activity {
-  @PrimaryColumn({
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column({
     type: "varchar",
   })
   activityCode!: string;
 
-  @ManyToOne(() => Unit, (unit) => unit.activities, { primary: true })
-  @JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" })
+  @ManyToOne(() => Unit, (unit) => unit.activities)
+  // @JoinColumn({ name: "unit_code", referencedColumnName: "unit_code" })
   unit!: Unit;
 
-  @PrimaryColumn({
+  @Column({
     type: "varchar",
   })
   offeringPeriod!: string;

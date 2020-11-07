@@ -17,29 +17,14 @@ let Allocation = class Allocation {
 };
 __decorate([
     typeorm_1.ManyToOne(() => Staff_1.Staff, (staff) => staff.allocations, { primary: true }),
-    typeorm_1.JoinColumn({ name: "staff_id", referencedColumnName: "id" }),
     __metadata("design:type", Staff_1.Staff)
 ], Allocation.prototype, "staff", void 0);
 __decorate([
     typeorm_1.ManyToOne(() => Activity_1.Activity, (activity) => activity.allocations, {
         primary: true,
     }),
-    typeorm_1.JoinColumn({ name: "activity_code", referencedColumnName: "activity_code" }),
     __metadata("design:type", Activity_1.Activity)
 ], Allocation.prototype, "activity", void 0);
-__decorate([
-    typeorm_1.PrimaryColumn({
-        type: "char",
-        length: 7,
-    }),
-    __metadata("design:type", String)
-], Allocation.prototype, "unitCode", void 0);
-__decorate([
-    typeorm_1.PrimaryColumn({
-        type: "varchar",
-    }),
-    __metadata("design:type", String)
-], Allocation.prototype, "offeringPeriod", void 0);
 __decorate([
     typeorm_1.Column({ type: "varchar" }),
     __metadata("design:type", String)

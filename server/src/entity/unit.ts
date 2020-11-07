@@ -14,7 +14,7 @@ export class Unit {
   id!: number;
 
   @PrimaryColumn({
-    type: "char",
+    type: "varchar",
     length: 7,
   })
   unitCode!: string;
@@ -25,7 +25,7 @@ export class Unit {
   offeringPeriod!: string;
 
   @Column({
-    type: "char",
+    type: "varchar",
     length: 2,
   })
   campus!: string;
