@@ -1,5 +1,4 @@
-default:
-  image: node:current-alpine
+image: node:current-alpine
 
 stages:
   - check
