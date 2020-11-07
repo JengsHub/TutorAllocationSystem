@@ -13,9 +13,7 @@ export const DBConnect = async () => {
         await connection.connect();
       }
     } else {
-      let connection = await createConnection(ORMConfig);
-      // TODO: should synchronize in dev only as this will drop the data
-      await connection.synchronize(true);
+      await createConnection(ORMConfig);
     }
     console.log("Database connection was successful!");
   } catch (e) {

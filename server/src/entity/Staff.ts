@@ -1,7 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Allocation } from "./Allocation";
-import { StaffPreference } from "./StaffPreference";
 import { Availability } from "./Availability";
+import { StaffPreference } from "./StaffPreference";
 
 @Entity()
 export class Staff {
@@ -27,11 +34,13 @@ export class Staff {
   email!: string;
 
   @OneToMany(() => Allocation, (allocation) => allocation.staff)
+  @JoinColumn()
   allocations!: Allocation[];
 
   @OneToMany(() => StaffPreference, (staffPreference) => staffPreference.staff)
   staffPreference!: StaffPreference[];
 
   @OneToMany(() => Availability, (availability) => availability.staff)
+  @JoinColumn()
   availability!: Availability[];
 }
