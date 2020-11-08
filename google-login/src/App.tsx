@@ -1,6 +1,9 @@
 import React from 'react';
-import GoogleBtn from './GoogleBtn';
 import './App.css';
+import { Route, BrowserRouter} from 'react-router-dom';
+import Page2 from "./Page2";
+import LoginPage from "./LoginPage";
+import ProtectedRoute from './protectedRoute';
 
 function App() {
   return (
@@ -9,14 +12,10 @@ function App() {
     //import the googleBtn module to this app page
     // refer to 'GoogleBtn.tsx"
     <div className="App">
-      <header className="App-header">
-        <h1> Monash Tutor Allocation Demo</h1> 
-
-        <p>
-          Welcome, Login with Google to Continue
-        </p>
-        <GoogleBtn/>
-      </header>
+      <BrowserRouter>
+      <Route exact path = "/" component={LoginPage} />
+      <ProtectedRoute path = "/page2" component={Page2} />
+      </BrowserRouter>
     </div>
   );
 }

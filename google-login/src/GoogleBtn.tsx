@@ -1,8 +1,8 @@
 
-import React, { Component } from 'react' //for the component class
+import React, { Component } from 'react'; //for the component class
 import { GoogleLogin, GoogleLogout} from 'react-google-login'; //for google login and log out function
-
-
+import { Redirect } from 'react-router-dom';
+import auth from './auth';
 /**
  * so to use google auth login you need a client ID
  * later when we deliver final product, Milad needs to create or use his/Monash own client ID
@@ -27,6 +27,17 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
    this.handleLogoutFailure = this.handleLogoutFailure.bind(this);
  }
 
+ refreshTokenSetup = (response: any) => {
+   let timer: any;
+   let refreshTiming = (response.tokenObj.expires_in || 3300); //time in seconds
+   const refreshToken = async () => { //async process
+     const newAuthRes = await response.reloadAuthResponse(); //reload the
+     refreshTiming = (newAuthRes.expires_in || 3300); //time in seconds
+     timer = setTimeout(refreshToken, refreshTiming);
+   }
+   timer = setTimeout(refreshToken,refreshTiming);
+
+ }
  //this is the login function
  login (response: any) {
    /**yarn 
@@ -44,7 +55,10 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
        isLogined: true,
        userName: response.profileObj.givenName + ' ' + response.profileObj.familyName
      }));
+     this.refreshTokenSetup(response);
+     auth.login();
    }
+   //change logedin: true in App.js
  }
 
  logout () {
@@ -63,7 +77,11 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
      isLogined: false,
      userName: ''
    }));
+   //TODO: kill async process
+
+   auth.logout();
  }
+
 
  handleLoginFailure () { //just a message
    alert('Failed to log in')
@@ -86,16 +104,17 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
        </GoogleLogout>: <GoogleLogin
          clientId={ CLIENT_ID } //clientid
          buttonText='Login' //button text
-         onSuccess={ this.login } //success -> then call login function (the package automatically sends the response)
+         onSuccess={ this.login} //success -> then call login function (the package automatically sends the response)
          onFailure={ this.handleLoginFailure } //message
          cookiePolicy={ 'single_host_origin' } //cookie type, but honestly idk much abt cookies, just followed to docs
          responseType='code,token' //the type of the response sent is token which is used by login function
        />
      }
      { //if userName is not null, show the text and print the username
-     this.state.userName ? <h5>You are logged in as : <br/><br/> { this.state.userName }</h5> : null
-      }
-
+     this.state.userName ? <span><h5>You are logged in as : <br/><br/> { this.state.userName }</h5> 
+     <Redirect push to="/page2"></Redirect>
+     </span>: null
+     }
    </div>
    )
  }
