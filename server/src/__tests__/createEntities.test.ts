@@ -58,23 +58,23 @@ describe("Create Entity Tests", () => {
     console.log(staff);
   });
 
-  //   test("Can build new Unit", async () => {
-  //     unit = await factory(Unit)().make();
-  //   });
+  test("Can build new Unit", async () => {
+    unit = await factory(Unit)().make();
+  });
 
-  //   test("Can build new Acivity", async () => {
-  //     activity = await factory(Activity)().make();
-  //   });
+  test("Can build new Acivity", async () => {
+    activity = await factory(Activity)().make();
+  });
 
-  //   test("Can build new Availability", async () => {
-  //     availability = await factory(Availability)().make();
-  //   });
+  test("Can build new Availability", async () => {
+    availability = await factory(Availability)().make();
+  });
 
-  //   test("Can build new StaffPreference", async () => {
-  //     staffPreference = await factory(StaffPreference)().make();
-  //   });
+  test("Can build new StaffPreference", async () => {
+    staffPreference = await factory(StaffPreference)().make();
+  });
 
-  //   test("Can build new Allocation", async () => {
-  //     allocation = await factory(Allocation)().make();
-  //   });
+  test("Can build new Allocation", async () => {
+    allocation = await factory(Allocation)().make();
+  });
 });

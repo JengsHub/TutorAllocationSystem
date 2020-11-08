@@ -35,14 +35,14 @@ export class Activity {
   @Column()
   duration!: number;
 
+  // TODO: varchar for sqlite compatibility in test?
   @Column({
-    type: "enum",
-    enum: DayOfWeek,
+    type: "varchar",
   })
   dayOfWeek!: DayOfWeek;
 
   @Column({ type: "time" })
-  startTime!: number;
+  startTime!: string; // TODO: Date object or string to store time only?
 
   @OneToMany(() => Activity, (activity) => activity.allocations)
   allocations!: Allocation[];

@@ -11,7 +11,7 @@ define(Activity, (faker: typeof Faker) => {
   activity.campus = "CL";
   activity.dayOfWeek = DayOfWeek.MONDAY;
   activity.location = faker.address.streetAddress();
-  activity.startTime = faker.time.recent();
+  activity.startTime = faker.time.recent().toString(); // TODO: fix
   activity.duration = faker.random.number(3) + 1;
   activity.unit = new Unit(); // Override this
   return activity;

@@ -7,14 +7,15 @@ export class Availability {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({ type: "enum", enum: DayOfWeek })
+  // @Column({ type: "enum", enum: DayOfWeek })
+  @Column({ type: "varchar" })
   day!: DayOfWeek;
 
   @Column({ type: "time" })
-  startTime!: number;
+  startTime!: string;
 
   @Column({ type: "time" })
-  endTime!: number;
+  endTime!: string;
 
   @Column()
   year!: number;
