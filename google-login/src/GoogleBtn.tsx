@@ -57,6 +57,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
      }));
      this.refreshTokenSetup(response);
      auth.login();
+     console.log(auth.isAuthenticated);
    }
    //change logedin: true in App.js
  }
@@ -112,7 +113,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
      }
      { //if userName is not null, show the text and print the username
      this.state.userName ? <span><h5>You are logged in as : <br/><br/> { this.state.userName }</h5> 
-     <Redirect push to="/page2"></Redirect>
+     
      </span>: null
      }
    </div>
@@ -121,3 +122,4 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
 }
 //export this module
 export default GoogleBtn;
+//<Redirect push to="/page2"></Redirect>

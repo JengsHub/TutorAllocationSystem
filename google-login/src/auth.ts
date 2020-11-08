@@ -2,6 +2,7 @@ class Auth {
     isAuthenticated: boolean
     constructor(){
         this.isAuthenticated = false;
+        console.log('hello');
     }
 
 login(){
@@ -17,4 +18,5 @@ isLoggedIn(){
 }
 
 }
-export default Auth;
+const auth = new Auth();
+export default auth;
