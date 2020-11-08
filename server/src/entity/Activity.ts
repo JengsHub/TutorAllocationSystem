@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique, } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Allocation } from "./Allocation";
 import { Unit } from "./Unit";
@@ -30,7 +37,7 @@ export class Activity {
 
   @Column({
     type: "enum",
-    enum: DayOfWeek
+    enum: DayOfWeek,
   })
   dayOfWeek!: DayOfWeek;
 

@@ -2,7 +2,7 @@ import { Connection, getManager } from "typeorm";
 import { Factory } from "typeorm-seeding";
 import { Unit } from "src/entity/Unit";
 
-export default class CreateUnit  {
+export default class CreateUnit {
   async run(factory: Factory, connection: Connection): Promise<void> {
     const manager = getManager();
     let unit = manager.create(Unit, {
@@ -12,9 +12,9 @@ export default class CreateUnit  {
       year: 2020,
       aqfTarget: 3,
       activities: [],
-      staffPreference: []
-  });
+      staffPreference: [],
+    });
 
-  await manager.save(unit);
-    }
+    await manager.save(unit);
+  }
 }

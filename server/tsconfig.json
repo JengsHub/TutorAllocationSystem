@@ -14,5 +14,12 @@
     }
   },
   "include": ["src/**/*", "src/ormconfig.ts", "ormconfig.js", "jest.config.ts"],
-  "exclude": ["node_modules", ".vscode", "**/*.spec.ts", "src/types/*.ts", "../ormconfig.ts", "./dist"]
+  "exclude": [
+    "node_modules",
+    ".vscode",
+    "**/*.spec.ts",
+    "src/types/*.ts",
+    "../ormconfig.ts",
+    "./dist"
+  ]
 }

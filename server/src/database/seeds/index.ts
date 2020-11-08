@@ -6,5 +6,10 @@ import CreateAvailability from "./CreateAvailability";
 import CreateStaffPreference from "./CreateStaffPreference";
 
 export {
-    CreateStaff, CreateUnit, CreateActivity, CreateAllocation, CreateAvailability, CreateStaffPreference
+  CreateStaff,
+  CreateUnit,
+  CreateActivity,
+  CreateAllocation,
+  CreateAvailability,
+  CreateStaffPreference,
 };

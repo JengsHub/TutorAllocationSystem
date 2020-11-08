@@ -5,6 +5,4 @@ import { Activity } from "./Activity";
 import { Availability } from "./Availability";
 import { StaffPreference } from "./StaffPreference";
 
-export {
-    Staff, Unit, Activity, Allocation, Availability, StaffPreference
-};
+export { Staff, Unit, Activity, Allocation, Availability, StaffPreference };
