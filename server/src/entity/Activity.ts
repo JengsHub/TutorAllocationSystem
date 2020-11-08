@@ -1,4 +1,5 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique, } from "typeorm";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import { Allocation } from "./Allocation";
 import { Unit } from "./Unit";
 
@@ -14,6 +15,7 @@ export class Activity {
   @Column()
   activityGroup!: string;
 
+  // TODO: Do we need campus if campus is also in unit ?
   @Column({
     type: "varchar",
     length: 2,
@@ -27,13 +29,13 @@ export class Activity {
   duration!: number;
 
   @Column({
-    type: "varchar",
-    length: 3,
+    type: "enum",
+    enum: DayOfWeek
   })
-  dayOfWeek!: number;
+  dayOfWeek!: DayOfWeek;
 
   @Column({ type: "time" })
-  startTime!: Date;
+  startTime!: number;
 
   @OneToMany(() => Activity, (activity) => activity.allocations)
   allocations!: Allocation[];

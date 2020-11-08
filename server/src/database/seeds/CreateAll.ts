@@ -1,7 +1,7 @@
 import { Connection, getManager } from "typeorm";
 import { Factory, Seeder } from "typeorm-seeding";
 import { Staff } from "src/entity/Staff";
-import { Unit } from "~/entity/Unit";
+import { Unit } from "../../entity/Unit";
 
 export default class CreateAll implements Seeder {
   async run(factory: Factory, connection: Connection): Promise<void> {
