@@ -1,0 +1,26 @@
+image: node:current-alpine
+
+stages:
+  - check
+
+server-build:
+  stage: check
+  script:
+    - cd server
+    - npm install
+    - npm run build
+
+server-format:
+  stage: check
+  script:
+    - cd server
+    - npm install -g prettier
+    - prettier --check "src/**/*.ts"
+
+server-test:
+  stage: check
+  script:
+    - cd server
+    - npm install
+    - npm install -g jest
+    - jest --env=node --colors --coverage test
