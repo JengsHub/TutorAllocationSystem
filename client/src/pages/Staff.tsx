@@ -1,7 +1,11 @@
 import React from "react";
 
 const Staff = () => {
-  return <h1>Staff</h1>;
+  return (
+    <div id="main">
+      <h1>Staff</h1>
+    </div>
+  );
 };
 
 export default Staff;
