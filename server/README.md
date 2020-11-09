@@ -5,17 +5,29 @@ Node.js server/API using Express, TypeORM, TypeScript Rest Framework, PostgreSQL
 ## Running the back end
 
 The back end consists of the server and the database, both of which need to be run separately (in two separate terminal windows).
+
+### Pre-requisites
+
 You must do the following before running them:
 
 - Install [Docker](https://www.docker.com/get-started)
-- Install [PostgreSQL](https://www.postgresql.org/download/)
 - Create a .env file (copy the contents of the .env.example file into a .env file)
-  - Note - configure this file differently according to your local environment _(the .env.example file is just a template)_
+- Install the following NPM packages globally (using npm install -g)
+  - typescript
+  - nodemon
+  - prettier
+  - ts-node
+  - typeorm
+  - jest
 
 ### Running the database
 
-1. `cd scripts`
-2. `./run-database.sh` will run a docker container with a postgres database (with properties set by your .env file)
+_Note - make sure the terminal shell you use is bash, not cmd, powershell or anything else_
+
+1. Stop any PostgreSQL services you have running (we only want the docker service spinning on port 5432) - If you've never installed PostgreSQL, don't worry about this step
+2. `cd scripts`
+3. `./run-database.sh` will run a docker container with a postgres database (with properties set by your .env file)
+4. Go to pgadmin and create a server set to the right port and with the username and password set based on your .env file
 
 ### Running the server
 
