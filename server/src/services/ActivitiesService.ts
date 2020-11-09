@@ -8,6 +8,7 @@ import {
   DELETE,
   PATCH,
 } from "typescript-rest";
+import { Allocation } from "~/entity";
 import { Activity } from "../entity/Activity";
 
 @Path("/activities")
@@ -20,7 +21,9 @@ class ActivitiesService {
    */
   @GET
   public getAllActivities(): Promise<Array<Activity>> {
-    return this.repo.find();
+    return this.repo.find({
+      relations: ["allocations", "unit"]
+    });
   }
 
   /**
@@ -31,8 +34,13 @@ class ActivitiesService {
   // TODO: assert return value as Promise<Activity> here
   @GET
   @Path(":activityCode")
-  public getActivity(@PathParam("activityCode") activityCode: string) {
-    return this.repo.findOne({ activityCode: activityCode });
+  public async getActivity(@PathParam("activityCode") activityCode: string) {
+    let activity = await this.repo.findOne(
+      { activityCode: activityCode },
+      { relations: ["allocations", "unit"] }
+    );
+
+    return activity;
   }
 
   /**

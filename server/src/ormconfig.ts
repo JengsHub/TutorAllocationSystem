@@ -13,7 +13,7 @@ export = {
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_NAME || "postgres",
   synchronize: process.env.DB_SYNC || false,
-  logging: process.env.DB_LOGS || false,
+  logging: process.env.DB_LOGS || true,
   autoReconnect: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,

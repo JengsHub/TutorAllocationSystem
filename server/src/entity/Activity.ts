@@ -4,6 +4,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
   Unique,
 } from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
@@ -11,9 +12,9 @@ import { Allocation } from "./Allocation";
 import { Unit } from "./Unit";
 
 @Entity()
-@Unique(["activityCode"])
+@Unique(["activityCode", "unit"])
 export class Activity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id!: string;
 
   @Column()
@@ -44,9 +45,15 @@ export class Activity {
   @Column({ type: "time" })
   startTime!: string; // TODO: Date object or string to store time only?
 
-  @OneToMany(() => Activity, (activity) => activity.allocations)
+  @OneToMany(() => Allocation, (allocation) => allocation.activity)  
   allocations!: Allocation[];
+
+  // @RelationId((activity: Activity) => activity.allocations)
+  // allocationIds!: string[];
 
   @ManyToOne(() => Unit, (unit) => unit.activities)
   unit!: Unit;
+
+  @RelationId((activity: Activity) => activity.unit)
+  unitId!: string;
 }

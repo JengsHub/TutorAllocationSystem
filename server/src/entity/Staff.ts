@@ -5,6 +5,7 @@ import {
   JoinTable,
   OneToMany,
   PrimaryGeneratedColumn,
+  RelationId,
 } from "typeorm";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";

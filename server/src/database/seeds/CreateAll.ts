@@ -1,7 +1,7 @@
 import { Staff } from "src/entity/Staff";
 import { Connection, getManager } from "typeorm";
 import { Factory, Seeder } from "typeorm-seeding";
-import { Activity, Availability, StaffPreference } from "~/entity";
+import { Activity, Allocation, Availability, StaffPreference } from "~/entity";
 import { DayOfWeek } from "~/enums/DayOfWeek";
 import { Unit } from "../../entity/Unit";
 
@@ -65,6 +65,12 @@ export default class CreateAll implements Seeder {
         staff: staff,
       });
       await manager.save(availability);
+
+      let allocation = manager.create(Allocation, {
+        activity: activity,
+        staff: staff,
+      });
+      await manager.save(allocation);
     });
   }
 }
