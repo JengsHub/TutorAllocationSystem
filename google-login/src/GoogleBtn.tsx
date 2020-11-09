@@ -56,10 +56,8 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
        userName: response.profileObj.givenName + ' ' + response.profileObj.familyName
      }));
      this.refreshTokenSetup(response);
-     auth.login();
-     console.log(auth.isAuthenticated);
+     auth.login(); //set auth.isautneticated = true
    }
-   //change logedin: true in App.js
  }
 
  logout () {
@@ -80,7 +78,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
    }));
    //TODO: kill async process
 
-   auth.logout();
+   auth.logout(); //set auth.isautneticated = false
  }
 
 
@@ -111,9 +109,9 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
          responseType='code,token' //the type of the response sent is token which is used by login function
        />
      }
-     { //if userName is not null, show the text and print the username
-     this.state.userName ? <span><h5>You are logged in as : <br/><br/> { this.state.userName }</h5> 
-     
+     { //if userName is not null, show the text and print the username and give link to page 2
+     this.state.isLogined ? <span><h5>You are logged in as : <br/><br/> { this.state.userName }</h5> 
+     <a href="http://localhost:3000/page2">Go to Page 2</a>
      </span>: null
      }
    </div>
@@ -122,4 +120,6 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
 }
 //export this module
 export default GoogleBtn;
-//<Redirect push to="/page2"></Redirect>
+
+//old code(s):
+//<Redirect push to="/page2"></Redirect> 

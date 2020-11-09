@@ -4,6 +4,7 @@ import GoogleBtn from './GoogleBtn';
 import './Page2.css';
 
 const Page2 = () => {
+    //just a simple page with a text and a link to go back to home
     return (
         <div className="page2">
             <h1>

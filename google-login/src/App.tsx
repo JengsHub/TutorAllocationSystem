@@ -7,10 +7,7 @@ import ProtectedRoute from './protectedRoute';
 
 function App() {
   return (
-    //title of website
-    //subtitle message
-    //import the googleBtn module to this app page
-    // refer to 'GoogleBtn.tsx"
+    //just defening the routes here
     <div className="App">
       <BrowserRouter>
       <Route exact path = "/" component={LoginPage} />
