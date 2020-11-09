@@ -45,7 +45,7 @@ export class Activity {
   @Column({ type: "time" })
   startTime!: string; // TODO: Date object or string to store time only?
 
-  @OneToMany(() => Allocation, (allocation) => allocation.activity)  
+  @OneToMany(() => Allocation, (allocation) => allocation.activity)
   allocations!: Allocation[];
 
   // @RelationId((activity: Activity) => activity.allocations)
