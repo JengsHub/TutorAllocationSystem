@@ -2,7 +2,6 @@
 import React, { Component } from 'react'; //for the component class
 import { GoogleLogin, GoogleLogout} from 'react-google-login'; //for google login and log out function
 import { Redirect } from 'react-router-dom';
-import auth from './auth';
 /**
  * so to use google auth login you need a client ID
  * later when we deliver final product, Milad needs to create or use his/Monash own client ID
@@ -56,7 +55,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
        userName: response.profileObj.givenName + ' ' + response.profileObj.familyName
      }));
      this.refreshTokenSetup(response);
-     auth.login(); //set auth.isautneticated = true
+     sessionStorage.setItem('isAuth','true'); //isAuth=true for system reference
    }
  }
 
@@ -78,7 +77,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
    }));
    //TODO: kill async process
 
-   auth.logout(); //set auth.isautneticated = false
+   sessionStorage.setItem('isAuth','false'); //set isAuth = false for system reference
  }
 
 
@@ -104,6 +103,7 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
          clientId={ CLIENT_ID } //clientid
          buttonText='Login' //button text
          onSuccess={ this.login} //success -> then call login function (the package automatically sends the response)
+         isSignedIn={true} //keep user signed in till he/she logs out
          onFailure={ this.handleLoginFailure } //message
          cookiePolicy={ 'single_host_origin' } //cookie type, but honestly idk much abt cookies, just followed to docs
          responseType='code,token' //the type of the response sent is token which is used by login function

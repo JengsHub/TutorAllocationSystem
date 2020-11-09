@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {Route, Router, Redirect, RouteProps} from 'react-router-dom';
-import auth from './auth';
+import {Route, Redirect, RouteProps} from 'react-router-dom';
 
 const ProtectedRoute: React.FC<RouteProps> = ({component: Component, ...rest}) => {
     if (!Component) return null;
@@ -9,7 +8,7 @@ const ProtectedRoute: React.FC<RouteProps> = ({component: Component, ...rest}) =
     return (
         <div>
             <Route {...rest} render={props => (
-                auth.isLoggedIn()? //if true, redirect to the requested page
+                sessionStorage.getItem('isAuth')=='true'? //if true, redirect to the requested page
                 <Component {...props} />: 
                 <Redirect to="/" /> //else, go back to login page/homepage
             )} />
@@ -18,4 +17,3 @@ const ProtectedRoute: React.FC<RouteProps> = ({component: Component, ...rest}) =
 };
 
 export default ProtectedRoute;
-

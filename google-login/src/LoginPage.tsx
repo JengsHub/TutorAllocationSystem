@@ -1,7 +1,7 @@
 import React from 'react';
 import GoogleBtn from './GoogleBtn';
 import './LoginPage.css';
-import auth from './auth';
+
 
 const LoginPage = (props:any) => {
   const myProp = props;
