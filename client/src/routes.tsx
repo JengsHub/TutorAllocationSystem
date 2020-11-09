@@ -6,6 +6,7 @@ import Activities from "./pages/Activities";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Sidebar from "./components/Sidebar";
+import DataImport from "./pages/DataImport";
 
 const Routes = () => {
   return (
@@ -16,6 +17,7 @@ const Routes = () => {
         <Route path="/staff" component={Staff} />
         <Route path="/preferences" component={Preferences} />
         <Route path="/activities" component={Activities} />
+        <Route path="/dataimport" component={DataImport} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
