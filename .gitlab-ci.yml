@@ -3,6 +3,20 @@ image: node:current-alpine
 stages:
   - check
 
+client-build:
+  stage: check
+  script:
+    - cd client
+    - npm install
+    - npm run build
+
+client-format:
+  stage: check
+  script:
+    - cd client
+    - npm install -g prettier
+    - prettier --check "src/**/*.{ts,tsx,js,jsx}"
+
 server-build:
   stage: check
   script:
