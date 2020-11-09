@@ -1,5 +1,14 @@
 import { DeleteResult, getRepository } from "typeorm";
-import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
+import {
+  DELETE,
+  GET,
+  PATCH,
+  Path,
+  PathParam,
+  POST,
+  PUT,
+} from "typescript-rest";
+import { Staff, Unit } from "~/entity";
 import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
@@ -24,9 +33,7 @@ class StaffPreferencesService {
   @GET
   @Path(":id")
   public getStaffPreference(@PathParam("id") id: string) {
-    return this.repo.findOne({
-      id: id,
-    });
+    return this.repo.findOne({ id });
   }
 
   /**
@@ -35,9 +42,19 @@ class StaffPreferencesService {
    * @return StaffPreference new staffPreference
    */
   @POST
-  public createStaffPreference(
+  public async createStaffPreference(
     newRecord: StaffPreference
   ): Promise<StaffPreference> {
+    // TODO: optimisation
+    let staff = await getRepository(Staff).findOneOrFail({
+      id: newRecord.staffId,
+    });
+    let unit = await getRepository(Unit).findOneOrFail({
+      id: newRecord.unitId,
+    });
+    newRecord.staff = staff;
+    newRecord.unit = unit;
+
     return this.repo.save(this.repo.create(newRecord));
   }
 
@@ -46,7 +63,7 @@ class StaffPreferencesService {
    * @param changedStaffPreference new staffPreference object to change existing staffPreference to
    * @return StaffPreference changed staffPreference
    */
-  @PATCH
+  @PUT
   public async updateStaffPreference(
     changedStaffPreference: StaffPreference
   ): Promise<StaffPreference> {
@@ -67,8 +84,6 @@ class StaffPreferencesService {
   public deleteStaffPreference(
     @PathParam("id") id: string
   ): Promise<DeleteResult> {
-    return this.repo.delete({
-      id: id,
-    });
+    return this.repo.delete({ id });
   }
 }

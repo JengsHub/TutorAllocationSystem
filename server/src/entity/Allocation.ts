@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
@@ -15,6 +15,12 @@ export class Allocation {
   })
   activity!: Activity;
 
+  @RelationId((a:Allocation)=>a.activity)
+  activityId!: string;
+
   @ManyToOne(() => Staff, (staff) => staff.allocations, { primary: true })
   staff!: Staff;
+
+  @RelationId((a:Allocation)=>a.staff)
+  staffId!: string;
 }

@@ -1,5 +1,14 @@
 import { DeleteResult, getRepository } from "typeorm";
-import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
+import {
+  DELETE,
+  GET,
+  PATCH,
+  Path,
+  PathParam,
+  POST,
+  PUT,
+} from "typescript-rest";
+import { Activity, Staff, Unit } from "~/entity";
 import { Allocation } from "../entity/Allocation";
 
 @Path("/allocations")
@@ -25,9 +34,7 @@ class AllocationsService {
   @GET
   @Path(":id")
   public getAllocation(@PathParam("id") id: string) {
-    return this.repo.findOne({
-      id: id,
-    });
+    return this.repo.findOne({ id });
   }
 
   /**
@@ -36,7 +43,16 @@ class AllocationsService {
    * @return Allocation new allocation
    */
   @POST
-  public createAllocation(newRecord: Allocation): Promise<Allocation> {
+  public async createAllocation(newRecord: Allocation): Promise<Allocation> {
+    // TODO: optimisation
+    let staff = await getRepository(Staff).findOneOrFail({
+      id: newRecord.staffId,
+    });
+    newRecord.staff = staff;
+    let activity = await getRepository(Activity).findOneOrFail({
+      id: newRecord.activityId,
+    });
+    newRecord.activity = activity;
     return this.repo.save(this.repo.create(newRecord));
   }
 
@@ -45,13 +61,23 @@ class AllocationsService {
    * @param changedAllocation new allocation object to change existing allocation to
    * @return Allocation changed allocation
    */
-  @PATCH
+  @PUT
   public async updateAllocation(
     changedAllocation: Allocation
   ): Promise<Allocation> {
     let allocationToUpdate = await this.repo.findOne({
       id: changedAllocation.id,
     });
+    // TODO: optimisation
+    if (changedAllocation.staffId){
+      let staff = await getRepository(Staff).findOneOrFail({ id: changedAllocation.staffId });
+      changedAllocation.staff = staff
+    }
+    if (changedAllocation.activityId){
+      let activity = await getRepository(Activity).findOneOrFail({ id: changedAllocation.activityId });
+      changedAllocation.activity = activity
+    }
+
     allocationToUpdate = changedAllocation;
     return this.repo.save(allocationToUpdate);
   }

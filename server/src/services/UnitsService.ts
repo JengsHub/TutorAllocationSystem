@@ -24,9 +24,7 @@ class UnitsService {
   @GET
   @Path(":id")
   public getUnit(@PathParam("id") id: string) {
-    return this.repo.findOne({
-      id: id,
-    });
+    return this.repo.findOne({ id });
   }
 
   /**

@@ -1,5 +1,5 @@
 import { DeleteResult, getRepository } from "typeorm";
-import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
+import { DELETE, GET, PATCH, Path, PathParam, POST, PUT } from "typescript-rest";
 import { Staff } from "../entity/Staff";
 
 @Path("/staff")
@@ -25,7 +25,7 @@ class StaffService {
   @Path(":id")
   public getStaff(@PathParam("id") id: string) {
     return this.repo.findOne({
-      id: id,
+      id,
     });
   }
 
@@ -44,7 +44,7 @@ class StaffService {
    * @param changedStaff new staff object to change existing staff to
    * @return Staff changed staff member
    */
-  @PATCH
+  @PUT
   public async updateStaff(changedStaff: Staff): Promise<Staff> {
     let staffToUpdate = await this.repo.findOne({
       id: changedStaff.id,

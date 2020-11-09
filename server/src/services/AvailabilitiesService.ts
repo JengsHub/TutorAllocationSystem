@@ -1,5 +1,14 @@
 import { DeleteResult, getRepository } from "typeorm";
-import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
+import {
+  DELETE,
+  GET,
+  PATCH,
+  Path,
+  PathParam,
+  POST,
+  PUT,
+} from "typescript-rest";
+import { Staff } from "~/entity";
 import { Availability } from "../entity/Availability";
 
 @Path("/availabilities")
@@ -35,7 +44,14 @@ class AvailabilitiesService {
    * @return Availability new availability
    */
   @POST
-  public createAvailability(newRecord: Availability): Promise<Availability> {
+  public async createAvailability(
+    newRecord: Availability
+  ): Promise<Availability> {
+    // TODO: optimisation
+    let staff = await getRepository(Staff).findOneOrFail({
+      id: newRecord.staffId,
+    });
+    newRecord.staff = staff;
     return this.repo.save(this.repo.create(newRecord));
   }
 
@@ -44,13 +60,18 @@ class AvailabilitiesService {
    * @param changedAvailability new availability object to change existing availability to
    * @return Availability changed availability
    */
-  @PATCH
+  @PUT
   public async updateAvailability(
     changedAvailability: Availability
   ): Promise<Availability> {
     let availabilityToUpdate = await this.repo.findOne({
       id: changedAvailability.id,
     });
+    // TODO: optimisation
+    if (changedAvailability.staffId){
+      let staff = await getRepository(Staff).findOneOrFail({ id: changedAvailability.staffId });
+      changedAvailability.staff = staff
+    }
     availabilityToUpdate = changedAvailability;
     return this.repo.save(availabilityToUpdate);
   }
@@ -65,8 +86,6 @@ class AvailabilitiesService {
   public deleteAvailability(
     @PathParam("id") id: string
   ): Promise<DeleteResult> {
-    return this.repo.delete({
-      id: id,
-    });
+    return this.repo.delete({ id });
   }
 }

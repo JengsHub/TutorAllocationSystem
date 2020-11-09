@@ -56,12 +56,11 @@ class ActivitiesService {
    */
   @POST
   public async createActivity(
-    newRecord: Activity,
-    @QueryParam("unitId") unitId: string
+    newRecord: Activity
   ): Promise<Activity> {
     // TODO: better optimisation since it's wasteful to fetch unit when we don't use it
     // potential solution: https://github.com/typeorm/typeorm/issues/447
-    let unit = await getRepository(Unit).findOneOrFail({ id: unitId });
+    let unit = await getRepository(Unit).findOneOrFail({ id: newRecord.unitId });
     newRecord.unit = unit;
     return this.repo.save(this.repo.create(newRecord));
   }
@@ -73,9 +72,15 @@ class ActivitiesService {
    */
   @PUT
   public async updateActivity(changedActivity: Activity): Promise<Activity> {
-    let activityToUpdate = await this.repo.findOne(
-      changedActivity.activityCode
+    let activityToUpdate = await this.repo.findOneOrFail(
+      changedActivity.id
     );
+
+    // TODO: optimisation
+    if (changedActivity.unitId){
+      let unit = await getRepository(Unit).findOneOrFail({ id: changedActivity.unitId });
+      changedActivity.unit = unit
+    }
     activityToUpdate = changedActivity;
     return this.repo.save(activityToUpdate);
   }
