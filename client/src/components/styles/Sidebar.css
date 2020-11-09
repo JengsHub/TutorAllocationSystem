@@ -1,0 +1,40 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  font-family: "Raleway", sans-serif;
+}
+
+.logo {
+  width: 200px;
+  padding: 20px;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.sidebar-item {
+  padding: 8px 16px;
+  margin: 4px 12px;
+  border-radius: 4px;
+}
+
+.active > div {
+  background: #363566;
+}
+
+.sidebar-item > p {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.sidebar-item:hover {
+  cursor: pointer;
+  background: #2c2b54;
+}

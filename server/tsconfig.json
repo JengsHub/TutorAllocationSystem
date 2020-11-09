@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "." /* Base directory to resolve non-absolute module names. */,
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "src/ormconfig.ts", "ormconfig.js", "jest.config.ts"],
+  "exclude": [
+    "node_modules",
+    ".vscode",
+    "**/*.spec.ts",
+    "src/types/*.ts",
+    "../ormconfig.ts",
+    "./dist"
+  ]
+}
