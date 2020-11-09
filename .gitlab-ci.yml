@@ -7,7 +7,6 @@ client-build:
   stage: check
   script:
     - cd client
-    - npm install -g yarn
     - yarn install
     - npm run build
 
