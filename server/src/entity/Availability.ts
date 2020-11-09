@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Staff } from "./Staff";
 
@@ -29,6 +35,6 @@ export class Availability {
   @ManyToOne(() => Staff, (staff) => staff.availability, { primary: true })
   staff!: Staff;
 
-  @RelationId((a:Availability)=>a.staff)
+  @RelationId((a: Availability) => a.staff)
   staffId!: string;
 }
