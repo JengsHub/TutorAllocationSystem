@@ -7,6 +7,7 @@ import {
   POST,
   PUT,
   QueryParam,
+  Security,
 } from "typescript-rest";
 import { Unit } from "~/entity";
 import { Activity } from "../entity/Activity";

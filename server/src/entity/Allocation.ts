@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -10,7 +11,7 @@ import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
 @Entity()
-export class Allocation {
+export class Allocation extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 

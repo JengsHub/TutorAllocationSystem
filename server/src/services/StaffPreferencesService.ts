@@ -21,7 +21,7 @@ class StaffPreferencesService {
    */
   @GET
   public getAllStaffPreferences(): Promise<Array<StaffPreference>> {
-    return this.repo.find();
+    return this.repo.find({ relations: ["staff", "unit"] });
   }
 
   /**
@@ -33,7 +33,7 @@ class StaffPreferencesService {
   @GET
   @Path(":id")
   public getStaffPreference(@PathParam("id") id: string) {
-    return this.repo.findOne({ id });
+    return this.repo.findOne({ id }, { relations: ["staff", "unit"] });
   }
 
   /**

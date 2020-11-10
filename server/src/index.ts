@@ -10,8 +10,9 @@ import { Server } from "typescript-rest";
 import "./services";
 import { TryDBConnect } from "./helpers";
 import authRoutes from "./services/AuthService";
-import cookieSession from "cookie-session";
+// import cookieSession from "cookie-session";
 // import { passport } from "./helpers/auth";
+import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import { authCheck } from "./helpers/auth";
@@ -22,12 +23,18 @@ export const app: express.Application = express();
 if (result.error) {
   throw result.error;
 }
-// set up session cookies
+
 app.use(
-  cookieSession({
-    name: "session",
-    maxAge: 24 * 60 * 60 * 1000, // 1 day expiration date
-    keys: ["ioqwer902sdjkabf891234!@#^SDAIOFq239as"], // TODO: .env
+  session({
+    name: "qid",
+    secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
+    cookie: {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration
+    },
+    rolling: true, // automatically set new expiration when user makes request
+    resave: true,
+    saveUninitialized: false  // do no set cookie if user is not authenticated
   })
 );
 
@@ -58,20 +65,7 @@ app.use(passport.session());
 // set up routes
 app.use("/auth", authRoutes);
 
-// if it's already login, send the profile response,
-// otherwise, send a 401 response that the user is not authenticated
-// authCheck before navigating to home page
-app.get("/", authCheck, (req, res) => {
-  res.status(200).json({
-    authenticated: true,
-    message: "user successfully authenticated",
-    user: req.user,
-    cookies: req.cookies
-  });
-});
 Server.buildServices(app);
-
-
 
 // Just checking if given PORT variable is an integer or not
 let port = parseInt(process.env.PORT || "");

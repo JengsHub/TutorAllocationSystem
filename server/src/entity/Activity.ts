@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -13,7 +14,7 @@ import { Unit } from "./Unit";
 
 @Entity()
 @Unique(["activityCode", "unit"])
-export class Activity {
+export class Activity extends BaseEntity{
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 

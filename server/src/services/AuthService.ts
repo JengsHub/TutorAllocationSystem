@@ -1,5 +1,7 @@
 import passport from "passport";
 import { Router } from "express";
+import { Staff } from "~/entity";
+import { authCheck } from "~/helpers/auth";
 
 const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
 
@@ -25,22 +27,25 @@ router.get(
 );
 
 // when login is successful, retrieve user info
-router.get("/login/success", (req, res) => {
-  if (req.user) {
-    res.json({
-      success: true,
-      message: "user has successfully authenticated",
-      user: req.user,
-      cookies: req.cookies
-    });
-  }
+router.get("/login/success", authCheck, (req, res) => {
+  const { givenNames, lastName, email } = req.user as Staff;
+  res.json({
+    success: true,
+    message: "user has successfully authenticated",
+    user: {
+      givenNames,
+      lastName,
+      email,
+    },
+    cookies: req.cookies,
+  });
 });
 
 // when login failed, send failed msg
 router.get("/login/failed", (req, res) => {
   res.status(401).json({
     success: false,
-    message: "user failed to authenticate."
+    message: "user failed to authenticate.",
   });
 });
 
@@ -52,12 +57,8 @@ router.get(
     successRedirect: CLIENT_HOME_PAGE_URL,
   }),
   (req, res) => {
-    console.log("Google auth redirecting");
-    res.json({
-      isAuthenticated: true,
-    });
-    // // redirect to homepage
-    // res.redirect("http://localhost:3000"); //TODO: how to dynamically change this for deployment
+    (req.session as any).userId = (req.user as any).id;
+    res.redirect("http://localhost:3000/login"); // TODO: dynamic
   }
 );
 

@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -12,7 +13,7 @@ import { Availability } from "./Availability";
 import { StaffPreference } from "./StaffPreference";
 
 @Entity()
-export class Staff {
+export class Staff extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
