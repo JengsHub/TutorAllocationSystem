@@ -16,16 +16,16 @@ export class Staff {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column()
+  @Column({nullable: true})
   givenNames!: string;
 
-  @Column()
+  @Column({nullable: true})
   lastName!: string;
 
-  @Column()
+  @Column({nullable: true})
   aqf!: number;
 
-  @Column()
+  @Column({nullable: true})
   studyingAqf!: number;
 
   @Column({

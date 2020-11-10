@@ -1,4 +1,4 @@
-import { passport } from "~/helpers/auth";
+import passport from "passport";
 import { Router } from "express";
 
 /**
@@ -10,7 +10,7 @@ const router = Router();
 // auth login
 router.get("/login", (req, res) => {
   // redirect to login page
-  res.send("login page")
+  res.send("login page");
 });
 
 // auth logout
@@ -23,13 +23,15 @@ router.get("/logout", (req, res) => {
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["profile"],
+    scope: ["email","profile"],
   })
 );
 
 // callback route for google to redirect to
-router.get("/google/redirect", (req, res) => {
-  res.send("you reached the redirect URI");
+router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+  console.log("Google auth redirecting");
+  // redirect to homepage
+  res.redirect("http://localhost:3000"); //TODO: how to dynamically change this for deployment
 });
 
 export default router;

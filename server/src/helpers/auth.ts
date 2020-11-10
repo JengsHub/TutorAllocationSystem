@@ -1,10 +1,19 @@
-import { Passport } from "passport";
+import passport from "passport";
 import { Strategy } from "passport-google-oauth20";
 import { getRepository } from "typeorm";
 import { Staff } from "~/entity";
 
 console.log("----Setting up Passport and Strategy----");
-const passport = new Passport();
+
+passport.serializeUser((user: Staff, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id: string, done) => {
+  const staffRepo = getRepository(Staff);
+  const user = await staffRepo.findOne({ id });
+  done(null, user);
+});
 const googleStrategy = new Strategy(
   {
     // options for google strategy
@@ -23,13 +32,21 @@ const googleStrategy = new Strategy(
       //if we already have a record with the given profile ID
       done(undefined, currentUser);
     } else {
-      //if not, create a new user
-      const newUser = staffRepo.create({ googleId: profile.id });
-      staffRepo.save(newUser);
+      // TODO: error handling, redirect back to login page
+      if (profile.emails) {
+        //if not, create a new user
+        const newUser = staffRepo.create({
+          googleId: profile.id,
+          email: profile.emails[0].value,
+          givenNames: profile.name?.givenName,
+          lastName: profile.name?.familyName,
+        });
+        await staffRepo.save(newUser);
+      }
     }
   }
 );
 
-passport.use("google", googleStrategy);
+passport.use(googleStrategy);
 
 export { passport };
