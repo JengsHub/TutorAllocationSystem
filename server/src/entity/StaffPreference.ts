@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  RelationId,
+} from "typeorm";
 import { Staff } from "./Staff";
 import { Unit } from "./Unit";
 
@@ -19,12 +25,12 @@ export class StaffPreference {
   @ManyToOne(() => Staff, (staff) => staff.staffPreference, { primary: true })
   staff!: Staff;
 
-  @RelationId((staffpref:StaffPreference)=>staffpref.staff)
+  @RelationId((staffpref: StaffPreference) => staffpref.staff)
   staffId!: string;
 
   @ManyToOne(() => Unit, { primary: true })
   unit!: Unit;
 
-  @RelationId((staffpref:StaffPreference)=>staffpref.unit)
+  @RelationId((staffpref: StaffPreference) => staffpref.unit)
   unitId!: string;
 }

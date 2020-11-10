@@ -1,46 +1,28 @@
-# Getting Started with Create React App
+# Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React frontend with TypeScript
 
-## Available Scripts
+## Running the frontend
 
-In the project directory, you can run:
+1. `yarn install` to install all packages you haven't already
+2. `yarn start` will compile the TypeScript files and run a nodemon server (hot-reloading) based on the compiled JS files
 
-### `yarn start`
+## Other scripts
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- `yarn build` builds an optimised production copy in the /build folder. For now, you probably don't have to use this.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Recommended tools/software
 
-### `yarn test`
+- VSCode extensions
+  - Prettier
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## General guidelines
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Please keep styling consistent across the whole frontend.
+- Main page components should be in src/pages.
+- All other components should be in src/components.
+- All images should be in src/images.
+- All .css files (except index.css) should be placed inside the styles folder in either /pages or /components, depending on the component that uses it.
+- If a component already exists in the codebase for what you want to create, please use the component by importing it into your file, instead of duplicating the code or making your own.
+- Use yarn instead of npm when adding packages.
+- The current preference is to use functional components and hooks for React.

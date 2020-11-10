@@ -69,13 +69,17 @@ class AllocationsService {
       id: changedAllocation.id,
     });
     // TODO: optimisation
-    if (changedAllocation.staffId){
-      let staff = await getRepository(Staff).findOneOrFail({ id: changedAllocation.staffId });
-      changedAllocation.staff = staff
+    if (changedAllocation.staffId) {
+      let staff = await getRepository(Staff).findOneOrFail({
+        id: changedAllocation.staffId,
+      });
+      changedAllocation.staff = staff;
     }
-    if (changedAllocation.activityId){
-      let activity = await getRepository(Activity).findOneOrFail({ id: changedAllocation.activityId });
-      changedAllocation.activity = activity
+    if (changedAllocation.activityId) {
+      let activity = await getRepository(Activity).findOneOrFail({
+        id: changedAllocation.activityId,
+      });
+      changedAllocation.activity = activity;
     }
 
     allocationToUpdate = changedAllocation;
