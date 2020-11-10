@@ -32,3 +32,8 @@
   .Dragdrop{
       margin-top: 8%;
   }
+
+  .success_feedback{
+    text-align: center;
+    visibility: hidden;
+  }

@@ -49,6 +49,7 @@ class TpsDragDrop extends Component<Props, State> {
       this.overrideEventDefaults(event);
       this.dragEventCounter = 0;
       this.setState({ dragging: false });
+      this.hideSuccess();
 
       if (event.dataTransfer.files && event.dataTransfer.files[0]) {
           if (this.validTypes.indexOf(event.dataTransfer.files[0].type) === -1){
@@ -147,9 +148,19 @@ class TpsDragDrop extends Component<Props, State> {
           }
         }
       }
+      this.showSuccess()
     };
 
+    showSuccess = () => {
+      document.getElementById('TPS_fb')!.style.visibility = "visible";
+    }
+
+    hideSuccess = () => {
+      document.getElementById('TPS_fb')!.style.visibility = "hidden";
+    }
+
     clearField = () => {
+      this.hideSuccess()
         this.setState({ file:null });
         this.fileUploaderInput = null;
         const inputElement: HTMLInputElement = document.getElementById('input_3') as HTMLInputElement;
@@ -162,6 +173,7 @@ class TpsDragDrop extends Component<Props, State> {
     };
   
     onFileChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+      this.hideSuccess()
       if (event.target.files && event.target.files[0]) {
         this.setState({ file: event.target.files[0] });
       }
@@ -182,6 +194,7 @@ class TpsDragDrop extends Component<Props, State> {
     onFileClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
         const element:HTMLInputElement = event.target as HTMLInputElement
         element.value ="";
+        this.hideSuccess()
       };
   
     componentDidMount() {
@@ -227,9 +240,14 @@ class TpsDragDrop extends Component<Props, State> {
             />
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center">
-            <Button className="submit_button" id="Sbutton5" variant="contained" onClick={this.clearField} type="button">Clear</Button>
+            <Button className="clear_button" id="Sbutton5" variant="contained" onClick={this.clearField} type="button">Clear</Button>
             <Button className="submit_button" id="Sbutton6" variant="contained" onClick={this.uploadData} type="button">Submit</Button>
             </Grid>
+            <div>
+              <h3 className="success_feedback" id="TPS_fb">
+                TPS file uploaded!
+              </h3>
+            </div>
             </FileUploaderPresentationalComponent>
         </div>
       );
