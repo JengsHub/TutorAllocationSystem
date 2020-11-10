@@ -42,4 +42,7 @@ export class Staff {
 
   @OneToMany(() => Availability, (availability) => availability.staff)
   availability!: Availability[];
+
+  @Column({nullable: true})
+  googleId?: string;
 }

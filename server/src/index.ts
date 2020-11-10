@@ -9,6 +9,8 @@ import { Server } from "typescript-rest";
 // Importing all services
 import "./services";
 import { TryDBConnect } from "./helpers";
+import authRoutes from "./services/AuthService";
+import { passport } from "./helpers/auth";
 
 export const app: express.Application = express();
 
@@ -26,6 +28,9 @@ app.use(async (req: Request, res: Response, next) => {
     });
   }, next);
 });
+
+// set up routes
+app.use("/auth", authRoutes);
 
 Server.buildServices(app);
 
