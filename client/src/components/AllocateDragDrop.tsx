@@ -3,6 +3,8 @@ import "./styles/DragDrop.css"
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import Papa from "papaparse";
 import {Button, Grid} from '@material-ui/core';
+import {DayOfWeek} from "../enums/DayOfWeek"
+import DatabaseFinder from "../apis/DatabaseFinder";
 
 // npm install -g browserify
 // yarn add csv-parser
@@ -66,6 +68,53 @@ class AllocateDragDrop extends Component<Props, State> {
         this.allocateList = results.data;
         console.log(this.allocateList)
     };
+
+    uploadData = async () => {
+      let tempList: string[] = this.allocateList[0];
+      let unit_object: any;
+      let activity_object: any;
+      for (let i = 1; i < this.allocateList.length; i++){
+        var unit: Units = {
+          unitCode: this.allocateList[i][tempList.indexOf("subject_code")].slice(0, 7),
+          offeringPeriod: this.allocateList[i][tempList.indexOf("subject_code")].slice(11, 13),
+          campus: this.allocateList[i][tempList.indexOf("campus")],
+          year: 2020,
+          aqfTarget: 0
+        }
+        try {
+          unit_object = await DatabaseFinder.post("/units", unit)
+          // console.log(unit_object)
+        } catch(err){
+          throw err;
+        }
+
+
+        let DOW: DayOfWeek[] = [DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY]
+        let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+        var activity: Activity = {
+          activityCode: this.allocateList[i][tempList.indexOf("activity_code")],
+          activityGroup: this.allocateList[i][tempList.indexOf("activity_group_code")],
+          campus: this.allocateList[i][tempList.indexOf("campus")],
+          location: this.allocateList[i][tempList.indexOf("location")],
+          duration: Number(this.allocateList[i][tempList.indexOf("duration")]),
+          dayOfWeek: DOW[dayStr.indexOf(this.allocateList[i][tempList.indexOf("day_of_week")])],
+          startTime: this.allocateList[i][tempList.indexOf("start_time")],
+          unitId: unit_object["data"]["id"]
+        }
+        try {
+          activity_object = await DatabaseFinder.post("/activities", activity)
+          // console.log(activity_object)
+        } catch(err){
+          throw err;
+        }
+
+        let staff_in_charge: string =  this.allocateList[i][tempList.indexOf("staff")];
+        if (staff_in_charge !== "-") {
+          // Prob gotta get the id of staff using name here but unable to do so with current api
+          // Then create a new allocation with activity_id and staff_id
+        }
+      }
+    }
 
     clearField = () => {
         this.setState({ file:null });
@@ -146,7 +195,7 @@ class AllocateDragDrop extends Component<Props, State> {
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center">
             <Button className="submit_button" id="Sbutton3" variant="contained" onClick={this.clearField} type="button">Clear</Button>
-            <Button className="submit_button" id="Sbutton4" variant="contained" type="button">Submit</Button>
+            <Button className="submit_button" id="Sbutton4" variant="contained" onClick={this.uploadData} type="button">Submit</Button>
             </Grid>
             </FileUploaderPresentationalComponent>
         </div>

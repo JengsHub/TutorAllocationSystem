@@ -130,7 +130,6 @@ class TpsDragDrop extends Component<Props, State> {
           start = start.slice(0, -2) + ":" + start.slice(-2)
           end = end.slice(0, -2) + ":" + end.slice(-2)
 
-          console.log(staff_object["data"]["id"])
           var availability: Availability = {
             day: DOW[j/2],
             startTime: start,
