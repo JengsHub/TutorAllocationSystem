@@ -21,7 +21,7 @@ class StaffPreferencesService {
    */
   @GET
   public getAllStaffPreferences(): Promise<Array<StaffPreference>> {
-    return this.repo.find();
+    return this.repo.find({ relations: ["staff", "unit"] });
   }
 
   /**

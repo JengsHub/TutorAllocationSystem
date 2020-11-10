@@ -28,6 +28,8 @@ interface IPreferences {
   preferenceScore: number;
   staffId: string;
   unitId: string;
+  staff: IStaff;
+  unit: IUnit;
 }
 
 interface IAllocation {
