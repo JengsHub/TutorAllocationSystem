@@ -55,7 +55,7 @@ describe("Create Entity Tests", () => {
 
   test("Can build new Staff", async () => {
     staff = await factory(Staff)().make();
-    console.log(staff);
+    // console.log(staff);
   });
 
   test("Can build new Unit", async () => {

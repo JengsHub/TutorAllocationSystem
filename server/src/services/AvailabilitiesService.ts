@@ -68,9 +68,11 @@ class AvailabilitiesService {
       id: changedAvailability.id,
     });
     // TODO: optimisation
-    if (changedAvailability.staffId){
-      let staff = await getRepository(Staff).findOneOrFail({ id: changedAvailability.staffId });
-      changedAvailability.staff = staff
+    if (changedAvailability.staffId) {
+      let staff = await getRepository(Staff).findOneOrFail({
+        id: changedAvailability.staffId,
+      });
+      changedAvailability.staff = staff;
     }
     availabilityToUpdate = changedAvailability;
     return this.repo.save(availabilityToUpdate);
