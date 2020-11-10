@@ -23,7 +23,7 @@ if (result.error) {
 // set up session cookies
 app.use(
   cookieSession({
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration date
     keys: ["ioqwer902sdjkabf891234!@#^SDAIOFq239as"], // TODO: .env
   })
 );
@@ -32,9 +32,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// initialize passport
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 app.use(async (req: Request, res: Response, next) => {
   await TryDBConnect(() => {
@@ -43,6 +41,10 @@ app.use(async (req: Request, res: Response, next) => {
     });
   }, next);
 });
+
+// initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // set up routes
 app.use("/auth", authRoutes);

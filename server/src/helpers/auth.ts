@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy } from "passport-google-oauth20";
 import { getRepository } from "typeorm";
 import { Staff } from "~/entity";
+import {Request, Response, NextFunction} from "express";
 
 console.log("----Setting up Passport and Strategy----");
 
@@ -14,6 +15,16 @@ passport.deserializeUser(async (id: string, done) => {
   const user = await staffRepo.findOne({ id });
   done(null, user);
 });
+
+// middleware to check if the current user is login
+export const authCheck = (req:Request, res:Response, next:NextFunction) => {
+  if(!req.user){
+      res.redirect('/auth/login');
+  } else {
+      next();
+  }
+};
+
 const googleStrategy = new Strategy(
   {
     // options for google strategy
@@ -35,6 +46,7 @@ const googleStrategy = new Strategy(
       // TODO: error handling, redirect back to login page
       if (profile.emails) {
         //if not, create a new user
+        // TODO: user/staff data may have been imported before they actually login so this will throw a PK error here. Should merge instead
         const newUser = staffRepo.create({
           googleId: profile.id,
           email: profile.emails[0].value,
@@ -42,6 +54,7 @@ const googleStrategy = new Strategy(
           lastName: profile.name?.familyName,
         });
         await staffRepo.save(newUser);
+        done(undefined, newUser);
       }
     }
   }

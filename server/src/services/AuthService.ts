@@ -16,7 +16,8 @@ router.get("/login", (req, res) => {
 // auth logout
 router.get("/logout", (req, res) => {
   // handle with passport
-  res.send("logging out");
+  req.logout();
+  res.redirect("http://localhost:3000"); //TODO: how to dynamically change this for deployment
 });
 
 // auth with google+
@@ -28,7 +29,7 @@ router.get(
 );
 
 // callback route for google to redirect to
-router.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+router.get("/google/redirect", passport.authenticate("google", { failureRedirect: '/login' }), (req, res) => {
   console.log("Google auth redirecting");
   // redirect to homepage
   res.redirect("http://localhost:3000"); //TODO: how to dynamically change this for deployment
