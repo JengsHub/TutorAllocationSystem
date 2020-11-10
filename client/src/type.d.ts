@@ -18,6 +18,7 @@ interface IStaff {
     givenNames: string;
     id: string;
     lastName: string;
+    studyingAqf: number;
 }
 
 interface IPreferences {

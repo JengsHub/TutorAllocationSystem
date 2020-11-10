@@ -39,6 +39,7 @@ const Staff = () => {
             <TableCell align="right">First Name</TableCell>
             <TableCell align="right">Email</TableCell>
             <TableCell align="right">AQF</TableCell>
+            <TableCell align="right">Studying AQF</TableCell>
             <TableCell align="right"></TableCell>
             <TableCell align="right"></TableCell>
             <TableCell align="right"></TableCell>
@@ -54,6 +55,7 @@ const Staff = () => {
               <TableCell align="right">{staff.givenNames}</TableCell>
               <TableCell align="right">{staff.email}</TableCell>
               <TableCell align="right">{staff.aqf}</TableCell>
+              <TableCell align="right">{staff.studyingAqf}</TableCell>
               <TableCell align="right"><button>View Preferences</button></TableCell>
               <TableCell align="right"><button>View Availability</button></TableCell>
               <TableCell align="right"><button>View Allocations</button></TableCell>
