@@ -50,3 +50,19 @@ type State = {
     maxNumberActivities: number,
     staffId: string,
   }
+
+  interface Activity {
+    activityCode: string,
+    activityGroup: string,
+    campus: string,
+    location: string,
+    duration: number,
+    dayOfWeek: DayOfWeek,
+    startTime: string,
+    unitId: string,
+  }
+
+  interface Allocation {
+    activityId: string,
+    staffId: string,
+  }

@@ -83,12 +83,11 @@ class TpsDragDrop extends Component<Props, State> {
         }
         try {
           unit_object = await DatabaseFinder.post("/units", unit)
-          console.log(unit_object)
+          // console.log(unit_object)
         } catch(err){
           throw err;
         }
         
-        // console.log("done")
         let  name: string[] = this.allocateList[i][tempList.indexOf("name")].split(" ")
         let  studyAqf: number = (isNaN(Number(this.allocateList[i][tempList.indexOf("tutors studying aqf")])) === true) ? 0 : Number(this.allocateList[i][tempList.indexOf("tutors studying aqf")])
         var staffDetail: Staff = {
@@ -100,13 +99,13 @@ class TpsDragDrop extends Component<Props, State> {
         }
         try {
           staff_object = await DatabaseFinder.post("/staff", staffDetail)
-          console.log(staff_object)
+          // console.log(staff_object)
         } catch(err){
           throw err;
         }
 
         // have to check for unit id and staf id in the future, works now as eveything is unique
-        let headCandidiate:boolean = (this.allocateList[i][tempList.indexOf("lec suitability")] === 1) ? true : false
+        let headCandidiate:boolean = (this.allocateList[i][tempList.indexOf("head tutor cand?")] === 1) ? true : false
         var staffPreference: StaffPreference = {
           preferenceScore: Number(this.allocateList[i][tempList.indexOf("tutors pref")]),
           lecturerScore: Number(this.allocateList[i][tempList.indexOf("lec suitability")]),
@@ -116,7 +115,7 @@ class TpsDragDrop extends Component<Props, State> {
         }
         try {
           const response = await DatabaseFinder.post("/staffpreferences", staffPreference)
-          console.log(response)
+          // console.log(response)
         } catch(err){
           throw err;
         }
@@ -143,7 +142,7 @@ class TpsDragDrop extends Component<Props, State> {
           }
           try {
             const response = await DatabaseFinder.post("/availabilities", availability)
-            console.log(response)
+            // console.log(response)
           } catch(err){
             throw err;
           }
