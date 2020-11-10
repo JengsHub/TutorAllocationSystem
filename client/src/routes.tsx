@@ -1,7 +1,6 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import Staff from "./pages/Staff";
-import ImportData from "./pages/ImportData"
 import Units from "./pages/Units";
 import Preferences from "./pages/Preferences";
 import Activities from "./pages/Activities";

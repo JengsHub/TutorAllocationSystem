@@ -4,10 +4,6 @@ const SidebarItems = [
     route: "/home",
   },
   {
-    name: "ImportData",
-    route: "/importData",
-  },
-  {
     name: "Units",
     route: "/unit",
   },

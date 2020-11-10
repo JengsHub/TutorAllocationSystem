@@ -20,7 +20,7 @@ const Sidebar = () => {
             </div>
           </NavLink>
         ))}
-        <GoogleBtn/>
+        <GoogleBtn />
       </div>
     </>
   );

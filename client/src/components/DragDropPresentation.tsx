@@ -1,6 +1,8 @@
-import React from 'react';
+import React from "react";
 
-const FileUploaderPresentationalComponent: React.FC<PresentationalProps> = props => {
+const FileUploaderPresentationalComponent: React.FC<PresentationalProps> = (
+  props
+) => {
   const {
     dragging,
     file,
@@ -10,7 +12,7 @@ const FileUploaderPresentationalComponent: React.FC<PresentationalProps> = props
     onDragOver,
     onDragEnter,
     onDragLeave,
-    onDrop
+    onDrop,
   } = props;
 
   let uploaderClasses = "file-uploader";
@@ -33,7 +35,9 @@ const FileUploaderPresentationalComponent: React.FC<PresentationalProps> = props
     >
       <div className="file-uploader__contents">
         <span className="file-uploader__file-name">{fileName}</span>
-        <p>Drag & Drop File<br></br>or<br></br>Select File</p>
+        <p>
+          Drag & Drop File<br></br>or<br></br>Select File
+        </p>
       </div>
       {props.children}
     </div>
