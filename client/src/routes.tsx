@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Sidebar from "./components/Sidebar";
 import ProtectedRoutes from "./components/ProtectedRoutes";
+import DataImport from "./pages/DataImport";
 
 const PrivateRoutes = () => {
   return (
@@ -16,7 +17,7 @@ const PrivateRoutes = () => {
       <Sidebar />
       <Switch>
         <ProtectedRoutes path="/home" exact component={Dashboard} />
-        <ProtectedRoutes path="/importData" exact component={ImportData} />
+        <ProtectedRoutes path="/dataimport" component={DataImport} />
         <ProtectedRoutes path="/unit" component={Units} />
         <ProtectedRoutes path="/staff" component={Staff} />
         <ProtectedRoutes path="/preferences" component={Preferences} />

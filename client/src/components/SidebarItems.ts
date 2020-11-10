@@ -23,6 +23,10 @@ const SidebarItems = [
     name: "Activities",
     route: "/activities",
   },
+  {
+    name: "Data Import",
+    route: "/dataimport",
+  },
 ];
 
 export default SidebarItems;
