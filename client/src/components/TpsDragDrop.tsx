@@ -3,10 +3,12 @@ import "./styles/DragDrop.css"
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import Papa from "papaparse";
 import {Button, Grid} from '@material-ui/core';
+import {DayOfWeek} from "../enums/DayOfWeek"
+import DatabaseFinder from "../apis/DatabaseFinder";
 
 // npm install -g browserify
 // yarn add csv-parser
-  
+
 class TpsDragDrop extends Component<Props, State> {
     static counter = 0;
     fileUploaderInput: HTMLElement | null = null;
@@ -56,15 +58,97 @@ class TpsDragDrop extends Component<Props, State> {
           else{
             this.setState({ file: event.dataTransfer.files[0] });
             Papa.parse(event.dataTransfer.files[0], {
-                complete: this.printTest
+                complete: this.obtainResult
             });
           }
       }
     };
     
-    printTest = (results: any) => {
+    obtainResult = (results: any) => {
         this.allocateList = results.data;
         console.log(this.allocateList)
+    };
+
+    uploadData = async () => {
+      let tempList: string[] = this.allocateList[0];
+      let unit_object: any;
+      let staff_object: any;
+      for (let i = 1; i < this.allocateList.length; i++){
+        var unit: Units = {
+          unitCode: this.allocateList[i][tempList.indexOf("unit")].slice(0, 7),
+          offeringPeriod: this.allocateList[i][tempList.indexOf("unit")].slice(7, 9),
+          campus: this.allocateList[i][tempList.indexOf("campus")],
+          year: 2020,
+          aqfTarget: Number(this.allocateList[i][tempList.indexOf("unit aqf target")])
+        }
+        try {
+          unit_object = await DatabaseFinder.post("/units", unit)
+          console.log(unit_object)
+        } catch(err){
+          throw err;
+        }
+        
+        // console.log("done")
+        let  name: string[] = this.allocateList[i][tempList.indexOf("name")].split(" ")
+        let  studyAqf: number = (isNaN(Number(this.allocateList[i][tempList.indexOf("tutors studying aqf")])) === true) ? 0 : Number(this.allocateList[i][tempList.indexOf("tutors studying aqf")])
+        var staffDetail: Staff = {
+          givenNames: name[0],
+          lastName: name[1],
+          aqf: Number(this.allocateList[i][tempList.indexOf("tutors aqf")]),
+          studyingAqf: studyAqf,
+          email: this.allocateList[i][tempList.indexOf("email")]
+        }
+        try {
+          staff_object = await DatabaseFinder.post("/staff", staffDetail)
+          console.log(staff_object)
+        } catch(err){
+          throw err;
+        }
+
+        // have to check for unit id and staf id in the future, works now as eveything is unique
+        let headCandidiate:boolean = (this.allocateList[i][tempList.indexOf("lec suitability")] === 1) ? true : false
+        var staffPreference: StaffPreference = {
+          preferenceScore: Number(this.allocateList[i][tempList.indexOf("tutors pref")]),
+          lecturerScore: Number(this.allocateList[i][tempList.indexOf("lec suitability")]),
+          isHeadTutorCandidate: headCandidiate,
+          staffId: staff_object["data"]["id"],
+          unitId: unit_object["data"]["id"],
+        }
+        try {
+          const response = await DatabaseFinder.post("/staffpreferences", staffPreference)
+          console.log(response)
+        } catch(err){
+          throw err;
+        }
+
+        // needs to check if M end/start has N/A
+        let startEnd: string[] = ["M start", "M end", "T start", "T end", "W start", "W end", "Th start", "Th end", "F start", "F end"]
+        let DOW: DayOfWeek[] = [DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY]
+
+        for (let j = 0; j < startEnd.length; j += 2){
+          let start:string = this.allocateList[i][tempList.indexOf(startEnd[j])]
+          let end:string = this.allocateList[i][tempList.indexOf(startEnd[j+1])]
+          start = start.slice(0, -2) + ":" + start.slice(-2)
+          end = end.slice(0, -2) + ":" + end.slice(-2)
+
+          console.log(staff_object["data"]["id"])
+          var availability: Availability = {
+            day: DOW[j/2],
+            startTime: start,
+            endTime: end,
+            year: 2020,
+            maxHours: Number(this.allocateList[i][tempList.indexOf("max hr")]),
+            maxNumberActivities:  Number(this.allocateList[i][tempList.indexOf("lecturer_override min classes")]),
+            staffId: staff_object["data"]["id"]
+          }
+          try {
+            const response = await DatabaseFinder.post("/availabilities", availability)
+            console.log(response)
+          } catch(err){
+            throw err;
+          }
+        }
+      }
     };
 
     clearField = () => {
@@ -91,7 +175,7 @@ class TpsDragDrop extends Component<Props, State> {
         else{
           this.setState({ file: event.target.files[0] });
           Papa.parse(event.target.files[0], {
-              complete: this.printTest
+              complete: this.obtainResult
           });
         }
       }
@@ -146,7 +230,7 @@ class TpsDragDrop extends Component<Props, State> {
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center">
             <Button className="submit_button" id="Sbutton5" variant="contained" onClick={this.clearField} type="button">Clear</Button>
-            <Button className="submit_button" id="Sbutton6" variant="contained" type="button">Submit</Button>
+            <Button className="submit_button" id="Sbutton6" variant="contained" onClick={this.uploadData} type="button">Submit</Button>
             </Grid>
             </FileUploaderPresentationalComponent>
         </div>

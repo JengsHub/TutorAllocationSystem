@@ -16,3 +16,37 @@ type State = {
     onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
     onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
   };
+
+  interface Units {
+    unitCode: string;
+    offeringPeriod: string;
+    campus: string;
+    year: number;
+    aqfTarget: number;
+  }
+
+  interface Staff {
+    givenNames: string;
+    lastName: string;
+    aqf: number;
+    studyingAqf: number;
+    email: string;
+  }
+
+  interface StaffPreference {
+    preferenceScore: number;
+    lecturerScore: number;
+    isHeadTutorCandidate: boolean;
+    staffId: string;
+    unitId: string;
+  }
+
+  interface Availability {
+    day: DayOfWeek,
+    startTime: string,
+    endTime: string,
+    year: number,
+    maxHours: number,
+    maxNumberActivities: number,
+    staffId: string,
+  }

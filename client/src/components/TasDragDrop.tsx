@@ -4,7 +4,6 @@ import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import Papa from "papaparse";
 import {Button, Grid} from '@material-ui/core';
 
-// npm install -g browserify
 // yarn add csv-parser
   
 class TasDragDrop extends Component<Props, State> {
@@ -56,15 +55,19 @@ class TasDragDrop extends Component<Props, State> {
           else{
             this.setState({ file: event.dataTransfer.files[0] });
             Papa.parse(event.dataTransfer.files[0], {
-                complete: this.printTest
+                complete: this.obtainResult
             });
           }
       }
     };
     
-    printTest = (results: any) => {
+    obtainResult = (results: any) => {
         this.allocateList = results.data;
         console.log(this.allocateList)
+    };
+
+    uploadData = () => {
+      console.log()
     };
 
     clearField = () => {
@@ -91,7 +94,7 @@ class TasDragDrop extends Component<Props, State> {
         else{
           this.setState({ file: event.target.files[0] });
           Papa.parse(event.target.files[0], {
-              complete: this.printTest
+              complete: this.obtainResult
           });
         }
       }
@@ -146,7 +149,7 @@ class TasDragDrop extends Component<Props, State> {
             </Grid>
             <Grid container direction="row" justify="space-evenly" alignItems="center">
             <Button className="submit_button" id="Sbutton" variant="contained" onClick={this.clearField} type="button">Clear</Button>
-            <Button className="submit_button" id="Sbutton2" variant="contained" type="button">Submit</Button>
+            <Button className="submit_button" id="Sbutton2" variant="contained" onClick={this.uploadData} type="button">Submit</Button>
             </Grid>
             </FileUploaderPresentationalComponent>
         </div>

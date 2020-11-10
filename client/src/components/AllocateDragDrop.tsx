@@ -56,13 +56,13 @@ class AllocateDragDrop extends Component<Props, State> {
           else{
             this.setState({ file: event.dataTransfer.files[0] });
             Papa.parse(event.dataTransfer.files[0], {
-                complete: this.printTest
+                complete: this.obtainResult
             });
           }
       }
     };
     
-    printTest = (results: any) => {
+    obtainResult = (results: any) => {
         this.allocateList = results.data;
         console.log(this.allocateList)
     };
@@ -91,7 +91,7 @@ class AllocateDragDrop extends Component<Props, State> {
         else{
           this.setState({ file: event.target.files[0] });
           Papa.parse(event.target.files[0], {
-              complete: this.printTest
+              complete: this.obtainResult
           });
         }
       }
