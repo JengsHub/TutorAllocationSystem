@@ -1,10 +1,16 @@
 import React from "react";
-import Routes from "./routes";
+import PrivateRoutes from "./routes";
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import LoginPage from "./pages/LoginPage"
+import ProtectedRoute from "./components/ProtectedRoutes";
 
 const App = () => {
   return (
     <div>
-      <Routes />
+      <BrowserRouter>
+        <Route exact path = "/" component={LoginPage} />
+        <ProtectedRoute path = "/home" component={PrivateRoutes}/>
+      </BrowserRouter>
     </div>
   );
 };

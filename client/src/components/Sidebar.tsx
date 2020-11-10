@@ -3,7 +3,7 @@ import SidebarItems from "./SidebarItems";
 import "./styles/Sidebar.css";
 import { NavLink } from "react-router-dom";
 import logo from "../images/logofull.png";
-
+import GoogleBtn from "../components/GoogleBtn";
 const Sidebar = () => {
   return (
     <>
@@ -20,6 +20,7 @@ const Sidebar = () => {
             </div>
           </NavLink>
         ))}
+        <GoogleBtn/>
       </div>
     </>
   );

@@ -8,22 +8,23 @@ import Activities from "./pages/Activities";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Sidebar from "./components/Sidebar";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
-const Routes = () => {
+const PrivateRoutes = () => {
   return (
     <BrowserRouter>
       <Sidebar />
       <Switch>
-        <Route path="/" exact component={Dashboard} />
-        <Route path="/importData" exact component={ImportData} />
-        <Route path="/unit" component={Units} />
-        <Route path="/staff" component={Staff} />
-        <Route path="/preferences" component={Preferences} />
-        <Route path="/activities" component={Activities} />
-        <Route component={NotFound} />
+        <ProtectedRoutes path="/home" exact component={Dashboard} />
+        <ProtectedRoutes path="/importData" exact component={ImportData} />
+        <ProtectedRoutes path="/unit" component={Units} />
+        <ProtectedRoutes path="/staff" component={Staff} />
+        <ProtectedRoutes path="/preferences" component={Preferences} />
+        <ProtectedRoutes path="/activities" component={Activities} />
+        <ProtectedRoutes component={NotFound} />
       </Switch>
     </BrowserRouter>
   );
 };
 
-export default Routes;
+export default PrivateRoutes;

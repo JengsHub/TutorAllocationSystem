@@ -1,7 +1,7 @@
 const SidebarItems = [
   {
     name: "Home",
-    route: "/",
+    route: "/home",
   },
   {
     name: "ImportData",

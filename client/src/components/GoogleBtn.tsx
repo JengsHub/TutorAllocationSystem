@@ -1,7 +1,10 @@
 
 import React, { Component } from 'react'; //for the component class
 import { GoogleLogin, GoogleLogout} from 'react-google-login'; //for google login and log out function
-import { Redirect } from 'react-router-dom';
+import { Redirect , Link } from 'react-router-dom';
+import { Route, BrowserRouter} from 'react-router-dom';
+import LoginPage from "../pages/LoginPage"
+
 /**
  * so to use google auth login you need a client ID
  * later when we deliver final product, Milad needs to create or use his/Monash own client ID
@@ -111,8 +114,10 @@ class GoogleBtn extends Component <{}, {isLogined: boolean, userName: string}>{
      }
      { //if userName is not null, show the text and print the username and give link to page 2
      this.state.isLogined ? <span><h5>You are logged in as : <br/><br/> { this.state.userName }</h5> 
-     <a href="http://localhost:3000/page2">Go to Home Page</a>
-     </span>: null
+     {/* <a href="http://localhost:3000/home">Go to Page 2</a> */}
+     <Redirect push to="/home"></Redirect> 
+     </span>: <Redirect push to="/"></Redirect>
+    //  <Link to="/" component={LoginPage} />
      }
    </div>
    )
