@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy } from "passport-google-oauth20";
 import { getRepository } from "typeorm";
 import { Staff } from "~/entity";
-import {Request, Response, NextFunction} from "express";
+import { Request, Response, NextFunction } from "express";
 
 console.log("----Setting up Passport and Strategy----");
 
@@ -17,11 +17,15 @@ passport.deserializeUser(async (id: string, done) => {
 });
 
 // middleware to check if the current user is login
-export const authCheck = (req:Request, res:Response, next:NextFunction) => {
-  if(!req.user){
-      res.redirect('/auth/login');
+export const authCheck = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    res.status(401).json({
+      authenticated: false,
+      message: "user has not been authenticated"
+    });
+    res.redirect("/auth/login");
   } else {
-      next();
+    next();
   }
 };
 

@@ -1,20 +1,42 @@
 import { DeleteResult, getRepository } from "typeorm";
-import { DELETE, GET, PATCH, Path, PathParam, POST } from "typescript-rest";
+import {
+  DELETE,
+  GET,
+  PATCH,
+  Path,
+  PathParam,
+  POST,
+  QueryParam,
+} from "typescript-rest";
 import { Unit } from "../entity/Unit";
 
 @Path("/units")
 class UnitsService {
   repo = getRepository(Unit);
 
-  /**
-   * Returns a list of units
-   * @return Array<Unit> units list
-   */
   @GET
-  public getAllUnits(): Promise<Array<Unit>> {
-    return this.repo.find();
-  }
+  public getUnits(
+    @QueryParam("unitCode") unitCode: string,
+    @QueryParam("offeringPeriod") offeringPeriod: string,
+    @QueryParam("year") year: number
+  ) {
+    let params = {
+      unitCode,
+      offeringPeriod,
+      year,
+    };
 
+    let searchOptions = {}
+    // TODO: better way to do this
+    for (const [key, value] of Object.entries(params)){
+      if (value){
+        // @ts-ignore
+        searchOptions[key] = value;
+      }
+    }
+    return this.repo.findOne(searchOptions);
+  }
+  
   /**
    * Returns a unit
    * @param id id for the unit
@@ -23,9 +45,11 @@ class UnitsService {
   // TODO: assert return value as Promise<Unit> here
   @GET
   @Path(":id")
-  public getUnit(@PathParam("id") id: string) {
+  public getUnitById(@PathParam("id") id: string) {
     return this.repo.findOne({ id });
   }
+
+ 
 
   /**
    * Creates a unit
