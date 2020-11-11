@@ -6,7 +6,7 @@ const Profile = () => {
   const isAuth = React.useContext(AuthContext); // TODO: create context hook for updating value
 
   const [user, setUser] = useState({});
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
 
   // TODO: loading state
   useEffect(() => {
@@ -33,7 +33,7 @@ const Profile = () => {
     try {
       setUser(resBody.user);
     } catch {
-      setError("Error fetch user profile");
+      // setError("Error fetch user profile");
     }
   };
 
