@@ -132,10 +132,7 @@ class TasDragDrop extends Component<Props, State> {
         unitId: unit_object["data"]["id"],
       };
       try {
-        await DatabaseFinder.post(
-          "/staffpreferences",
-          staffPreference
-        );
+        await DatabaseFinder.post("/staffpreferences", staffPreference);
       } catch (err) {
         throw err;
       }
