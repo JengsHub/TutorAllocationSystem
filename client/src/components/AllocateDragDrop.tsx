@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import "./styles/DragDrop.css";
-import FileUploaderPresentationalComponent from "./DragDropPresentation";
-import Papa from "papaparse";
 import { Button, Grid } from "@material-ui/core";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import Papa from "papaparse";
+import React, { Component } from "react";
 import DatabaseFinder from "../apis/DatabaseFinder";
+import { DayOfWeek } from "../enums/DayOfWeek";
+import FileUploaderPresentationalComponent from "./DragDropPresentation";
+import "./styles/DragDrop.css";
 
 // npm install -g browserify
 // yarn add csv-parser

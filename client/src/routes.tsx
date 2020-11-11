@@ -25,12 +25,38 @@ const Routes = () => {
       <BrowserRouter>
         <Sidebar />
         <Switch>
-          <PrivateRoute isAuthenticated={isAuth} path="/" exact component={Dashboard} />
-          <PrivateRoute isAuthenticated={isAuth} path="/unit" exact component={Units} />
-          <PrivateRoute isAuthenticated={isAuth} path="/staff" component={Staff} />
-          <PrivateRoute isAuthenticated={isAuth} path="/preferences" component={Preferences} />
-          <PrivateRoute isAuthenticated={isAuth} path="/activities" component={Activities} />
-          <PrivateRoute isAuthenticated={isAuth} path="/dataimport" component={DataImport} />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/"
+            exact
+            component={Dashboard}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/unit"
+            exact
+            component={Units}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/staff"
+            component={Staff}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/preferences"
+            component={Preferences}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/activities"
+            component={Activities}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/dataimport"
+            component={DataImport}
+          />
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
         </Switch>
