@@ -1,29 +1,37 @@
-import React from "react";
-import { BrowserRouter, Switch } from "react-router-dom";
-import Staff from "./pages/Staff";
-import Units from "./pages/Units";
-import Preferences from "./pages/Preferences";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 import Activities from "./pages/Activities";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import Sidebar from "./components/Sidebar";
-import ProtectedRoutes from "./components/ProtectedRoutes";
-import DataImport from "./pages/DataImport";
+import Preferences from "./pages/Preferences";
+import Profile from "./pages/Profile";
+import Staff from "./pages/Staff";
+import PrivateRoute from "./PrivateRoute";
+import { AuthContext, getAuthState } from "./session";
 
-const PrivateRoutes = () => {
+const Routes = () => {
+  const [isAuth, setAuth] = useState(getAuthState());
+
+  // Update auth state when user login or logout
+  useEffect(() => {
+    setAuth(getAuthState());
+  }, [isAuth]);
+
   return (
-    <BrowserRouter>
-      <Sidebar />
-      <Switch>
-        <ProtectedRoutes path="/home" exact component={Dashboard} />
-        <ProtectedRoutes path="/dataimport" component={DataImport} />
-        <ProtectedRoutes path="/unit" component={Units} />
-        <ProtectedRoutes path="/staff" component={Staff} />
-        <ProtectedRoutes path="/preferences" component={Preferences} />
-        <ProtectedRoutes path="/activities" component={Activities} />
-        <ProtectedRoutes component={NotFound} />
-      </Switch>
-    </BrowserRouter>
+    <AuthContext.Provider value={isAuth}>
+      <BrowserRouter>
+        <Sidebar />
+        <Switch>
+          <PrivateRoute isAuthenticated={isAuth} path="/" exact component={Dashboard} />
+          <PrivateRoute isAuthenticated={isAuth} path="/staff" component={Staff} />
+          <PrivateRoute isAuthenticated={isAuth} path="/preferences" component={Preferences} />
+          <PrivateRoute isAuthenticated={isAuth} path="/activities" component={Activities} />
+          <Route path="/profile" component={Profile} />
+          <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
+        </Switch>
+      </BrowserRouter>
+    </AuthContext.Provider>
   );
 };
 

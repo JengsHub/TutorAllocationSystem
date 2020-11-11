@@ -33,7 +33,7 @@ class StaffPreferencesService {
   @GET
   @Path(":id")
   public getStaffPreference(@PathParam("id") id: string) {
-    return this.repo.findOne({ id });
+    return this.repo.findOne({ id }, { relations: ["staff", "unit"] });
   }
 
   /**

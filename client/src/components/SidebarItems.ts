@@ -23,6 +23,10 @@ const SidebarItems = [
     name: "Data Import",
     route: "/dataimport",
   },
+  {
+    name: "Profile",
+    route: "/profile",
+  },
 ];
 
 export default SidebarItems;

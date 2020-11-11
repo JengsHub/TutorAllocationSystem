@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   OneToMany,
@@ -10,7 +11,7 @@ import { StaffPreference } from "./StaffPreference";
 
 @Entity()
 @Unique(["unitCode", "offeringPeriod", "year"])
-export class Unit {
+export class Unit extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 

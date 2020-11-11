@@ -1,9 +1,10 @@
 import React from "react";
-import SidebarItems from "./SidebarItems";
-import "./styles/Sidebar.css";
 import { NavLink } from "react-router-dom";
 import logo from "../images/logofull.png";
 import GoogleBtn from "../components/GoogleBtn";
+import SidebarItems from "./SidebarItems";
+import "./styles/Sidebar.css";
+
 const Sidebar = () => {
   return (
     <>
