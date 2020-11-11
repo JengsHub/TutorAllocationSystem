@@ -15,6 +15,10 @@ const SidebarItems = [
     name: "Activities",
     route: "/activities",
   },
+  {
+    name: "Profile",
+    route: "/profile",
+  },
 ];
 
 export default SidebarItems;

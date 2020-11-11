@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -9,7 +10,7 @@ import { DayOfWeek } from "../enums/DayOfWeek";
 import { Staff } from "./Staff";
 
 @Entity()
-export class Availability {
+export class Availability extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
