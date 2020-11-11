@@ -15,7 +15,12 @@ const router = Router();
 router.get("/google/logout", (req, res) => {
   // handle with passport
   req.logout();
+  req.session.cookie.expires = new Date(); // delete session cookie
   res.redirect(CLIENT_HOME_PAGE_URL);
+
+  // req.session.destroy(()=>{
+  //   res.redirect(CLIENT_HOME_PAGE_URL);
+  // });
 });
 
 // auth with google+
