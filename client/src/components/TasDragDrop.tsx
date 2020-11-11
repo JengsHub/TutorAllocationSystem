@@ -132,11 +132,10 @@ class TasDragDrop extends Component<Props, State> {
         unitId: unit_object["data"]["id"],
       };
       try {
-        const response = await DatabaseFinder.post(
+        await DatabaseFinder.post(
           "/staffpreferences",
           staffPreference
         );
-        // console.log(response)
       } catch (err) {
         throw err;
       }
@@ -172,8 +171,7 @@ class TasDragDrop extends Component<Props, State> {
         staffId: staff_object["data"]["id"],
       };
       try {
-        const response = await DatabaseFinder.post("/allocations", allocation);
-        // console.log(response)
+        await DatabaseFinder.post("/allocations", allocation);
       } catch (err) {
         throw err;
       }

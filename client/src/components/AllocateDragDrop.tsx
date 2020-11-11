@@ -75,7 +75,6 @@ class AllocateDragDrop extends Component<Props, State> {
   uploadData = async () => {
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
-    let activity_object: any;
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: Units = {
         unitCode: this.allocateList[i][tempList.indexOf("subject_code")].slice(
@@ -122,8 +121,7 @@ class AllocateDragDrop extends Component<Props, State> {
         unitId: unit_object["data"]["id"],
       };
       try {
-        activity_object = await DatabaseFinder.post("/activities", activity);
-        // console.log(activity_object)
+        await DatabaseFinder.post("/activities", activity);
       } catch (err) {
         throw err;
       }

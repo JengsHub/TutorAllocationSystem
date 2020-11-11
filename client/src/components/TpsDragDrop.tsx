@@ -138,7 +138,7 @@ class TpsDragDrop extends Component<Props, State> {
         unitId: unit_object["data"]["id"],
       };
       try {
-        const response = await DatabaseFinder.post(
+        await DatabaseFinder.post(
           "/staffpreferences",
           staffPreference
         );
@@ -190,11 +190,10 @@ class TpsDragDrop extends Component<Props, State> {
           staffId: staff_object["data"]["id"],
         };
         try {
-          const response = await DatabaseFinder.post(
+          await DatabaseFinder.post(
             "/availabilities",
             availability
           );
-          // console.log(response)
         } catch (err) {
           throw err;
         }
