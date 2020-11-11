@@ -8,7 +8,7 @@ const ProtectedRoute: React.FC<RouteProps> = ({component: Component, ...rest}) =
     return (
         <div>
             <Route {...rest} render={props => (
-                sessionStorage.getItem('isAuth')=='true'? //if true, redirect to the requested page
+                sessionStorage.getItem('isAuth')==='true'? //if true, redirect to the requested page
                 <Component {...props} />: 
                 <Redirect to="/" /> //else, go back to login page/homepage
             )} />
