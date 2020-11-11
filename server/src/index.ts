@@ -30,11 +30,11 @@ app.use(
     secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
     cookie: {
       httpOnly: false, //TODO: should enable this?
-      maxAge: 24 * 60 * 60 * 1000,  // 1 day expiration
+      maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
     },
     rolling: true, // automatically set new expiration when user makes request
     resave: true,
-    saveUninitialized: false  // do no set cookie if user is not authenticated
+    saveUninitialized: false, // do no set cookie if user is not authenticated
   })
 );
 

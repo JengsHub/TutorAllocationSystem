@@ -21,7 +21,7 @@ export const authCheck = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     res.status(401).json({
       authenticated: false,
-      message: "user has not been authenticated"
+      message: "user has not been authenticated",
     });
     // res.redirect("/auth/login");
   } else {
@@ -40,7 +40,7 @@ const googleStrategy = new Strategy(
     // passport callback function
     const { id, emails } = profile;
 
-    const query =getRepository(Staff)
+    const query = getRepository(Staff)
       .createQueryBuilder("staff")
       .where("staff.googleId = :id", { id });
 
@@ -59,7 +59,7 @@ const googleStrategy = new Strategy(
         googleId: id as string,
         email: email as string,
         givenNames: profile.name?.givenName,
-        lastName: profile.name?.familyName
+        lastName: profile.name?.familyName,
       }).save();
     } else if (!user.googleId) {
       // merge account
@@ -70,7 +70,7 @@ const googleStrategy = new Strategy(
       // we have a twitterId
       // login
     }
-    done(undefined, {id: user.id});
+    done(undefined, { id: user.id });
   }
 );
 

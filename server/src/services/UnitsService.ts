@@ -26,17 +26,17 @@ class UnitsService {
       year,
     };
 
-    let searchOptions = {}
+    let searchOptions = {};
     // TODO: better way to do this
-    for (const [key, value] of Object.entries(params)){
-      if (value){
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
         // @ts-ignore
         searchOptions[key] = value;
       }
     }
     return this.repo.findOne(searchOptions);
   }
-  
+
   /**
    * Returns a unit
    * @param id id for the unit
@@ -48,8 +48,6 @@ class UnitsService {
   public getUnitById(@PathParam("id") id: string) {
     return this.repo.findOne({ id });
   }
-
- 
 
   /**
    * Creates a unit

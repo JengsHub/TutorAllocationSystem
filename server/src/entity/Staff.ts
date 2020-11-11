@@ -17,16 +17,16 @@ export class Staff extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   givenNames!: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   lastName!: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   aqf!: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   studyingAqf!: number;
 
   @Column({
@@ -44,6 +44,6 @@ export class Staff extends BaseEntity {
   @OneToMany(() => Availability, (availability) => availability.staff)
   availability!: Availability[];
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   googleId?: string;
 }

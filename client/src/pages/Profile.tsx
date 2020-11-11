@@ -7,7 +7,7 @@ const Profile = () => {
 
   const [user, setUser] = useState({});
   const [error, setError] = useState("");
-  
+
   // TODO: loading state
   useEffect(() => {
     getProfile();
@@ -24,7 +24,7 @@ const Profile = () => {
       },
     });
 
-    if (authRes.status != 200) {
+    if (authRes.status !== 200) {
       return;
     }
 

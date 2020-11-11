@@ -1,9 +1,9 @@
 import * as React from "react";
 import {
-    Redirect,
-    Route,
-    RouteComponentProps,
-    RouteProps
+  Redirect,
+  Route,
+  RouteComponentProps,
+  RouteProps,
 } from "react-router-dom";
 
 interface PrivateRouteProps extends RouteProps {

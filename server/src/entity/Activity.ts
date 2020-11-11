@@ -14,7 +14,7 @@ import { Unit } from "./Unit";
 
 @Entity()
 @Unique(["activityCode", "unit"])
-export class Activity extends BaseEntity{
+export class Activity extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
