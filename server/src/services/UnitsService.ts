@@ -34,7 +34,7 @@ class UnitsService {
         searchOptions[key] = value;
       }
     }
-    return this.repo.findOne(searchOptions);
+    return this.repo.find(searchOptions);
   }
 
   /**

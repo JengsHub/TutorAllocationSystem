@@ -15,7 +15,8 @@ const Units = () => {
     try {
       const response = await fetch("http://localhost:8888/units");
       const jsonData = await response.json();
-
+      console.log(response);
+      console.log(jsonData);
       setUnits(jsonData);
     } catch (err) {
       console.log(err.message);

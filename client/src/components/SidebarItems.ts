@@ -1,7 +1,7 @@
 const SidebarItems = [
   {
     name: "Home",
-    route: "/home",
+    route: "/",
   },
   {
     name: "Units",
