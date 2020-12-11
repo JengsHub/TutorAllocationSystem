@@ -9,7 +9,7 @@ import Paper from "@material-ui/core/Paper";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
-  let user:IStaff|undefined;
+  let user: IStaff | undefined;
 
   const getActivities = async () => {
     const authRes = await fetch("http://localhost:8888/auth/login/success", {
@@ -24,10 +24,12 @@ const Activities = () => {
 
     const jsonRes = await authRes.json();
     user = jsonRes.user;
-    console.log(user)
+    console.log(user);
 
     if (user) {
-      const res = await fetch(`http://localhost:8888/allocations/mine/${user.id}`);
+      const res = await fetch(
+        `http://localhost:8888/allocations/mine/${user.id}`
+      );
       return await res.json();
     }
   };
@@ -37,7 +39,7 @@ const Activities = () => {
       console.log(res);
       setActivities(res || []);
     });
-  }, []);
+  });
 
   // if(activities.length > 0){
   // console.log(activities[0].allocations)}
@@ -60,20 +62,20 @@ const Activities = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-              {activities.map((activity, i) => (
-                <TableRow key={i}>
-                  <TableCell component="th" scope="row">
-                    {activity.activityCode}
-                  </TableCell>
-                  <TableCell align="right">{activity.activityGroup}</TableCell>
-                  <TableCell align="right">{activity.campus}</TableCell>
-                  <TableCell align="right">{activity.dayOfWeek}</TableCell>
-                  <TableCell align="right">{activity.location}</TableCell>
-                  <TableCell align="right">{activity.startTime}</TableCell>
-                  <TableCell align="right">{activity.duration}</TableCell>
-                  <TableCell align="right">{activity.unit.unitCode}</TableCell>
-                </TableRow>
-              ))}
+            {activities.map((activity, i) => (
+              <TableRow key={i}>
+                <TableCell component="th" scope="row">
+                  {activity.activityCode}
+                </TableCell>
+                <TableCell align="right">{activity.activityGroup}</TableCell>
+                <TableCell align="right">{activity.campus}</TableCell>
+                <TableCell align="right">{activity.dayOfWeek}</TableCell>
+                <TableCell align="right">{activity.location}</TableCell>
+                <TableCell align="right">{activity.startTime}</TableCell>
+                <TableCell align="right">{activity.duration}</TableCell>
+                <TableCell align="right">{activity.unit.unitCode}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

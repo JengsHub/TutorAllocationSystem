@@ -1,39 +1,39 @@
 .file-uploader {
-    width: 300px;
-    height: 150px;
-    border: 2px dashed steelblue;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 16px;
-    margin: auto;
-    margin-top: 5%;
-  }
-  
-  .file-uploader--dragging {
-    background-color: lightblue;
-  }
-  
-  .file-uploader__contents {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .file-uploader__file-name {
-    font-weight: 700;
-  }
+  width: 300px;
+  height: 150px;
+  border: 2px dashed steelblue;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+  margin: auto;
+  margin-top: 5%;
+}
 
-  .file-uploader__input {
-      padding:20px;
-  }
+.file-uploader--dragging {
+  background-color: lightblue;
+}
 
-  .Dragdrop{
-      margin-top: 8%;
-  }
+.file-uploader__contents {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .success_feedback{
-    text-align: center;
-    visibility: hidden;
-  }
+.file-uploader__file-name {
+  font-weight: 700;
+}
+
+.file-uploader__input {
+  padding: 20px;
+}
+
+.Dragdrop {
+  margin-top: 8%;
+}
+
+.success_feedback {
+  text-align: center;
+  visibility: hidden;
+}

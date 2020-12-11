@@ -41,19 +41,21 @@ class AllocationsService {
   @Path("/mine/:userId")
   public async getMyAllocation(@PathParam("userId") userId: string) {
     const me = await getRepository("Staff").findOne(userId);
-    const allocations = await this.repo.find({
-      where: {
-        staff: me
-      },
-      relations: ["activity"]
-    }).then(
-      result => {
-        return result.map(a => a.activityId);
-      }
-    );
+    const allocations = await this.repo
+      .find({
+        where: {
+          staff: me,
+        },
+        relations: ["activity"],
+      })
+      .then((result) => {
+        return result.map((a) => a.activityId);
+      });
     let activites = [];
     for (let id of allocations) {
-      activites.push(await getRepository("activity").findOne(id, {relations:["unit"]}))
+      activites.push(
+        await getRepository("activity").findOne(id, { relations: ["unit"] })
+      );
     }
     return activites;
   }
