@@ -37,6 +37,27 @@ class AllocationsService {
     return this.repo.findOne({ id });
   }
 
+  @GET
+  @Path("/mine/:userId")
+  public async getMyAllocation(@PathParam("userId") userId: string) {
+    const me = await getRepository("Staff").findOne(userId);
+    const allocations = await this.repo.find({
+      where: {
+        staff: me
+      },
+      relations: ["activity"]
+    }).then(
+      result => {
+        return result.map(a => a.activityId);
+      }
+    );
+    let activites = [];
+    for (let id of allocations) {
+      activites.push(await getRepository("activity").findOne(id, {relations:["unit"]}))
+    }
+    return activites;
+  }
+
   /**
    * Creates an allocation
    * @param newRecord allocation data

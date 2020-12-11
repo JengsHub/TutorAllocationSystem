@@ -9,16 +9,33 @@ import Paper from "@material-ui/core/Paper";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
+  let user:IStaff|undefined;
 
   const getActivities = async () => {
-    const res = await fetch("http://localhost:8888/activities");
-    return res.json();
+    const authRes = await fetch("http://localhost:8888/auth/login/success", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": "true",
+      },
+    });
+
+    const jsonRes = await authRes.json();
+    user = jsonRes.user;
+    console.log(user)
+
+    if (user) {
+      const res = await fetch(`http://localhost:8888/allocations/mine/${user.id}`);
+      return await res.json();
+    }
   };
 
   useEffect(() => {
     getActivities().then((res) => {
-      // console.log(res);
-      setActivities(res);
+      console.log(res);
+      setActivities(res || []);
     });
   }, []);
 
@@ -43,20 +60,20 @@ const Activities = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map((activity, i) => (
-              <TableRow key={i}>
-                <TableCell component="th" scope="row">
-                  {activity.activityCode}
-                </TableCell>
-                <TableCell align="right">{activity.activityGroup}</TableCell>
-                <TableCell align="right">{activity.campus}</TableCell>
-                <TableCell align="right">{activity.dayOfWeek}</TableCell>
-                <TableCell align="right">{activity.location}</TableCell>
-                <TableCell align="right">{activity.startTime}</TableCell>
-                <TableCell align="right">{activity.duration}</TableCell>
-                <TableCell align="right">{activity.unit.unitCode}</TableCell>
-              </TableRow>
-            ))}
+              {activities.map((activity, i) => (
+                <TableRow key={i}>
+                  <TableCell component="th" scope="row">
+                    {activity.activityCode}
+                  </TableCell>
+                  <TableCell align="right">{activity.activityGroup}</TableCell>
+                  <TableCell align="right">{activity.campus}</TableCell>
+                  <TableCell align="right">{activity.dayOfWeek}</TableCell>
+                  <TableCell align="right">{activity.location}</TableCell>
+                  <TableCell align="right">{activity.startTime}</TableCell>
+                  <TableCell align="right">{activity.duration}</TableCell>
+                  <TableCell align="right">{activity.unit.unitCode}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

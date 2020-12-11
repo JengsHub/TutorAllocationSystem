@@ -33,11 +33,12 @@ router.get(
 
 // when login is successful, retrieve user info
 router.get("/login/success", authCheck, (req, res) => {
-  const { givenNames, lastName, email } = req.user as Staff;
+  const { id, givenNames, lastName, email } = req.user as Staff; 
   res.json({
     success: true,
     message: "user has successfully authenticated",
     user: {
+      id,
       givenNames,
       lastName,
       email,
