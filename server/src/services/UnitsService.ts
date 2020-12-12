@@ -1,5 +1,7 @@
 import { DeleteResult, getRepository } from "typeorm";
 import {
+  ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
   PATCH,
@@ -8,7 +10,11 @@ import {
   POST,
   QueryParam,
 } from "typescript-rest";
+import { Activity, Allocation, Staff } from "~/entity";
+import { authenticationCheck } from "~/helpers/auth";
 import { Unit } from "../entity/Unit";
+import { Request, Response } from "express";
+
 
 @Path("/units")
 class UnitsService {
@@ -84,5 +90,27 @@ class UnitsService {
     return this.repo.delete({
       id: id,
     });
+  }
+
+  @GET
+  @Path(":id/allocations")
+  public async getUnitAllocations(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @PathParam("id") id: string
+  ) {
+    authenticationCheck(req, res);
+    const user = req.user as Staff;
+    const activities = await Activity.find({
+
+      where: {
+        allocations: {
+          staffId: user.id
+        }
+      }
+    });
+
+    console.log(activities)
+    return ;
   }
 }
