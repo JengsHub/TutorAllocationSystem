@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
 import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
+import Candidate from "./pages/Candidate";
 import { AuthContext, getAuthState } from "./session";
 
 const Routes = () => {
@@ -51,6 +52,11 @@ const Routes = () => {
             isAuthenticated={isAuth}
             path="/activities"
             component={Activities}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/candidates/:activityId"
+            component={Candidate}
           />
           <PrivateRoute
             isAuthenticated={isAuth}
