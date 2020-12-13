@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
+import { Unit } from ".";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
 import { Role } from "./Role";
@@ -50,4 +51,15 @@ export class Staff extends BaseEntity {
 
   @OneToMany(() => Role, (role) => role.staff)
   roles!: Role[];
+
+  async getRoleForUnit(unit: Unit) {
+    const role = await Role.findOneOrFail({
+      where: {
+        staffId: this.id,
+        unitId: unit.id
+      },
+    });
+    console.log(role)
+    return role;
+  }
 }
