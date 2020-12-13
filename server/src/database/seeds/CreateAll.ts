@@ -2,7 +2,9 @@ import { Staff } from "src/entity/Staff";
 import { Connection, getManager } from "typeorm";
 import { Factory, Seeder } from "typeorm-seeding";
 import { Activity, Allocation, Availability, StaffPreference } from "~/entity";
+import { Role } from "~/entity/Role";
 import { DayOfWeek } from "~/enums/DayOfWeek";
+import { RoleEnum } from "~/enums/RoleEnum";
 import { Unit } from "../../entity/Unit";
 
 export default class CreateAll implements Seeder {
@@ -71,6 +73,13 @@ export default class CreateAll implements Seeder {
         staff: staff,
       });
       await manager.save(allocation);
+
+      let role = manager.create(Role, {
+        title: RoleEnum.LECTURER,
+        staff: staff,
+        unit: unit,
+      });
+      await manager.save(role);
     });
   }
 }
