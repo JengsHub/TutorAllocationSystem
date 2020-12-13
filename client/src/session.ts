@@ -45,8 +45,8 @@ import { isQualifiedName } from "typescript";
 // };
 
 // TODO: create hook to allow modifying auth state
-const defaultAuthContext : {isAuth: boolean, setAuth: any} = {
+const defaultAuthContext: { isAuth: boolean; setAuth: any } = {
   isAuth: false,
-  setAuth: () => {}
-}
+  setAuth: () => {},
+};
 export const AuthContext = React.createContext(defaultAuthContext);

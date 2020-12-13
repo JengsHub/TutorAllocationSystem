@@ -20,21 +20,21 @@ export const authenticationCheck = (req: Request, res: Response) => {
   if (!req.user) {
     req.logout();
     req.session.cookie.expires = new Date(); // delete session cookie
-    res.clearCookie('sid');
+    res.clearCookie("sid");
     res.status(401).json({
       authenticated: false,
       message: "user has not been authenticated",
     });
     // res.redirect("/auth/login");
-  } 
-}
+  }
+};
 
 // middleware to check if the current user is login
 export const authCheck = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     req.logout();
     req.session.cookie.expires = new Date(); // delete session cookie
-    res.clearCookie('sid');
+    res.clearCookie("sid");
     res.status(401).json({
       authenticated: false,
       message: "user has not been authenticated",

@@ -15,7 +15,6 @@ import { authenticationCheck } from "~/helpers/auth";
 import { Unit } from "../entity/Unit";
 import { Request, Response } from "express";
 
-
 @Path("/units")
 class UnitsService {
   repo = getRepository(Unit);
@@ -105,18 +104,20 @@ class UnitsService {
     let activities = await Activity.find({
       relations: ["allocations"],
       where: {
-        unitId: id
-      }
+        unitId: id,
+      },
     });
 
     // Filter out activities that do not have the staff allocated to them
-    activities = activities.filter(activity => {
-      const allocations = activity.allocations.filter(allocation => allocation.staffId == user.id);
+    activities = activities.filter((activity) => {
+      const allocations = activity.allocations.filter(
+        (allocation) => allocation.staffId == user.id
+      );
       activity.allocations = allocations;
-      return allocations.length > 0
-    })
+      return allocations.length > 0;
+    });
 
-    // console.log(activities)  
+    // console.log(activities)
     return activities;
   }
 }
