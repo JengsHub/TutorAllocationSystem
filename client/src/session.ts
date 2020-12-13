@@ -1,6 +1,8 @@
-import * as Cookies from "js-cookie";
-import React, { useEffect, useState } from "react";
-import { isQualifiedName } from "typescript";
+// import * as Cookies from "js-cookie";
+// import React, { useEffect, useState } from "react";
+// import { isQualifiedName } from "typescript";
+
+import React from "react";
 
 // export const getAuthState: any = () => {
 //   /**If session cookie "sid" exists, the user is already logged in.

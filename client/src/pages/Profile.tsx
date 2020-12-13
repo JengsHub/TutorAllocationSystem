@@ -3,7 +3,7 @@ import { AuthContext } from "../session";
 // import "../components/styles/Login.css";
 
 const Profile = () => {
-  const { isAuth, setAuth } = React.useContext(AuthContext); // TODO: create context hook for updating value
+  const { isAuth } = React.useContext(AuthContext); // TODO: create context hook for updating value
   console.log("profile page:", isAuth);
   const [user, setUser] = useState({});
   // const [error, setError] = useState("");

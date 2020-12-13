@@ -11,7 +11,7 @@ const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
 
   useEffect(() => {
-    let user: IStaff | undefined;
+    // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
         const res = await fetch(`http://localhost:8888/staffpreferences/mine`, {
