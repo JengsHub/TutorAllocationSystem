@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -9,40 +10,50 @@ import Paper from "@material-ui/core/Paper";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
-  let user: IStaff | undefined;
-
-  const getActivities = async () => {
-    const authRes = await fetch("http://localhost:8888/auth/login/success", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": "true",
-      },
-    });
-
-    const jsonRes = await authRes.json();
-    user = jsonRes.user;
-    console.log(user);
-
-    if (user) {
-      const res = await fetch(
-        `http://localhost:8888/allocations/mine/${user.id}`
-      );
-      return await res.json();
-    }
-  };
+  const [sortedField, setSort] = useState<string>("dayTime")
 
   useEffect(() => {
-    getActivities().then((res) => {
-      console.log(res);
-      setActivities(res || []);
-    });
-  });
+    let user: IStaff | undefined;
+    const getActivities = async () => {
+      const authRes = await fetch("http://localhost:8888/auth/login/success", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": "true",
+        },
+      });
+  
+      const jsonRes = await authRes.json();
+      user = jsonRes.user;
+  
+      if (user) {
+        const res = await fetch(
+          `http://localhost:8888/allocations/mine/${user.id}`
+        );
+        return await res.json();
+      }
+      return [];
+    };
 
-  // if(activities.length > 0){
-  // console.log(activities[0].allocations)}
+    getActivities().then((res) => {
+      // console.log(res);
+      setActivities(res);
+    });
+  }, []);
+
+  const timeReducer = (time: String) => time.split(":").map(val => parseInt(val)).reduce((val, total) => val*60 + total)
+
+  const sortDayTime = (list: IActivity[]) => {
+    return list.sort((a, b) => {
+      if (Object.values(DayOfWeek).indexOf(a.dayOfWeek) < Object.values(DayOfWeek).indexOf(b.dayOfWeek)) {return -1}
+      else if (Object.values(DayOfWeek).indexOf(a.dayOfWeek) > Object.values(DayOfWeek).indexOf(b.dayOfWeek)) {return 1}
+      else {
+        return timeReducer(a.startTime) - timeReducer(b.startTime)
+      } 
+    })
+  }
 
   return (
     <div id="main">
@@ -62,7 +73,8 @@ const Activities = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map((activity, i) => (
+            {sortDayTime(activities)
+            .map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
                   {activity.activityCode}
