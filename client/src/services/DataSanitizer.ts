@@ -158,7 +158,7 @@ const cleanInputData = (inputData: Units): Units => {
         // remove whitespaces
         .trim()
         // remove symbols
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
         // remove unnecessary spaces left by previous replace() function
         .replace(/\s{2,}/g, " ");
       let abbr = teachingPeriods[i][j]
@@ -167,7 +167,7 @@ const cleanInputData = (inputData: Units): Units => {
         // remove whitespaces
         .trim()
         // remove symbols
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
         // remove unnecessary spaces left by previous replace() function
         .replace(/\s{2,}/g, " ");
       if (oPeriod === abbr) {
