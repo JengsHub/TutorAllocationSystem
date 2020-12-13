@@ -10,7 +10,7 @@ import Paper from "@material-ui/core/Paper";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
-  const [sortedField, setSort] = useState<string>("dayTime")
+  // const [sortedField, setSort] = useState<string>("dayTime")
 
   useEffect(() => {
     let user: IStaff | undefined;

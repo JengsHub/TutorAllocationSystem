@@ -1,4 +1,4 @@
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, Like } from "typeorm";
 import {
   DELETE,
   GET,
@@ -34,6 +34,23 @@ class StaffPreferencesService {
   @Path(":id")
   public getStaffPreference(@PathParam("id") id: string) {
     return this.repo.findOne({ id }, { relations: ["staff", "unit"] });
+  }
+
+  @GET
+  @Path("/mine/:userId")
+  public async getMyPreference(@PathParam("userId") userId: string) {
+    const me = await getRepository("Staff").findOne(userId);
+    const preferences = await this.repo
+      .find({
+        where: {
+          staff: me,
+        },
+        relations: ["unit"],
+      })
+      .then((result) => {
+        return result;
+      });
+    return preferences;
   }
 
   /**
