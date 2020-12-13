@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -53,8 +54,9 @@ export class Activity extends BaseEntity {
   // allocationIds!: string[];
 
   @ManyToOne(() => Unit, (unit) => unit.activities)
+  @JoinColumn({ name: 'unitId' })
   unit!: Unit;
 
-  @RelationId((activity: Activity) => activity.unit)
+  @Column()
   unitId!: string;
 }

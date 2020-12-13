@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
+import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
 
 @Entity()
@@ -46,4 +47,7 @@ export class Staff extends BaseEntity {
 
   @Column({ nullable: true })
   googleId?: string;
+
+  @OneToMany(() => Role, (role) => role.staff)
+  roles!: Role[];
 }

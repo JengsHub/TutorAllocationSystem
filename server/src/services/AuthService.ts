@@ -47,6 +47,7 @@ router.get("/login/success", authCheck, (req, res) => {
   });
 });
 
+
 // when login failed, send failed msg
 router.get("/login/failed", (req, res) => {
   res.status(401).json({
@@ -64,7 +65,7 @@ router.get(
   }),
   (req, res) => {
     (req.session as any).userId = (req.user as any).id;
-    res.redirect("http://localhost:3000/login"); // TODO: dynamic
+    res.redirect(CLIENT_HOME_PAGE_URL); // TODO: dynamic
   }
 );
 

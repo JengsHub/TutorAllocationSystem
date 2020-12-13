@@ -18,7 +18,7 @@ export class PrivateRoute extends Route<PrivateRouteProps> {
       <Route
         render={(props: RouteComponentProps) => {
           if (!this.props.isAuthenticated) {
-            return <Redirect to="/login" />;
+            return <Redirect to="/profile" />;
           }
           if (this.props.component) {
             return React.createElement(this.props.component);
