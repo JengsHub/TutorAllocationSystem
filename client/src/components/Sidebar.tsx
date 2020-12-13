@@ -11,6 +11,7 @@ const Sidebar = () => {
         <img src={logo} alt="logo" className="logo"></img>
         {SidebarItems.map((item, index) => (
           <NavLink
+            key={index}
             to={item.route}
             activeClassName={item.route === "/" ? "" : "active"}
             className="link"
