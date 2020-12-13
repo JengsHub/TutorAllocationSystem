@@ -10,35 +10,28 @@ import Paper from "@material-ui/core/Paper";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
-  // const [sortedField, setSort] = useState<string>("dayTime")
 
   useEffect(() => {
-    let user: IStaff | undefined;
+    // let user: IStaff | undefined;
     const getActivities = async () => {
-      const authRes = await fetch("http://localhost:8888/auth/login/success", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": "true",
-        },
-      });
-
-      const jsonRes = await authRes.json();
-      user = jsonRes.user;
-
-      if (user) {
-        const res = await fetch(
-          `http://localhost:8888/allocations/mine/${user.id}`
-        );
+      try {
+        const res = await fetch(`http://localhost:8888/allocations/mine`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
+          },
+        });
         return await res.json();
+      } catch (e) {
+        console.log("Error fetching user activities");
+        return [];
       }
-      return [];
     };
 
     getActivities().then((res) => {
-      // console.log(res);
       setActivities(res);
     });
   }, []);

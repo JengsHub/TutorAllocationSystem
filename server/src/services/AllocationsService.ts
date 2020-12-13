@@ -1,15 +1,21 @@
 import { DeleteResult, getRepository } from "typeorm";
 import {
+  ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
   PATCH,
   Path,
   PathParam,
   POST,
   PUT,
 } from "typescript-rest";
+import { Request, Response } from "express";
+
 import { Activity, Staff, Unit } from "~/entity";
 import { Allocation } from "../entity/Allocation";
+import { authenticationCheck } from "~/helpers/auth";
 
 @Path("/allocations")
 class AllocationsService {
@@ -25,6 +31,38 @@ class AllocationsService {
   }
 
   /**
+   * Get the allocated activities of the current user
+   * @param req
+   * @param res
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/mine")
+  public async getMyAllocation(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    authenticationCheck(req, res);
+    const me = req.user as Staff;
+    const allocations = await this.repo.find({
+      where: {
+        staff: me,
+      },
+      relations: ["activity"],
+    });
+    let activites = [];
+
+    for (let id of allocations) {
+      activites.push(
+        await getRepository("activity").findOne(id.activityId, {
+          relations: ["unit"],
+        })
+      );
+    }
+    return activites;
+  }
+
+  /**
    * Returns an allocation
    * @param unitCode unit code for the allocation
    * @param offeringPeriod offering period for the unit in allocation
@@ -35,29 +73,6 @@ class AllocationsService {
   @Path(":id")
   public getAllocation(@PathParam("id") id: string) {
     return this.repo.findOne({ id });
-  }
-
-  @GET
-  @Path("/mine/:userId")
-  public async getMyAllocation(@PathParam("userId") userId: string) {
-    const me = await getRepository("Staff").findOne(userId);
-    const allocations = await this.repo
-      .find({
-        where: {
-          staff: me,
-        },
-        relations: ["activity"],
-      })
-      .then((result) => {
-        return result.map((a) => a.activityId);
-      });
-    let activites = [];
-    for (let id of allocations) {
-      activites.push(
-        await getRepository("activity").findOne(id, { relations: ["unit"] })
-      );
-    }
-    return activites;
   }
 
   /**

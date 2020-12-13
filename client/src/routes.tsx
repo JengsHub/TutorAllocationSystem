@@ -14,7 +14,7 @@ import { AuthContext } from "./session";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
-  const params = useParams()
+  const params = useParams();
   useEffect(() => {
     // Check if user is logged in every time they change page
     const fetchAuthState = async () => {
@@ -38,45 +38,45 @@ const Routes = () => {
   }, [params]);
 
   return (
-    <AuthContext.Provider value={{isAuth: isAuth, setAuth: setAuth}}>
-        <Sidebar />
-        <Switch>
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/"
-            exact
-            component={Dashboard}
-          />
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/unit"
-            exact
-            component={Units}
-          />
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/staff"
-            component={Staff}
-          />
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/preferences"
-            component={Preferences}
-          />
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/activities"
-            component={Activities}
-          />
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/dataimport"
-            component={DataImport}
-          />
-          <Route path="/profile" component={Profile} />
-          <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
-        </Switch>
-     </AuthContext.Provider>
+    <AuthContext.Provider value={{ isAuth: isAuth, setAuth: setAuth }}>
+      <Sidebar />
+      <Switch>
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/"
+          exact
+          component={Dashboard}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/unit"
+          exact
+          component={Units}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/staff"
+          component={Staff}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/preferences"
+          component={Preferences}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/activities"
+          component={Activities}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/dataimport"
+          component={DataImport}
+        />
+        <Route path="/profile" component={Profile} />
+        <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
+      </Switch>
+    </AuthContext.Provider>
   );
 };
 

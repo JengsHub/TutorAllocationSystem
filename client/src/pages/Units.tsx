@@ -14,30 +14,19 @@ const Units = () => {
     let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const authRes = await fetch(
-          "http://localhost:8888/auth/login/success",
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
-
-        const res = await authRes.json();
-        user = res.user;
-
-        if (user) {
-          const res = await fetch(
-            `http://localhost:8888/staffpreferences/mine/${user.id}`
-          );
-          return await res.json();
-        }
+        const res = await fetch(`http://localhost:8888/staffpreferences/mine`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
+          },
+        });
+        return await res.json();
       } catch (err) {
         console.log("No preferences found");
+        return [];
       }
     };
 

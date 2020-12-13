@@ -54,7 +54,7 @@ export class Activity extends BaseEntity {
   // allocationIds!: string[];
 
   @ManyToOne(() => Unit, (unit) => unit.activities)
-  @JoinColumn({ name: 'unitId' })
+  @JoinColumn({ name: "unitId" })
   unit!: Unit;
 
   @Column()
