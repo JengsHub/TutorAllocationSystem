@@ -36,7 +36,7 @@ const Activities = () => {
     e.preventDefault();
     setDisplay([]);
     activities.forEach((activity) => {
-      if (activity.unit.unitCode == unitCode) {
+      if (activity.unit.unitCode === unitCode) {
         setDisplay((display) => [...display, activity]);
       }
     });

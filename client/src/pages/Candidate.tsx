@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -41,7 +41,7 @@ const Candidate = () => {
       // console.log(res);
       setCandidatePreference(res);
     });
-  }, []);
+  };
 
   return (
     <div id="main">
