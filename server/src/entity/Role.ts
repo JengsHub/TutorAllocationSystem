@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { RoleEnum } from "~/enums/RoleEnum";
+import { RoleEnum } from "../enums/RoleEnum";
 import { Staff } from ".";
 import { Unit } from "./Unit";
 
