@@ -5,7 +5,6 @@ import DatabaseFinder from "../apis/DatabaseFinder";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import cleanInputData from "../services/DataSanitizer";
 
 // yarn add csv-parser
 
