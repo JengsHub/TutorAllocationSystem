@@ -33,9 +33,6 @@ router.get(
 
 // when login is successful, retrieve user info
 router.get("/login/success", authCheck, (req, res) => {
-  console.log('**312: auth route', req)
-  console.log('**313: auth route', req.user)
-
   const { givenNames, lastName, email } = req.user as Staff;
   res.json({
     success: true,
@@ -49,21 +46,6 @@ router.get("/login/success", authCheck, (req, res) => {
   });
 });
 
-router.get("/login/test", (req, res) => {
-  console.log('**313: auth test', req.user)
-
-  const { givenNames, lastName, email } = req.user as Staff;
-  res.json({
-    success: true,
-    message: "user has successfully authenticated",
-    user: {
-      givenNames,
-      lastName,
-      email,
-    },
-    cookies: req.cookies,
-  });
-});
 
 // when login failed, send failed msg
 router.get("/login/failed", (req, res) => {
@@ -82,7 +64,7 @@ router.get(
   }),
   (req, res) => {
     (req.session as any).userId = (req.user as any).id;
-    res.redirect("http://localhost:3000/login"); // TODO: dynamic
+    res.redirect(CLIENT_HOME_PAGE_URL); // TODO: dynamic
   }
 );
 

@@ -93,7 +93,7 @@ class UnitsService {
   }
 
   @GET
-  @Path(":id/allocations")
+  @Path(":id/activities")
   public async getUnitAllocations(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
@@ -101,16 +101,22 @@ class UnitsService {
   ) {
     authenticationCheck(req, res);
     const user = req.user as Staff;
-    const activities = await Activity.find({
 
+    let activities = await Activity.find({
+      relations: ["allocations"],
       where: {
-        allocations: {
-          staffId: user.id
-        }
+        unitId: id
       }
     });
 
-    console.log(activities)
-    return ;
+    // Filter out activities that do not have the staff allocated to them
+    activities = activities.filter(activity => {
+      const allocations = activity.allocations.filter(allocation => allocation.staffId == user.id);
+      activity.allocations = allocations;
+      return allocations.length > 0
+    })
+
+    // console.log(activities)  
+    return activities;
   }
 }
