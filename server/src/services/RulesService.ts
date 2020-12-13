@@ -31,7 +31,7 @@ class RulesService {
   // TODO: assert return value as Promise<Rule> here
   @GET
   @Path(":id")
-  public getRule(@PathParam("id") id: number) {
+  public getRule(@PathParam("id") id: string) {
     return this.repo.findOne({
       id: id,
     });

@@ -8,8 +8,9 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
-import { Activity, Staff, Unit } from "~/entity";
+import { Activity, Staff, Rule, Availability } from "~/entity";
 import { Allocation } from "../entity/Allocation";
+import { DayOfWeek } from "../enums/DayOfWeek";
 
 @Path("/allocations")
 class AllocationsService {
@@ -44,6 +45,9 @@ class AllocationsService {
    */
   @POST
   public async createAllocation(newRecord: Allocation): Promise<Allocation> {
+    // TODO: error message because constraints not met
+    if (!this.checkAllocation(newRecord)) return newRecord;
+
     // TODO: optimisation
     let staff = await getRepository(Staff).findOneOrFail({
       id: newRecord.staffId,
@@ -57,6 +61,91 @@ class AllocationsService {
   }
 
   /**
+   * Checks if an allocation fits the constraints (global rules as well as individual staff preferences)
+   * @param newRecord the new allocation
+   * @param staff the staff member taking the allocation
+   */
+  private async checkAllocation(newRecord: Allocation): Promise<boolean> {
+    // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
+    // TODO: consecutive hours. This will be easier if the startTime of activities is stored as a Date.
+    // TODO: check for clashes, and compare against available times from the Availibility table
+
+    const staff = await getRepository(Staff).findOneOrFail({
+      id: newRecord.staffId,
+    });
+
+    const currentAllocations = await getRepository(Allocation).find({
+      staffId: staff.id,
+    });
+
+    const activitiesRepo = await getRepository(Activity);
+    const newActivity = await activitiesRepo.findOne({
+      id: newRecord.activityId,
+    });
+    if (!newActivity) return false;
+
+    let dayHours = newActivity.duration;
+    let weekHours = newActivity.duration;
+    let activitiesInUnit = 1;
+    let totalActivities = 1;
+
+    const activities = await Promise.all(
+      currentAllocations.map(
+        async (allocation): Promise<Activity | undefined> =>
+          allocation.id === newRecord.id
+            ? undefined
+            : await activitiesRepo.findOne({ id: allocation.activityId })
+      )
+    );
+
+    activities.forEach((activity) => {
+      if (activity && newActivity) {
+        // Total hours in day
+        if (activity.dayOfWeek === newActivity.dayOfWeek)
+          dayHours += activity.duration;
+        // Total hours in week
+        weekHours += activity.duration;
+        // Activities in unit
+        if (activity.unitId === newActivity.unitId) activitiesInUnit++;
+        // Total activities
+        totalActivities++;
+      }
+    });
+
+    // Checking the numbers against the constraints/rules.
+    // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
+    const rules = await getRepository(Rule);
+    const availability = await getRepository(Availability).findOneOrFail({
+      staffId: staff.id,
+    });
+
+    const maxHoursPerDayRule = (
+      await rules.findOneOrFail({ ruleName: "maxHoursPerDay" })
+    ).value;
+    const maxHoursPerWeekRule = Math.min(
+      (await rules.findOneOrFail({ ruleName: "maxHoursPerWeek" })).value,
+      availability.maxHours
+    );
+    const maxActivitiesPerUnitRule = (
+      await rules.findOneOrFail({ ruleName: "maxActivitiesPerUnit" })
+    ).value;
+    const maxTotalActivitiesRule = Math.min(
+      (await rules.findOneOrFail({ ruleName: "maxTotalActivities" })).value,
+      availability.maxNumberActivities
+    );
+
+    // Check
+    if (
+      dayHours > maxHoursPerDayRule ||
+      weekHours > maxHoursPerWeekRule ||
+      activitiesInUnit > maxActivitiesPerUnitRule ||
+      totalActivities > maxTotalActivitiesRule
+    )
+      return false;
+    return true;
+  }
+
+  /**
    * Updates an allocation
    * @param changedAllocation new allocation object to change existing allocation to
    * @return Allocation changed allocation
@@ -65,6 +154,9 @@ class AllocationsService {
   public async updateAllocation(
     changedAllocation: Allocation
   ): Promise<Allocation> {
+    // TODO: error message because constraints not met
+    if (!this.checkAllocation(changedAllocation)) return changedAllocation;
+
     let allocationToUpdate = await this.repo.findOne({
       id: changedAllocation.id,
     });

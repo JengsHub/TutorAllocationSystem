@@ -1,9 +1,16 @@
 import { Staff } from "src/entity/Staff";
 import { Connection, getManager } from "typeorm";
 import { Factory, Seeder } from "typeorm-seeding";
-import { Activity, Allocation, Availability, StaffPreference } from "~/entity";
+import {
+  Activity,
+  Allocation,
+  Availability,
+  StaffPreference,
+  Rule,
+} from "~/entity";
 import { DayOfWeek } from "~/enums/DayOfWeek";
 import { Unit } from "../../entity/Unit";
+import { defaultRules } from "../../helpers/defaultRules";
 
 export default class CreateAll implements Seeder {
   async run(factory: Factory, connection: Connection): Promise<void> {
@@ -71,6 +78,11 @@ export default class CreateAll implements Seeder {
         staff: staff,
       });
       await manager.save(allocation);
+
+      for (const r of defaultRules) {
+        let rule = manager.create(Rule, r);
+        await manager.save(rule);
+      }
     });
   }
 }

@@ -2,10 +2,10 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Rule extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-  @Column()
+  @Column({ readonly: true })
   ruleName!: string;
 
   @Column()

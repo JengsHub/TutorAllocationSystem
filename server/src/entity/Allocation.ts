@@ -1,12 +1,10 @@
 import {
   BaseEntity,
-  Column,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { DayOfWeek } from "../enums/DayOfWeek";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
