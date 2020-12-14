@@ -62,6 +62,19 @@ export default class CreateAll implements Seeder {
       });
       await manager.save(activity);
 
+      let activity2 = manager.create(Activity, {
+        activityCode: "02-P1",
+        activityGroup: "Workshop",
+        campus: "CL",
+        location: "123 Seed Local",
+        duration: 6,
+        dayOfWeek: DayOfWeek.MONDAY,
+        startTime: "16:00",
+        allocations: [],
+        unit: unit,
+      });
+      await manager.save(activity2);
+
       let availability = manager.create(Availability, {
         day: DayOfWeek.TUESDAY,
         startTime: "08:00",

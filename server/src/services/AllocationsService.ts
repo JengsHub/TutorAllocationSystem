@@ -1,4 +1,4 @@
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, createQueryBuilder } from "typeorm";
 import {
   DELETE,
   GET,
@@ -7,10 +7,18 @@ import {
   PathParam,
   POST,
   PUT,
+  Errors,
 } from "typescript-rest";
 import { Activity, Staff, Rule, Availability } from "~/entity";
 import { Allocation } from "../entity/Allocation";
 import { DayOfWeek } from "../enums/DayOfWeek";
+
+class ConstraintError extends Errors.HttpError {
+  static statusCode: number = 512;
+  constructor(message: string) {
+    super("ConstraintError", message);
+  }
+}
 
 @Path("/allocations")
 class AllocationsService {
@@ -44,9 +52,16 @@ class AllocationsService {
    * @return Allocation new allocation
    */
   @POST
-  public async createAllocation(newRecord: Allocation): Promise<Allocation> {
+  public async createAllocation(
+    newRecord: Allocation
+  ): Promise<Allocation | Errors.HttpError> {
     // TODO: error message because constraints not met
-    if (!this.checkAllocation(newRecord)) return newRecord;
+
+    if (!(await this.checkAllocation(newRecord))) {
+      return new ConstraintError(
+        "Allocation not made because constraints not met"
+      );
+    }
 
     // TODO: optimisation
     let staff = await getRepository(Staff).findOneOrFail({
@@ -74,8 +89,9 @@ class AllocationsService {
       id: newRecord.staffId,
     });
 
-    const currentAllocations = await getRepository(Allocation).find({
-      staffId: staff.id,
+    const currentAllocations = await this.repo.find({
+      relations: ["staff"],
+      where: { staff: { id: staff.id } },
     });
 
     const activitiesRepo = await getRepository(Activity);
@@ -116,7 +132,8 @@ class AllocationsService {
     // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
     const rules = await getRepository(Rule);
     const availability = await getRepository(Availability).findOneOrFail({
-      staffId: staff.id,
+      relations: ["staff"],
+      where: { staff: { id: staff.id } },
     });
 
     const maxHoursPerDayRule = (
@@ -133,6 +150,8 @@ class AllocationsService {
       (await rules.findOneOrFail({ ruleName: "maxTotalActivities" })).value,
       availability.maxNumberActivities
     );
+
+    //console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
 
     // Check
     if (
@@ -153,9 +172,13 @@ class AllocationsService {
   @PUT
   public async updateAllocation(
     changedAllocation: Allocation
-  ): Promise<Allocation> {
+  ): Promise<Allocation | Errors.HttpError> {
     // TODO: error message because constraints not met
-    if (!this.checkAllocation(changedAllocation)) return changedAllocation;
+    if (!(await this.checkAllocation(changedAllocation))) {
+      return new ConstraintError(
+        "Allocation not updated because constraints not met"
+      );
+    }
 
     let allocationToUpdate = await this.repo.findOne({
       id: changedAllocation.id,
