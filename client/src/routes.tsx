@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Activities from "./pages/Activities";
+import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
 import NotFound from "./pages/NotFound";
@@ -14,6 +15,8 @@ import { AuthContext } from "./session";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
+  const [adminAccess, setAdminAccess] = useState(false);
+
   const params = useParams();
   useEffect(() => {
     // Check if user is logged in every time they change page
@@ -29,16 +32,20 @@ const Routes = () => {
       });
 
       if (authRes.status === 401) {
-        return setAuth(false);
+        setAuth(false);
       } else {
-        return setAuth(true);
+        setAuth(true);
+        const resJson = await authRes.json();
+        setAdminAccess(resJson.user.adminAccess)
       }
     };
     fetchAuthState();
   }, [params]);
 
+  console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`)
+
   return (
-    <AuthContext.Provider value={{ isAuth: isAuth, setAuth: setAuth }}>
+    <AuthContext.Provider value={{ isAuth, setAuth, adminAccess, setAdminAccess }}>
       <Sidebar />
       <Switch>
         <PrivateRoute
@@ -72,6 +79,11 @@ const Routes = () => {
           isAuthenticated={isAuth}
           path="/dataimport"
           component={DataImport}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/admin"
+          component={Admin}
         />
         <Route path="/profile" component={Profile} />
         <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
