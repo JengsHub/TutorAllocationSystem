@@ -52,13 +52,11 @@ class AllocationsService {
    * @return Allocation new allocation
    */
   @POST
-  public async createAllocation(
-    newRecord: Allocation
-  ): Promise<Allocation | Errors.HttpError> {
+  public async createAllocation(newRecord: Allocation): Promise<Allocation> {
     // TODO: error message because constraints not met
 
     if (!(await this.checkAllocation(newRecord))) {
-      return new ConstraintError(
+      throw new ConstraintError(
         "Allocation not made because constraints not met"
       );
     }
@@ -172,10 +170,10 @@ class AllocationsService {
   @PUT
   public async updateAllocation(
     changedAllocation: Allocation
-  ): Promise<Allocation | Errors.HttpError> {
+  ): Promise<Allocation> {
     // TODO: error message because constraints not met
     if (!(await this.checkAllocation(changedAllocation))) {
-      return new ConstraintError(
+      throw new ConstraintError(
         "Allocation not updated because constraints not met"
       );
     }
