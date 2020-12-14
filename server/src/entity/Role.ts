@@ -25,7 +25,7 @@ export class Role extends BaseEntity {
   @JoinColumn({ name: "unitId" })
   unit!: Unit;
 
-  @Column()
+  @Column({ nullable: true })
   unitId!: string;
 
   @ManyToOne(() => Staff)

@@ -62,4 +62,13 @@ export class Staff extends BaseEntity {
     console.log(role);
     return role;
   }
+
+  async getRoles() {
+    const role = await Role.find({
+      where: {
+        staffId: this.id,
+      },
+    });
+    return role;
+  }
 }
