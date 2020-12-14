@@ -7,8 +7,11 @@ import {
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
 import { StaffControllerFactory } from "~/controller";
+import { Unit } from "~/entity";
+import { Role } from "~/entity/Role";
 import { Staff } from "../entity/Staff";
 
 @Path("/staff")
@@ -16,13 +19,71 @@ class StaffService {
   repo = getRepository(Staff);
   factory = new StaffControllerFactory();
 
-  /**
-   * Returns a list of staff
-   * @return Array<Staff> staff list
-   */
+  // /**
+  //  * Returns a list of staff
+  //  * @return Array<Staff> staff list
+  //  */
+  // @GET
+  // public getAllStaff(): Promise<Array<Staff>> {
+  //   return this.repo.find();
+  // }
+
   @GET
-  public getAllStaff(): Promise<Array<Staff>> {
-    return this.repo.find();
+  public async getStaffUnit(
+    @QueryParam("unitCode") unitCode: string,
+    @QueryParam("offeringPeriod") offeringPeriod: string,
+    @QueryParam("year") year: number
+  ): Promise<any> {
+    // TODO: refactor to handle other Role
+    let params = {
+      unitCode,
+      offeringPeriod,
+      year,
+    };
+
+    let searchOptions = {};
+    // TODO: better way to do this
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
+        // @ts-ignore
+        searchOptions[key] = value;
+      }
+    }
+
+    const units = await Unit.find({
+      select: ["unitCode", "id"],
+      where: searchOptions,
+    });
+
+    let staffList = [];
+    for (const unit of units) {
+      // TODO: any way to avoid any?
+      const data: any = await Role.find({
+        where: {
+          unitId: unit.id,
+        },
+        relations: ["staff"],
+      });
+
+      for (const e of data) {
+        e.unitCode = unit.unitCode;
+      }
+      staffList.push(...data);
+    }
+
+    const result = staffList?.map((e) => {
+      let result = {
+        role: e.title,
+        unitCode: e.unitCode,
+      };
+      for (const [key, value] of Object.entries(e.staff)) {
+        //@ts-ignore
+        result[key] = value;
+      }
+      return result;
+    });
+    console.log(result);
+    return result;
   }
 
   /**
