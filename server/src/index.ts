@@ -65,6 +65,9 @@ app.use(passport.session());
 // set up routes
 app.use("/auth", authRoutes);
 
+// Middleware to require authentication for all routes in /units
+app.use("/units", authCheck); 
+
 Server.buildServices(app);
 
 // Just checking if given PORT variable is an integer or not
