@@ -8,11 +8,13 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
+import { StaffControllerFactory } from "~/controller";
 import { Staff } from "../entity/Staff";
 
 @Path("/staff")
 class StaffService {
   repo = getRepository(Staff);
+  factory = new StaffControllerFactory();
 
   /**
    * Returns a list of staff

@@ -8,12 +8,14 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
+import { AllocationControllerFactory } from "~/controller";
 import { Activity, Staff, Unit } from "~/entity";
 import { Allocation } from "../entity/Allocation";
 
 @Path("/allocations")
 class AllocationsService {
   repo = getRepository(Allocation);
+  factory = new AllocationControllerFactory();
 
   /**
    * Returns a list of allocations

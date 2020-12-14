@@ -8,12 +8,14 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
+import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
 import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
 class StaffPreferencesService {
   repo = getRepository(StaffPreference);
+  factory = new StaffPreferenceControllerFactory();
 
   /**
    * Returns a list of staffPreferences

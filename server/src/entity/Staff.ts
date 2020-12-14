@@ -56,10 +56,10 @@ export class Staff extends BaseEntity {
     const role = await Role.findOneOrFail({
       where: {
         staffId: this.id,
-        unitId: unit.id
+        unitId: unit.id,
       },
     });
-    console.log(role)
+    console.log(role);
     return role;
   }
 }

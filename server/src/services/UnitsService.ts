@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
@@ -10,13 +11,9 @@ import {
   POST,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Allocation, Staff } from "~/entity";
-import { authenticationCheck } from "~/helpers/auth";
-import { Unit } from "../entity/Unit";
-import { Request, Response } from "express";
-import { RoleEnum } from "~/enums/RoleEnum";
-import { Role } from "~/entity/Role";
 import { UnitControllerFactory } from "~/controller/index";
+import { Staff } from "~/entity";
+import { Unit } from "../entity/Unit";
 
 @Path("/units")
 class UnitsService {
@@ -109,5 +106,3 @@ class UnitsService {
     return controller.getActivities(unit, user);
   }
 }
-
-

@@ -15,7 +15,7 @@ import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import { authCheck } from "./helpers/auth";
-const FileStore = require('session-file-store')(session);
+const FileStore = require("session-file-store")(session);
 
 export const app: express.Application = express();
 
@@ -67,7 +67,7 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 
 // Middleware to require authentication for all routes in /units
-app.use("/units", authCheck); 
+app.use("/units", authCheck);
 
 Server.buildServices(app);
 
