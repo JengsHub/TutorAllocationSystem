@@ -24,6 +24,10 @@ const SidebarItems = [
     route: "/dataimport",
   },
   {
+    name: "Administration",
+    route: "/admin",
+  },
+  {
     name: "Profile",
     route: "/profile",
   },

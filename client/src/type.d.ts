@@ -57,3 +57,10 @@ interface IUnit {
   year: number;
   aqfTarget: number;
 }
+
+interface IRule {
+  id: string;
+  ruleName: string;
+  ruleDescription: string;
+  value: number;
+}

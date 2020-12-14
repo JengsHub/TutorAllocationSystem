@@ -29,7 +29,7 @@ const Activities = () => {
     <div id="main">
       <h1>Activities</h1>
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="a dense table">
+        <Table className={""} size="small" aria-label="activities table">
           <TableHead>
             <TableRow>
               <TableCell>Activity Code</TableCell>

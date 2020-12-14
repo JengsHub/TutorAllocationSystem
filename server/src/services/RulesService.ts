@@ -42,11 +42,15 @@ class RulesService {
    * @return Rule: changed global rule
    */
   @PUT
-  public async updateRule(changedRule: Rule): Promise<Rule> {
-    let ruleToUpdate = await this.repo.findOne({
-      id: changedRule.id,
-    });
-    ruleToUpdate = changedRule;
-    return this.repo.save(ruleToUpdate);
+  public async updateRules(changedRules: Rule[]): Promise<Rule[]> {
+    let updatedRules = [];
+    for (let changedRule of changedRules) {
+      let ruleToUpdate = await this.repo.findOne({
+        id: changedRule.id,
+      });
+      ruleToUpdate = changedRule;
+      updatedRules.push(ruleToUpdate);
+    }
+    return this.repo.save(updatedRules);
   }
 }

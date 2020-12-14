@@ -8,6 +8,9 @@ export class Rule extends BaseEntity {
   @Column({ readonly: true })
   ruleName!: string;
 
+  @Column({ readonly: true })
+  ruleDescription!: string;
+
   @Column()
   value!: number;
 }

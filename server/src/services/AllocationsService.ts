@@ -171,7 +171,6 @@ class AllocationsService {
   public async updateAllocation(
     changedAllocation: Allocation
   ): Promise<Allocation> {
-    // TODO: error message because constraints not met
     if (!(await this.checkAllocation(changedAllocation))) {
       throw new ConstraintError(
         "Allocation not updated because constraints not met"

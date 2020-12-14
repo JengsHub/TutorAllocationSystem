@@ -9,6 +9,7 @@ import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
 import Units from "./pages/Units";
+import Admin from "./pages/Admin";
 import PrivateRoute from "./PrivateRoute";
 import { AuthContext, getAuthState } from "./session";
 
@@ -56,6 +57,11 @@ const Routes = () => {
             isAuthenticated={isAuth}
             path="/dataimport"
             component={DataImport}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/admin"
+            component={Admin}
           />
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
