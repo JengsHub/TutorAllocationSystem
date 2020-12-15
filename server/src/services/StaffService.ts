@@ -7,20 +7,83 @@ import {
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
+import { StaffControllerFactory } from "~/controller";
+import { Unit } from "~/entity";
+import { Role } from "~/entity/Role";
+import { LooseObject } from "~/interfaces/interfaces";
 import { Staff } from "../entity/Staff";
 
 @Path("/staff")
 class StaffService {
   repo = getRepository(Staff);
+  factory = new StaffControllerFactory();
 
-  /**
-   * Returns a list of staff
-   * @return Array<Staff> staff list
-   */
+  // /**
+  //  * Returns a list of staff
+  //  * @return Array<Staff> staff list
+  //  */
+  // @GET
+  // public getAllStaff(): Promise<Array<Staff>> {
+  //   return this.repo.find();
+  // }
+
   @GET
-  public getAllStaff(): Promise<Array<Staff>> {
-    return this.repo.find();
+  public async getStaffUnit(
+    @QueryParam("unitCode") unitCode: string,
+    @QueryParam("offeringPeriod") offeringPeriod: string,
+    @QueryParam("year") year: number
+  ): Promise<any> {
+    // TODO: refactor to handle other Role
+    
+    let params: {[key: string]: any} = {
+      unitCode,
+      offeringPeriod,
+      year,
+    };
+
+    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+
+    const units = await Unit.find({
+      select: ["unitCode", "id"],
+      where: params,
+    });
+
+    let staffList = [];
+    for (const unit of units) {
+      const data: (Role & LooseObject)[] = await Role.find({
+        where: {
+          unitId: unit.id,
+        },
+        relations: ["staff"],
+      });
+
+      for (const e of data) {
+        e.unitCode = unit.unitCode;
+        e.unitId = unit.id;
+      }
+      staffList.push(...data);
+    }
+
+    const result = staffList?.map((e) => {
+      let result: LooseObject = {
+        role: e.title,
+        roleId: e.id,
+        unitCode: e.unitCode,
+        unitId: e.unitId
+      };
+      for (const [key, value] of Object.entries(e.staff)) {
+        if (key === "id") {
+          result["staffId"] = value;
+        } else {
+          result[key] = value;
+        }
+      }
+      return result;
+    });
+    console.log(result);
+    return result;
   }
 
   /**

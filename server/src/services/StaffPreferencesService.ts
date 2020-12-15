@@ -12,7 +12,7 @@ import {
   PUT,
 } from "typescript-rest";
 import { Request, Response } from "express";
-
+import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
 import { authenticationCheck } from "~/helpers/auth";
 import { StaffPreference } from "../entity/StaffPreference";
@@ -20,6 +20,7 @@ import { StaffPreference } from "../entity/StaffPreference";
 @Path("/staffpreferences")
 class StaffPreferencesService {
   repo = getRepository(StaffPreference);
+  factory = new StaffPreferenceControllerFactory();
 
   /**
    * Returns a list of staffPreferences

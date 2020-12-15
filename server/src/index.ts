@@ -10,13 +10,12 @@ import { Server } from "typescript-rest";
 import "./services";
 import { TryDBConnect } from "./helpers";
 import authRoutes from "./services/AuthService";
-// import cookieSession from "cookie-session";
-// import { passport } from "./helpers/auth";
+
 import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import { authCheck } from "./helpers/auth";
-const passportSetup = require("./helpers/auth");
+const FileStore = require("session-file-store")(session);
 
 export const app: express.Application = express();
 
@@ -24,12 +23,14 @@ if (result.error) {
   throw result.error;
 }
 
+const fileStoreOptions = {};
 app.use(
   session({
+    store: new FileStore({}),
     name: "sid",
     secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
     cookie: {
-      httpOnly: false, //TODO: should enable this?
+      httpOnly: true, //TODO: should enable this?
       maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
     },
     rolling: true, // automatically set new expiration when user makes request
@@ -64,6 +65,9 @@ app.use(passport.session());
 
 // set up routes
 app.use("/auth", authRoutes);
+
+// Middleware to require authentication for all routes in /units
+app.use("/units", authCheck);
 
 Server.buildServices(app);
 

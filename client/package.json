@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -14,8 +16,8 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
     "axios": "^0.21.0",
-    "papaparse": "^5.3.0",
     "js-cookie": "^2.2.1",
+    "papaparse": "^5.3.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-google-login": "^5.1.22",
@@ -51,6 +53,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^2.2.6",
+    "@types/material-ui": "^0.21.8",
     "prettier": "^2.1.2"
   }
 }

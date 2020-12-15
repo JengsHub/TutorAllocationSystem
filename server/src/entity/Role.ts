@@ -22,14 +22,16 @@ export class Role extends BaseEntity {
   title!: RoleEnum;
 
   @ManyToOne(() => Unit)
+  @JoinColumn({ name: "unitId" })
   unit!: Unit;
 
-  @RelationId((role: Role) => role.unit)
+  @Column({ nullable: true })
   unitId!: string;
 
   @ManyToOne(() => Staff)
+  @JoinColumn({ name: "staffId" })
   staff!: Staff;
 
-  @RelationId((role: Role) => role.staff)
+  @Column()
   staffId!: string;
 }

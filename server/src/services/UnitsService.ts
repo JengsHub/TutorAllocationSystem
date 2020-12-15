@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
@@ -10,14 +11,14 @@ import {
   POST,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Allocation, Staff } from "~/entity";
-import { authenticationCheck } from "~/helpers/auth";
+import { UnitControllerFactory } from "~/controller/index";
+import { Staff } from "~/entity";
 import { Unit } from "../entity/Unit";
-import { Request, Response } from "express";
 
 @Path("/units")
 class UnitsService {
   repo = getRepository(Unit);
+  factory = new UnitControllerFactory();
 
   @GET
   public getUnits(
@@ -25,21 +26,15 @@ class UnitsService {
     @QueryParam("offeringPeriod") offeringPeriod: string,
     @QueryParam("year") year: number
   ) {
-    let params = {
+    let params: {[key:string]:any} = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    let searchOptions = {};
-    // TODO: better way to do this
-    for (const [key, value] of Object.entries(params)) {
-      if (value) {
-        // @ts-ignore
-        searchOptions[key] = value;
-      }
-    }
-    return this.repo.find(searchOptions);
+    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+
+    return this.repo.find(params);
   }
 
   /**
@@ -93,31 +88,15 @@ class UnitsService {
 
   @GET
   @Path(":id/activities")
-  public async getUnitAllocations(
+  public async getUnitActivities(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
     @PathParam("id") id: string
   ) {
-    authenticationCheck(req, res);
     const user = req.user as Staff;
-
-    let activities = await Activity.find({
-      relations: ["allocations"],
-      where: {
-        unitId: id,
-      },
-    });
-
-    // Filter out activities that do not have the staff allocated to them
-    activities = activities.filter((activity) => {
-      const allocations = activity.allocations.filter(
-        (allocation) => allocation.staffId == user.id
-      );
-      activity.allocations = allocations;
-      return allocations.length > 0;
-    });
-
-    // console.log(activities)
-    return activities;
+    const unit = await Unit.findOneOrFail({ id });
+    const role = await user.getRoleForUnit(unit);
+    const controller = this.factory.getController(role.title);
+    return controller.getActivities(unit, user);
   }
 }

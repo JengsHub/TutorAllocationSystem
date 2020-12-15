@@ -13,6 +13,7 @@ import {
 } from "typescript-rest";
 import { Request, Response } from "express";
 
+import { AllocationControllerFactory } from "~/controller";
 import { Activity, Staff, Unit } from "~/entity";
 import { Allocation } from "../entity/Allocation";
 import { authenticationCheck } from "~/helpers/auth";
@@ -20,6 +21,7 @@ import { authenticationCheck } from "~/helpers/auth";
 @Path("/allocations")
 class AllocationsService {
   repo = getRepository(Allocation);
+  factory = new AllocationControllerFactory();
 
   /**
    * Returns a list of allocations
