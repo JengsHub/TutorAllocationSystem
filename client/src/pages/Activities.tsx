@@ -7,6 +7,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Box from "@material-ui/core/Box";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -61,9 +62,8 @@ const Activities = () => {
   };
 
   return (
-    <div id="main">
-      <h1>Activities</h1>
-      <TableContainer component={Paper}>
+    <Box>
+        <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
@@ -95,7 +95,7 @@ const Activities = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Box>
   );
 };
 

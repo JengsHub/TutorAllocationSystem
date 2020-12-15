@@ -67,16 +67,16 @@ const Routes = () => {
           path="/staff"
           component={Staff}
         />
-        <PrivateRoute
+        {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/preferences"
           component={Preferences}
-        />
-        <PrivateRoute
+        /> */}
+        {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/activities"
           component={Activities}
-        />
+        /> */}
         <PrivateRoute
           isAuthenticated={isAuth}
           path="/dataimport"

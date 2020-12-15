@@ -6,6 +6,12 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import Collapse from "@material-ui/core/Collapse";
+import Box from "@material-ui/core/Box";
+import { makeStyles } from "@material-ui/core";
+import Activities from "./Activities";
 
 const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
@@ -36,6 +42,43 @@ const Units = () => {
       setUnits(res || []);
     });
   }, []);
+
+  const useRowStyles = makeStyles({
+    root: {
+      '& > *': {
+        borderBottom: 'unset',
+      },
+    },
+  });
+
+  function Row(props: { row: IPreferences}){
+    const { row } = props;
+    const [open, setOpen] = useState(false);
+    const classes = useRowStyles();
+
+    return (
+      <React.Fragment>
+        <TableRow className={classes.root}>
+          <TableCell>
+            <Button onClick={() => setOpen(!open)}>{ row.unit.unitCode + "-" + row.unit.campus + "-" + row.unit.offeringPeriod } </Button>
+          </TableCell>
+          <TableCell align="right">{row.unit.year}</TableCell>
+          <TableCell align="right">{row.unit.aqfTarget}</TableCell>
+          <TableCell align="center">{row.preferenceScore}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style = {{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin = {1}>
+                <Typography variant="h6" gutterBottom component="div"> My Allocations for {row.unit.unitCode} </Typography>
+                  <Activities></Activities>
+                </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    )
+  }
 
   const sortPreferenceScore = (list: IPreferences[], way: String) => {
     console.log(list);
@@ -71,18 +114,7 @@ const Units = () => {
           </TableHead>
           <TableBody>
             {units.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell align="left">
-                  {row.unit.unitCode +
-                    "-" +
-                    row.unit.campus +
-                    "-" +
-                    row.unit.offeringPeriod}{" "}
-                </TableCell>
-                <TableCell align="right">{row.unit.year}</TableCell>
-                <TableCell align="right">{row.unit.aqfTarget}</TableCell>
-                <TableCell align="center">{row.preferenceScore}</TableCell>
-              </TableRow>
+              <Row key={row.id} row = {row}/>
             ))}
           </TableBody>
         </Table>
