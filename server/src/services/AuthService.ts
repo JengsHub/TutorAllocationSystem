@@ -49,7 +49,7 @@ router.get("/login/success", authCheck, async (req, res) => {
       givenNames,
       lastName,
       email,
-      adminAccess: roles.length > 0
+      adminAccess: roles.length > 0,
     },
     cookies: req.cookies,
   });

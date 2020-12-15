@@ -26,13 +26,15 @@ class UnitsService {
     @QueryParam("offeringPeriod") offeringPeriod: string,
     @QueryParam("year") year: number
   ) {
-    let params: {[key:string]:any} = {
+    let params: { [key: string]: any } = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
     return this.repo.find(params);
   }

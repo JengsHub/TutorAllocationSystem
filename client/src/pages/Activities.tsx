@@ -11,11 +11,11 @@ import Box from "@material-ui/core/Box";
 
 const Activities = (props: { [key: string]: any }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
-  let params: { [key: string]: any } = {
-    ...props,
-  };
+
   useEffect(() => {
-    // let user: IStaff | undefined;
+    let params: { [key: string]: any } = {
+      ...props,
+    };
     const getActivities = async () => {
       try {
         let query = Object.keys(params)
@@ -45,7 +45,7 @@ const Activities = (props: { [key: string]: any }) => {
     getActivities().then((res) => {
       setActivities(res);
     });
-  }, []);
+  }, [props]);
 
   const timeReducer = (time: String) =>
     time

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import Activities from "./pages/Activities";
+// import Activities from "./pages/Activities";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
 import NotFound from "./pages/NotFound";
-import Preferences from "./pages/Preferences";
+// import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
 import Units from "./pages/Units";

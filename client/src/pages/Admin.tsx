@@ -82,7 +82,7 @@ const CustomTableCell = ({ row, name, onChange }: any) => {
 };
 
 const Admin = () => {
-  const { adminAccess } = React.useContext(AuthContext);
+  // const { adminAccess } = React.useContext(AuthContext);
   const [selectedPeriod, setSelectedPeriod] = useState<any>(null);
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
   const [rows, setRows] = useState<IRow[]>([]);
@@ -186,7 +186,6 @@ const Admin = () => {
   // TODO: fetch data from backend
   const teachingPeriods = [{ year: 2020 }, { year: 2019 }];
   const units = [{ unitCode: "FIT3170" }, { unitCode: "FIT2100" }];
-
 
   return (
     <div id="main">

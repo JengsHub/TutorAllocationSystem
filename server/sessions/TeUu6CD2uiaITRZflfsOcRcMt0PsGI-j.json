@@ -1,1 +1,10 @@
-{"cookie":{"originalMaxAge":86400000,"expires":"2020-12-16T09:41:28.005Z","httpOnly":true,"path":"/"},"passport":{"user":"63cc8687-51dd-4484-af18-178f4e3790be"},"__lastAccess":1608025288005}
+{
+  "cookie": {
+    "originalMaxAge": 86400000,
+    "expires": "2020-12-16T09:41:28.005Z",
+    "httpOnly": true,
+    "path": "/"
+  },
+  "passport": { "user": "63cc8687-51dd-4484-af18-178f4e3790be" },
+  "__lastAccess": 1608025288005
+}

@@ -46,7 +46,7 @@ class AllocationsService {
   public async getMyAllocation(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
-    @QueryParam("unitId") unitId: string,
+    @QueryParam("unitId") unitId: string
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
   ) {
@@ -56,7 +56,7 @@ class AllocationsService {
     const me = req.user as Staff;
     let allocations = await this.repo.find({
       where: {
-        staff: me
+        staff: me,
       },
       relations: ["activity"],
     });
@@ -64,7 +64,7 @@ class AllocationsService {
 
     // if for a request unit, filter by ID
     if (unitId) {
-      allocations = allocations.filter(a => a.activity.unitId === unitId)
+      allocations = allocations.filter((a) => a.activity.unitId === unitId);
     }
 
     // fetch activities associated with users allocations.
