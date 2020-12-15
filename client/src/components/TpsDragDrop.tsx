@@ -78,6 +78,8 @@ class TpsDragDrop extends Component<Props, State> {
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
     let staff_object: any;
+
+    var t0 = performance.now();
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: Units = {
         unitCode: this.allocateList[i][tempList.indexOf("unit")].slice(0, 7),
@@ -194,6 +196,8 @@ class TpsDragDrop extends Component<Props, State> {
         }
       }
     }
+    var t1 = performance.now();
+    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
     this.showSuccess();
   };
 
