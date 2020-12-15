@@ -31,26 +31,26 @@ class RolesService {
 
     role = role.filter((r) => r.title === RoleEnum.ADMIN);
 
-    if (role.length > 0) {
-      let params = {
-        unitCode,
-        staffId,
-        title,
-      };
+    // if (role.length > 0) {
+    let params = {
+      unitCode,
+      staffId,
+      title,
+    };
 
-      let searchOptions = {};
-      for (const [key, value] of Object.entries(params)) {
-        if (value) {
-          // @ts-ignore
-          searchOptions[key] = value;
-        }
+    let searchOptions = {};
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
+        // @ts-ignore
+        searchOptions[key] = value;
       }
-
-      return this.repo.find(searchOptions);
-    } else {
-      // TODO return an error code and message
-      return [];
     }
+
+    return this.repo.find(searchOptions);
+    // } else {
+    // TODO return an error code and message
+    // return [];
+    // }
   }
 
   /**
@@ -85,11 +85,21 @@ class RolesService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ): Promise<Role> {
-    let roleToUpdate = await this.repo.findOne({
-      id: changedRole.id,
-    });
-    roleToUpdate = changedRole;
-    return this.repo.save(roleToUpdate);
+    const user = req.user as Staff;
+    let role = await user.getRoles();
+
+    role = role.filter((r) => r.title === RoleEnum.ADMIN);
+
+    if (role.length > 0) {
+      let roleToUpdate = await this.repo.findOne({
+        id: changedRole.id,
+      });
+      roleToUpdate = changedRole;
+      return this.repo.save(roleToUpdate);
+    } else {
+      // TODO return and error code and message instead
+      return changedRole;
+    }
   }
 
   /**
