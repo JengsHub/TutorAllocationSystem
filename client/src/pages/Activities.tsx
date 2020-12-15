@@ -47,6 +47,19 @@ const Activities = (props: { [key: string]: any }) => {
     });
   }, [props]);
 
+  function EmptyAllocations() {
+    if (activities.length === 0) {
+      return (
+        <TableRow>
+          <TableCell align="right">
+            You currently have no allocations for this unit.{" "}
+          </TableCell>
+        </TableRow>
+      );
+    }
+    return <TableRow />;
+  }
+
   const timeReducer = (time: String) =>
     time
       .split(":")
@@ -71,35 +84,52 @@ const Activities = (props: { [key: string]: any }) => {
     });
   };
 
+  const dayConverter = (day: string) => {
+    if (day === "M") {
+      return "Monday";
+    } else if (day === " T") {
+      return "Tuesday";
+    } else if (day === "W") {
+      return "Wednesday";
+    } else if (day === "Th") {
+      return "Thursday";
+    } else {
+      return "Friday";
+    }
+  };
+
   return (
     <Box>
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>Activity Code</TableCell>
-              <TableCell align="right">Activity Group</TableCell>
-              <TableCell align="right">Campus</TableCell>
-              <TableCell align="right">Day of Week</TableCell>
-              <TableCell align="right">Location </TableCell>
-              <TableCell align="right">Start Time</TableCell>
-              <TableCell align="right">Duration</TableCell>
-              <TableCell align="right">Unit Code</TableCell>
+              <TableCell align="left">Activity Code</TableCell>
+              <TableCell align="left">Activity Group</TableCell>
+              <TableCell align="left">Campus</TableCell>
+              <TableCell align="left">Day of Week</TableCell>
+              <TableCell align="left">Location </TableCell>
+              <TableCell align="left">Start Time</TableCell>
+              <TableCell align="left">Duration</TableCell>
+              <TableCell align="left">Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
+            <EmptyAllocations />
             {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
                   {activity.activityCode}
                 </TableCell>
-                <TableCell align="right">{activity.activityGroup}</TableCell>
-                <TableCell align="right">{activity.campus}</TableCell>
-                <TableCell align="right">{activity.dayOfWeek}</TableCell>
-                <TableCell align="right">{activity.location}</TableCell>
-                <TableCell align="right">{activity.startTime}</TableCell>
-                <TableCell align="right">{activity.duration}</TableCell>
-                <TableCell align="right">{activity.unit.unitCode}</TableCell>
+                <TableCell align="left">{activity.activityGroup}</TableCell>
+                <TableCell align="left">{activity.campus}</TableCell>
+                <TableCell align="left">
+                  {dayConverter(activity.dayOfWeek)}
+                </TableCell>
+                <TableCell align="left">{activity.location}</TableCell>
+                <TableCell align="left">{activity.startTime}</TableCell>
+                <TableCell align="left">{activity.duration}</TableCell>
+                <TableCell align="left">TODO: Display status?</TableCell>
               </TableRow>
             ))}
           </TableBody>

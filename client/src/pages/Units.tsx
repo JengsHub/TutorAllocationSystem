@@ -49,6 +49,9 @@ const Units = () => {
         borderBottom: "unset",
       },
     },
+    header: {
+      fontSize: "large",
+    },
   });
 
   function Row(props: { row: IPreferences }) {
@@ -68,8 +71,8 @@ const Units = () => {
                 row.unit.offeringPeriod}{" "}
             </Button>
           </TableCell>
-          <TableCell align="right">{row.unit.year}</TableCell>
-          <TableCell align="right">{row.unit.aqfTarget}</TableCell>
+          <TableCell align="center">{row.unit.year}</TableCell>
+          <TableCell align="center">{row.unit.aqfTarget}</TableCell>
           <TableCell align="center">{row.preferenceScore}</TableCell>
         </TableRow>
         <TableRow>
@@ -112,17 +115,27 @@ const Units = () => {
     });
   };
 
+  const classes = useRowStyles();
+
   return (
     <div id="main">
       <h1>My Units</h1>
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="a dense table">
+        <Table className={""} aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>Unit Code</TableCell>
-              <TableCell align="right">Year</TableCell>
-              <TableCell align="right">AQF Target</TableCell>
-              <TableCell align="center">Your Preference Score </TableCell>
+              <TableCell className={classes.header} align="left">
+                Unit Code
+              </TableCell>
+              <TableCell className={classes.header} align="center">
+                Year
+              </TableCell>
+              <TableCell className={classes.header} align="center">
+                AQF Target
+              </TableCell>
+              <TableCell className={classes.header} align="center">
+                Your Preference Score{" "}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
