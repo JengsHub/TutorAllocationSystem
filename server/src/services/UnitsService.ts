@@ -26,21 +26,15 @@ class UnitsService {
     @QueryParam("offeringPeriod") offeringPeriod: string,
     @QueryParam("year") year: number
   ) {
-    let params = {
+    let params: {[key:string]:any} = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    let searchOptions = {};
-    // TODO: better way to do this
-    for (const [key, value] of Object.entries(params)) {
-      if (value) {
-        // @ts-ignore
-        searchOptions[key] = value;
-      }
-    }
-    return this.repo.find(searchOptions);
+    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+
+    return this.repo.find(params);
   }
 
   /**

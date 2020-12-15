@@ -36,22 +36,18 @@ class StaffService {
     @QueryParam("year") year: number
   ): Promise<any> {
     // TODO: refactor to handle other Role
-    let params = {
+    
+    let params: {[key: string]: any} = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    let searchOptions: LooseObject = {};
-    for (const [key, value] of Object.entries(params)) {
-      if (value) {
-        searchOptions[key] = value;
-      }
-    }
+    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
 
     const units = await Unit.find({
       select: ["unitCode", "id"],
-      where: searchOptions,
+      where: params,
     });
 
     let staffList = [];
