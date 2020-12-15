@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
+import {
+  Button,
+  Grid,
+  IconButton,
+  makeStyles,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import { Autocomplete } from "@material-ui/lab";
 
 const Activities = () => {
-  const [unitCode, setUnitCode] = useState("");
-  const [activities, setActivities] = useState<IActivity[]>([]);
-  const [searchedActivities, setDisplay] = useState<IActivity[]>([]);
+  const [activities, setActivities] = useState<IActivity[]>([]); //this will set all available activities
+  const [searchedActivities, setSearchedACtivities] = useState<IActivity[]>([]);
+  const [unitCodes] = useState<any[]>([]);
+  const [offeringYear] = useState<any[]>([]);
+  const [selectedYear, setSelectedYear] = useState<any>(null);
+  const [selectedUnit, setSelectedUnit] = useState<any>(null);
+
   const history = useHistory();
 
-  // const [getCandidatePreference setActivityCandidate]
   const getActivities = async () => {
     const res = await fetch("http://localhost:8888/activities");
     return res.json();
@@ -22,22 +33,20 @@ const Activities = () => {
 
   useEffect(() => {
     getActivities().then((res) => {
-      // console.log(res);
       setActivities(res);
+      getChoices(res);
     });
   }, []);
 
-  // this will allow user to search for the unit that they are looking for
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUnitCode(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setDisplay([]);
+  const getChoices = (activities: IActivity[]) => {
     activities.forEach((activity) => {
-      if (activity.unit.unitCode === unitCode) {
-        setDisplay((display) => [...display, activity]);
+      if (!offeringYear.includes(activity.unit.year)) {
+        offeringYear.push(activity.unit.year);
+        console.log(offeringYear);
+      }
+      if (!unitCodes.includes(activity.unit.unitCode)) {
+        unitCodes.push(activity.unit.unitCode);
+        console.log(unitCodes);
       }
     });
   };
@@ -51,24 +60,67 @@ const Activities = () => {
     history.push("candidates/" + activity.id);
   };
 
+  const handleSelect = () => {
+    setSearchedACtivities([]);
+    activities.forEach((activity) => {
+      if (
+        activity.unit.unitCode === selectedUnit &&
+        activity.unit.year === selectedYear
+      ) {
+        setSearchedACtivities((display) => [...display, activity]);
+      }
+    });
+  };
+
   return (
     <div id="main">
       <h1>Activity</h1>
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={offeringYear}
+            getOptionLabel={(option) => option.toString()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Teaching period"
+                variant="outlined"
+              />
+            )}
+            value={selectedYear}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedYear(newValue);
+            }}
+          />
+        </Grid>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type="text"
-            value={unitCode}
-            onChange={handleInputChange}
-            placeholder="Enter a unit code..."
-          ></input>
-          <button className="icon-button" type="submit">
-            Submit
-          </button>
-          <div>{unitCode}</div>
-        </div>
-      </form>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={unitCodes}
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
+              <TextField {...params} label="Unit" variant="outlined" />
+            )}
+            disabled={selectedYear === null}
+            value={selectedUnit}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedUnit(newValue);
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={selectedYear === null}
+            onClick={handleSelect}
+          >
+            SELECT
+          </Button>
+        </Grid>
+      </Grid>
 
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
