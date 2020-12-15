@@ -12,6 +12,7 @@ import {
 import { StaffControllerFactory } from "~/controller";
 import { Unit } from "~/entity";
 import { Role } from "~/entity/Role";
+import { LooseObject } from "~/interfaces/interfaces";
 import { Staff } from "../entity/Staff";
 
 @Path("/staff")
@@ -41,11 +42,9 @@ class StaffService {
       year,
     };
 
-    let searchOptions = {};
-    // TODO: better way to do this
+    let searchOptions: LooseObject = {};
     for (const [key, value] of Object.entries(params)) {
       if (value) {
-        // @ts-ignore
         searchOptions[key] = value;
       }
     }
@@ -57,8 +56,7 @@ class StaffService {
 
     let staffList = [];
     for (const unit of units) {
-      // TODO: any way to avoid any?
-      const data: any = await Role.find({
+      const data: (Role & LooseObject)[] = await Role.find({
         where: {
           unitId: unit.id,
         },
@@ -72,12 +70,11 @@ class StaffService {
     }
 
     const result = staffList?.map((e) => {
-      let result = {
+      let result: LooseObject = {
         role: e.title,
         unitCode: e.unitCode,
       };
       for (const [key, value] of Object.entries(e.staff)) {
-        //@ts-ignore
         result[key] = value;
       }
       return result;
