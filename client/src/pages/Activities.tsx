@@ -8,6 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
+import { makeStyles } from "@material-ui/core";
 
 const Activities = (props: { [key: string]: any }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -47,11 +48,21 @@ const Activities = (props: { [key: string]: any }) => {
     });
   }, [props]);
 
+  const useRowStyles = makeStyles({
+    error: {
+      fontSize: "large",
+      textAlign: "center",
+      border: 0,
+      borderRadius: 5,
+    },
+  });
+
   function EmptyAllocations() {
+    const classes = useRowStyles();
     if (activities.length === 0) {
       return (
         <TableRow>
-          <TableCell align="right">
+          <TableCell className={classes.error} align="center">
             You currently have no allocations for this unit.{" "}
           </TableCell>
         </TableRow>

@@ -8,6 +8,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
+import IconButton from "@material-ui/core/IconButton";
+import DoneIcon from "@material-ui/icons/Done";
+import ClearIcon from "@material-ui/icons/Clear";
 
 const Allocate = (props: { [key: string]: any }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -67,6 +70,21 @@ const Allocate = (props: { [key: string]: any }) => {
     });
   };
 
+  const allocationApproved = (row: string) =>{
+    // TODO: Handle approval
+    console.log(row);
+  }
+
+  const allocationRejected = (row: string) =>{
+    // TODO: Handle approval
+    console.log(row);
+  }
+
+  /*
+  NOTE
+  For the approval tablecell, we could prob display the status e.g. APPROVED/REJECTED is it has been dealt with. 
+  Else, we just provide the buttons for approval/rekjection.
+   */
   return (
     <Box>
       <TableContainer component={Paper}>
@@ -81,6 +99,7 @@ const Allocate = (props: { [key: string]: any }) => {
               <TableCell align="right">Start Time</TableCell>
               <TableCell align="right">Duration</TableCell>
               <TableCell align="right">Allocations</TableCell>
+              <TableCell align="center">Approval</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -96,6 +115,14 @@ const Allocate = (props: { [key: string]: any }) => {
                 <TableCell align="right">{activity.startTime}</TableCell>
                 <TableCell align="right">{activity.duration}</TableCell>
                 <TableCell align="right"> TO-DO </TableCell>
+                <TableCell align="center">
+                  <IconButton onClick={()=>allocationApproved(activity.id)}>
+                    <DoneIcon/>
+                  </IconButton>
+                  <IconButton onClick={()=>allocationRejected(activity.id)}>
+                    <ClearIcon/>
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
