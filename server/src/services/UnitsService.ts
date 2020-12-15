@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, IsNull } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -21,18 +21,26 @@ class UnitsService {
   factory = new UnitControllerFactory();
 
   @GET
-  public getUnits(
+  public async getUnits(
     @QueryParam("unitCode") unitCode: string,
     @QueryParam("offeringPeriod") offeringPeriod: string,
-    @QueryParam("year") year: number
+    @QueryParam("year") year: number,
+    @QueryParam("unassigned") unassigned: boolean
   ) {
-    let params: {[key:string]:any} = {
+    if (unassigned) {
+      const units = await this.repo.find({ relations: ["roles"] });
+      return units.filter(r => {return r.roles.filter(e => e.title === "Lecturer").length == 0});
+    }
+
+    let params: { [key: string]: any } = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
     return this.repo.find(params);
   }

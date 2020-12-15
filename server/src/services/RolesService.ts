@@ -32,21 +32,17 @@ class RolesService {
     role = role.filter((r) => r.title === RoleEnum.ADMIN);
 
     // if (role.length > 0) {
-    let params = {
+    let params: { [key: string]: any } = {
       unitCode,
       staffId,
       title,
     };
 
-    let searchOptions = {};
-    for (const [key, value] of Object.entries(params)) {
-      if (value) {
-        // @ts-ignore
-        searchOptions[key] = value;
-      }
-    }
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
-    return this.repo.find(searchOptions);
+    return this.repo.find(params);
     // } else {
     // TODO return an error code and message
     // return [];
