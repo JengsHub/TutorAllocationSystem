@@ -58,15 +58,13 @@ const Units = () => {
 
   return (
     <div id="main">
-      <h1>Units</h1>
+      <h1>My Units</h1>
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
               <TableCell>Unit Code</TableCell>
               <TableCell align="right">Year</TableCell>
-              <TableCell align="right">Campus</TableCell>
-              <TableCell align="right">Offering</TableCell>
               <TableCell align="right">AQF Target</TableCell>
               <TableCell align="center">Your Preference Score </TableCell>
             </TableRow>
@@ -74,12 +72,16 @@ const Units = () => {
           <TableBody>
             {units.map((row) => (
               <TableRow key={row.id}>
-                <TableCell align="left">{row.unit.unitCode + " "} </TableCell>
+                <TableCell align="left">
+                  {row.unit.unitCode +
+                    "-" +
+                    row.unit.campus +
+                    "-" +
+                    row.unit.offeringPeriod}{" "}
+                </TableCell>
                 <TableCell align="right">{row.unit.year}</TableCell>
-                <TableCell align="right">{row.unit.campus}</TableCell>
-                <TableCell align="right">{row.unit.offeringPeriod}</TableCell>
                 <TableCell align="right">{row.unit.aqfTarget}</TableCell>
-                <TableCell align="right">{row.preferenceScore}</TableCell>
+                <TableCell align="center">{row.preferenceScore}</TableCell>
               </TableRow>
             ))}
           </TableBody>
