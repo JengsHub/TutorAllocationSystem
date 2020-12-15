@@ -10,6 +10,7 @@ import {
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
 import { Request, Response } from "express";
 
@@ -34,26 +35,39 @@ class AllocationsService {
 
   /**
    * Get the allocated activities of the current user
+   * Option to filter by unit id
    * @param req
    * @param res
+   * @param unitId : Optional param to filter allocations by
    */
   @GET
   @IgnoreNextMiddlewares
   @Path("/mine")
   public async getMyAllocation(
     @ContextRequest req: Request,
-    @ContextResponse res: Response
+    @ContextResponse res: Response,
+    @QueryParam("unitId") unitId: string,
+    // @QueryParam("offeringPeriod") offeringPeriod: string,
+    // @QueryParam("year") year: number
   ) {
     authenticationCheck(req, res);
+
+    // Fetch all users allocaitons
     const me = req.user as Staff;
-    const allocations = await this.repo.find({
+    let allocations = await this.repo.find({
       where: {
-        staff: me,
+        staff: me
       },
       relations: ["activity"],
     });
     let activites = [];
 
+    // if for a request unit, filter by ID
+    if (unitId) {
+      allocations = allocations.filter(a => a.activity.unitId === unitId)
+    }
+
+    // fetch activities associated with users allocations.
     for (let id of allocations) {
       activites.push(
         await getRepository("activity").findOne(id.activityId, {

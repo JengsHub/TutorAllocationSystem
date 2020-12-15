@@ -45,13 +45,13 @@ const Units = () => {
 
   const useRowStyles = makeStyles({
     root: {
-      '& > *': {
-        borderBottom: 'unset',
+      "& > *": {
+        borderBottom: "unset",
       },
     },
   });
 
-  function Row(props: { row: IPreferences}){
+  function Row(props: { row: IPreferences }) {
     const { row } = props;
     const [open, setOpen] = useState(false);
     const classes = useRowStyles();
@@ -60,24 +60,37 @@ const Units = () => {
       <React.Fragment>
         <TableRow className={classes.root}>
           <TableCell>
-            <Button onClick={() => setOpen(!open)}>{ row.unit.unitCode + "-" + row.unit.campus + "-" + row.unit.offeringPeriod } </Button>
+            <Button onClick={() => setOpen(!open)}>
+              {row.unit.unitCode +
+                "-" +
+                row.unit.campus +
+                "-" +
+                row.unit.offeringPeriod}{" "}
+            </Button>
           </TableCell>
           <TableCell align="right">{row.unit.year}</TableCell>
           <TableCell align="right">{row.unit.aqfTarget}</TableCell>
           <TableCell align="center">{row.preferenceScore}</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell style = {{paddingBottom: 0, paddingTop: 0}} colSpan={6}>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box margin = {1}>
-                <Typography variant="h6" gutterBottom component="div"> My Allocations for {row.unit.unitCode} </Typography>
-                  <Activities></Activities>
-                </Box>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  {" "}
+                  My Allocations for {row.unit.unitCode}{" "}
+                </Typography>
+                <Activities
+                  {...{
+                    unitId: row.unitId,
+                  }}
+                ></Activities>
+              </Box>
             </Collapse>
           </TableCell>
         </TableRow>
       </React.Fragment>
-    )
+    );
   }
 
   const sortPreferenceScore = (list: IPreferences[], way: String) => {
@@ -114,7 +127,7 @@ const Units = () => {
           </TableHead>
           <TableBody>
             {units.map((row) => (
-              <Row key={row.id} row = {row}/>
+              <Row key={row.id} row={row} />
             ))}
           </TableBody>
         </Table>

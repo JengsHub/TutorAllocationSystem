@@ -9,22 +9,32 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 
-const Activities = () => {
+const Activities = (props: { [key: string]: any }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
-
+  let params: { [key: string]: any } = {
+    ...props,
+  };
   useEffect(() => {
     // let user: IStaff | undefined;
     const getActivities = async () => {
       try {
-        const res = await fetch(`http://localhost:8888/allocations/mine`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": "true",
-          },
-        });
+        let query = Object.keys(params)
+          .filter((key) => params[key] !== undefined)
+          .map((key) => `${key}=${params[key]}`)
+          .join("&");
+
+        const res = await fetch(
+          `http://localhost:8888/allocations/mine?${query}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Credentials": "true",
+            },
+          }
+        );
         return await res.json();
       } catch (e) {
         console.log("Error fetching user activities");
@@ -63,7 +73,7 @@ const Activities = () => {
 
   return (
     <Box>
-        <TableContainer component={Paper}>
+      <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
