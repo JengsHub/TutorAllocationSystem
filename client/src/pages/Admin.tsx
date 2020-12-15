@@ -1,15 +1,11 @@
-import { Autocomplete } from "@material-ui/lab";
-import TextField from "@material-ui/core/TextField";
-import React, { useState } from "react";
-import { AuthContext } from "../session";
-
 import {
   Button,
   Grid,
   IconButton,
-  Input,
   makeStyles,
+  MenuItem,
   Paper,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -17,10 +13,23 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
 import { Clear, Done, Edit } from "@material-ui/icons";
+import { Autocomplete } from "@material-ui/lab";
+import React, { useState } from "react";
+import { RoleEnum } from "../enums/RoleEnum";
+import { AuthContext } from "../session";
 
+/***
+ * TODO:
+ * - Clean up code
+ * - Refactor out the editable table as a component
+ * - Avoid `any` type
+ * - Secure this route only for Admin role
+ */
 interface IRow {
   role: string;
+  roleId: string;
   unitCode: string;
   givenNames: string;
   lastName: string;
@@ -54,16 +63,17 @@ const useStyles = makeStyles((theme) => ({
 const CustomTableCell = ({ row, name, onChange }: any) => {
   const classes = useStyles();
   const { isEditMode } = row;
-  // TODO: use drop down select
   return (
     <TableCell align="left" className={classes.tableCell}>
       {isEditMode ? (
-        <Input
+        <Select
           value={row[name]}
           name={name}
           onChange={(e) => onChange(e, row)}
-          className={classes.input}
-        />
+        >
+          <MenuItem value={RoleEnum.LECTURER}>Lecturer</MenuItem>
+          <MenuItem value={RoleEnum.TA}>TA</MenuItem>
+        </Select>
       ) : (
         row[name]
       )}
@@ -90,6 +100,20 @@ const Admin = () => {
     });
   };
 
+  const onSaveChange = (id: number) => {
+    setRows((state) => {
+      return rows.map((row) => {
+        if (row.id === id) {
+          return { ...row, isEditMode: !row.isEditMode };
+        }
+        return row;
+      });
+    });
+
+    // TODO: send request to update role
+    console.log("TODO: send request to update role");
+  };
+
   const onChange = (e: any, row: IRow) => {
     if (!previous[row.id]) {
       setPrevious((state: any) => ({ ...state, [row.id]: row }));
@@ -109,7 +133,9 @@ const Admin = () => {
   const onRevert = (id: number) => {
     const newRows = rows.map((row) => {
       if (row.id === id) {
-        return previous[id] ? previous[id] : row;
+        let r = previous[id] ? previous[id] : row;
+        r.isEditMode = !r.isEditMode;
+        return r;
       }
       return row;
     });
@@ -118,7 +144,6 @@ const Admin = () => {
       delete state[id];
       return state;
     });
-    onToggleEditMode(id);
   };
 
   const fetchStaff = async () => {
@@ -161,8 +186,11 @@ const Admin = () => {
   // TODO: fetch data from backend
   const teachingPeriods = [{ year: 2020 }, { year: 2019 }];
   const units = [{ unitCode: "FIT3170" }, { unitCode: "FIT2100" }];
+
+
   return (
     <div id="main">
+      <h1> Admin </h1>
       {/* <div>Admin access: {adminAccess.toString()}</div> */}
       <Grid container spacing={3}>
         <Grid item xs={3}>
@@ -230,15 +258,13 @@ const Admin = () => {
                     <>
                       <IconButton
                         aria-label="done"
-                        onClick={() => onToggleEditMode(row.id)}
-                        // TODO: on submit
+                        onClick={() => onSaveChange(row.id)}
                       >
                         <Done />
                       </IconButton>
                       <IconButton
                         aria-label="revert"
                         onClick={() => onRevert(row.id)}
-                        // TODO: revert not working?
                       >
                         <Clear />
                       </IconButton>

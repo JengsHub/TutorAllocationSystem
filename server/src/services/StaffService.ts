@@ -65,6 +65,7 @@ class StaffService {
 
       for (const e of data) {
         e.unitCode = unit.unitCode;
+        e.unitId = unit.id;
       }
       staffList.push(...data);
     }
@@ -72,10 +73,16 @@ class StaffService {
     const result = staffList?.map((e) => {
       let result: LooseObject = {
         role: e.title,
+        roleId: e.id,
         unitCode: e.unitCode,
+        unitId: e.unitId
       };
       for (const [key, value] of Object.entries(e.staff)) {
-        result[key] = value;
+        if (key === "id") {
+          result["staffId"] = value;
+        } else {
+          result[key] = value;
+        }
       }
       return result;
     });
