@@ -16,6 +16,7 @@ class TpsDragDrop extends Component<Props, State> {
   readonly validTypes: String[] = [
     "application/vnd.ms-excel",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv",
   ];
 
   constructor(props: Props) {

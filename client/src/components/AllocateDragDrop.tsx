@@ -18,6 +18,7 @@ class AllocateDragDrop extends Component<Props, State> {
   readonly validTypes: String[] = [
     "application/vnd.ms-excel",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv",
   ];
 
   constructor(props: Props) {
@@ -208,7 +209,7 @@ class AllocateDragDrop extends Component<Props, State> {
     window.removeEventListener("dragover", this.overrideEventDefaults);
     window.removeEventListener("drop", this.overrideEventDefaults);
   }
-  
+
 //render the ui components:
   render() {
     return (
