@@ -6,3 +6,6 @@ server/dist
 
 # Environment files
 .env
+
+# session files
+server/sessions
