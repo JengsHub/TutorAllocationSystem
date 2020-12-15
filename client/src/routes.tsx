@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
+import Lecturing from "./pages/Lecturing";
 import NotFound from "./pages/NotFound";
 // import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
@@ -61,6 +62,11 @@ const Routes = () => {
           path="/unit"
           exact
           component={Units}
+        />
+        <PrivateRoute
+          isAuthenticated={isAuth}
+          path="/lecturing"
+          component={Lecturing}
         />
         <PrivateRoute
           isAuthenticated={isAuth}

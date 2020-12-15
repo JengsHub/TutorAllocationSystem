@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
@@ -16,6 +16,8 @@ export class Allocation extends BaseEntity {
   id!: string;
 
   // TODO: lec,staff,workforce Confirmation(s) booleans or Enum
+  @Column({ default: ApprovalEnum.INIT })
+  approval!: ApprovalEnum;
 
   @ManyToOne(() => Activity, (activity) => activity.allocations, {
     primary: true,

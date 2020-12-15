@@ -20,6 +20,10 @@ const SidebarItems = [
   //   route: "/activities",
   // },
   {
+    name: "Lecturing",
+    route: "/lecturing"
+  },
+  {
     name: "Data Import",
     route: "/dataimport",
   },

@@ -1,3 +1,4 @@
+import { getRepository } from "typeorm";
 import { Staff, Unit, Activity } from "~/entity";
 import { RoleEnum } from "~/enums/RoleEnum";
 
@@ -52,7 +53,10 @@ class LecturerUnitController implements IUnitController {
     throw new Error("Method not implemented.");
   }
   getActivities(unit: Unit, user: Staff): Promise<Activity[]> {
-    throw new Error("Method not implemented.");
+    let activites = getRepository(Activity).find({
+      where: {unit: unit}
+    });
+    return activites;
   }
 }
 

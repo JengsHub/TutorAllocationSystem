@@ -13,6 +13,9 @@ import {
 } from "typescript-rest";
 import { UnitControllerFactory } from "~/controller/index";
 import { Staff } from "~/entity";
+import { Role } from "~/entity/Role";
+import { RoleEnum } from "~/enums/RoleEnum";
+import { authenticationCheck } from "~/helpers/auth";
 import { Unit } from "../entity/Unit";
 
 @Path("/units")
@@ -37,6 +40,30 @@ class UnitsService {
     );
 
     return this.repo.find(params);
+  }
+
+  @GET
+  @Path("/byRole/:title")
+  public async getUnitsByRoll(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @PathParam("title") title: RoleEnum
+  ) {
+    const me = req.user as Staff;
+    const roles: Role[] = await getRepository(Role).find({
+      where: {
+        staff: me,
+        title: title
+      },
+      relations: ["unit"]
+    })
+    let units: Unit[] = [];
+    for (let r of roles) {
+      const unit = (await this.repo.findOne(r.unitId, {relations: ["activities"]}));
+      if (unit) units.push(unit)
+    }
+
+    return units
   }
 
   /**
