@@ -72,7 +72,13 @@ const Units = () => {
           <TableBody>
             {units.map((row) => (
               <TableRow key={row.id}>
-                <TableCell align="left">{row.unit.unitCode + "-"  + row.unit.campus + "-" + row.unit.offeringPeriod} </TableCell>
+                <TableCell align="left">
+                  {row.unit.unitCode +
+                    "-" +
+                    row.unit.campus +
+                    "-" +
+                    row.unit.offeringPeriod}{" "}
+                </TableCell>
                 <TableCell align="right">{row.unit.year}</TableCell>
                 <TableCell align="right">{row.unit.aqfTarget}</TableCell>
                 <TableCell align="center">{row.preferenceScore}</TableCell>
