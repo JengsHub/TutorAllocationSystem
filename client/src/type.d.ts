@@ -1,9 +1,17 @@
+enum DayOfWeek {
+  MONDAY = "M",
+  TUESDAY = "T",
+  WEDNESDAY = "W",
+  THURSDAY = "Th",
+  FRIDAY = "F",
+}
+
 interface IActivity {
   activityCode: string;
   activityGroup: string;
   allocations: IAllocation[];
   campus: string;
-  dayOfWeek: string;
+  dayOfWeek: DayOfWeek;
   duration: number;
   id: string;
   location: string;
@@ -40,7 +48,7 @@ interface IAllocation {
 
 interface IAvailability {
   id: string;
-  day: string;
+  day: DayOfWeek;
   startTime: string;
   endTime: string;
   year: number;

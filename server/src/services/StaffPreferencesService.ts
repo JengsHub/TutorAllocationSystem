@@ -1,7 +1,11 @@
-import { DeleteResult, getRepository } from "typeorm";
+import { Request, Response } from "express";
+import { DeleteResult, getRepository, Like } from "typeorm";
 import {
+  ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
   PATCH,
   Path,
   PathParam,
@@ -10,6 +14,7 @@ import {
 } from "typescript-rest";
 import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
+import { authCheck } from "~/helpers/auth";
 import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
@@ -27,13 +32,40 @@ class StaffPreferencesService {
   }
 
   /**
+   * Return the staff perferences for a current user.
+   * @param req
+   * @param res
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/mine")
+  public async getMyPreference(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    if (!authCheck(req, res)) return;
+    const me = req.user as Staff;
+    const preferences = await this.repo
+      .find({
+        where: {
+          staff: me,
+        },
+        relations: ["unit"],
+      })
+      .then((result) => {
+        return result;
+      });
+    return preferences;
+  }
+
+  /**
    * Returns a staffPreference
    * @param id id for the staffPreference
    * @return StaffPreference single staffPreference
    */
   // TODO: assert return value as Promise<StaffPreference> here
   @GET
-  @Path(":id")
+  @Path("/:id")
   public getStaffPreference(@PathParam("id") id: string) {
     return this.repo.findOne({ id }, { relations: ["staff", "unit"] });
   }

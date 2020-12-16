@@ -4,7 +4,7 @@ const SidebarItems = [
     route: "/",
   },
   {
-    name: "Units",
+    name: "My Units",
     route: "/unit",
   },
   {

@@ -1,15 +1,19 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository } from "typeorm";
 import {
+  ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
-  PATCH,
+  IgnoreNextMiddlewares,
   Path,
   PathParam,
   POST,
   PUT,
 } from "typescript-rest";
 import { AllocationControllerFactory } from "~/controller";
-import { Activity, Staff, Unit } from "~/entity";
+import { Activity, Staff } from "~/entity";
+import { authCheck } from "~/helpers/auth";
 import { Allocation } from "../entity/Allocation";
 
 @Path("/allocations")
@@ -24,6 +28,38 @@ class AllocationsService {
   @GET
   public getAllAllocations(): Promise<Array<Allocation>> {
     return this.repo.find();
+  }
+
+  /**
+   * Get the allocated activities of the current user
+   * @param req
+   * @param res
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/mine")
+  public async getMyAllocation(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    if (!authCheck(req, res)) return;
+    const me = req.user as Staff;
+    const allocations = await this.repo.find({
+      where: {
+        staff: me,
+      },
+      relations: ["activity"],
+    });
+    let activites = [];
+
+    for (let id of allocations) {
+      activites.push(
+        await getRepository("activity").findOne(id.activityId, {
+          relations: ["unit"],
+        })
+      );
+    }
+    return activites;
   }
 
   /**

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -10,20 +11,54 @@ import Paper from "@material-ui/core/Paper";
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]);
 
-  const getActivities = async () => {
-    const res = await fetch("http://localhost:8888/activities");
-    return res.json();
-  };
-
   useEffect(() => {
+    // let user: IStaff | undefined;
+    const getActivities = async () => {
+      try {
+        const res = await fetch(`http://localhost:8888/allocations/mine`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
+          },
+        });
+        return await res.json();
+      } catch (e) {
+        console.log("Error fetching user activities");
+        return [];
+      }
+    };
+
     getActivities().then((res) => {
-      // console.log(res);
       setActivities(res);
     });
   }, []);
 
-  // if(activities.length > 0){
-  // console.log(activities[0].allocations)}
+  const timeReducer = (time: String) =>
+    time
+      .split(":")
+      .map((val) => parseInt(val))
+      .reduce((val, total) => val * 60 + total);
+
+  const sortDayTime = (list: IActivity[]) => {
+    return list.sort((a, b) => {
+      if (
+        Object.values(DayOfWeek).indexOf(a.dayOfWeek) <
+        Object.values(DayOfWeek).indexOf(b.dayOfWeek)
+      ) {
+        return -1;
+      } else if (
+        Object.values(DayOfWeek).indexOf(a.dayOfWeek) >
+        Object.values(DayOfWeek).indexOf(b.dayOfWeek)
+      ) {
+        return 1;
+      } else {
+        return timeReducer(a.startTime) - timeReducer(b.startTime);
+      }
+    });
+  };
 
   return (
     <div id="main">
@@ -43,7 +78,7 @@ const Activities = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map((activity, i) => (
+            {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
                   {activity.activityCode}
