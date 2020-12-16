@@ -53,7 +53,7 @@ export class Staff extends BaseEntity {
   @OneToMany(() => Role, (role) => role.staff)
   roles!: Role[];
 
-  @Column({default: AppRoleEnum.USER})
+  @Column({ default: AppRoleEnum.USER })
   appRole!: AppRoleEnum;
 
   async getRoleForUnit(unit: Unit) {
@@ -62,7 +62,7 @@ export class Staff extends BaseEntity {
       where: {
         staffId: this.id,
         unitId: unit.id,
-      }
+      },
     });
     console.log(role);
     return role;
@@ -76,7 +76,7 @@ export class Staff extends BaseEntity {
       where: {
         staffId: this.id,
         unitId: unitId,
-      }
+      },
     });
     return role.title;
   }

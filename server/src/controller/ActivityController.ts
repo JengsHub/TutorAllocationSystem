@@ -1,7 +1,7 @@
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class ActivityControllerFactory {
-  getController(role: RoleEnum|AppRoleEnum): IActivityController {
+  getController(role: RoleEnum | AppRoleEnum): IActivityController {
     switch (role) {
       case RoleEnum.TA:
         return new TaActivityController();

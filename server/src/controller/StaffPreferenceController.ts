@@ -1,7 +1,7 @@
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class StaffPreferenceControllerFactory {
-  getController(role: RoleEnum|AppRoleEnum): IStaffPreferenceController {
+  getController(role: RoleEnum | AppRoleEnum): IStaffPreferenceController {
     switch (role) {
       case RoleEnum.TA:
         return new TaStaffPreferenceController();

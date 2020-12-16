@@ -1,7 +1,7 @@
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class AvailabilityControllerFactory {
-  getController(role: RoleEnum|AppRoleEnum): IAvailabilityController {
+  getController(role: RoleEnum | AppRoleEnum): IAvailabilityController {
     switch (role) {
       case RoleEnum.TA:
         return new TaAvailabilityController();

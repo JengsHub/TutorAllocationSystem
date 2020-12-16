@@ -10,7 +10,7 @@ import {
   PathParam,
   POST,
   PUT,
-  QueryParam
+  QueryParam,
 } from "typescript-rest";
 import { RoleControllerFactory } from "~/controller/RoleController";
 import { Staff } from "~/entity";
@@ -22,7 +22,7 @@ import { Role } from "../entity/Role";
  * Things to consider:
  * - Should we move this /unit (i.e. UnitService) instead since many of the operations
  * required Role checking which needs the unitId?
- * 
+ *
  * - Error handling and unauthorised access
  * - General API design
  */

@@ -13,7 +13,15 @@ const Units = () => {
 
   const getAllUnits = async () => {
     try {
-      const response = await fetch("http://localhost:8888/units");
+      const response = await fetch("http://localhost:8888/units", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": "true",
+        },
+      });
       const jsonData = await response.json();
       console.log(response);
       console.log(jsonData);

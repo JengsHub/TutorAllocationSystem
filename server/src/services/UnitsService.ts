@@ -38,7 +38,7 @@ class UnitsService {
       (key) => params[key] === undefined && delete params[key]
     );
 
-    return this.repo.find(params);
+    return Unit.find(params);
   }
 
   /**
@@ -100,7 +100,9 @@ class UnitsService {
     const user = req.user as Staff;
     const unit = await Unit.findOneOrFail({ id });
 
-    const role = user.isAdmin() ? AppRoleEnum.ADMIN : (await user.getRoleForUnit(unit)).title;
+    const role = user.isAdmin()
+      ? AppRoleEnum.ADMIN
+      : (await user.getRoleForUnit(unit)).title;
     const controller = this.factory.getController(role);
     return controller.getActivities(unit, user);
   }

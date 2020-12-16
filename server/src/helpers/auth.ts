@@ -16,17 +16,18 @@ passport.deserializeUser(async (id: string, done) => {
   done(null, user);
 });
 
-export const authCheck = (req: Request, res: Response) => {
+export const authCheck = (req: Request, res: Response): boolean => {
   if (!req.user) {
     req.logout();
     req.session.cookie.expires = new Date(); // delete session cookie
     res.clearCookie("sid");
-    return res.status(401).json({
+    res.status(401).json({
       authenticated: false,
       message: "user has not been authenticated",
     });
-    // res.redirect("/auth/login");
+    return false;
   }
+  return true;
 };
 
 // middleware to check if the current user is login
@@ -35,7 +36,16 @@ export const authCheckMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  authCheck(req, res);
+  if (!authCheck(req, res)) return;
+  // if (!req.user) {
+  //   req.logout();
+  //   req.session.cookie.expires = new Date(); // delete session cookie
+  //   res.clearCookie("sid");
+  //   return res.status(401).json({
+  //     authenticated: false,
+  //     message: "user has not been authenticated",
+  //   });
+  // }
   next();
 };
 

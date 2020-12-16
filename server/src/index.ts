@@ -70,6 +70,7 @@ app.use("/auth", authRoutes);
 // Middleware to require authentication for all routes in /units
 app.use("/units", authCheckMiddleware);
 app.use("/roles", authCheckMiddleware);
+// app.use("/activities", authCheckMiddleware);
 
 Server.buildServices(app);
 

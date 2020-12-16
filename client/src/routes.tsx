@@ -36,16 +36,18 @@ const Routes = () => {
       } else {
         setAuth(true);
         const resJson = await authRes.json();
-        setAdminAccess(resJson.user.adminAccess)
+        setAdminAccess(resJson.user.adminAccess);
       }
     };
     fetchAuthState();
   }, [params]);
 
-  console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`)
+  console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`);
 
   return (
-    <AuthContext.Provider value={{ isAuth, setAuth, adminAccess, setAdminAccess }}>
+    <AuthContext.Provider
+      value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
+    >
       <Sidebar />
       <Switch>
         <PrivateRoute

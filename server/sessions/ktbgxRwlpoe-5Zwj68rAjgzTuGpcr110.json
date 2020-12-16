@@ -1,10 +1,10 @@
 {
   "cookie": {
     "originalMaxAge": 86400000,
-    "expires": "2020-12-17T07:14:01.558Z",
+    "expires": "2020-12-17T10:00:40.170Z",
     "httpOnly": true,
     "path": "/"
   },
   "passport": { "user": "edf6aa97-6797-4c37-9251-40b487c75b1a" },
-  "__lastAccess": 1608102841558
+  "__lastAccess": 1608112840170
 }

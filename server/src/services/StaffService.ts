@@ -29,21 +29,31 @@ class StaffService {
   //   return this.repo.find();
   // }
 
+  /**
+   * Note:
+   * - This is currently using Role to check if a Staff member belongs to a Unit
+   * This should probably be changed to or used along side with StaffPreference
+   * - This currently won't return users with Admin access
+   * @param unitCode
+   * @param offeringPeriod
+   * @param year
+   */
   @GET
-  public async getStaffUnit(
+  public async getStaffByUnit(
     @QueryParam("unitCode") unitCode: string,
     @QueryParam("offeringPeriod") offeringPeriod: string,
     @QueryParam("year") year: number
   ): Promise<any> {
     // TODO: refactor to handle other Role
-    
-    let params: {[key: string]: any} = {
+    let params: { [key: string]: any } = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
     const units = await Unit.find({
       select: ["unitCode", "id"],
@@ -71,7 +81,7 @@ class StaffService {
         role: e.title,
         roleId: e.id,
         unitCode: e.unitCode,
-        unitId: e.unitId
+        unitId: e.unitId,
       };
       for (const [key, value] of Object.entries(e.staff)) {
         if (key === "id") {
@@ -82,7 +92,7 @@ class StaffService {
       }
       return result;
     });
-    console.log(result);
+    // console.log(result);
     return result;
   }
 

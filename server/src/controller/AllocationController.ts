@@ -1,7 +1,7 @@
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class AllocationControllerFactory {
-  getController(role: RoleEnum|AppRoleEnum): IAllocationController {
+  getController(role: RoleEnum | AppRoleEnum): IAllocationController {
     switch (role) {
       case RoleEnum.TA:
         return new TaAllocationController();
