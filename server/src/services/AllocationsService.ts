@@ -19,6 +19,7 @@ import { Activity, Staff, Unit } from "~/entity";
 import { Allocation } from "../entity/Allocation";
 import { authenticationCheck } from "~/helpers/auth";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
+import { app } from "..";
 
 @Path("/allocations")
 class AllocationsService {
@@ -47,7 +48,8 @@ class AllocationsService {
   public async getMyAllocation(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
-    @QueryParam("unitId") unitId: string
+    @QueryParam("unitId") unitId: string,
+    @QueryParam("approval") approval: ApprovalEnum
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
   ) {
@@ -61,22 +63,20 @@ class AllocationsService {
       },
       relations: ["activity"],
     });
-    let activites = [];
 
-    // if for a request unit, filter by ID
     if (unitId) {
       allocations = allocations.filter((a) => a.activity.unitId === unitId);
     }
-
-    // fetch activities associated with users allocations.
-    for (let id of allocations) {
-      activites.push(
-        await getRepository("activity").findOne(id.activityId, {
-          relations: ["unit"],
-        })
+    console.log(allocations);
+    if (approval) {
+      allocations = allocations.filter(
+        (a) =>
+          Object.values(ApprovalEnum).indexOf(a.approval) >=
+          Object.values(ApprovalEnum).indexOf(approval)
       );
     }
-    return activites;
+    console.log(allocations);
+    return allocations;
   }
 
   /**

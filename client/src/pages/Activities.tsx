@@ -8,16 +8,29 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
-import { makeStyles } from "@material-ui/core";
+import ClearIcon from "@material-ui/icons/Clear";
+import DoneIcon from "@material-ui/icons/Done";
+import { IconButton, makeStyles } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import DatabaseFinder from "../apis/DatabaseFinder";
+import { ApprovalEnum } from "../enums/ApprovalEnum";
 
 const Activities = (props: { [key: string]: any }) => {
-  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [allocations, setAllocations] = useState<
+    (IAllocation & { [key: string]: any })[]
+  >([]);
+
+  const [hasChanged, setChanged] = useState<Boolean>(false);
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openRejected, setOpenRejected] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
     let params: { [key: string]: any } = {
       ...props,
     };
-    const getActivities = async () => {
+    const getAllocations = async () => {
       try {
         let query = Object.keys(params)
           .filter((key) => params[key] !== undefined)
@@ -43,10 +56,10 @@ const Activities = (props: { [key: string]: any }) => {
       }
     };
 
-    getActivities().then((res) => {
-      setActivities(res);
+    getAllocations().then((res) => {
+      setAllocations(res);
     });
-  }, [props]);
+  }, [props, hasChanged]);
 
   const useRowStyles = makeStyles({
     error: {
@@ -59,7 +72,7 @@ const Activities = (props: { [key: string]: any }) => {
 
   function EmptyAllocations() {
     const classes = useRowStyles();
-    if (activities.length === 0) {
+    if (allocations.length === 0) {
       return (
         <TableRow>
           <TableCell className={classes.error} align="center">
@@ -71,41 +84,110 @@ const Activities = (props: { [key: string]: any }) => {
     return <TableRow />;
   }
 
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+    setOpenRejected(false);
+  };
+
   const timeReducer = (time: String) =>
     time
       .split(":")
       .map((val) => parseInt(val))
       .reduce((val, total) => val * 60 + total);
 
-  const sortDayTime = (list: IActivity[]) => {
+  const sortDayTime = (list: (IAllocation & { [key: string]: any })[]) => {
     return list.sort((a, b) => {
       if (
-        Object.values(DayOfWeek).indexOf(a.dayOfWeek) <
-        Object.values(DayOfWeek).indexOf(b.dayOfWeek)
+        Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) <
+        Object.values(DayOfWeek).indexOf(b.activity.dayOfWeek)
       ) {
         return -1;
       } else if (
-        Object.values(DayOfWeek).indexOf(a.dayOfWeek) >
-        Object.values(DayOfWeek).indexOf(b.dayOfWeek)
+        Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) >
+        Object.values(DayOfWeek).indexOf(b.activity.ayOfWeek)
       ) {
         return 1;
       } else {
-        return timeReducer(a.startTime) - timeReducer(b.startTime);
+        return (
+          timeReducer(a.activity.startTime) - timeReducer(b.activity.startTime)
+        );
       }
     });
   };
 
-  const dayConverter = (day: string) => {
-    if (day === "M") {
-      return "Monday";
-    } else if (day === " T") {
-      return "Tuesday";
-    } else if (day === "W") {
-      return "Wednesday";
-    } else if (day === "Th") {
-      return "Thursday";
+  const dayConverter = (day: DayOfWeek) => {
+    switch (day) {
+      case DayOfWeek.MONDAY:
+        return "Monday";
+      case DayOfWeek.TUESDAY:
+        return "Tuesday";
+      case DayOfWeek.WEDNESDAY:
+        return "Wednesday";
+      case DayOfWeek.THURSDAY:
+        return "Thursday";
+      case DayOfWeek.FRIDAY:
+        return "Friday";
+      default:
+        return "Invalid Day";
+    }
+  };
+
+  const allocationApproved = async (allocation: IAllocation) => {
+    const result = await DatabaseFinder.post(
+      `http://localhost:8888/allocations/approval/${allocation.id}/TA`
+    );
+    if (result.statusText === "OK") {
+      setChanged(true);
+      setOpenApproval(true);
     } else {
-      return "Friday";
+      setOpenError(true);
+      console.error("error updating");
+    }
+  };
+
+  const allocationRejected = async (allocation: IAllocation) => {
+    // TODO: Handle approval
+    const result = await DatabaseFinder.delete(
+      `http://localhost:8888/allocations/${allocation.id}`
+    );
+    if (result.statusText === "OK") {
+      setChanged(true);
+    } else {
+      setOpenError(true);
+      setOpenRejected(true);
+      console.error("error deleting");
+    }
+  };
+
+  const approvalStatus = (allocation: IAllocation & { [key: string]: any }) => {
+    switch (allocation.approval) {
+      case ApprovalEnum.INIT:
+        return "You Shouldn't See Me";
+      case ApprovalEnum.LECTURER:
+        return (
+          <>
+            <IconButton onClick={() => allocationApproved(allocation)}>
+              <DoneIcon />
+            </IconButton>
+            <IconButton onClick={() => allocationRejected(allocation)}>
+              <ClearIcon />
+            </IconButton>
+          </>
+        );
+      case ApprovalEnum.TA:
+        return "Accepted Offer";
+      case ApprovalEnum.WORKFORCE:
+        return "Accepted and Confirmed by WorkForce";
+      default:
+        return "Error With Approval Status";
     }
   };
 
@@ -127,25 +209,56 @@ const Activities = (props: { [key: string]: any }) => {
           </TableHead>
           <TableBody>
             <EmptyAllocations />
-            {sortDayTime(activities).map((activity, i) => (
+            {sortDayTime(allocations).map((allocation, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {activity.activityCode}
+                  {allocation.activity.activityCode}
                 </TableCell>
-                <TableCell align="left">{activity.activityGroup}</TableCell>
-                <TableCell align="left">{activity.campus}</TableCell>
                 <TableCell align="left">
-                  {dayConverter(activity.dayOfWeek)}
+                  {allocation.activity.activityGroup}
                 </TableCell>
-                <TableCell align="left">{activity.location}</TableCell>
-                <TableCell align="left">{activity.startTime}</TableCell>
-                <TableCell align="left">{activity.duration}</TableCell>
-                <TableCell align="left">TODO: Display status?</TableCell>
+                <TableCell align="left">{allocation.activity.campus}</TableCell>
+                <TableCell align="left">
+                  {dayConverter(allocation.activity.dayOfWeek)}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.location}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.startTime}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.duration}
+                </TableCell>
+                <TableCell align="left">{approvalStatus(allocation)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have approved an allocation.
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={openRejected}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have rejected an allocation.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
