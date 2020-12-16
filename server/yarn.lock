@@ -584,13 +584,6 @@
     "@types/qs" "*"
     "@types/range-parser" "*"
 
-"@types/express-session@*":
-  version "1.17.3"
-  resolved "https://registry.yarnpkg.com/@types/express-session/-/express-session-1.17.3.tgz#4a37c5c4428b8f922ac8ac1cb4bd9190a4d2b097"
-  integrity sha512-57DnyxiqClXOIjoCgeKCUYfKxBPOlOY/k+l1TPK+7bSwyiPTrS5FIk1Ycql7twk4wO7P5lfOVy6akDGiaMSLfw==
-  dependencies:
-    "@types/express" "*"
-
 "@types/express-session@^1.17.1":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@types/express-session/-/express-session-1.17.1.tgz#5d69dba9f31be7ffe1db8da3da432213688f59ba"
@@ -733,14 +726,6 @@
   dependencies:
     "@types/mime" "*"
     "@types/node" "*"
-
-"@types/session-file-store@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@types/session-file-store/-/session-file-store-1.2.1.tgz#701d84cc1e7d9ed0e6023a4b1f14d9e4c83e4d2f"
-  integrity sha512-7k4fs9ZMsZvVREw76GT9STL37dvDogDaL5CYj4QAssbixRm6Q8g9d+/gmhVK7L7XsgvEPSkj9VZlYTLMmoKORw==
-  dependencies:
-    "@types/express" "*"
-    "@types/express-session" "*"
 
 "@types/stack-utils@^2.0.0":
   version "2.0.0"
@@ -5550,6 +5535,11 @@ typeorm-seeding@^1.6.1:
     ora "4.0.3"
     reflect-metadata "0.1.13"
     yargs "15.3.1"
+
+typeorm-store@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/typeorm-store/-/typeorm-store-1.2.0.tgz#1f6a552fa635a4ee21401891e62cbd53f02dad0a"
+  integrity sha512-HdNV8OZcSS1ETSxXn8b0UsZc3E+S+KjOGRN0rPGiSUP74LylUEehTzMrgAekZw7h4zfAtfqqgpEILZIhoTbrZA==
 
 typeorm@^0.2.28:
   version "0.2.29"
