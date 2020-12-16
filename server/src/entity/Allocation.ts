@@ -7,6 +7,7 @@ import {
   RelationId,
 } from "typeorm";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 

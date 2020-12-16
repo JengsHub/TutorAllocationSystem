@@ -59,7 +59,6 @@ export class Staff extends BaseEntity {
         unitId: unit.id,
       },
     });
-    console.log(role);
     return role;
   }
 

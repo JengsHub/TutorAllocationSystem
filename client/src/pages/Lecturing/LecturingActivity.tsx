@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import { DayOfWeek } from "../../enums/DayOfWeek";
+import { ApprovalEnum } from "../../enums/ApprovalEnum";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -11,9 +12,11 @@ import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
+import DatabaseFinder from "../../apis/DatabaseFinder";
 
-const Allocate = (props: { [key: string]: any }) => {
+const LecturingActivity = (props: { [key: string]: any }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
+  const [hasChanged, setChanged] = useState<Boolean>(false);
 
   useEffect(() => {
     let params: { [key: string]: any } = {
@@ -44,7 +47,7 @@ const Allocate = (props: { [key: string]: any }) => {
     getActivities().then((res) => {
       setActivities(res);
     });
-  }, [props]);
+  }, [props, hasChanged]);
 
   const timeReducer = (time: String) =>
     time
@@ -70,14 +73,67 @@ const Allocate = (props: { [key: string]: any }) => {
     });
   };
 
-  const allocationApproved = (row: string) =>{
+  const allocationApproved = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    console.log(row);
-  }
+    await DatabaseFinder.post(
+      `http://localhost:8888/allocations/approval/${allocation.id}/Lecturer`
+    );
+    setChanged(true);
+  };
 
-  const allocationRejected = (row: string) =>{
+  const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    console.log(row);
+    await DatabaseFinder.delete(
+      `http://localhost:8888/allocations/${allocation.id}`
+    );
+    setChanged(true);
+  };
+
+  function ApprovalCell(props: { allocation: IAllocation }) {
+    const { allocation } = props;
+    let approval = allocation.approval;
+    switch (approval) {
+      case ApprovalEnum.INIT:
+        return (
+          <>
+            <IconButton onClick={() => allocationApproved(allocation)}>
+              <DoneIcon />
+            </IconButton>
+            <IconButton onClick={() => allocationRejected(allocation)}>
+              <ClearIcon />
+            </IconButton>
+          </>
+        );
+      case ApprovalEnum.LECTURER:
+        return (
+          <>
+            {" "}
+            <div> Waiting on TA response to offer </div>
+          </>
+        );
+      case ApprovalEnum.TA:
+        return (
+          <>
+            {" "}
+            <div> TA Has Accepted </div>{" "}
+          </>
+        );
+      case ApprovalEnum.WORKFORCE:
+        return (
+          <>
+            {" "}
+            <div> Work-Force Have Confirmed </div>{" "}
+          </>
+        );
+      default:
+        console.error("Unknown approval");
+        return (
+          <>
+            {" "}
+            <div>Errror With Allocations Approval</div>{" "}
+          </>
+        );
+    }
   }
 
   /*
@@ -98,8 +154,7 @@ const Allocate = (props: { [key: string]: any }) => {
               <TableCell align="right">Location </TableCell>
               <TableCell align="right">Start Time</TableCell>
               <TableCell align="right">Duration</TableCell>
-              <TableCell align="right">Allocations</TableCell>
-              <TableCell align="center">Approval</TableCell>
+              <TableCell align="center">Allocations</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -114,14 +169,25 @@ const Allocate = (props: { [key: string]: any }) => {
                 <TableCell align="right">{activity.location}</TableCell>
                 <TableCell align="right">{activity.startTime}</TableCell>
                 <TableCell align="right">{activity.duration}</TableCell>
-                <TableCell align="right"> TO-DO </TableCell>
-                <TableCell align="center">
-                  <IconButton onClick={()=>allocationApproved(activity.id)}>
-                    <DoneIcon/>
-                  </IconButton>
-                  <IconButton onClick={()=>allocationRejected(activity.id)}>
-                    <ClearIcon/>
-                  </IconButton>
+                <TableCell align="left">
+                  {activity.allocations.length > 0 ? (
+                    activity.allocations.map(
+                      (allocation: IAllocation & { [key: string]: any }, j) => (
+                        <TableRow key={j}>
+                          <TableCell>
+                            {" "}
+                            {allocation.staff.givenNames}{" "}
+                            {allocation.staff.lastName}
+                          </TableCell>
+                          <TableCell align="right">
+                            <ApprovalCell allocation={allocation} />
+                          </TableCell>
+                        </TableRow>
+                      )
+                    )
+                  ) : (
+                    <TableCell> No Allocations Yet </TableCell>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
@@ -132,4 +198,4 @@ const Allocate = (props: { [key: string]: any }) => {
   );
 };
 
-export default Allocate;
+export default LecturingActivity;

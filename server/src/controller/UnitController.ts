@@ -52,10 +52,17 @@ class LecturerUnitController implements IUnitController {
   getUnits(user: Staff): Promise<Unit[]> {
     throw new Error("Method not implemented.");
   }
-  getActivities(unit: Unit, user: Staff): Promise<Activity[]> {
-    let activites = getRepository(Activity).find({
-      where: {unit: unit}
+  async getActivities(unit: Unit, user: Staff): Promise<Activity[]> {
+    let activites = await getRepository(Activity).find({
+      where: { unit: unit },
+      relations: ["allocations"],
     });
+    for (let activity of activites) {
+      for (let allocation of activity.allocations) {
+        let staff = await getRepository(Staff).findOne(allocation.staffId);
+        if (staff) allocation.staff = staff;
+      }
+    }
     return activites;
   }
 }

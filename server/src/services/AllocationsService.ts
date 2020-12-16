@@ -18,6 +18,7 @@ import { AllocationControllerFactory } from "~/controller";
 import { Activity, Staff, Unit } from "~/entity";
 import { Allocation } from "../entity/Allocation";
 import { authenticationCheck } from "~/helpers/auth";
+import { ApprovalEnum } from "~/enums/ApprovalEnum";
 
 @Path("/allocations")
 class AllocationsService {
@@ -108,6 +109,25 @@ class AllocationsService {
     });
     newRecord.activity = activity;
     return this.repo.save(this.repo.create(newRecord));
+  }
+
+  @POST
+  @Path("approval/:id/:approval")
+  public async updateApproval(
+    @PathParam("id") id: string,
+    @PathParam("approval") approval: ApprovalEnum
+  ) {
+    console.log(id, approval);
+    let allocation = await this.repo.findOne({ where: { id: id } });
+    console.log(allocation);
+    if (allocation) {
+      allocation.approval = approval;
+      return await this.repo.update(
+        { id: allocation.id },
+        { approval: approval }
+      );
+    }
+    console.error("No allocation by this id");
   }
 
   /**

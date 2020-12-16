@@ -5,7 +5,7 @@ import Sidebar from "./components/Sidebar";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
-import Lecturing from "./pages/Lecturing";
+import Lecturing from "./pages/Lecturing/Lecturing";
 import NotFound from "./pages/NotFound";
 // import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";

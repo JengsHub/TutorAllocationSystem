@@ -11,7 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import Collapse from "@material-ui/core/Collapse";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
-import Allocate from "./Allocate";
+import LecturingActivity from "./LecturingActivity";
 
 const Lecturing = () => {
   const [units, setUnits] = useState<IUnit[] & { [key: string]: any }>([]);
@@ -75,11 +75,11 @@ const Lecturing = () => {
                   {" "}
                   The activites of {row.unitCode}{" "}
                 </Typography>
-                <Allocate
+                <LecturingActivity
                   {...{
                     unitId: row.id,
                   }}
-                ></Allocate>
+                ></LecturingActivity>
               </Box>
             </Collapse>
           </TableCell>
