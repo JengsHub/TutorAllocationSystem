@@ -160,9 +160,9 @@ const Activities = (props: { [key: string]: any }) => {
     );
     if (result.statusText === "OK") {
       setChanged(true);
+      setOpenRejected(true);
     } else {
       setOpenError(true);
-      setOpenRejected(true);
       console.error("error deleting");
     }
   };

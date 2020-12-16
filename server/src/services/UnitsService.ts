@@ -54,17 +54,19 @@ class UnitsService {
     const roles: Role[] = await getRepository(Role).find({
       where: {
         staff: me,
-        title: title
+        title: title,
       },
-      relations: ["unit"]
-    })
+      relations: ["unit"],
+    });
     let units: Unit[] = [];
     for (let r of roles) {
-      const unit = (await this.repo.findOne(r.unitId, {relations: ["activities"]}));
-      if (unit) units.push(unit)
+      const unit = await this.repo.findOne(r.unitId, {
+        relations: ["activities"],
+      });
+      if (unit) units.push(unit);
     }
 
-    return units
+    return units;
   }
 
   /**

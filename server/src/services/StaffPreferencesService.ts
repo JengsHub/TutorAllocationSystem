@@ -12,10 +12,6 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
-<<<<<<< HEAD
-import { Request, Response } from "express";
-=======
->>>>>>> 7ff0f2d5168823d9934144797cd0ec91d7708bf8
 import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
 import { authCheck } from "~/helpers/auth";
