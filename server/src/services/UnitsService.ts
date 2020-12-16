@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, IsNull } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -22,10 +22,11 @@ class UnitsService {
   factory = new UnitControllerFactory();
 
   @GET
-  public getUnits(
+  public async getUnits(
     @QueryParam("unitCode") unitCode: string,
     @QueryParam("offeringPeriod") offeringPeriod: string,
-    @QueryParam("year") year: number
+    @QueryParam("year") year: number,
+    @QueryParam("unassigned") unassigned: boolean
   ) {
     let params: { [key: string]: any } = {
       unitCode,
