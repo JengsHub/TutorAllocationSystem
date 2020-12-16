@@ -228,7 +228,7 @@ const Activities = (props: { [key: string]: any }) => {
                   {allocation.activity.startTime}
                 </TableCell>
                 <TableCell align="left">
-                  {allocation.activity.duration}
+                  {allocation.activity.duration + " hour(s)"}
                 </TableCell>
                 <TableCell align="left">{approvalStatus(allocation)}</TableCell>
               </TableRow>

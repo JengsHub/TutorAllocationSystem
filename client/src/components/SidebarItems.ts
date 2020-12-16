@@ -7,10 +7,10 @@ const SidebarItems = [
     name: "My Units",
     route: "/unit",
   },
-  {
-    name: "Staff",
-    route: "/staff",
-  },
+  // {
+  //   name: "Staff",
+  //   route: "/staff",
+  // },
   // {
   //   name: "Preferences",
   //   route: "/preferences",

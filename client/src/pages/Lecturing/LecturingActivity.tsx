@@ -10,6 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
+import { makeStyles } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
 import DatabaseFinder from "../../apis/DatabaseFinder";
@@ -118,6 +119,46 @@ const LecturingActivity = (props: { [key: string]: any }) => {
     }
   };
 
+  const useRowStyles = makeStyles({
+    error: {
+      fontSize: "large",
+      textAlign: "center",
+      border: 0,
+      borderRadius: 5,
+    },
+  });
+
+  function EmptyAllocations() {
+    const classes = useRowStyles();
+    if (activities.length === 0) {
+      return (
+        <TableRow>
+          <TableCell className={classes.error} align="center">
+            No activity has been allocated for this unit.{" "}
+          </TableCell>
+        </TableRow>
+      );
+    }
+    return <TableRow />;
+  }
+
+  const dayConverter = (day: DayOfWeek) => {
+    switch (day) {
+      case DayOfWeek.MONDAY:
+        return "Monday";
+      case DayOfWeek.TUESDAY:
+        return "Tuesday";
+      case DayOfWeek.WEDNESDAY:
+        return "Wednesday";
+      case DayOfWeek.THURSDAY:
+        return "Thursday";
+      case DayOfWeek.FRIDAY:
+        return "Friday";
+      default:
+        return "Invalid Day";
+    }
+  };
+
   function ApprovalCell(props: { allocation: IAllocation }) {
     const { allocation } = props;
     let approval = allocation.approval;
@@ -187,6 +228,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
             </TableRow>
           </TableHead>
           <TableBody>
+            <EmptyAllocations />
             {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
@@ -194,10 +236,14 @@ const LecturingActivity = (props: { [key: string]: any }) => {
                 </TableCell>
                 <TableCell align="left">{activity.activityGroup}</TableCell>
                 <TableCell align="left">{activity.campus}</TableCell>
-                <TableCell align="left">{activity.dayOfWeek}</TableCell>
+                <TableCell align="left">
+                  {dayConverter(activity.dayOfWeek)}
+                </TableCell>
                 <TableCell align="left">{activity.location}</TableCell>
                 <TableCell align="left">{activity.startTime}</TableCell>
-                <TableCell align="left">{activity.duration}</TableCell>
+                <TableCell align="left">
+                  {activity.duration + " hour(s)"}
+                </TableCell>
                 <TableCell align="left">
                   {activity.allocations.length > 0 ? (
                     activity.allocations.map(
@@ -205,12 +251,12 @@ const LecturingActivity = (props: { [key: string]: any }) => {
                         <Table key={j}>
                           <TableBody>
                             <TableRow>
-                              <TableCell align="left">
+                              <TableCell align="left" width="50%">
                                 {" "}
                                 {allocation.staff.givenNames}{" "}
                                 {allocation.staff.lastName}
                               </TableCell>
-                              <TableCell align="left">
+                              <TableCell align="left" width="50%">
                                 <ApprovalCell allocation={allocation} />
                               </TableCell>
                             </TableRow>
