@@ -31,11 +31,13 @@ interface IRow {
   role: string;
   roleId: string;
   unitCode: string;
+  unitId: string;
   givenNames: string;
   lastName: string;
   email: string;
   id: number;
   isEditMode: boolean;
+  staffId: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -100,7 +102,7 @@ const Admin = () => {
     });
   };
 
-  const onSaveChange = (id: number) => {
+  const onSaveChange = async (id: number) => {
     setRows((state) => {
       return rows.map((row) => {
         if (row.id === id) {
@@ -112,6 +114,25 @@ const Admin = () => {
 
     // TODO: send request to update role
     console.log("TODO: send request to update role");
+    const data = rows.find((r) => r.id === id);
+    if (data) {
+      const res = await fetch(
+        `http://localhost:8888/roles/unit/${data.unitId}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          body: JSON.stringify({
+            title: data.role,
+            staffId: data.staffId
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
+          },
+        }
+      );
+    }
   };
 
   const onChange = (e: any, row: IRow) => {
@@ -186,7 +207,6 @@ const Admin = () => {
   // TODO: fetch data from backend
   const teachingPeriods = [{ year: 2020 }, { year: 2019 }];
   const units = [{ unitCode: "FIT3170" }, { unitCode: "FIT2100" }];
-
 
   return (
     <div id="main">

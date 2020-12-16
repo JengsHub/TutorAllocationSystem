@@ -14,8 +14,8 @@ import authRoutes from "./services/AuthService";
 import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
-import { authCheck } from "./helpers/auth";
-import { roleControlAccess } from "./helpers/controlAccess";
+import { authCheckMiddleware } from "./helpers/auth";
+import { hasAdminAccessMiddleware } from "./helpers/controlAccess";
 const FileStore = require("session-file-store")(session);
 
 export const app: express.Application = express();
@@ -68,9 +68,8 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 
 // Middleware to require authentication for all routes in /units
-app.use("/units", authCheck);
-
-app.use("/roles", roleControlAccess);
+app.use("/units", authCheckMiddleware);
+app.use("/roles", authCheckMiddleware);
 
 Server.buildServices(app);
 

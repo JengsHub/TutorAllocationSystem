@@ -1,13 +1,13 @@
-import { RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class StaffControllerFactory {
-  getController(role: RoleEnum): IStaffController {
+  getController(role: RoleEnum|AppRoleEnum): IStaffController {
     switch (role) {
       case RoleEnum.TA:
         return new TaStaffController();
       case RoleEnum.LECTURER:
         return new LecturerStaffController();
-      case RoleEnum.ADMIN:
+      case AppRoleEnum.ADMIN:
         return new AdminStaffController();
       default:
         throw new Error("Cannot create controller: invalid Role");

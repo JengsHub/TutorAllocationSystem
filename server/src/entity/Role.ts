@@ -8,12 +8,14 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  Unique,
 } from "typeorm";
 import { RoleEnum } from "~/enums/RoleEnum";
 import { Staff } from ".";
 import { Unit } from "./Unit";
 
 @Entity()
+@Unique(["unitId", "staffId"])
 export class Role extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -25,7 +27,7 @@ export class Role extends BaseEntity {
   @JoinColumn({ name: "unitId" })
   unit!: Unit;
 
-  @Column({ nullable: true })
+  @Column()
   unitId!: string;
 
   @ManyToOne(() => Staff)

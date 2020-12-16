@@ -13,6 +13,7 @@ import {
 } from "typescript-rest";
 import { UnitControllerFactory } from "~/controller/index";
 import { Staff } from "~/entity";
+import { AppRoleEnum } from "~/enums/RoleEnum";
 import { Unit } from "../entity/Unit";
 
 @Path("/units")
@@ -26,13 +27,15 @@ class UnitsService {
     @QueryParam("offeringPeriod") offeringPeriod: string,
     @QueryParam("year") year: number
   ) {
-    let params: {[key:string]:any} = {
+    let params: { [key: string]: any } = {
       unitCode,
       offeringPeriod,
       year,
     };
 
-    Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
     return this.repo.find(params);
   }
@@ -95,8 +98,9 @@ class UnitsService {
   ) {
     const user = req.user as Staff;
     const unit = await Unit.findOneOrFail({ id });
-    const role = await user.getRoleForUnit(unit);
-    const controller = this.factory.getController(role.title);
+
+    const role = user.isAdmin() ? AppRoleEnum.ADMIN : (await user.getRoleForUnit(unit)).title;
+    const controller = this.factory.getController(role);
     return controller.getActivities(unit, user);
   }
 }

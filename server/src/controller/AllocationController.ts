@@ -1,13 +1,13 @@
-import { RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class AllocationControllerFactory {
-  getController(role: RoleEnum): IAllocationController {
+  getController(role: RoleEnum|AppRoleEnum): IAllocationController {
     switch (role) {
       case RoleEnum.TA:
         return new TaAllocationController();
       case RoleEnum.LECTURER:
         return new LecturerAllocationController();
-      case RoleEnum.ADMIN:
+      case AppRoleEnum.ADMIN:
         return new AdminAllocationController();
       default:
         throw new Error("Cannot create controller: invalid Role");

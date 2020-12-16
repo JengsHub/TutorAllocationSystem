@@ -1,28 +1,21 @@
 import { Request, Response } from "express";
 import { NextFunction } from "express";
 import { Staff } from "~/entity";
-import { RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum } from "~/enums/RoleEnum";
 
-export const roleControlAccess = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const user = req.user as Staff;
-  let role = await user.getRoles();
-
-  role = role.filter((r) => r.title === RoleEnum.ADMIN);
-  if (role.length > 0) {
+export const hasAdminAccessMiddleware = () => {
+  return function (req: Request, res: Response, next: NextFunction) {
+    hasAdminAccess(req, res);
     next();
-  } else {
-    // TODO: Remove if not relevant
-    if (req.method === "GET") {
-      next();
-    } else {
-      res.status(401).json({
-        admin: false,
-        message: "user does not have admin privilege",
-      });
-    }
+  };
+};
+
+export const hasAdminAccess = (req: Request, res: Response) => {
+  const user = req.user as Staff;
+  if (user.appRole !== AppRoleEnum.ADMIN) {
+    res.status(401).json({
+      admin: false,
+      message: "user does not have admin privilege",
+    });
   }
 };

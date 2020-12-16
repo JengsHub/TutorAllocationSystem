@@ -1,13 +1,13 @@
-import { RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class ActivityControllerFactory {
-  getController(role: RoleEnum): IActivityController {
+  getController(role: RoleEnum|AppRoleEnum): IActivityController {
     switch (role) {
       case RoleEnum.TA:
         return new TaActivityController();
       case RoleEnum.LECTURER:
         return new LecturerActivityController();
-      case RoleEnum.ADMIN:
+      case AppRoleEnum.ADMIN:
         return new AdminActivityController();
       default:
         throw new Error("Cannot create controller: invalid Role");
