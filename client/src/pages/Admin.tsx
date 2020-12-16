@@ -18,12 +18,12 @@ import { Clear, Done, Edit } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useState } from "react";
 import { RoleEnum } from "../enums/RoleEnum";
-import { AuthContext } from "../session";
 
 /***
  * TODO:
  * - Clean up code
  * - Refactor out the editable table as a component
+ * (if we intend to reuse this type of table elsewhere)
  * - Avoid `any` type
  * - Secure this route only for Admin role
  */
@@ -31,11 +31,13 @@ interface IRow {
   role: string;
   roleId: string;
   unitCode: string;
+  unitId: string;
   givenNames: string;
   lastName: string;
   email: string;
   id: number;
   isEditMode: boolean;
+  staffId: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -100,7 +102,7 @@ const Admin = () => {
     });
   };
 
-  const onSaveChange = (id: number) => {
+  const onSaveChange = async (id: number) => {
     setRows((state) => {
       return rows.map((row) => {
         if (row.id === id) {
@@ -110,8 +112,23 @@ const Admin = () => {
       });
     });
 
-    // TODO: send request to update role
-    console.log("TODO: send request to update role");
+    const data = rows.find((r) => r.id === id);
+    if (data) {
+      // TODO: handle status of request to provide feedback to user, especially if update failed
+      await fetch(`http://localhost:8888/roles/unit/${data.unitId}`, {
+        method: "PUT",
+        credentials: "include",
+        body: JSON.stringify({
+          title: data.role,
+          staffId: data.staffId,
+        }),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Credentials": "true",
+        },
+      });
+    }
   };
 
   const onChange = (e: any, row: IRow) => {
@@ -147,19 +164,14 @@ const Admin = () => {
   };
 
   const fetchStaff = async () => {
-    let values = {
+    let params: { [key: string]: any } = {
       unitCode: selectedUnit ? selectedUnit.unitCode : null,
       year: selectedPeriod ? selectedPeriod.year : null,
     };
 
-    let params = {};
-    // TODO: better way to do this
-    for (const [key, value] of Object.entries(values)) {
-      if (value) {
-        // @ts-ignore
-        params[key] = value;
-      }
-    }
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
 
     const res = await fetch(
       "http://localhost:8888/staff?" + new URLSearchParams(params),

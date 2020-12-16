@@ -1,8 +1,8 @@
 import passport from "passport";
 import { Router } from "express";
 import { Staff } from "~/entity";
-import { authCheck } from "~/helpers/auth";
-import { RoleEnum } from "~/enums/RoleEnum";
+import { authCheckMiddleware } from "~/helpers/auth";
+import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
 
@@ -33,14 +33,9 @@ router.get(
 );
 
 // when login is successful, retrieve user info
-router.get("/login/success", authCheck, async (req, res) => {
-  const { id, givenNames, lastName, email } = req.user as Staff;
-
-  // TODO: better way to implement Admin role
+router.get("/login/success", authCheckMiddleware, async (req, res) => {
   const user = req.user as Staff;
-  let roles = await user.getRoles();
-  roles = roles.filter((r) => r.title === RoleEnum.ADMIN);
-
+  const { givenNames, lastName, email, id } = user;
   res.json({
     success: true,
     message: "user has successfully authenticated",
@@ -49,7 +44,7 @@ router.get("/login/success", authCheck, async (req, res) => {
       givenNames,
       lastName,
       email,
-      adminAccess: roles.length > 0,
+      adminAccess: user.isAdmin(),
     },
     cookies: req.cookies,
   });

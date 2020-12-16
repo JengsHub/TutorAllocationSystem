@@ -1,15 +1,15 @@
 import { getRepository } from "typeorm";
 import { Staff, Unit, Activity } from "~/entity";
-import { RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 export class UnitControllerFactory {
-  getController(role: RoleEnum): IUnitController {
+  getController(role: RoleEnum | AppRoleEnum): IUnitController {
     switch (role) {
       case RoleEnum.TA:
         return new TaUnitController();
       case RoleEnum.LECTURER:
         return new LecturerUnitController();
-      case RoleEnum.ADMIN:
+      case AppRoleEnum.ADMIN:
         return new AdminUnitController();
       default:
         throw new Error("Cannot create controller: invalid Role");

@@ -8,12 +8,12 @@
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "." /* Base directory to resolve non-absolute module names. */,
+    "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*", "src/ormconfig.ts", "ormconfig.js", "jest.config.ts"],
+  "include": ["src/**/*", "src/ormconfig.ts", "ormconfig.js"],
   "exclude": [
     "node_modules",
     ".vscode",

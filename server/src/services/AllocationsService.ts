@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
@@ -5,21 +6,18 @@ import {
   DELETE,
   GET,
   IgnoreNextMiddlewares,
-  PATCH,
   Path,
   PathParam,
   POST,
   PUT,
   QueryParam,
 } from "typescript-rest";
-import { Request, Response } from "express";
 
 import { AllocationControllerFactory } from "~/controller";
-import { Activity, Staff, Unit } from "~/entity";
+import { Activity, Staff } from "~/entity";
 import { Allocation } from "../entity/Allocation";
-import { authenticationCheck } from "~/helpers/auth";
+import { authCheck } from "~/helpers/auth";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
-import { app } from "..";
 
 @Path("/allocations")
 class AllocationsService {
@@ -53,9 +51,8 @@ class AllocationsService {
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
   ) {
-    authenticationCheck(req, res);
+    if (!authCheck(req, res)) return;
 
-    // Fetch all users allocaitons
     const me = req.user as Staff;
     let allocations = await this.repo.find({
       where: {

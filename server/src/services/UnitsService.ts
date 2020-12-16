@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, IsNull } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -15,7 +15,7 @@ import { UnitControllerFactory } from "~/controller/index";
 import { Staff } from "~/entity";
 import { Role } from "~/entity/Role";
 import { RoleEnum } from "~/enums/RoleEnum";
-import { authenticationCheck } from "~/helpers/auth";
+import { AppRoleEnum } from "~/enums/RoleEnum";
 import { Unit } from "../entity/Unit";
 
 @Path("/units")
@@ -24,10 +24,11 @@ class UnitsService {
   factory = new UnitControllerFactory();
 
   @GET
-  public getUnits(
+  public async getUnits(
     @QueryParam("unitCode") unitCode: string,
     @QueryParam("offeringPeriod") offeringPeriod: string,
-    @QueryParam("year") year: number
+    @QueryParam("year") year: number,
+    @QueryParam("unassigned") unassigned: boolean
   ) {
     let params: { [key: string]: any } = {
       unitCode,
@@ -39,7 +40,7 @@ class UnitsService {
       (key) => params[key] === undefined && delete params[key]
     );
 
-    return this.repo.find(params);
+    return Unit.find(params);
   }
 
   @GET
@@ -124,8 +125,11 @@ class UnitsService {
   ) {
     const user = req.user as Staff;
     const unit = await Unit.findOneOrFail({ id });
-    const role = await user.getRoleForUnit(unit);
-    const controller = this.factory.getController(role.title);
+
+    const role = user.isAdmin()
+      ? AppRoleEnum.ADMIN
+      : (await user.getRoleForUnit(unit)).title;
+    const controller = this.factory.getController(role);
     return controller.getActivities(unit, user);
   }
 }
