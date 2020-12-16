@@ -13,10 +13,15 @@ import IconButton from "@material-ui/core/IconButton";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
 import DatabaseFinder from "../../apis/DatabaseFinder";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 const LecturingActivity = (props: { [key: string]: any }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openRejected, setOpenRejected] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
     let params: { [key: string]: any } = {
@@ -73,20 +78,44 @@ const LecturingActivity = (props: { [key: string]: any }) => {
     });
   };
 
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+    setOpenRejected(false);
+  };
+
   const allocationApproved = async (allocation: IAllocation) => {
-    // TODO: Handle approval
-    await DatabaseFinder.post(
+    const result = await DatabaseFinder.post(
       `http://localhost:8888/allocations/approval/${allocation.id}/Lecturer`
     );
-    setChanged(true);
+    if (result.statusText === "OK") {
+      setChanged(true);
+      setOpenApproval(true);
+    } else {
+      // Untested
+      setOpenError(true);
+    }
   };
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    await DatabaseFinder.delete(
+    const result = await DatabaseFinder.delete(
       `http://localhost:8888/allocations/${allocation.id}`
     );
-    setChanged(true);
+    if (result.statusText === "OK") {
+      setChanged(true);
+      setOpenRejected(true);
+    } else {
+      // Untested
+      setOpenError(true);
+    }
   };
 
   function ApprovalCell(props: { allocation: IAllocation }) {
@@ -130,7 +159,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
         return (
           <>
             {" "}
-            <div>Errror With Allocations Approval</div>{" "}
+            <div>Error With Allocations Approval</div>{" "}
           </>
         );
     }
@@ -147,13 +176,13 @@ const LecturingActivity = (props: { [key: string]: any }) => {
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>Activity Code</TableCell>
-              <TableCell align="right">Activity Group</TableCell>
-              <TableCell align="right">Campus</TableCell>
-              <TableCell align="right">Day of Week</TableCell>
-              <TableCell align="right">Location </TableCell>
-              <TableCell align="right">Start Time</TableCell>
-              <TableCell align="right">Duration</TableCell>
+              <TableCell align="left">Activity Code</TableCell>
+              <TableCell align="left">Activity Group</TableCell>
+              <TableCell align="left">Campus</TableCell>
+              <TableCell align="left">Day of Week</TableCell>
+              <TableCell align="left">Location </TableCell>
+              <TableCell align="left">Start Time</TableCell>
+              <TableCell align="left">Duration</TableCell>
               <TableCell align="center">Allocations</TableCell>
             </TableRow>
           </TableHead>
@@ -163,30 +192,40 @@ const LecturingActivity = (props: { [key: string]: any }) => {
                 <TableCell component="th" scope="row">
                   {activity.activityCode}
                 </TableCell>
-                <TableCell align="right">{activity.activityGroup}</TableCell>
-                <TableCell align="right">{activity.campus}</TableCell>
-                <TableCell align="right">{activity.dayOfWeek}</TableCell>
-                <TableCell align="right">{activity.location}</TableCell>
-                <TableCell align="right">{activity.startTime}</TableCell>
-                <TableCell align="right">{activity.duration}</TableCell>
+                <TableCell align="left">{activity.activityGroup}</TableCell>
+                <TableCell align="left">{activity.campus}</TableCell>
+                <TableCell align="left">{activity.dayOfWeek}</TableCell>
+                <TableCell align="left">{activity.location}</TableCell>
+                <TableCell align="left">{activity.startTime}</TableCell>
+                <TableCell align="left">{activity.duration}</TableCell>
                 <TableCell align="left">
                   {activity.allocations.length > 0 ? (
                     activity.allocations.map(
                       (allocation: IAllocation & { [key: string]: any }, j) => (
-                        <TableRow key={j}>
-                          <TableCell>
-                            {" "}
-                            {allocation.staff.givenNames}{" "}
-                            {allocation.staff.lastName}
-                          </TableCell>
-                          <TableCell align="right">
-                            <ApprovalCell allocation={allocation} />
-                          </TableCell>
-                        </TableRow>
+                        <Table key={j}>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell align="left">
+                                {" "}
+                                {allocation.staff.givenNames}{" "}
+                                {allocation.staff.lastName}
+                              </TableCell>
+                              <TableCell align="left">
+                                <ApprovalCell allocation={allocation} />
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
                       )
                     )
                   ) : (
-                    <TableCell> No Allocations Yet </TableCell>
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>No Allocations yet.</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
                   )}
                 </TableCell>
               </TableRow>
@@ -194,6 +233,29 @@ const LecturingActivity = (props: { [key: string]: any }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have approved an allocation.
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={openRejected}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have rejected an allocation.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
