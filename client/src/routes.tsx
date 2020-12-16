@@ -9,7 +9,6 @@ import Lecturing from "./pages/Lecturing/Lecturing";
 import NotFound from "./pages/NotFound";
 // import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
-import Staff from "./pages/Staff";
 import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
 import { AuthContext } from "./session";

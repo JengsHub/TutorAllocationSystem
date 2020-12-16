@@ -30,12 +30,8 @@ import { Role } from "../entity/Role";
 @Path("/roles")
 class RolesService {
   repo = getRepository(Role);
-<<<<<<< HEAD
-  
-=======
   factory = new RoleControllerFactory();
 
->>>>>>> 7ff0f2d5168823d9934144797cd0ec91d7708bf8
   @GET
   public async getRoles(
     @QueryParam("unitId") unitId: string,
@@ -44,29 +40,6 @@ class RolesService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
-<<<<<<< HEAD
-    const user = req.user as Staff;
-    let role = await user.getRoles();
-
-    role = role.filter((r) => r.title === RoleEnum.ADMIN);
-
-    if (role.length > 0) {
-      let params: {[key:string]: any} = {
-        unitCode,
-        staffId,
-        title,
-      };
-
-      Object.keys(params).forEach(
-        (key) => params[key] === undefined && delete params[key]
-      );
-
-      return this.repo.find(params);
-    } else {
-      // TODO return an error code and message
-      return [];
-    }
-=======
     // Only admin can have access to roles in all units
     hasAdminAccess(req, res);
     let params: { [key: string]: any } = {
@@ -78,7 +51,6 @@ class RolesService {
       (key) => params[key] === undefined && delete params[key]
     );
     return Role.find(params);
->>>>>>> 7ff0f2d5168823d9934144797cd0ec91d7708bf8
   }
 
   /**
