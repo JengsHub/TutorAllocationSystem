@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
@@ -5,21 +6,20 @@ import {
   DELETE,
   GET,
   IgnoreNextMiddlewares,
-  PATCH,
   Path,
   PathParam,
   POST,
   PUT,
 } from "typescript-rest";
-import { Request, Response } from "express";
-
-import { Activity, Staff, Unit } from "~/entity";
+import { AllocationControllerFactory } from "~/controller";
+import { Activity, Staff } from "~/entity";
+import { authCheck } from "~/helpers/auth";
 import { Allocation } from "../entity/Allocation";
-import { authenticationCheck } from "~/helpers/auth";
 
 @Path("/allocations")
 class AllocationsService {
   repo = getRepository(Allocation);
+  factory = new AllocationControllerFactory();
 
   /**
    * Returns a list of allocations
@@ -42,7 +42,7 @@ class AllocationsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
-    authenticationCheck(req, res);
+    if (!authCheck(req, res)) return;
     const me = req.user as Staff;
     const allocations = await this.repo.find({
       where: {

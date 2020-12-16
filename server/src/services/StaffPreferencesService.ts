@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository, Like } from "typeorm";
 import {
   ContextRequest,
@@ -11,15 +12,15 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
-import { Request, Response } from "express";
-
+import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
-import { authenticationCheck } from "~/helpers/auth";
+import { authCheck } from "~/helpers/auth";
 import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
 class StaffPreferencesService {
   repo = getRepository(StaffPreference);
+  factory = new StaffPreferenceControllerFactory();
 
   /**
    * Returns a list of staffPreferences
@@ -42,7 +43,7 @@ class StaffPreferencesService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
-    authenticationCheck(req, res);
+    if (!authCheck(req, res)) return;
     const me = req.user as Staff;
     const preferences = await this.repo
       .find({

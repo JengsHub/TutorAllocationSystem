@@ -4,7 +4,6 @@ import { AuthContext } from "../session";
 
 const Profile = () => {
   const { isAuth } = React.useContext(AuthContext); // TODO: create context hook for updating value
-  console.log("profile page:", isAuth);
   const [user, setUser] = useState({});
   // const [error, setError] = useState("");
 
