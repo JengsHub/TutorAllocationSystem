@@ -4,7 +4,7 @@ interface IActivity {
   allocations: IAllocation[];
   campus: string;
   dayOfWeek: string;
-  duration: number;
+  endTime: string;
   id: string;
   location: string;
   startTime: string;

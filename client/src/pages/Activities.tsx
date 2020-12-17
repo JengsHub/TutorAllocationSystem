@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from "react";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
+import { useHistory } from "react-router-dom";
+import {
+  Button,
+  Grid,
+  IconButton,
+  makeStyles,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import { Autocomplete } from "@material-ui/lab";
 
 const Activities = () => {
-  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [activities, setActivities] = useState<IActivity[]>([]); //this will set all available activities
+  const [searchedActivities, setSearchedACtivities] = useState<IActivity[]>([]);
+  const [unitCodes] = useState<any[]>([]);
+  const [offeringYear] = useState<any[]>([]);
+  const [selectedYear, setSelectedYear] = useState<any>(null);
+  const [selectedUnit, setSelectedUnit] = useState<any>(null);
+
+  const history = useHistory();
 
   const getActivities = async () => {
     const res = await fetch("http://localhost:8888/activities");
@@ -17,17 +33,95 @@ const Activities = () => {
 
   useEffect(() => {
     getActivities().then((res) => {
-      // console.log(res);
       setActivities(res);
+      getChoices(res);
     });
   }, []);
 
-  // if(activities.length > 0){
-  // console.log(activities[0].allocations)}
+  const getChoices = (activities: IActivity[]) => {
+    activities.forEach((activity) => {
+      if (!offeringYear.includes(activity.unit.year)) {
+        offeringYear.push(activity.unit.year);
+        console.log(offeringYear);
+      }
+      if (!unitCodes.includes(activity.unit.unitCode)) {
+        unitCodes.push(activity.unit.unitCode);
+        console.log(unitCodes);
+      }
+    });
+  };
+
+  // click on a row of table will bring you to a page which will show the available candidates pool for that activity
+  const handleClick = (
+    event: React.MouseEvent<unknown>,
+    activity: IActivity
+  ) => {
+    console.log(activity);
+    history.push("candidates/" + activity.id);
+  };
+
+  const handleSelect = () => {
+    setSearchedACtivities([]);
+    activities.forEach((activity) => {
+      if (
+        activity.unit.unitCode === selectedUnit &&
+        activity.unit.year === selectedYear
+      ) {
+        setSearchedACtivities((display) => [...display, activity]);
+      }
+    });
+  };
 
   return (
     <div id="main">
-      <h1>Activities</h1>
+      <h1>Activity</h1>
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={offeringYear}
+            getOptionLabel={(option) => option.toString()}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Teaching period"
+                variant="outlined"
+              />
+            )}
+            value={selectedYear}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedYear(newValue);
+            }}
+          />
+        </Grid>
+
+        <Grid item xs={3}>
+          <Autocomplete
+            options={unitCodes}
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
+              <TextField {...params} label="Unit" variant="outlined" />
+            )}
+            disabled={selectedYear === null}
+            value={selectedUnit}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedUnit(newValue);
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={selectedYear === null}
+            onClick={handleSelect}
+          >
+            SELECT
+          </Button>
+        </Grid>
+      </Grid>
+
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="activities table">
           <TableHead>
@@ -43,8 +137,12 @@ const Activities = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map((activity, i) => (
-              <TableRow key={i}>
+            {searchedActivities.map((activity, i) => (
+              <TableRow
+                hover
+                onClick={(event) => handleClick(event, searchedActivities[i])}
+                key={i}
+              >
                 <TableCell component="th" scope="row">
                   {activity.activityCode}
                 </TableCell>
@@ -53,7 +151,7 @@ const Activities = () => {
                 <TableCell align="right">{activity.dayOfWeek}</TableCell>
                 <TableCell align="right">{activity.location}</TableCell>
                 <TableCell align="right">{activity.startTime}</TableCell>
-                <TableCell align="right">{activity.duration}</TableCell>
+                <TableCell align="right">{activity.endTime}</TableCell>
                 <TableCell align="right">{activity.unit.unitCode}</TableCell>
               </TableRow>
             ))}

@@ -1,3 +1,4 @@
+import { exception } from "console";
 import { DeleteResult, getRepository } from "typeorm";
 import {
   DELETE,
@@ -9,7 +10,14 @@ import {
   QueryParam,
   Security,
 } from "typescript-rest";
-import { Unit } from "~/entity";
+import {
+  Allocation,
+  Availability,
+  Staff,
+  StaffPreference,
+  Unit,
+} from "~/entity";
+import { resError } from "~/helpers";
 import { Activity } from "../entity/Activity";
 
 @Path("/activities")
@@ -48,6 +56,256 @@ class ActivitiesService {
       { relations: ["allocations", "unit"] }
     );
     return activity;
+  }
+
+  /**
+   * Returns the unsorted candidate pool for an activity
+   * @param activityCode activity code
+   * @return StaffPreference[] list of staff preferences that are potential candidates for an activity
+   */
+  // TODO: assert return value as Promise<StaffPreference[]> here
+  @GET
+  @Path(":activityId/candidates")
+  public async getCandidates(@PathParam("activityId") id: string) {
+    // Get the activity given by the activityId, else return errors
+    // Activity is joined with unit, staffpreferences, staff and availability here
+    try {
+      var activity = await this.repo.findOne(
+        { id },
+        {
+          relations: [
+            "allocations",
+            "unit",
+            "unit.staffPreference",
+            "unit.staffPreference.staff",
+            "unit.staffPreference.staff.availability",
+            "unit.staffPreference.staff.allocations",
+            "unit.staffPreference.staff.allocations.activity",
+          ],
+        }
+      );
+      if (!activity) {
+        return resError("Activity not found");
+      }
+    } catch (e) {
+      return resError(
+        "Query to find activity failed - this is probably because the uuid syntax is wrong"
+      );
+    }
+
+    var candidates: StaffPreference[] = [];
+    var r: any = [];
+    // Find all staff with preferences in activity's unit
+    const staffPreferences = activity.unit.staffPreference;
+    if (staffPreferences) {
+      for (var preference of staffPreferences) {
+        const staffAvailability = preference.staff.availability;
+        var staffAllocations = preference.staff.allocations;
+        // If the staff member isn't already allocated to the activity, check to see if they are available to be allocated to the activity
+        if (
+          activity.allocations.filter(function (e) {
+            return e.staffId === preference.staffId;
+          }).length == 0
+        ) {
+          for (var availability of staffAvailability) {
+            if (
+              this.availableForActivity(
+                availability,
+                activity,
+                staffAllocations
+              )
+            ) {
+              // If they're available, push them to the candidate pool
+              candidates.push(preference);
+            }
+          }
+        }
+      }
+    }
+
+    return candidates;
+  }
+
+  /**
+   * Returns the sorted candidate pool for an activity
+   * @param activityCode activity code
+   * @param sortingCriteria the criteria to sort the candidate pool by ("staff" or "lecturer")
+   * @return StaffPreference[] sorted list of staff preferences that are potential candidates for an activity
+   */
+  // TODO: assert return value as Promise<StaffPreference[]> here
+  @GET
+  @Path(":activityId/candidates/:sortingCriteria")
+  public async getSortedCandidates(
+    @PathParam("activityId") id: string,
+    @PathParam("sortingCriteria") sortingCriteria: string
+  ) {
+    // Get the activity given by the activityId, else return errors
+    // Activity is joined with unit, staffpreferences, staff and availability here
+    try {
+      var activity = await this.repo.findOne(
+        { id },
+        {
+          relations: [
+            "allocations",
+            "unit",
+            "unit.staffPreference",
+            "unit.staffPreference.staff",
+            "unit.staffPreference.staff.availability",
+            "unit.staffPreference.staff.allocations",
+            "unit.staffPreference.staff.allocations.activity",
+          ],
+        }
+      );
+      if (!activity) {
+        return resError("Activity not found");
+      }
+    } catch (e) {
+      return resError(
+        "Query to find activity failed - this is probably because the uuid syntax is wrong"
+      );
+    }
+
+    var candidates: StaffPreference[] = [];
+
+    // Find all staff with preferences in activity's unit
+    var staffPreferences = activity.unit.staffPreference;
+    if (staffPreferences) {
+      for (var preference of staffPreferences) {
+        var staffAvailability = preference.staff.availability;
+        var staffAllocations = preference.staff.allocations;
+        // If the staff member isn't already allocated to the activity, check to see if they are available to be allocated to the activity
+        if (
+          activity.allocations.filter(function (e) {
+            return e.staffId === preference.staffId;
+          }).length == 0
+        ) {
+          for (var availability of staffAvailability) {
+            if (
+              this.availableForActivity(
+                availability,
+                activity,
+                staffAllocations
+              )
+            ) {
+              // If they're available, push them to the candidate pool
+              candidates.push(preference);
+            }
+          }
+        }
+      }
+    }
+
+    // Sort the candidates using the criteria provided, else return error if sorting criteria is invalid
+    try {
+      candidates = this.sortCandidates(sortingCriteria, candidates)!;
+    } catch (e) {
+      return resError("Invalid sorting criteria - unable to sort");
+    }
+
+    return candidates;
+  }
+
+  /**
+   * Calculate the time duration of the activity
+   * @param activity activity to be determined
+   */
+  private activityDuration(activity: Activity) {
+    var activityStartTime = new Date("1970-1-1 " + activity.startTime);
+    var activityEndTime = new Date("1970-1-1  " + activity.endTime);
+    return (
+      (activityEndTime.valueOf() - activityStartTime.valueOf()) / 1000 / 60 / 60
+    );
+  }
+
+  /**
+   * Checks if a staff member is available for an activity
+   * @param availability availability of the staff member
+   * @param activity activity to be allocated to
+   * @param allocations allocations of the staff member
+   * @return true if they are available, false if not
+   */
+  private availableForActivity(
+    availability: Availability,
+    activity: Activity,
+    allocations: Allocation[]
+  ) {
+    var slotAvailable: boolean = false;
+    var allocatedNum = 0;
+
+    var duration = this.activityDuration(activity);
+    var totalAllocatedDuration = 0;
+
+    for (var allocation of allocations) {
+      if (allocation.activity?.dayOfWeek == activity?.dayOfWeek) {
+        totalAllocatedDuration += this.activityDuration(allocation.activity);
+        allocatedNum += 1;
+      }
+    }
+
+    // Check if there are the current number of allocations of the staff member exceed the max number of allocation
+    if (
+      allocatedNum < availability.maxNumberActivities &&
+      availability.maxHours >= totalAllocatedDuration + duration
+    ) {
+      slotAvailable = true;
+    }
+
+    // Check if the staff member is available for the given time period
+    if (slotAvailable) {
+      return (
+        availability.day == activity?.dayOfWeek &&
+        availability.startTime <= activity.startTime &&
+        availability.endTime >= activity.endTime
+      );
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Sorts a list of candidates based on given sorting criteria
+   * @param sortingCriteria "staff" for sorting based on staffScore or "lecturer" for sorting based on lecturer score
+   * @param candidates StaffPreference[] list of unsorted candidates
+   * @return StaffPreference[] if valid sorting criteria provided, else throws exception
+   */
+  private sortCandidates(
+    sortingCriteria: string,
+    candidates: StaffPreference[]
+  ) {
+    // If there's no candidates, no need to sort
+    if (candidates.length == 0) {
+      return candidates;
+    }
+
+    // Sort by staff score
+    if (sortingCriteria == "staff") {
+      candidates = candidates.sort((a, b) => {
+        if (a.preferenceScore > b.preferenceScore) {
+          return 1;
+        }
+        if (a.preferenceScore < b.preferenceScore) {
+          return -1;
+        }
+        return 0;
+      });
+
+      // Sort by lecturer score
+    } else if (sortingCriteria == "lecturer") {
+      candidates = candidates.sort((a, b) => {
+        if (a.lecturerScore > b.lecturerScore) {
+          return 1;
+        }
+        if (a.lecturerScore < b.lecturerScore) {
+          return -1;
+        }
+        return 0;
+      });
+      // If no valid sorting criteria provided, throw exception
+    } else {
+      throw exception("Invalid sorting criteria parameter");
+    }
+
+    return candidates;
   }
 
   /**

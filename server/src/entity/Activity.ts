@@ -35,7 +35,7 @@ export class Activity extends BaseEntity {
   location!: string;
 
   @Column()
-  duration!: number;
+  endTime!: string;
 
   // TODO: varchar for sqlite compatibility in test?
   @Column({
