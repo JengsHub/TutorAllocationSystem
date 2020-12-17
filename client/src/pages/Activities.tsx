@@ -16,7 +16,7 @@ import { Autocomplete } from "@material-ui/lab";
 
 const Activities = () => {
   const [activities, setActivities] = useState<IActivity[]>([]); //this will set all available activities
-  const [searchedActivities, setSearchedACtivities] = useState<IActivity[]>([]);
+  const [searchedActivities, setSearchedActivities] = useState<IActivity[]>([]);
   const [unitCodes] = useState<any[]>([]);
   const [offeringYear] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState<any>(null);
@@ -30,42 +30,41 @@ const Activities = () => {
   };
 
   useEffect(() => {
+    const getChoices = (activities: IActivity[]) => {
+      activities.forEach((activity) => {
+        if (!offeringYear.includes(activity.unit.year)) {
+          offeringYear.push(activity.unit.year);
+          //console.log(offeringYear);
+        }
+        if (!unitCodes.includes(activity.unit.unitCode)) {
+          unitCodes.push(activity.unit.unitCode);
+          //console.log(unitCodes);
+        }
+      });
+    };
     getActivities().then((res) => {
       setActivities(res);
       getChoices(res);
     });
-  });
+  }, [offeringYear, unitCodes]);
 
-  const getChoices = (activities: IActivity[]) => {
-    activities.forEach((activity) => {
-      if (!offeringYear.includes(activity.unit.year)) {
-        offeringYear.push(activity.unit.year);
-        console.log(offeringYear);
-      }
-      if (!unitCodes.includes(activity.unit.unitCode)) {
-        unitCodes.push(activity.unit.unitCode);
-        console.log(unitCodes);
-      }
-    });
-  };
-
-  // click on a row of table will bring you to a page which will show the available candidates pool for that activity
+  // Click on a row of table will bring you to a page which will show the available candidates pool for that activity
   const handleClick = (
     event: React.MouseEvent<unknown>,
     activity: IActivity
   ) => {
-    console.log(activity);
-    history.push("candidates/" + activity.id);
+    //console.log(activity);
+    history.push("/candidates", { id: activity.id });
   };
 
   const handleSelect = () => {
-    setSearchedACtivities([]);
+    setSearchedActivities([]);
     activities.forEach((activity) => {
       if (
         activity.unit.unitCode === selectedUnit &&
         activity.unit.year === selectedYear
       ) {
-        setSearchedACtivities((display) => [...display, activity]);
+        setSearchedActivities((display) => [...display, activity]);
       }
     });
   };

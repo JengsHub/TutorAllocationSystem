@@ -56,7 +56,7 @@ const Routes = () => {
           />
           <PrivateRoute
             isAuthenticated={isAuth}
-            path="/candidates/:activityId"
+            path="/candidates"
             component={Candidate}
           />
           <PrivateRoute
@@ -69,6 +69,7 @@ const Routes = () => {
             path="/admin"
             component={Admin}
           />
+          <Route path="/404" component={NotFound} />
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
         </Switch>

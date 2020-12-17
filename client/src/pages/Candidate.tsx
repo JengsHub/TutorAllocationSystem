@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import {
+  useParams,
+  useHistory,
+  useLocation,
+  RouteComponentProps,
+} from "react-router-dom";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -10,44 +15,38 @@ import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import DatabaseFinder from "../apis/DatabaseFinder";
+import { getActivity, getCandidatePreference } from "../apis/api";
+
+interface RouteParams {
+  id: string;
+}
 
 const Candidate = () => {
-  let location = useLocation();
-
-  // TODO: this activityId can use a different way to obtain, such as useparams
-  // but it is undefined for some reason if possible someone can solve it
-  let activityId = location.pathname.substring(12);
   const [candidatesPreference, setCandidatePreference] = useState<
     IPreferences[]
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
 
-  const getCandidatePreference = async () => {
-    const res = await fetch(
-      "http://localhost:8888/activities/" + activityId + "/candidates/lecturer"
-    );
-    return res.json();
-  };
-
-  // TODO: instead of calling api again, actually can pass the activity object
-  // selected to this component, but i also dk how to do it.
-  const getActivity = async () => {
-    const res = await fetch("http://localhost:8888/activities/" + activityId);
-    return res.json();
-  };
+  const location = useLocation<RouteParams>();
+  const history = useHistory();
+  const activityId = location.state.id;
 
   useEffect(() => {
-    getActivity().then((res) => {
-      // console.log(res);
-      setActivity(res);
-    });
-    console.log(activityId);
-    getCandidatePreference().then((res) => {
-      // console.log(res);
-      setCandidatePreference(res);
-    });
-  }, []);
+    if (activityId) {
+      getActivity(activityId).then((res) => {
+        // console.log(res);
+        setActivity(res);
+      });
+      console.log(activityId);
+      getCandidatePreference(activityId).then((res) => {
+        // console.log(res);
+        setCandidatePreference(res);
+      });
+    } else {
+      history.push("/404");
+    }
+  }, [activityId, history]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -78,24 +77,24 @@ const Candidate = () => {
   };
 
   const makeOffers = () => {
-    console.log(selecteds);
+    //console.log(selecteds);
     selecteds.forEach(async (i) => {
-      console.log(candidatesPreference[i]);
+      //console.log(candidatesPreference[i]);
       var allocation: Allocation = {
         activityId: activityId,
         staffId: candidatesPreference[i].staffId,
       };
       try {
         await DatabaseFinder.post("/allocations", allocation);
+        setSelected([]);
+
+        getCandidatePreference(activityId).then((res) => {
+          // console.log(res);
+          setCandidatePreference(res);
+        });
       } catch (err) {
         throw err;
       }
-    });
-    setSelected([]);
-    
-    getCandidatePreference().then((res) => {
-      // console.log(res);
-      setCandidatePreference(res);
     });
   };
   const isSelected = (i: number) => selecteds.indexOf(i) !== -1;
@@ -127,7 +126,7 @@ const Candidate = () => {
                   }
                   checked={
                     selecteds.length > 0 &&
-                    selecteds.length == candidatesPreference.length
+                    selecteds.length === candidatesPreference.length
                   }
                   onChange={handleSelectAllClick}
                 />
@@ -143,7 +142,7 @@ const Candidate = () => {
             {candidatesPreference.map((candidatePreference, i) => (
               <TableRow key={i} onClick={(event) => handleClick(event, i)}>
                 <TableCell>
-                  <Checkbox checked={isSelected(i)}/>
+                  <Checkbox checked={isSelected(i)} />
                 </TableCell>
                 <TableCell>{candidatePreference.staff.givenNames}</TableCell>
                 <TableCell align="right">
