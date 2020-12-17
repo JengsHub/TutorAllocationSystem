@@ -101,18 +101,18 @@ export default class CreateAll implements Seeder {
       });
       await manager.save(activityTwo);
 
-      let activityhree = manager.create(Activity, {
+      let activityThree = manager.create(Activity, {
         activityCode: "03-P2",
         activityGroup: "Tutorial",
         campus: "CL",
         location: "123 Seed Local",
-        dayOfWeek: DayOfWeek.TUESDAY,
+        dayOfWeek: DayOfWeek.MONDAY,
         startTime: "17:00",
-        endTime: "20:00",
+        endTime: "23:00",
         allocations: [],
         unit: unit,
       });
-      await manager.save(activityTwo);
+      await manager.save(activityThree);
 
       // Create two availabilities
       let availabilityOne = manager.create(Availability, {
@@ -143,6 +143,11 @@ export default class CreateAll implements Seeder {
         staff: staffOne,
       });
       await manager.save(allocationOne);
+
+      for (const r of defaultRules) {
+        let rule = manager.create(Rule, r);
+        await manager.save(rule);
+      }
     });
   }
 }
