@@ -14,6 +14,14 @@ const activityDuration = (activity: Activity) => {
 };
 
 /**
+ * Convert a time in string form to date form
+ * @param time a time represented as a string
+ */
+const timeStringToDate = (time: string) => {
+  return new Date("1970-1-1 " + time);
+};
+
+/**
  * Checks if an allocation fits the constraints (global rules as well as individual staff preferences)
  * @param newRecord the new allocation
  * @param staff the staff member taking the allocation
@@ -31,7 +39,7 @@ export const checkAllocation = async (
     where: { staff: { id: staff.id } },
   });
 
-  console.log(staff.lastName);
+  //console.log(staff.lastName);
 
   let dayHours = activityDuration(newActivity);
   let weekHours = activityDuration(newActivity);
@@ -81,7 +89,7 @@ export const checkAllocation = async (
     await rules.findOneOrFail({ ruleName: "consecutiveHours" })
   ).value;
 
-  console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
+  //console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
 
   // TODO: Specific error message for each constraint violated
   if (
@@ -97,9 +105,9 @@ export const checkAllocation = async (
     availability.startTime <= newActivity.startTime &&
     availability.endTime >= newActivity.endTime;
 
-  console.log(isWithinAvailableHours);
+  //console.log(isWithinAvailableHours);
 
-  if (isWithinAvailableHours) return false;
+  if (!isWithinAvailableHours) return false;
 
   // Check for clashes
 
@@ -107,12 +115,15 @@ export const checkAllocation = async (
     .filter((a) => a?.dayOfWeek === newActivity.dayOfWeek)
     .slice();
 
+  //console.log(sameDayActivities);
+
   for (let a of sameDayActivities) {
-    if (a.startTime < newActivity.endTime || a.endTime > newActivity.startTime)
+    if (
+      timeStringToDate(a.startTime) < timeStringToDate(newActivity.endTime) &&
+      timeStringToDate(a.endTime) > timeStringToDate(newActivity.startTime)
+    )
       return false;
   }
-
-  console.log(sameDayActivities);
 
   // Check consecutive hours
 
@@ -124,14 +135,22 @@ export const checkAllocation = async (
       stack.push(a);
       return;
     }
-    if (a.startTime > lastActivity.endTime) stack.push(a);
-    else if (a.endTime > lastActivity.endTime) lastActivity.endTime = a.endTime;
+    if (timeStringToDate(a.startTime) > timeStringToDate(lastActivity.endTime))
+      stack.push(a);
+    else if (
+      timeStringToDate(a.endTime) > timeStringToDate(lastActivity.endTime)
+    )
+      lastActivity.endTime = a.endTime;
   });
-  const longestConsecutive = Math.max(...stack.map((a) => activityDuration(a)));
+  if (stack.length) {
+    const longestConsecutive = Math.max(
+      ...stack.map((a) => activityDuration(a))
+    );
 
-  console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
+    //console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
 
-  if (longestConsecutive > consecutiveHoursRule) return false;
+    if (longestConsecutive > consecutiveHoursRule) return false;
+  }
 
   return true;
 };

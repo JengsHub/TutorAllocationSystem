@@ -104,7 +104,6 @@ class ActivitiesService {
           }).length == 0
         ) {
           if (await checkAllocation(preference.staff, activity)) {
-            console.log("pushed");
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -167,7 +166,6 @@ class ActivitiesService {
           }).length == 0
         ) {
           if (await checkAllocation(preference.staff, activity)) {
-            console.log("pushed");
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }

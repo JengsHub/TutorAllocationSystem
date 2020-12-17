@@ -114,29 +114,50 @@ export default class CreateAll implements Seeder {
       });
       await manager.save(activityThree);
 
+      let availabilities = [
+        {
+          day: DayOfWeek.MONDAY,
+          startTime: "08:00",
+          endTime: "18:00",
+          year: 2020,
+          maxHours: 6,
+          maxNumberActivities: 2,
+          staff: staffOne,
+        },
+        {
+          day: DayOfWeek.TUESDAY,
+          startTime: "08:00",
+          endTime: "18:00",
+          year: 2020,
+          maxHours: 6,
+          maxNumberActivities: 2,
+          staff: staffTwo,
+        },
+        {
+          day: DayOfWeek.TUESDAY,
+          startTime: "08:00",
+          endTime: "18:00",
+          year: 2020,
+          maxHours: 6,
+          maxNumberActivities: 2,
+          staff: staffOne,
+        },
+        {
+          day: DayOfWeek.MONDAY,
+          startTime: "08:00",
+          endTime: "18:00",
+          year: 2020,
+          maxHours: 6,
+          maxNumberActivities: 2,
+          staff: staffTwo,
+        },
+      ];
+
       // Create two availabilities
-      let availabilityOne = manager.create(Availability, {
-        day: DayOfWeek.MONDAY,
-        startTime: "08:00",
-        endTime: "18:00",
-        year: 2020,
-        maxHours: 6,
-        maxNumberActivities: 2,
-        staff: staffOne,
-      });
-      await manager.save(availabilityOne);
-
-      let availabilityTwo = manager.create(Availability, {
-        day: DayOfWeek.TUESDAY,
-        startTime: "08:00",
-        endTime: "18:00",
-        year: 2020,
-        maxHours: 6,
-        maxNumberActivities: 2,
-        staff: staffTwo,
-      });
-      await manager.save(availabilityTwo);
-
+      for (let availability of availabilities) {
+        let a = manager.create(Availability, availability);
+        await manager.save(a);
+      }
       // Create one allocation
       let allocationOne = manager.create(Allocation, {
         activity: activityOne,
