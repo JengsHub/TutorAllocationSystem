@@ -18,7 +18,7 @@ interface IActivity {
   activityGroup: string;
   allocations: IAllocation[];
   campus: string;
-  dayOfWeek: string;
+  dayOfWeek: DayOfWeek;
   endTime: string;
   id: string;
   location: string;

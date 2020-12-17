@@ -30,7 +30,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
     };
     const getActivities = async () => {
       try {
-        // console.log(params.unitId);
+        //console.log(params.unitId);
         const res = await fetch(
           `http://localhost:8888/units/${params.unitId}/activities`,
           {
@@ -223,7 +223,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
               <TableCell align="left">Day of Week</TableCell>
               <TableCell align="left">Location </TableCell>
               <TableCell align="left">Start Time</TableCell>
-              <TableCell align="left">Duration</TableCell>
+              <TableCell align="left">End Time</TableCell>
               <TableCell align="center">Allocations</TableCell>
             </TableRow>
           </TableHead>
@@ -241,9 +241,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
                 </TableCell>
                 <TableCell align="left">{activity.location}</TableCell>
                 <TableCell align="left">{activity.startTime}</TableCell>
-                <TableCell align="left">
-                  {activity.duration + " hour(s)"}
-                </TableCell>
+                <TableCell align="left">{activity.endTime}</TableCell>
                 <TableCell align="left">
                   {activity.allocations.length > 0 ? (
                     activity.allocations.map(

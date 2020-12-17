@@ -7,8 +7,5 @@ import "./RulesService";
 import "./StaffPreferencesService";
 import "./StaffService";
 import "./UnitsService";
-<<<<<<< HEAD
-=======
 import "./AuthService";
 import "./RolesService";
->>>>>>> origin/master

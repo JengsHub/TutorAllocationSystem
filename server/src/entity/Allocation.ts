@@ -4,12 +4,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  Column,
 } from "typeorm";
-<<<<<<< HEAD
-=======
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { DayOfWeek } from "../enums/DayOfWeek";
->>>>>>> origin/master
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
