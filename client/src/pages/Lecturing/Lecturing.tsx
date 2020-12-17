@@ -73,7 +73,7 @@ const Lecturing = () => {
               <Box margin={1}>
                 <Typography variant="h6" gutterBottom component="div">
                   {" "}
-                  The activites of {row.unitCode}{" "}
+                  The activities of {row.unitCode}{" "}
                 </Typography>
                 <LecturingActivity
                   {...{
