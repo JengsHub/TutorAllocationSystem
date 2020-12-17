@@ -16,7 +16,7 @@ import { Autocomplete } from "@material-ui/lab";
 
 const Activities1 = () => {
   const [activities, setActivities] = useState<IActivity[]>([]); //this will set all available activities
-  const [searchedActivities, setSearchedActivities] = useState<IActivity[]>([]);
+  const [searchedActivities, setSearchedACtivities] = useState<IActivity[]>([]);
   const [unitCodes] = useState<any[]>([]);
   const [offeringYear] = useState<any[]>([]);
   const [selectedYear, setSelectedYear] = useState<any>(null);
@@ -24,47 +24,48 @@ const Activities1 = () => {
 
   const history = useHistory();
 
-  const [hasChanged, setChanged] = useState<Boolean>(false);
-  const [openApproval, setOpenApproval] = useState<boolean>(false);
-  const [openRejected, setOpenRejected] = useState<boolean>(false);
-  const [openError, setOpenError] = useState<boolean>(false);
+  const getActivities = async () => {
+    const res = await fetch("http://localhost:8888/activities");
+    return res.json();
+  };
 
   useEffect(() => {
-    const getChoices = (activities: IActivity[]) => {
-      activities.forEach((activity) => {
-        if (!offeringYear.includes(activity.unit.year)) {
-          offeringYear.push(activity.unit.year);
-          //console.log(offeringYear);
-        }
-        if (!unitCodes.includes(activity.unit.unitCode)) {
-          unitCodes.push(activity.unit.unitCode);
-          //console.log(unitCodes);
-        }
-      });
-    };
     getActivities().then((res) => {
       setActivities(res);
       getChoices(res);
     });
-  }, [offeringYear, unitCodes]);
+  });
 
-  // Click on a row of table will bring you to a page which will show the available candidates pool for that activity
+  const getChoices = (activities: IActivity[]) => {
+    activities.forEach((activity) => {
+      if (!offeringYear.includes(activity.unit.year)) {
+        offeringYear.push(activity.unit.year);
+        console.log(offeringYear);
+      }
+      if (!unitCodes.includes(activity.unit.unitCode)) {
+        unitCodes.push(activity.unit.unitCode);
+        console.log(unitCodes);
+      }
+    });
+  };
+
+  // click on a row of table will bring you to a page which will show the available candidates pool for that activity
   const handleClick = (
     event: React.MouseEvent<unknown>,
     activity: IActivity
   ) => {
-    //console.log(activity);
-    history.push("/candidates", { id: activity.id });
+    console.log(activity);
+    history.push("candidates/" + activity.id);
   };
 
   const handleSelect = () => {
-    setSearchedActivities([]);
+    setSearchedACtivities([]);
     activities.forEach((activity) => {
       if (
         activity.unit.unitCode === selectedUnit &&
         activity.unit.year === selectedYear
       ) {
-        setSearchedActivities((display) => [...display, activity]);
+        setSearchedACtivities((display) => [...display, activity]);
       }
     });
   };
@@ -120,17 +121,17 @@ const Activities1 = () => {
       </Grid>
 
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="activities table">
+        <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="left">Activity Code</TableCell>
-              <TableCell align="left">Activity Group</TableCell>
-              <TableCell align="left">Campus</TableCell>
-              <TableCell align="left">Day of Week</TableCell>
-              <TableCell align="left">Location </TableCell>
-              <TableCell align="left">Start Time</TableCell>
-              <TableCell align="left">Duration</TableCell>
-              <TableCell align="left">Status</TableCell>
+              <TableCell>Activity Code</TableCell>
+              <TableCell align="right">Activity Group</TableCell>
+              <TableCell align="right">Campus</TableCell>
+              <TableCell align="right">Day of Week</TableCell>
+              <TableCell align="right">Location </TableCell>
+              <TableCell align="right">Start Time</TableCell>
+              <TableCell align="right">Duration</TableCell>
+              <TableCell align="right">Unit Code</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -141,23 +142,7 @@ const Activities1 = () => {
                 key={i}
               >
                 <TableCell component="th" scope="row">
-                  {allocation.activity.activityCode}
-                </TableCell>
-                <TableCell align="left">
-                  {allocation.activity.activityGroup}
-                </TableCell>
-                <TableCell align="left">{allocation.activity.campus}</TableCell>
-                <TableCell align="left">
-                  {dayConverter(allocation.activity.dayOfWeek)}
-                </TableCell>
-                <TableCell align="left">
-                  {allocation.activity.location}
-                </TableCell>
-                <TableCell align="left">
-                  {allocation.activity.startTime}
-                </TableCell>
-                <TableCell align="left">
-                  {allocation.activity.duration + " hour(s)"}
+                  {activity.activityCode}
                 </TableCell>
                 <TableCell align="right">{activity.activityGroup}</TableCell>
                 <TableCell align="right">{activity.campus}</TableCell>
@@ -171,30 +156,7 @@ const Activities1 = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Snackbar
-        open={openApproval}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="success">
-          You have approved an allocation.
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={openRejected}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert onClose={handleClose} severity="success">
-          You have rejected an allocation.
-        </Alert>
-      </Snackbar>
-      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="error">
-          Something went wrong. Please try again.
-        </Alert>
-      </Snackbar>
-    </Box>
+    </div>
   );
 };
 
