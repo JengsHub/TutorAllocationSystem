@@ -3,8 +3,6 @@ import { useHistory } from "react-router-dom";
 import {
   Button,
   Grid,
-  IconButton,
-  makeStyles,
   Paper,
   Table,
   TableBody,
@@ -36,7 +34,7 @@ const Activities = () => {
       setActivities(res);
       getChoices(res);
     });
-  }, []);
+  });
 
   const getChoices = (activities: IActivity[]) => {
     activities.forEach((activity) => {
