@@ -31,12 +31,23 @@ export const checkAllocation = async (
     where: { staff: { id: staff.id } },
   });
 
+  console.log(staff.lastName);
+
   let dayHours = activityDuration(newActivity);
   let weekHours = activityDuration(newActivity);
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
   const activities = currentAllocations.map((a) => a.activity);
+
+  // Checking the numbers against the constraints/rules.
+  // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
+  const rules = await getRepository(Rule);
+  const availability = await getRepository(Availability).findOne({
+    relations: ["staff"],
+    where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
+  });
+  if (!availability) return false;
 
   activities.forEach((activity) => {
     if (activity && newActivity) {
@@ -50,14 +61,6 @@ export const checkAllocation = async (
       // Total activities
       totalActivities++;
     }
-  });
-
-  // Checking the numbers against the constraints/rules.
-  // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
-  const rules = await getRepository(Rule);
-  const availability = await getRepository(Availability).findOneOrFail({
-    relations: ["staff"],
-    where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
   });
 
   const maxHoursPerDayRule = (
@@ -78,7 +81,7 @@ export const checkAllocation = async (
     await rules.findOneOrFail({ ruleName: "consecutiveHours" })
   ).value;
 
-  //console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
+  console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
 
   // TODO: Specific error message for each constraint violated
   if (
@@ -94,6 +97,8 @@ export const checkAllocation = async (
     availability.startTime <= newActivity.startTime &&
     availability.endTime >= newActivity.endTime;
 
+  console.log(isWithinAvailableHours);
+
   if (isWithinAvailableHours) return false;
 
   // Check for clashes
@@ -106,6 +111,8 @@ export const checkAllocation = async (
     if (a.startTime < newActivity.endTime || a.endTime > newActivity.startTime)
       return false;
   }
+
+  console.log(sameDayActivities);
 
   // Check consecutive hours
 
@@ -121,6 +128,8 @@ export const checkAllocation = async (
     else if (a.endTime > lastActivity.endTime) lastActivity.endTime = a.endTime;
   });
   const longestConsecutive = Math.max(...stack.map((a) => activityDuration(a)));
+
+  console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
 
   if (longestConsecutive > consecutiveHoursRule) return false;
 

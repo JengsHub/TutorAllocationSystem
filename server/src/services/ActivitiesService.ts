@@ -103,14 +103,15 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (checkAllocation(preference.staff, activity)) {
+          if (await checkAllocation(preference.staff, activity)) {
+            console.log("pushed");
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
         }
       }
     }
-
+    console.log(candidates);
     return candidates;
   }
 
@@ -165,7 +166,8 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (checkAllocation(preference.staff, activity)) {
+          if (await checkAllocation(preference.staff, activity)) {
+            console.log("pushed");
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
