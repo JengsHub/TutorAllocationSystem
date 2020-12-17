@@ -31,7 +31,7 @@ const Lecturing = () => {
         });
         return await res.json();
       } catch (err) {
-        console.log("No units found with lecturer roll");
+        // console.log("No units found with lecturer roll");
         console.error(err);
         return [];
       }

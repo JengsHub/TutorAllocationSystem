@@ -30,7 +30,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
     };
     const getActivities = async () => {
       try {
-        console.log(params.unitId);
+        // console.log(params.unitId);
         const res = await fetch(
           `http://localhost:8888/units/${params.unitId}/activities`,
           {
