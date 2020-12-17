@@ -98,7 +98,7 @@ const Lecturing = () => {
               <TableCell>Unit Code</TableCell>
               <TableCell align="right">Year</TableCell>
               <TableCell align="right">AQF Target</TableCell>
-              <TableCell align="center">Activites in this Unit </TableCell>
+              <TableCell align="center">Activities in this Unit </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
