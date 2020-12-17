@@ -41,7 +41,7 @@ const Candidate = () => {
       // console.log(res);
       setCandidatePreference(res);
     });
-  }, []);
+  });
 
   return (
     <div id="main">
