@@ -7,8 +7,10 @@ import {
   Availability,
   StaffPreference,
   Rule,
+  Role,
 } from "~/entity";
 import { DayOfWeek } from "~/enums/DayOfWeek";
+import { RoleEnum } from "~/enums/RoleEnum";
 import { Unit } from "../../entity/Unit";
 import { defaultRules } from "../../helpers/defaultRules";
 
@@ -169,6 +171,13 @@ export default class CreateAll implements Seeder {
         let rule = manager.create(Rule, r);
         await manager.save(rule);
       }
+
+      let role = manager.create(Role, {
+        title: RoleEnum.LECTURER,
+        staff: staffOne,
+        unit: unit,
+      });
+      await manager.save(role);
     });
   }
 }

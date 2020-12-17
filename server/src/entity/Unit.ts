@@ -7,6 +7,7 @@ import {
   Unique,
 } from "typeorm";
 import { Activity } from "./Activity";
+import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
 
 @Entity()
@@ -41,4 +42,7 @@ export class Unit extends BaseEntity {
 
   @OneToMany(() => StaffPreference, (staffPreference) => staffPreference.unit)
   staffPreference!: StaffPreference[];
+
+  @OneToMany(() => Role, (role) => role.unit)
+  roles!: Role[];
 }

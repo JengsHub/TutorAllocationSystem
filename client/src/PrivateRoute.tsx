@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  Redirect,
-  Route,
-  RouteComponentProps,
-  RouteProps,
-} from "react-router-dom";
+import { Route, RouteComponentProps, RouteProps } from "react-router-dom";
 
 interface PrivateRouteProps extends RouteProps {
   isAuthenticated: boolean;
@@ -18,7 +13,8 @@ export class PrivateRoute extends Route<PrivateRouteProps> {
       <Route
         render={(props: RouteComponentProps) => {
           if (!this.props.isAuthenticated) {
-            return <Redirect to="/login" />;
+            // return <Redirect to="/profile" />;
+            return;
           }
           if (this.props.component) {
             return React.createElement(this.props.component);

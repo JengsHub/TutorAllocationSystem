@@ -5,6 +5,7 @@ import DatabaseFinder from "../apis/DatabaseFinder";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
+import cleanInputData from "../services/DataSanitizer";
 
 // yarn add csv-parser
 
@@ -77,6 +78,7 @@ class TasDragDrop extends Component<Props, State> {
     let unit_object: any;
     let staff_object: any;
     let activity_object: any;
+
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: Units = {
         unitCode: this.allocateList[i][tempList.indexOf("Subject")],
@@ -87,6 +89,7 @@ class TasDragDrop extends Component<Props, State> {
         year: 2020,
         aqfTarget: 0,
       };
+      unit = cleanInputData(unit);
       try {
         unit_object = await DatabaseFinder.post("/units", unit);
         // console.log(unit_object)

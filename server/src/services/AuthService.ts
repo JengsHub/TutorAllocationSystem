@@ -1,7 +1,8 @@
 import passport from "passport";
 import { Router } from "express";
 import { Staff } from "~/entity";
-import { authCheck } from "~/helpers/auth";
+import { authCheckMiddleware } from "~/helpers/auth";
+import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 
 const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
 
@@ -32,15 +33,18 @@ router.get(
 );
 
 // when login is successful, retrieve user info
-router.get("/login/success", authCheck, (req, res) => {
-  const { givenNames, lastName, email } = req.user as Staff;
+router.get("/login/success", authCheckMiddleware, async (req, res) => {
+  const user = req.user as Staff;
+  const { givenNames, lastName, email, id } = user;
   res.json({
     success: true,
     message: "user has successfully authenticated",
     user: {
+      id,
       givenNames,
       lastName,
       email,
+      adminAccess: user.isAdmin(),
     },
     cookies: req.cookies,
   });
@@ -63,7 +67,7 @@ router.get(
   }),
   (req, res) => {
     (req.session as any).userId = (req.user as any).id;
-    res.redirect("http://localhost:3000/login"); // TODO: dynamic
+    res.redirect(CLIENT_HOME_PAGE_URL); // TODO: dynamic
   }
 );
 

@@ -10,19 +10,15 @@ import {
   QueryParam,
   Security,
 } from "typescript-rest";
-import {
-  Allocation,
-  Availability,
-  Staff,
-  StaffPreference,
-  Unit,
-} from "~/entity";
+import { StaffPreference, Unit } from "~/entity";
 import { resError } from "~/helpers";
+import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
 import { checkAllocation } from "../helpers/checkConstraints";
 
 @Path("/activities")
 class ActivitiesService {
+  factory = new ActivityControllerFactory();
   repo = getRepository(Activity);
 
   /**

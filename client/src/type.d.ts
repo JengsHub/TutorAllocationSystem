@@ -1,3 +1,18 @@
+enum DayOfWeek {
+  MONDAY = "M",
+  TUESDAY = "T",
+  WEDNESDAY = "W",
+  THURSDAY = "Th",
+  FRIDAY = "F",
+}
+
+enum ApprovalEnum {
+  INIT = "Init",
+  LECTURER = "Lecturer",
+  TA = "TA",
+  WORKFORCE = "WorkForce",
+}
+
 interface IActivity {
   activityCode: string;
   activityGroup: string;
@@ -36,11 +51,12 @@ interface IAllocation {
   id: string;
   activityId: string;
   staffId: string;
+  approval: ApprovalEnum;
 }
 
 interface IAvailability {
   id: string;
-  day: string;
+  day: DayOfWeek;
   startTime: string;
   endTime: string;
   year: number;
