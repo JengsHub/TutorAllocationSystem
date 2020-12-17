@@ -5,6 +5,7 @@ import DatabaseFinder from "../apis/DatabaseFinder";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
+import cleanInputData from "../services/DataSanitizer";
 
 // npm install -g browserify
 // yarn add csv-parser
@@ -16,6 +17,7 @@ class AllocateDragDrop extends Component<Props, State> {
   readonly validTypes: String[] = [
     "application/vnd.ms-excel",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv",
   ];
 
   constructor(props: Props) {
@@ -75,6 +77,7 @@ class AllocateDragDrop extends Component<Props, State> {
   uploadData = async () => {
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
+
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: Units = {
         unitCode: this.allocateList[i][tempList.indexOf("subject_code")].slice(
@@ -88,6 +91,7 @@ class AllocateDragDrop extends Component<Props, State> {
         year: 2020,
         aqfTarget: 0,
       };
+      unit = cleanInputData(unit);
       try {
         unit_object = await DatabaseFinder.post("/units", unit);
         // console.log(unit_object)
