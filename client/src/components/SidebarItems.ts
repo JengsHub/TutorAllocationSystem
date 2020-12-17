@@ -7,17 +7,21 @@ const SidebarItems = [
     name: "My Units",
     route: "/unit",
   },
+  // {
+  //   name: "Staff",
+  //   route: "/staff",
+  // },
+  // {
+  //   name: "Preferences",
+  //   route: "/preferences",
+  // },
+  // {
+  //   name: "Activities",
+  //   route: "/activities",
+  // },
   {
-    name: "Staff",
-    route: "/staff",
-  },
-  {
-    name: "Preferences",
-    route: "/preferences",
-  },
-  {
-    name: "Activities",
-    route: "/activities",
+    name: "Lecturing",
+    route: "/lecturing",
   },
   {
     name: "Data Import",

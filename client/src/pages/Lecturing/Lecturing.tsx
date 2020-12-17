@@ -11,17 +11,16 @@ import Typography from "@material-ui/core/Typography";
 import Collapse from "@material-ui/core/Collapse";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
-import Activities from "./Activities";
-import { ApprovalEnum } from "../enums/ApprovalEnum";
+import LecturingActivity from "./LecturingActivity";
 
-const Units = () => {
-  const [units, setUnits] = useState<IPreferences[]>([]);
+const Lecturing = () => {
+  const [units, setUnits] = useState<IUnit[] & { [key: string]: any }>([]);
 
   useEffect(() => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const res = await fetch(`http://localhost:8888/staffpreferences/mine`, {
+        const res = await fetch(`http://localhost:8888/units/byRole/Lecturer`, {
           method: "GET",
           credentials: "include",
           headers: {
@@ -32,14 +31,13 @@ const Units = () => {
         });
         return await res.json();
       } catch (err) {
-        console.log("No preferences found");
+        // console.log("No units found with lecturer roll");
+        console.error(err);
         return [];
       }
     };
 
     getUnits().then((res) => {
-      // console.log(res);
-      sortPreferenceScore(res, "desc");
       setUnits(res || []);
     });
   }, []);
@@ -50,12 +48,9 @@ const Units = () => {
         borderBottom: "unset",
       },
     },
-    header: {
-      fontSize: "large",
-    },
   });
 
-  function Row(props: { row: IPreferences }) {
+  function Row(props: { row: IUnit & { [key: string]: any } }) {
     const { row } = props;
     const [open, setOpen] = useState(false);
     const classes = useRowStyles();
@@ -65,16 +60,12 @@ const Units = () => {
         <TableRow className={classes.root}>
           <TableCell>
             <Button onClick={() => setOpen(!open)}>
-              {row.unit.unitCode +
-                "-" +
-                row.unit.campus +
-                "-" +
-                row.unit.offeringPeriod}{" "}
+              {row.unitCode + "-" + row.campus + "-" + row.offeringPeriod}{" "}
             </Button>
           </TableCell>
-          <TableCell align="center">{row.unit.year}</TableCell>
-          <TableCell align="center">{row.unit.aqfTarget}</TableCell>
-          <TableCell align="center">{row.preferenceScore}</TableCell>
+          <TableCell align="right">{row.year}</TableCell>
+          <TableCell align="right">{row.aqfTarget}</TableCell>
+          <TableCell align="center">{row.activities.length}</TableCell>
         </TableRow>
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -82,14 +73,13 @@ const Units = () => {
               <Box margin={1}>
                 <Typography variant="h6" gutterBottom component="div">
                   {" "}
-                  My Allocations for {row.unit.unitCode}{" "}
+                  The activites of {row.unitCode}{" "}
                 </Typography>
-                <Activities
+                <LecturingActivity
                   {...{
-                    unitId: row.unitId,
-                    approval: ApprovalEnum.LECTURER,
+                    unitId: row.id,
                   }}
-                ></Activities>
+                ></LecturingActivity>
               </Box>
             </Collapse>
           </TableCell>
@@ -98,46 +88,17 @@ const Units = () => {
     );
   }
 
-  const sortPreferenceScore = (list: IPreferences[], way: String) => {
-    console.log(list);
-    list.sort((a, b) => {
-      if (way === "desc") {
-        return b.preferenceScore > a.preferenceScore
-          ? 1
-          : b.preferenceScore < a.preferenceScore
-          ? -1
-          : 0;
-      } else {
-        return a.preferenceScore > b.preferenceScore
-          ? 1
-          : a.preferenceScore < b.preferenceScore
-          ? -1
-          : 0;
-      }
-    });
-  };
-
-  const classes = useRowStyles();
-
   return (
     <div id="main">
       <h1>My Units</h1>
       <TableContainer component={Paper}>
-        <Table className={""} aria-label="a dense table">
+        <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell className={classes.header} align="left">
-                Unit Code
-              </TableCell>
-              <TableCell className={classes.header} align="center">
-                Year
-              </TableCell>
-              <TableCell className={classes.header} align="center">
-                AQF Target
-              </TableCell>
-              <TableCell className={classes.header} align="center">
-                Your Preference Score{" "}
-              </TableCell>
+              <TableCell>Unit Code</TableCell>
+              <TableCell align="right">Year</TableCell>
+              <TableCell align="right">AQF Target</TableCell>
+              <TableCell align="center">Activites in this Unit </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -151,4 +112,4 @@ const Units = () => {
   );
 };
 
-export default Units;
+export default Lecturing;

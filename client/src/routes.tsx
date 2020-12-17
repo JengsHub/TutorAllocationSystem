@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import Activities from "./pages/Activities";
+// import Activities from "./pages/Activities";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
+import Lecturing from "./pages/Lecturing/Lecturing";
 import NotFound from "./pages/NotFound";
-import Preferences from "./pages/Preferences";
+// import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
-import Staff from "./pages/Staff";
 import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
 import { AuthContext } from "./session";
@@ -64,19 +64,24 @@ const Routes = () => {
         />
         <PrivateRoute
           isAuthenticated={isAuth}
+          path="/lecturing"
+          component={Lecturing}
+        />
+        {/* <PrivateRoute
+          isAuthenticated={isAuth}
           path="/staff"
           component={Staff}
-        />
-        <PrivateRoute
+        /> */}
+        {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/preferences"
           component={Preferences}
-        />
-        <PrivateRoute
+        /> */}
+        {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/activities"
           component={Activities}
-        />
+        /> */}
         <PrivateRoute
           isAuthenticated={isAuth}
           path="/dataimport"
