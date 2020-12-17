@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import Activities from "./pages/Activities";
+// import Activities from "./pages/Activities";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
@@ -11,7 +11,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
-import Candidate from "./pages/Candidate";
+// import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
 
 const Routes = () => {
@@ -78,11 +78,11 @@ const Routes = () => {
           path="/preferences"
           component={Preferences}
         /> */}
-        <PrivateRoute
+        {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/activities"
           component={Activities}
-        />
+        /> */}
         <PrivateRoute
           isAuthenticated={isAuth}
           path="/dataimport"

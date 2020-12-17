@@ -28,7 +28,7 @@ class AllocateDragDrop extends Component<Props, State> {
   }
 
   dragEventCounter: number = 0;
-  //listener for the drag feature to allocate files slot
+  // listener for the drag feature to allocate files slot
   dragenterListener = (event: React.DragEvent<HTMLDivElement>) => {
     this.overrideEventDefaults(event);
     this.dragEventCounter++;
@@ -213,7 +213,7 @@ class AllocateDragDrop extends Component<Props, State> {
     window.removeEventListener("drop", this.overrideEventDefaults);
   }
 
-//render the ui components:
+  //render the ui components:
   render() {
     return (
       <div className="Dragdrop">
