@@ -9,11 +9,13 @@ import {
   QueryParam,
   Security,
 } from "typescript-rest";
+import { ActivityControllerFactory } from "~/controller";
 import { Unit } from "~/entity";
 import { Activity } from "../entity/Activity";
 
 @Path("/activities")
 class ActivitiesService {
+  factory = new ActivityControllerFactory();
   repo = getRepository(Activity);
 
   /**

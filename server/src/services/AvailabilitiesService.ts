@@ -8,12 +8,14 @@ import {
   POST,
   PUT,
 } from "typescript-rest";
+import { ActivityControllerFactory } from "~/controller";
 import { Staff } from "~/entity";
 import { Availability } from "../entity/Availability";
 
 @Path("/availabilities")
 class AvailabilitiesService {
   repo = getRepository(Availability);
+  factory = new ActivityControllerFactory();
 
   /**
    * Returns a list of availabilities

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -6,61 +7,259 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import Box from "@material-ui/core/Box";
+import ClearIcon from "@material-ui/icons/Clear";
+import DoneIcon from "@material-ui/icons/Done";
+import { IconButton, makeStyles } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import DatabaseFinder from "../apis/DatabaseFinder";
+import { ApprovalEnum } from "../enums/ApprovalEnum";
 
-const Activities = () => {
-  const [activities, setActivities] = useState<IActivity[]>([]);
+const Activities = (props: { [key: string]: any }) => {
+  const [allocations, setAllocations] = useState<
+    (IAllocation & { [key: string]: any })[]
+  >([]);
 
-  const getActivities = async () => {
-    const res = await fetch("http://localhost:8888/activities");
-    return res.json();
-  };
+  const [hasChanged, setChanged] = useState<Boolean>(false);
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openRejected, setOpenRejected] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
-    getActivities().then((res) => {
-      // console.log(res);
-      setActivities(res);
-    });
-  }, []);
+    let params: { [key: string]: any } = {
+      ...props,
+    };
+    const getAllocations = async () => {
+      try {
+        let query = Object.keys(params)
+          .filter((key) => params[key] !== undefined)
+          .map((key) => `${key}=${params[key]}`)
+          .join("&");
 
-  // if(activities.length > 0){
-  // console.log(activities[0].allocations)}
+        const res = await fetch(
+          `http://localhost:8888/allocations/mine?${query}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Credentials": "true",
+            },
+          }
+        );
+        return await res.json();
+      } catch (e) {
+        console.log("Error fetching user activities");
+        return [];
+      }
+    };
+
+    getAllocations().then((res) => {
+      setAllocations(res);
+    });
+  }, [props, hasChanged]);
+
+  const useRowStyles = makeStyles({
+    error: {
+      fontSize: "large",
+      textAlign: "center",
+      border: 0,
+      borderRadius: 5,
+    },
+  });
+
+  function EmptyAllocations() {
+    const classes = useRowStyles();
+    if (allocations.length === 0) {
+      return (
+        <TableRow>
+          <TableCell className={classes.error} align="center">
+            You currently have no allocations for this unit.{" "}
+          </TableCell>
+        </TableRow>
+      );
+    }
+    return <TableRow />;
+  }
+
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+    setOpenRejected(false);
+  };
+
+  const timeReducer = (time: String) =>
+    time
+      .split(":")
+      .map((val) => parseInt(val))
+      .reduce((val, total) => val * 60 + total);
+
+  const sortDayTime = (list: (IAllocation & { [key: string]: any })[]) => {
+    return list.sort((a, b) => {
+      if (
+        Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) <
+        Object.values(DayOfWeek).indexOf(b.activity.dayOfWeek)
+      ) {
+        return -1;
+      } else if (
+        Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) >
+        Object.values(DayOfWeek).indexOf(b.activity.ayOfWeek)
+      ) {
+        return 1;
+      } else {
+        return (
+          timeReducer(a.activity.startTime) - timeReducer(b.activity.startTime)
+        );
+      }
+    });
+  };
+
+  const dayConverter = (day: DayOfWeek) => {
+    switch (day) {
+      case DayOfWeek.MONDAY:
+        return "Monday";
+      case DayOfWeek.TUESDAY:
+        return "Tuesday";
+      case DayOfWeek.WEDNESDAY:
+        return "Wednesday";
+      case DayOfWeek.THURSDAY:
+        return "Thursday";
+      case DayOfWeek.FRIDAY:
+        return "Friday";
+      default:
+        return "Invalid Day";
+    }
+  };
+
+  const allocationApproved = async (allocation: IAllocation) => {
+    const result = await DatabaseFinder.post(
+      `http://localhost:8888/allocations/approval/${allocation.id}/TA`
+    );
+    if (result.statusText === "OK") {
+      setChanged(true);
+      setOpenApproval(true);
+    } else {
+      setOpenError(true);
+      console.error("error updating");
+    }
+  };
+
+  const allocationRejected = async (allocation: IAllocation) => {
+    // TODO: Handle approval
+    const result = await DatabaseFinder.delete(
+      `http://localhost:8888/allocations/${allocation.id}`
+    );
+    if (result.statusText === "OK") {
+      setChanged(true);
+      setOpenRejected(true);
+    } else {
+      setOpenError(true);
+      console.error("error deleting");
+    }
+  };
+
+  const approvalStatus = (allocation: IAllocation & { [key: string]: any }) => {
+    switch (allocation.approval) {
+      case ApprovalEnum.INIT:
+        return "You Shouldn't See Me";
+      case ApprovalEnum.LECTURER:
+        return (
+          <>
+            <IconButton onClick={() => allocationApproved(allocation)}>
+              <DoneIcon />
+            </IconButton>
+            <IconButton onClick={() => allocationRejected(allocation)}>
+              <ClearIcon />
+            </IconButton>
+          </>
+        );
+      case ApprovalEnum.TA:
+        return "Accepted Offer";
+      case ApprovalEnum.WORKFORCE:
+        return "Accepted and Confirmed by WorkForce";
+      default:
+        return "Error With Approval Status";
+    }
+  };
 
   return (
-    <div id="main">
-      <h1>Activities</h1>
+    <Box>
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>Activity Code</TableCell>
-              <TableCell align="right">Activity Group</TableCell>
-              <TableCell align="right">Campus</TableCell>
-              <TableCell align="right">Day of Week</TableCell>
-              <TableCell align="right">Location </TableCell>
-              <TableCell align="right">Start Time</TableCell>
-              <TableCell align="right">Duration</TableCell>
-              <TableCell align="right">Unit Code</TableCell>
+              <TableCell align="left">Activity Code</TableCell>
+              <TableCell align="left">Activity Group</TableCell>
+              <TableCell align="left">Campus</TableCell>
+              <TableCell align="left">Day of Week</TableCell>
+              <TableCell align="left">Location </TableCell>
+              <TableCell align="left">Start Time</TableCell>
+              <TableCell align="left">Duration</TableCell>
+              <TableCell align="left">Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map((activity, i) => (
+            <EmptyAllocations />
+            {sortDayTime(allocations).map((allocation, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {activity.activityCode}
+                  {allocation.activity.activityCode}
                 </TableCell>
-                <TableCell align="right">{activity.activityGroup}</TableCell>
-                <TableCell align="right">{activity.campus}</TableCell>
-                <TableCell align="right">{activity.dayOfWeek}</TableCell>
-                <TableCell align="right">{activity.location}</TableCell>
-                <TableCell align="right">{activity.startTime}</TableCell>
-                <TableCell align="right">{activity.duration}</TableCell>
-                <TableCell align="right">{activity.unit.unitCode}</TableCell>
+                <TableCell align="left">
+                  {allocation.activity.activityGroup}
+                </TableCell>
+                <TableCell align="left">{allocation.activity.campus}</TableCell>
+                <TableCell align="left">
+                  {dayConverter(allocation.activity.dayOfWeek)}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.location}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.startTime}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.duration + " hour(s)"}
+                </TableCell>
+                <TableCell align="left">{approvalStatus(allocation)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have approved an allocation.
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={openRejected}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have rejected an allocation.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 

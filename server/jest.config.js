@@ -1,10 +1,13 @@
-import type { Config } from "@jest/types";
+const { compilerOptions } = require("./tsconfig.json");
+const { pathsToModuleNameMapper } = require("ts-jest/utils");
 
-const config: Config.InitialOptions = {
+module.exports = {
   verbose: true,
   preset: "ts-jest",
   testEnvironment: "node",
-  roots: ["<rootDir>/src"],
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    prefix: "<rootDir>/",
+  }),
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
@@ -13,4 +16,3 @@ const config: Config.InitialOptions = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   collectCoverage: true,
 };
-export default config;

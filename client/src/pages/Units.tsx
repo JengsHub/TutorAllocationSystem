@@ -7,61 +7,142 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import Collapse from "@material-ui/core/Collapse";
+import Box from "@material-ui/core/Box";
+import { makeStyles } from "@material-ui/core";
+import Activities from "./Activities";
+import { ApprovalEnum } from "../enums/ApprovalEnum";
 
 const Units = () => {
-  const [units, setUnits] = useState<IUnit[]>([]);
-
-  const getAllUnits = async () => {
-    try {
-      const response = await fetch("http://localhost:8888/units");
-      const jsonData = await response.json();
-      console.log(response);
-      console.log(jsonData);
-      setUnits(jsonData);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  const [units, setUnits] = useState<IPreferences[]>([]);
 
   useEffect(() => {
-    getAllUnits();
+    // let user: IStaff | undefined;
+    const getUnits = async () => {
+      try {
+        const res = await fetch(`http://localhost:8888/staffpreferences/mine`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
+          },
+        });
+        return await res.json();
+      } catch (err) {
+        console.log("No preferences found");
+        return [];
+      }
+    };
+
+    getUnits().then((res) => {
+      // console.log(res);
+      sortPreferenceScore(res, "desc");
+      setUnits(res || []);
+    });
   }, []);
+
+  const useRowStyles = makeStyles({
+    root: {
+      "& > *": {
+        borderBottom: "unset",
+      },
+    },
+    header: {
+      fontSize: "large",
+    },
+  });
+
+  function Row(props: { row: IPreferences }) {
+    const { row } = props;
+    const [open, setOpen] = useState(false);
+    const classes = useRowStyles();
+
+    return (
+      <React.Fragment>
+        <TableRow className={classes.root}>
+          <TableCell>
+            <Button onClick={() => setOpen(!open)}>
+              {row.unit.unitCode +
+                "-" +
+                row.unit.campus +
+                "-" +
+                row.unit.offeringPeriod}{" "}
+            </Button>
+          </TableCell>
+          <TableCell align="center">{row.unit.year}</TableCell>
+          <TableCell align="center">{row.unit.aqfTarget}</TableCell>
+          <TableCell align="center">{row.preferenceScore}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Typography variant="h6" gutterBottom component="div">
+                  {" "}
+                  My Allocations for {row.unit.unitCode}{" "}
+                </Typography>
+                <Activities
+                  {...{
+                    unitId: row.unitId,
+                    approval: ApprovalEnum.LECTURER,
+                  }}
+                ></Activities>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+  }
+
+  const sortPreferenceScore = (list: IPreferences[], way: String) => {
+    console.log(list);
+    list.sort((a, b) => {
+      if (way === "desc") {
+        return b.preferenceScore > a.preferenceScore
+          ? 1
+          : b.preferenceScore < a.preferenceScore
+          ? -1
+          : 0;
+      } else {
+        return a.preferenceScore > b.preferenceScore
+          ? 1
+          : a.preferenceScore < b.preferenceScore
+          ? -1
+          : 0;
+      }
+    });
+  };
+
+  const classes = useRowStyles();
 
   return (
     <div id="main">
-      <h1>Units</h1>
+      <h1>My Units</h1>
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="a dense table">
+        <Table className={""} aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell>Unit Code</TableCell>
-              <TableCell align="right">Year</TableCell>
-              <TableCell align="right">Campus</TableCell>
-              <TableCell align="right">Offering</TableCell>
-              <TableCell align="right">AQF Target</TableCell>
-              <TableCell align="center">Activities</TableCell>
-              <TableCell align="center">Preference</TableCell>
+              <TableCell className={classes.header} align="left">
+                Unit Code
+              </TableCell>
+              <TableCell className={classes.header} align="center">
+                Year
+              </TableCell>
+              <TableCell className={classes.header} align="center">
+                AQF Target
+              </TableCell>
+              <TableCell className={classes.header} align="center">
+                Your Preference Score{" "}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {units.map((unit) => (
-              <TableRow key={unit.id}>
-                <TableCell align="left">{unit.unitCode}</TableCell>
-                <TableCell align="right">{unit.year}</TableCell>
-                <TableCell align="right">{unit.campus}</TableCell>
-                <TableCell align="right">{unit.offeringPeriod}</TableCell>
-                <TableCell align="right">{unit.aqfTarget}</TableCell>
-                <TableCell align="right">
-                  <Button variant="contained" color="secondary">
-                    View Activities
-                  </Button>
-                </TableCell>
-                <TableCell align="right">
-                  <Button variant="contained" color="default">
-                    View Preferences
-                  </Button>
-                </TableCell>
-              </TableRow>
+            {units.map((row) => (
+              <Row key={row.id} row={row} />
             ))}
           </TableBody>
         </Table>

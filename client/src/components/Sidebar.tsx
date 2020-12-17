@@ -14,6 +14,7 @@ const Sidebar = () => {
             to={item.route}
             activeClassName={item.route === "/" ? "" : "active"}
             className="link"
+            key={index}
           >
             <div className="sidebar-item" key={item.name}>
               <p>{item.name}</p>

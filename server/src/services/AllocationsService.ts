@@ -1,19 +1,28 @@
+import { Request, Response } from "express";
 import { DeleteResult, getRepository } from "typeorm";
 import {
+  ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
-  PATCH,
+  IgnoreNextMiddlewares,
   Path,
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
-import { Activity, Staff, Unit } from "~/entity";
+
+import { AllocationControllerFactory } from "~/controller";
+import { Activity, Staff } from "~/entity";
 import { Allocation } from "../entity/Allocation";
+import { authCheck } from "~/helpers/auth";
+import { ApprovalEnum } from "~/enums/ApprovalEnum";
 
 @Path("/allocations")
 class AllocationsService {
   repo = getRepository(Allocation);
+  factory = new AllocationControllerFactory();
 
   /**
    * Returns a list of allocations
@@ -22,6 +31,49 @@ class AllocationsService {
   @GET
   public getAllAllocations(): Promise<Array<Allocation>> {
     return this.repo.find();
+  }
+
+  /**
+   * Get the allocated activities of the current user
+   * Option to filter by unit id
+   * @param req
+   * @param res
+   * @param unitId : Optional param to filter allocations by
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/mine")
+  public async getMyAllocation(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @QueryParam("unitId") unitId: string,
+    @QueryParam("approval") approval: ApprovalEnum
+    // @QueryParam("offeringPeriod") offeringPeriod: string,
+    // @QueryParam("year") year: number
+  ) {
+    if (!authCheck(req, res)) return;
+
+    const me = req.user as Staff;
+    let allocations = await this.repo.find({
+      where: {
+        staff: me,
+      },
+      relations: ["activity"],
+    });
+
+    if (unitId) {
+      allocations = allocations.filter((a) => a.activity.unitId === unitId);
+    }
+    console.log(allocations);
+    if (approval) {
+      allocations = allocations.filter(
+        (a) =>
+          Object.values(ApprovalEnum).indexOf(a.approval) >=
+          Object.values(ApprovalEnum).indexOf(approval)
+      );
+    }
+    console.log(allocations);
+    return allocations;
   }
 
   /**
@@ -54,6 +106,25 @@ class AllocationsService {
     });
     newRecord.activity = activity;
     return this.repo.save(this.repo.create(newRecord));
+  }
+
+  @POST
+  @Path("approval/:id/:approval")
+  public async updateApproval(
+    @PathParam("id") id: string,
+    @PathParam("approval") approval: ApprovalEnum
+  ) {
+    console.log(id, approval);
+    let allocation = await this.repo.findOne({ where: { id: id } });
+    console.log(allocation);
+    if (allocation) {
+      allocation.approval = approval;
+      return await this.repo.update(
+        { id: allocation.id },
+        { approval: approval }
+      );
+    }
+    console.error("No allocation by this id");
   }
 
   /**
