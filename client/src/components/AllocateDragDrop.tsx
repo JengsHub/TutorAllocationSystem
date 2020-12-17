@@ -78,7 +78,6 @@ class AllocateDragDrop extends Component<Props, State> {
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
 
-    var t0 = performance.now();
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: Units = {
         unitCode: this.allocateList[i][tempList.indexOf("subject_code")].slice(
@@ -139,8 +138,6 @@ class AllocateDragDrop extends Component<Props, State> {
         // Then create a new allocation with activity_id and staff_id
       }
     }
-    var t1 = performance.now();
-    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
     this.showSuccess();
   };
 

@@ -79,7 +79,6 @@ class TasDragDrop extends Component<Props, State> {
     let staff_object: any;
     let activity_object: any;
 
-    var t0 = performance.now();
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: Units = {
         unitCode: this.allocateList[i][tempList.indexOf("Subject")],
@@ -178,8 +177,6 @@ class TasDragDrop extends Component<Props, State> {
         throw err;
       }
     }
-    var t1 = performance.now();
-    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
     this.showSuccess();
   };
 
