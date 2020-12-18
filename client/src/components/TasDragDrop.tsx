@@ -73,6 +73,10 @@ class TasDragDrop extends Component<Props, State> {
     console.log(this.allocateList);
   };
 
+  getEndTime = (start: Date, minutes: string) => {
+    return new Date(start.getTime() + Number(minutes) * 60000);
+  };
+
   uploadData = async () => {
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
@@ -149,16 +153,36 @@ class TasDragDrop extends Component<Props, State> {
         DayOfWeek.FRIDAY,
       ];
       let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+      let startHour: Date = new Date();
+      startHour.setHours(
+        Number(this.allocateList[i][tempList.indexOf("Time")].slice(0, 2))
+      );
+      startHour.setMinutes(
+        Number(this.allocateList[i][tempList.indexOf("Time")].slice(3, 5))
+      );
       var activity: Activity = {
         activityCode: this.allocateList[i][tempList.indexOf("Activity Code")],
         activityGroup: this.allocateList[i][tempList.indexOf("Activity Group")],
         campus: this.allocateList[i][tempList.indexOf("Campus")],
         location: this.allocateList[i][tempList.indexOf("Location")],
-        duration: Number(this.allocateList[i][tempList.indexOf("Duration")]),
         dayOfWeek:
           DOW[dayStr.indexOf(this.allocateList[i][tempList.indexOf("Day")])],
         startTime: this.allocateList[i][tempList.indexOf("Time")],
         unitId: unit_object["data"]["id"],
+        endTime:
+          this.getEndTime(
+            startHour,
+            this.allocateList[i][tempList.indexOf("Duration")]
+          )
+            .getHours()
+            .toString() +
+          ":" +
+          this.getEndTime(
+            startHour,
+            this.allocateList[i][tempList.indexOf("Duration")]
+          )
+            .getMinutes()
+            .toString(),
       };
       try {
         activity_object = await DatabaseFinder.post("/activities", activity);

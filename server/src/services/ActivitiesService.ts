@@ -238,6 +238,16 @@ class ActivitiesService {
       id: newRecord.unitId,
     });
     newRecord.unit = unit;
+    let activityToUpdate = await Activity.findOne({
+      activityCode: newRecord.activityCode,
+      unit: newRecord.unit,
+    });
+
+    if (activityToUpdate) {
+      Activity.update({ id: activityToUpdate.id }, newRecord);
+      newRecord.id = activityToUpdate.id;
+      return newRecord;
+    }
     return this.repo.save(this.repo.create(newRecord));
   }
 
