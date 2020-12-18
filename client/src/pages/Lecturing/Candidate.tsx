@@ -1,36 +1,29 @@
-import React, { useState, useEffect } from "react";
-import {
-  useParams,
-  useHistory,
-  useLocation,
-  RouteComponentProps,
-} from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import Button from "@material-ui/core/Button";
-import DatabaseFinder from "../apis/DatabaseFinder";
-import { getActivity, getCandidatePreference } from "../apis/api";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { getActivity, getCandidatePreference } from "../../apis/api";
+import DatabaseFinder from "../../apis/DatabaseFinder";
 
-interface RouteParams {
-  id: string;
+interface ICandidateProps {
+  activityId: string;
 }
 
-const Candidate = () => {
+const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const [candidatesPreference, setCandidatePreference] = useState<
     IPreferences[]
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
 
-  const location = useLocation<RouteParams>();
   const history = useHistory();
-  const activityId = location.state.id;
 
   useEffect(() => {
     if (activityId) {
@@ -100,7 +93,7 @@ const Candidate = () => {
   const isSelected = (i: number) => selecteds.indexOf(i) !== -1;
 
   return (
-    <div id="main">
+    <div>
       <h1>Available Candidates </h1>
       {activity ? (
         <div>
@@ -162,7 +155,15 @@ const Candidate = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Button onClick={makeOffers}> Request Offer</Button>
+      <Button
+        onClick={makeOffers}
+        variant="contained"
+        style={{ marginTop: 20 }}
+        color="primary"
+      >
+        {" "}
+        Request Offer
+      </Button>
     </div>
   );
 };
