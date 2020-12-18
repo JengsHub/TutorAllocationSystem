@@ -19,7 +19,7 @@ interface IActivity {
   allocations: IAllocation[];
   campus: string;
   dayOfWeek: DayOfWeek;
-  duration: number;
+  endTime: string;
   id: string;
   location: string;
   startTime: string;
@@ -72,4 +72,11 @@ interface IUnit {
   campus: string;
   year: number;
   aqfTarget: number;
+}
+
+interface IRule {
+  id: string;
+  ruleName: string;
+  ruleDescription: string;
+  value: number;
 }

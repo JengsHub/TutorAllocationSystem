@@ -10,14 +10,21 @@ import {
   PathParam,
   POST,
   PUT,
+  Errors,
   QueryParam,
 } from "typescript-rest";
-
+import { Activity, Staff, Allocation } from "~/entity";
+import { checkAllocation } from "../helpers/checkConstraints";
 import { AllocationControllerFactory } from "~/controller";
-import { Activity, Staff } from "~/entity";
-import { Allocation } from "../entity/Allocation";
 import { authCheck } from "~/helpers/auth";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
+
+class ConstraintError extends Errors.HttpError {
+  static statusCode: number = 512;
+  constructor(message: string) {
+    super("ConstraintError", message);
+  }
+}
 
 @Path("/allocations")
 class AllocationsService {
@@ -96,14 +103,25 @@ class AllocationsService {
    */
   @POST
   public async createAllocation(newRecord: Allocation): Promise<Allocation> {
-    // TODO: optimisation
+    // TODO: error message because constraints not met
+
     let staff = await getRepository(Staff).findOneOrFail({
       id: newRecord.staffId,
     });
-    newRecord.staff = staff;
     let activity = await getRepository(Activity).findOneOrFail({
       id: newRecord.activityId,
     });
+
+    if (!(await checkAllocation(staff, activity))) {
+      throw new ConstraintError(
+        "Allocation not made because constraints not met"
+      );
+    }
+
+    // TODO: optimisation
+
+    newRecord.staff = staff;
+
     newRecord.activity = activity;
     return this.repo.save(this.repo.create(newRecord));
   }
@@ -136,9 +154,16 @@ class AllocationsService {
   public async updateAllocation(
     changedAllocation: Allocation
   ): Promise<Allocation> {
-    let allocationToUpdate = await this.repo.findOne({
-      id: changedAllocation.id,
-    });
+    let allocationToUpdate = await this.repo.findOne(
+      {
+        id: changedAllocation.id,
+      },
+      { relations: ["staff", "activity"] }
+    );
+
+    if (!allocationToUpdate)
+      throw new Errors.NotFoundError("Allocation not found.");
+
     // TODO: optimisation
     if (changedAllocation.staffId) {
       let staff = await getRepository(Staff).findOneOrFail({
@@ -153,6 +178,16 @@ class AllocationsService {
       changedAllocation.activity = activity;
     }
 
+    if (
+      !(await checkAllocation(
+        changedAllocation.staff || allocationToUpdate.staff,
+        changedAllocation.activity || allocationToUpdate.activity
+      ))
+    ) {
+      throw new ConstraintError(
+        "Allocation not updated because constraints not met"
+      );
+    }
     allocationToUpdate = changedAllocation;
     return this.repo.save(allocationToUpdate);
   }

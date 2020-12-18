@@ -194,7 +194,7 @@ const Activities = (props: { [key: string]: any }) => {
   return (
     <Box>
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="a dense table">
+        <Table className={""} size="small" aria-label="activities table">
           <TableHead>
             <TableRow>
               <TableCell align="left">Activity Code</TableCell>

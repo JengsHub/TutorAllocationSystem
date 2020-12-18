@@ -1,10 +1,10 @@
 import {
   BaseEntity,
-  Column,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
+  Column,
 } from "typeorm";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { DayOfWeek } from "../enums/DayOfWeek";

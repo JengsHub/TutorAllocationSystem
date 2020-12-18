@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 import { ApprovalEnum } from "../../enums/ApprovalEnum";
+import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -17,7 +18,15 @@ import DatabaseFinder from "../../apis/DatabaseFinder";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
-const LecturingActivity = (props: { [key: string]: any }) => {
+interface ILecturingActivityProps {
+  unitId: string;
+  setModalOpen: (activityId: string) => void;
+}
+
+const LecturingActivity: React.FC<ILecturingActivityProps> = ({
+  unitId,
+  setModalOpen,
+}) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const [openApproval, setOpenApproval] = useState<boolean>(false);
@@ -25,14 +34,11 @@ const LecturingActivity = (props: { [key: string]: any }) => {
   const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
-    let params: { [key: string]: any } = {
-      ...props,
-    };
     const getActivities = async () => {
       try {
-        // console.log(params.unitId);
+        //console.log(params.unitId);
         const res = await fetch(
-          `http://localhost:8888/units/${params.unitId}/activities`,
+          `http://localhost:8888/units/${unitId}/activities`,
           {
             method: "GET",
             credentials: "include",
@@ -53,7 +59,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
     getActivities().then((res) => {
       setActivities(res);
     });
-  }, [props, hasChanged]);
+  }, [unitId, hasChanged]);
 
   const timeReducer = (time: String) =>
     time
@@ -223,7 +229,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
               <TableCell align="left">Day of Week</TableCell>
               <TableCell align="left">Location </TableCell>
               <TableCell align="left">Start Time</TableCell>
-              <TableCell align="left">Duration</TableCell>
+              <TableCell align="left">End Time</TableCell>
               <TableCell align="center">Allocations</TableCell>
             </TableRow>
           </TableHead>
@@ -241,9 +247,7 @@ const LecturingActivity = (props: { [key: string]: any }) => {
                 </TableCell>
                 <TableCell align="left">{activity.location}</TableCell>
                 <TableCell align="left">{activity.startTime}</TableCell>
-                <TableCell align="left">
-                  {activity.duration + " hour(s)"}
-                </TableCell>
+                <TableCell align="left">{activity.endTime}</TableCell>
                 <TableCell align="left">
                   {activity.allocations.length > 0 ? (
                     activity.allocations.map(
@@ -273,6 +277,12 @@ const LecturingActivity = (props: { [key: string]: any }) => {
                       </TableBody>
                     </Table>
                   )}
+                  <Button
+                    variant="contained"
+                    onClick={() => setModalOpen(activity.id)}
+                  >
+                    Manually add allocations
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

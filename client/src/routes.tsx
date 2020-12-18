@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
+// import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
 
 const Routes = () => {

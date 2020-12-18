@@ -12,8 +12,18 @@ define(Activity, (faker: typeof Faker) => {
   activity.dayOfWeek = DayOfWeek.MONDAY;
   activity.location = faker.address.streetAddress();
   // activity.startTime = faker.time.recent().toString(); // TODO: fix
-  activity.startTime = "18:00"; // TODO: fix
-  activity.duration = faker.random.number(3) + 1;
+  activity.startTime = `${faker.random
+    .number({
+      min: 10,
+      max: 16,
+    })
+    .toString()}:00`; // TODO: fix
+  activity.endTime = `${faker.random
+    .number({
+      min: 17,
+      max: 23,
+    })
+    .toString()}:00`;
   activity.unit = new Unit(); // Override this
   return activity;
 });

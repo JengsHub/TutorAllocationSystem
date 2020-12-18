@@ -7,10 +7,12 @@ import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 import cleanInputData from "../services/DataSanitizer";
 
+//dependencies:
 // npm install -g browserify
 // yarn add csv-parser
 
 class AllocateDragDrop extends Component<Props, State> {
+  //initialzier to accept file types.
   static counter = 0;
   fileUploaderInput: HTMLElement | null = null;
   allocateList: any[] = [[]];
@@ -26,6 +28,7 @@ class AllocateDragDrop extends Component<Props, State> {
   }
 
   dragEventCounter: number = 0;
+  // listener for the drag feature to allocate files slot
   dragenterListener = (event: React.DragEvent<HTMLDivElement>) => {
     this.overrideEventDefaults(event);
     this.dragEventCounter++;
@@ -50,6 +53,7 @@ class AllocateDragDrop extends Component<Props, State> {
     }
   };
 
+  //drop listener to indicate a file upload to the allocate file slot
   dropListener = (event: React.DragEvent<HTMLDivElement>) => {
     this.overrideEventDefaults(event);
     this.dragEventCounter = 0;
@@ -69,11 +73,15 @@ class AllocateDragDrop extends Component<Props, State> {
     }
   };
 
+  //
   obtainResult = (results: any) => {
+    //move the data od the file to allocateList
     this.allocateList = results.data;
+    //for debugging:
     console.log(this.allocateList);
   };
 
+  //asyncrhize function to upload the data from a file
   uploadData = async () => {
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
@@ -141,14 +149,17 @@ class AllocateDragDrop extends Component<Props, State> {
     this.showSuccess();
   };
 
+  //success message
   showSuccess = () => {
     document.getElementById("Allocate_fb")!.style.visibility = "visible";
   };
 
+  //hide the success message
   hideSuccess = () => {
     document.getElementById("Allocate_fb")!.style.visibility = "hidden";
   };
 
+  //clearing
   clearField = () => {
     this.hideSuccess();
     this.setState({ file: null });
@@ -202,6 +213,7 @@ class AllocateDragDrop extends Component<Props, State> {
     window.removeEventListener("drop", this.overrideEventDefaults);
   }
 
+  //render the ui components:
   render() {
     return (
       <div className="Dragdrop">

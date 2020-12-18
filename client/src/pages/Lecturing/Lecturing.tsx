@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Collapse from "@material-ui/core/Collapse";
+import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import Collapse from "@material-ui/core/Collapse";
-import Box from "@material-ui/core/Box";
-import { makeStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import CandidatesModal from "./CandidatesModal";
 import LecturingActivity from "./LecturingActivity";
 
 const Lecturing = () => {
-  const [units, setUnits] = useState<IUnit[] & { [key: string]: any }>([]);
+  const [units, setUnits] = useState<IUnit[]>([]);
+  const [modalOpen, setModalOpen] = useState<string | null>(null);
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -42,6 +44,10 @@ const Lecturing = () => {
     });
   }, []);
 
+  const [openRows, setOpenRows] = useState<boolean[]>(
+    Array(units.length).fill(false)
+  );
+
   const useRowStyles = makeStyles({
     root: {
       "& > *": {
@@ -52,14 +58,20 @@ const Lecturing = () => {
 
   function Row(props: { row: IUnit & { [key: string]: any } }) {
     const { row } = props;
-    const [open, setOpen] = useState(false);
     const classes = useRowStyles();
-
     return (
       <React.Fragment>
         <TableRow className={classes.root}>
           <TableCell>
-            <Button onClick={() => setOpen(!open)}>
+            <Button
+              onClick={() =>
+                setOpenRows((o) => {
+                  const rows = o.slice();
+                  rows[row.key] = true;
+                  return rows;
+                })
+              }
+            >
               {row.unitCode + "-" + row.campus + "-" + row.offeringPeriod}{" "}
             </Button>
           </TableCell>
@@ -69,15 +81,16 @@ const Lecturing = () => {
         </TableRow>
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
+            <Collapse in={openRows[row.key]} timeout="auto" unmountOnExit>
               <Box margin={1}>
                 <Typography variant="h6" gutterBottom component="div">
                   {" "}
-                  The activites of {row.unitCode}{" "}
+                  The activities of {row.unitCode}{" "}
                 </Typography>
                 <LecturingActivity
                   {...{
                     unitId: row.id,
+                    setModalOpen,
                   }}
                 ></LecturingActivity>
               </Box>
@@ -90,7 +103,11 @@ const Lecturing = () => {
 
   return (
     <div id="main">
-      <h1>My Units</h1>
+      <CandidatesModal
+        activityId={modalOpen}
+        closeModal={() => setModalOpen(null)}
+      />
+      <h1>Lecturing</h1>
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
@@ -98,7 +115,7 @@ const Lecturing = () => {
               <TableCell>Unit Code</TableCell>
               <TableCell align="right">Year</TableCell>
               <TableCell align="right">AQF Target</TableCell>
-              <TableCell align="center">Activites in this Unit </TableCell>
+              <TableCell align="center">Activities in this Unit </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
