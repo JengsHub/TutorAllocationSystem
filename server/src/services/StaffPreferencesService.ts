@@ -86,6 +86,17 @@ class StaffPreferencesService {
     let unit = await getRepository(Unit).findOneOrFail({
       id: newRecord.unitId,
     });
+    let staffPreferenceToUpdate = await StaffPreference.findOne({
+      staff: staff,
+      unit: unit,
+    });
+    if (staffPreferenceToUpdate) {
+      StaffPreference.update({ id: staffPreferenceToUpdate.id }, newRecord);
+      newRecord.staff = staff;
+      newRecord.unit = unit;
+      return newRecord;
+    }
+
     newRecord.staff = staff;
     newRecord.unit = unit;
 

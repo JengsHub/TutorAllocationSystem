@@ -116,7 +116,16 @@ class StaffService {
    * @return Staff new staff member
    */
   @POST
-  public createStaff(newRecord: Staff): Promise<Staff> {
+  public async createStaff(newRecord: Staff): Promise<Staff> {
+    let staffToUpdate = await Staff.findOne({
+      email: newRecord.email,
+    });
+    if (staffToUpdate) {
+      Staff.update({ id: staffToUpdate.id }, newRecord);
+      newRecord.id = staffToUpdate.id;
+      return newRecord;
+    }
+
     return this.repo.save(this.repo.create(newRecord));
   }
 

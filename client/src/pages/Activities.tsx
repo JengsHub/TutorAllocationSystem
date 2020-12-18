@@ -203,7 +203,6 @@ const Activities = (props: { [key: string]: any }) => {
               <TableCell align="left">Day of Week</TableCell>
               <TableCell align="left">Location </TableCell>
               <TableCell align="left">Start Time</TableCell>
-              <TableCell align="left">Duration</TableCell>
               <TableCell align="left">Status</TableCell>
             </TableRow>
           </TableHead>
@@ -226,9 +225,6 @@ const Activities = (props: { [key: string]: any }) => {
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.startTime}
-                </TableCell>
-                <TableCell align="left">
-                  {allocation.activity.duration + " hour(s)"}
                 </TableCell>
                 <TableCell align="left">{approvalStatus(allocation)}</TableCell>
               </TableRow>

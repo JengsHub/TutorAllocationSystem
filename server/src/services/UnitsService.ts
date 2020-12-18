@@ -87,8 +87,18 @@ class UnitsService {
    * @return Unit new unit
    */
   @POST
-  public createUnit(newRecord: Unit): Promise<Unit> {
-    return this.repo.save(this.repo.create(newRecord));
+  public async createUnit(newRecord: Unit): Promise<Unit> {
+    let unitToUpdate = await Unit.findOne({
+      unitCode: newRecord.unitCode,
+      offeringPeriod: newRecord.offeringPeriod,
+      year: newRecord.year,
+    });
+    if (unitToUpdate) {
+      Unit.update({ id: unitToUpdate.id }, newRecord);
+      newRecord.id = unitToUpdate.id;
+      return newRecord;
+    }
+    return this.repo.save(newRecord);
   }
 
   /**

@@ -56,10 +56,10 @@ interface Activity {
   activityGroup: string;
   campus: string;
   location: string;
-  duration: number;
   dayOfWeek: DayOfWeek;
   startTime: string;
   unitId: string;
+  endTime: string;
 }
 
 interface Allocation {

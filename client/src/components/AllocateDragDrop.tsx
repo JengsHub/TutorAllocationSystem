@@ -81,6 +81,14 @@ class AllocateDragDrop extends Component<Props, State> {
     console.log(this.allocateList);
   };
 
+  getEndTime = (start: Date, minutes: string) => {
+    return new Date(start.getTime() + Number(minutes) * 60000);
+  };
+
+  minLeadZeros = (date: Date) => {
+    return (date.getMinutes() < 10 ? "0" : "") + date.getMinutes().toString();
+  };
+
   //asyncrhize function to upload the data from a file
   uploadData = async () => {
     let tempList: string[] = this.allocateList[0];
@@ -115,6 +123,13 @@ class AllocateDragDrop extends Component<Props, State> {
         DayOfWeek.FRIDAY,
       ];
       let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+      let startHour: Date = new Date();
+      startHour.setHours(
+        Number(this.allocateList[i][tempList.indexOf("start_time")].slice(0, 2))
+      );
+      startHour.setMinutes(
+        Number(this.allocateList[i][tempList.indexOf("start_time")].slice(3, 5))
+      );
       var activity: Activity = {
         activityCode: this.allocateList[i][tempList.indexOf("activity_code")],
         activityGroup: this.allocateList[i][
@@ -122,7 +137,20 @@ class AllocateDragDrop extends Component<Props, State> {
         ],
         campus: this.allocateList[i][tempList.indexOf("campus")],
         location: this.allocateList[i][tempList.indexOf("location")],
-        duration: Number(this.allocateList[i][tempList.indexOf("duration")]),
+        endTime:
+          this.getEndTime(
+            startHour,
+            this.allocateList[i][tempList.indexOf("duration")]
+          )
+            .getHours()
+            .toString() +
+          ":" +
+          this.minLeadZeros(
+            this.getEndTime(
+              startHour,
+              this.allocateList[i][tempList.indexOf("duration")]
+            )
+          ),
         dayOfWeek:
           DOW[
             dayStr.indexOf(
