@@ -6,6 +6,7 @@ import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 import cleanInputData from "../services/DataSanitizer";
+import ReadFileFormat from "../services/ReadFileFormat";
 
 // npm install -g browserify
 // yarn add csv-parser
@@ -14,15 +15,13 @@ class TpsDragDrop extends Component<Props, State> {
   static counter = 0;
   fileUploaderInput: HTMLElement | null = null;
   allocateList: any[] = [[]];
-  readonly validTypes: String[] = [
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "text/csv",
-  ];
+  fileFormats: ReadFileFormat = new ReadFileFormat();
+  readonly validTypes: String[];
 
   constructor(props: Props) {
     super(props);
     this.state = { dragging: false, file: null };
+    this.validTypes = this.fileFormats.getFormats();
   }
 
   dragEventCounter: number = 0;
