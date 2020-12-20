@@ -2,11 +2,9 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  JoinTable,
+  getConnection,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 import { Unit } from ".";
@@ -14,6 +12,7 @@ import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
+import { IStaff } from "../../../client/src/types"
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -91,5 +90,47 @@ export class Staff extends BaseEntity {
 
   isAdmin() {
     return this.appRole === AppRoleEnum.ADMIN;
+  }
+
+  static async insertStaffIntoDb(valueToInsert: IStaff){
+    /**
+     * Inserts new staff item into database if not present, else update the existing staff
+     * returns staff that was inserted or updated
+     */
+    // find whether current value is already in database
+    var inDB = true;
+    try{
+      await getConnection()
+      .getRepository(Staff)
+      .createQueryBuilder("staff")
+      .where("staff.email = :email", { email: valueToInsert.email })
+      .getOneOrFail();
+    }catch (EntityNotFoundError){
+      inDB = false;
+      // insert new staff row if entity not found in database
+      await getConnection()
+      .createQueryBuilder()
+      .insert()
+      .into(Staff)
+      .values(valueToInsert)
+      .execute();
+    }
+    
+    if (inDB){    // if already in db, then just update all the values
+      await getConnection()
+            .createQueryBuilder()
+            .update(Staff)
+            .set({ givenNames: valueToInsert.givenNames, lastName: valueToInsert.lastName, aqf: valueToInsert.aqf, studyingAqf: valueToInsert.studyingAqf})
+            .where("email = :email", { email: valueToInsert.email })
+            .execute();
+    }
+
+    const staff = await getConnection()
+    .getRepository(Staff)
+    .createQueryBuilder("staff")
+    .where("staff.email = :email", { email: valueToInsert.email })
+    .getOne();
+
+    return staff;
   }
 }

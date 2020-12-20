@@ -1,6 +1,7 @@
 import { DayOfWeek } from "../enums/DayOfWeek";
 import cleanInputData from "../services/DataSanitizerService";
-import { Units, Staff, StaffPreference, Activity, Allocation } from "../../../client/src/types";
+import { IUnits, IStaff, IStaffPreference, IActivity, IAllocation } from "../../../client/src/types";
+import { Activity, Allocation, Staff, StaffPreference, Unit } from "~/entity";
 
 type TasObject = {
     "Tutor": string,
@@ -35,7 +36,7 @@ export class ProcessFileService{
         let activity_object: any;
         
         for (let i = 1; i < this.allocateList.length; i++) {
-            var unit: Units = {
+            var unit: IUnits = {
             unitCode: row["Subject"],
             offeringPeriod: row["Subject Code"].slice(11, 13),
             campus: row["Campus"],
@@ -44,7 +45,7 @@ export class ProcessFileService{
             };
             unit = cleanInputData(unit);
             try {
-            unit_object = await DatabaseFinder.post("/units", unit);
+            unit_object = Unit.insertUnitIntoDb(unit);
             // console.log(unit_object)
             } catch (err) {
             throw err;
@@ -56,7 +57,7 @@ export class ProcessFileService{
             true
                 ? 0
                 : Number(row["Tutor AQF"]);
-            var staffDetail: Staff = {
+            var staffDetail: IStaff = {
             givenNames: name[0],
             lastName: name[1],
             aqf: studyAqf,
@@ -64,7 +65,7 @@ export class ProcessFileService{
             email: this.allocateList[i][tempList.indexOf("Email")],
             };
             try {
-            staff_object = await DatabaseFinder.post("/staff", staffDetail);
+            staff_object = Staff.insertStaffIntoDb(staffDetail);
             // console.log(staff_object)
             } catch (err) {
             throw err;
@@ -75,7 +76,7 @@ export class ProcessFileService{
             this.allocateList[i][tempList.indexOf("Head tutor")] === 1
                 ? true
                 : false;
-            var staffPreference: StaffPreference = {
+            var staffPreference: IStaffPreference = {
             preferenceScore: Math.floor(
                 Number(this.allocateList[i][tempList.indexOf("Tutor pref")])
             ),
@@ -87,7 +88,7 @@ export class ProcessFileService{
             unitId: unit_object["data"]["id"],
             };
             try {
-            await DatabaseFinder.post("/staffpreferences", staffPreference);
+            StaffPreference.insertStaffPreferencesIntoDb(staffPreference);
             } catch (err) {
             throw err;
             }
@@ -100,7 +101,7 @@ export class ProcessFileService{
             DayOfWeek.FRIDAY,
             ];
             let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-            var activity: Activity = {
+            var activity: IActivity = {
             activityCode: this.allocateList[i][tempList.indexOf("Activity Code")],
             activityGroup: this.allocateList[i][tempList.indexOf("Activity Group")],
             campus: this.allocateList[i][tempList.indexOf("Campus")],
@@ -112,23 +113,22 @@ export class ProcessFileService{
             unitId: unit_object["data"]["id"],
             };
             try {
-            activity_object = await DatabaseFinder.post("/activities", activity);
+            activity_object = Activity.insertActivityIntoDb(activity);
             // console.log(activity_object)
             } catch (err) {
             throw err;
             }
 
-            var allocation: Allocation = {
-            activityId: activity_object["data"]["id"],
-            staffId: staff_object["data"]["id"],
+            var allocation: IAllocation = {
+            activityId: activity_object.id,
+            staffId: staff_object.id,
             };
             try {
-            await DatabaseFinder.post("/allocations", allocation);
+            Allocation.insertAllocationIntoDb(allocation);
             } catch (err) {
             throw err;
             }
         }
-        this.showSuccess();
     };
 
 

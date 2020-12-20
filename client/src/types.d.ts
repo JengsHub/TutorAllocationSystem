@@ -17,7 +17,7 @@ export type PresentationalProps = {
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
 };
 
-export interface Units {
+export interface IUnits {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
@@ -25,7 +25,7 @@ export interface Units {
   aqfTarget: number;
 }
 
-export interface Staff {
+export interface IStaff {
   givenNames: string;
   lastName: string;
   aqf: number;
@@ -33,7 +33,7 @@ export interface Staff {
   email: string;
 }
 
-export interface StaffPreference {
+export interface IStaffPreference {
   preferenceScore: number;
   lecturerScore: number;
   isHeadTutorCandidate: boolean;
@@ -41,7 +41,7 @@ export interface StaffPreference {
   unitId: string;
 }
 
-export interface Availability {
+export interface IAvailability {
   day: DayOfWeek;
   startTime: string;
   endTime: string;
@@ -51,7 +51,7 @@ export interface Availability {
   staffId: string;
 }
 
-export export interface Activity {
+export export interface IActivity {
   activityCode: string;
   activityGroup: string;
   campus: string;
@@ -62,7 +62,7 @@ export export interface Activity {
   unitId: string;
 }
 
-export interface Allocation {
+export interface IAllocation {
   activityId: string;
   staffId: string;
 }
