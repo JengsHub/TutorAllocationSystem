@@ -145,7 +145,7 @@ let semesterNamesDict: { [key: string]: string } = {
 const cleanInputData = (inputData: Units): Units => {
   // DOMPurify library sanitizes imported data for security reasons; prevents XSS
   let unitCode: string = DOMPurify.sanitize(inputData["unitCode"]);
-  var offeringPeriod: string = DOMPurify.sanitize(inputData["offeringPeriod"]);
+  let offeringPeriod: string = DOMPurify.sanitize(inputData["offeringPeriod"]);
   let campus: string = DOMPurify.sanitize(inputData["campus"]);
   let year: string = DOMPurify.sanitize(String(inputData["year"]));
   let aqfTarget: string = DOMPurify.sanitize(String(inputData["aqfTarget"]));

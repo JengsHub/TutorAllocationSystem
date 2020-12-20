@@ -66,8 +66,9 @@ class ActivitiesService {
   public async getCandidates(@PathParam("activityId") id: string) {
     // Get the activity given by the activityId, else return errors
     // Activity is joined with unit, staffpreferences and staff here
+    let activity: Activity;
     try {
-      var activity = await this.repo.findOne(
+      activity = await this.repo.findOneOrFail(
         { id },
         {
           relations: [
@@ -87,12 +88,12 @@ class ActivitiesService {
       );
     }
 
-    var candidates: StaffPreference[] = [];
-    var r: any = [];
+    let candidates: StaffPreference[] = [];
+    let r: any = [];
     // Find all staff with preferences in activity's unit
     const staffPreferences = activity.unit.staffPreference;
     if (staffPreferences) {
-      for (var preference of staffPreferences) {
+      for (let preference of staffPreferences) {
         // If the staff member isn't already allocated to the activity, check to see if they are available to be allocated to the activity
         if (
           activity.allocations.filter(function (e) {
@@ -125,8 +126,9 @@ class ActivitiesService {
   ) {
     // Get the activity given by the activityId, else return errors
     // Activity is joined with unit, staffpreferences, staff and availability here
+    let activity: Activity;
     try {
-      var activity = await this.repo.findOne(
+      activity = await this.repo.findOneOrFail(
         { id },
         {
           relations: [
@@ -149,13 +151,19 @@ class ActivitiesService {
       );
     }
 
-    var candidates: StaffPreference[] = [];
+    let candidates: StaffPreference[] = [];
 
     // Find all staff with preferences in activity's unit
-    var staffPreferences = activity.unit.staffPreference;
+    const staffPreferences = activity.unit.staffPreference;
     if (staffPreferences) {
-      for (var preference of staffPreferences) {
+      for (const preference of staffPreferences) {
         // If the staff member isn't already allocated to the activity, check to see if they are available to be allocated to the activity
+        console.log(
+          activity.allocations.filter(function (e) {
+            console.log(e.staffId);
+            return e.staffId === preference.staffId;
+          })
+        );
         if (
           activity.allocations.filter(function (e) {
             return e.staffId === preference.staffId;
