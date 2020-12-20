@@ -62,54 +62,79 @@ export class Activity extends BaseEntity {
   @Column()
   unitId!: string;
 
-  static async insertActivityIntoDb(valueToInsert: IActivity){
+  static async insertActivityIntoDb(valueToInsert: IActivity) {
     /**
      * Inserts new activity item into database if not present, else update the existing activity
      * Returns user
      */
     // find whether current value is already in database
     var inDB = true;
-    try{
+    try {
       await getConnection()
-      .getRepository(Activity)
-      .createQueryBuilder("activity")
-      .where("activity.activityCode = :activityCode AND activity.unitId = :unitId", { activityCode: valueToInsert.activityCode, unitId: valueToInsert.unitId })
-      .getOneOrFail();
-    }catch (EntityNotFoundError){
+        .getRepository(Activity)
+        .createQueryBuilder("activity")
+        .where(
+          "activity.activityCode = :activityCode AND activity.unitId = :unitId",
+          {
+            activityCode: valueToInsert.activityCode,
+            unitId: valueToInsert.unitId,
+          }
+        )
+        .getOneOrFail();
+    } catch (EntityNotFoundError) {
       inDB = false;
       // insert activity row if entity not found in database
       await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(Activity)
-      .values(valueToInsert)
-      .execute();
+        .createQueryBuilder()
+        .insert()
+        .into(Activity)
+        .values(valueToInsert)
+        .execute();
     }
-    
-    if (inDB){    // if already in db, then just update all the values
+
+    if (inDB) {
+      // if already in db, then just update all the values
       // calculating the end time by adding duration to start time
-      var durationInHours = Math.floor(valueToInsert.duration/60);
+      var durationInHours = Math.floor(valueToInsert.duration / 60);
       var durationInMins = valueToInsert.duration % 60;
       var inputStartHour = parseInt(valueToInsert.startTime.split(":")[0]);
       var inputStartMinute = parseInt(valueToInsert.startTime.split(":")[1]);
       var inputEndMinute = (inputStartMinute + durationInMins).toString();
-      var inputEndHour = (inputStartHour+durationInHours).toString();
-      var inputEndTime = inputEndHour.concat(inputEndMinute) ;
+      var inputEndHour = (inputStartHour + durationInHours).toString();
+      var inputEndTime = inputEndHour.concat(inputEndMinute);
       // update the activity in db
       await getConnection()
-            .createQueryBuilder()
-            .update(Activity)
-            .set({ endTime: inputEndTime, activityGroup: valueToInsert.activityGroup, campus: valueToInsert.campus, location: valueToInsert.location, dayOfWeek: valueToInsert.dayOfWeek, startTime: valueToInsert.startTime})
-            .where("activity.activityCode = :activityCode AND activity.unitId = :unitId", { activityCode: valueToInsert.activityCode, unitId: valueToInsert.unitId })
-            .execute();
+        .createQueryBuilder()
+        .update(Activity)
+        .set({
+          endTime: inputEndTime,
+          activityGroup: valueToInsert.activityGroup,
+          campus: valueToInsert.campus,
+          location: valueToInsert.location,
+          dayOfWeek: valueToInsert.dayOfWeek,
+          startTime: valueToInsert.startTime,
+        })
+        .where(
+          "activity.activityCode = :activityCode AND activity.unitId = :unitId",
+          {
+            activityCode: valueToInsert.activityCode,
+            unitId: valueToInsert.unitId,
+          }
+        )
+        .execute();
     }
     const user = await getConnection()
       .getRepository(Activity)
       .createQueryBuilder("activity")
-      .where("activity.activityCode = :activityCode AND activity.unitId = :unitId", { activityCode: valueToInsert.activityCode, unitId: valueToInsert.unitId })
+      .where(
+        "activity.activityCode = :activityCode AND activity.unitId = :unitId",
+        {
+          activityCode: valueToInsert.activityCode,
+          unitId: valueToInsert.unitId,
+        }
+      )
       .getOne();
 
     return user;
   }
-
 }

@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
-  getConnection
+  getConnection,
 } from "typeorm";
 import { IUnits } from "../../../client/src/types";
 import { Activity } from "./Activity";
@@ -48,43 +48,68 @@ export class Unit extends BaseEntity {
   @OneToMany(() => Role, (role) => role.unit)
   roles!: Role[];
 
-  static async insertUnitIntoDb(valueToInsert: IUnits){
+  static async insertUnitIntoDb(valueToInsert: IUnits) {
     /**
      * Inserts new unit item into database if not present, else update the existing unit
      */
     // find whether current value is already in database
     var inDB = true;
-    try{
+    try {
       await getConnection()
-      .getRepository(Unit)
-      .createQueryBuilder("unit")
-      .where("unit.unitCode = :unitCode AND unit.offeringPeriod = :offeringPeriod AND unit.year = :year", { unitCode: valueToInsert.unitCode, offeringPeriod: valueToInsert.offeringPeriod, year: valueToInsert.year })
-      .getOneOrFail();
-    }catch (EntityNotFoundError){
+        .getRepository(Unit)
+        .createQueryBuilder("unit")
+        .where(
+          "unit.unitCode = :unitCode AND unit.offeringPeriod = :offeringPeriod AND unit.year = :year",
+          {
+            unitCode: valueToInsert.unitCode,
+            offeringPeriod: valueToInsert.offeringPeriod,
+            year: valueToInsert.year,
+          }
+        )
+        .getOneOrFail();
+    } catch (EntityNotFoundError) {
       inDB = false;
       // insert new unit row if entity not found in database
       await getConnection()
-      .createQueryBuilder()
-      .insert()
-      .into(Unit)
-      .values(valueToInsert)
-      .execute();
+        .createQueryBuilder()
+        .insert()
+        .into(Unit)
+        .values(valueToInsert)
+        .execute();
     }
-    
-    if (inDB){    // if already in db, then just update all the values
+
+    if (inDB) {
+      // if already in db, then just update all the values
       await getConnection()
-            .createQueryBuilder()
-            .update(Unit)
-            .set({ campus: valueToInsert.campus, aqfTarget: valueToInsert.aqfTarget})
-            .where("unit.unitCode = :unitCode AND unit.offeringPeriod = :offeringPeriod AND unit.year = :year", { unitCode: valueToInsert.unitCode, offeringPeriod: valueToInsert.offeringPeriod, year: valueToInsert.year })
-            .execute();
+        .createQueryBuilder()
+        .update(Unit)
+        .set({
+          campus: valueToInsert.campus,
+          aqfTarget: valueToInsert.aqfTarget,
+        })
+        .where(
+          "unit.unitCode = :unitCode AND unit.offeringPeriod = :offeringPeriod AND unit.year = :year",
+          {
+            unitCode: valueToInsert.unitCode,
+            offeringPeriod: valueToInsert.offeringPeriod,
+            year: valueToInsert.year,
+          }
+        )
+        .execute();
     }
     const unit = await getConnection()
       .getRepository(Unit)
       .createQueryBuilder("unit")
-      .where("unit.unitCode = :unitCode AND unit.offeringPeriod = :offeringPeriod AND unit.year = :year", { unitCode: valueToInsert.unitCode, offeringPeriod: valueToInsert.offeringPeriod, year: valueToInsert.year })
+      .where(
+        "unit.unitCode = :unitCode AND unit.offeringPeriod = :offeringPeriod AND unit.year = :year",
+        {
+          unitCode: valueToInsert.unitCode,
+          offeringPeriod: valueToInsert.offeringPeriod,
+          year: valueToInsert.year,
+        }
+      )
       .getOne();
 
-    return unit
+    return unit;
   }
 }
