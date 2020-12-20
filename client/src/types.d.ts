@@ -1,11 +1,11 @@
-type State = {
+export type State = {
   dragging: boolean;
   file: File | null;
 };
 
-type Props = {};
+export type Props = {};
 
-type PresentationalProps = {
+export type PresentationalProps = {
   dragging: boolean;
   file: File | null;
   onDrag: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -17,7 +17,7 @@ type PresentationalProps = {
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
 };
 
-interface Units {
+export interface Units {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
@@ -25,7 +25,7 @@ interface Units {
   aqfTarget: number;
 }
 
-interface Staff {
+export interface Staff {
   givenNames: string;
   lastName: string;
   aqf: number;
@@ -33,7 +33,7 @@ interface Staff {
   email: string;
 }
 
-interface StaffPreference {
+export interface StaffPreference {
   preferenceScore: number;
   lecturerScore: number;
   isHeadTutorCandidate: boolean;
@@ -41,7 +41,7 @@ interface StaffPreference {
   unitId: string;
 }
 
-interface Availability {
+export interface Availability {
   day: DayOfWeek;
   startTime: string;
   endTime: string;
@@ -51,7 +51,7 @@ interface Availability {
   staffId: string;
 }
 
-interface Activity {
+export export interface Activity {
   activityCode: string;
   activityGroup: string;
   campus: string;
@@ -62,7 +62,7 @@ interface Activity {
   unitId: string;
 }
 
-interface Allocation {
+export interface Allocation {
   activityId: string;
   staffId: string;
 }

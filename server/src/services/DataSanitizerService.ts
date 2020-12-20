@@ -1,4 +1,5 @@
 import DOMPurify from "dompurify";
+import { Units } from "../../../client/src/types";
 
 // List of preferred semester/teaching period names to be displayed on the front and stored in the database
 // Currently set to be `Moodle Semester` terminology

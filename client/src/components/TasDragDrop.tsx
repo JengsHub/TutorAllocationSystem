@@ -6,6 +6,7 @@ import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 import cleanInputData from "../services/DataSanitizer";
+import axios from 'axios';
 
 // yarn add csv-parser
 
@@ -13,6 +14,8 @@ class TasDragDrop extends Component<Props, State> {
   static counter = 0;
   fileUploaderInput: HTMLElement | null = null;
   allocateList: any[] = [[]];
+  csvFile : File = new File(['foo'], 'placeholder.txt');
+  
   readonly validTypes: String[] = [
     "application/vnd.ms-excel",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -61,6 +64,7 @@ class TasDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.dataTransfer.files[0] });
+        this.csvFile = event.dataTransfer.files[0];
         Papa.parse(event.dataTransfer.files[0], {
           complete: this.obtainResult,
         });
@@ -70,10 +74,17 @@ class TasDragDrop extends Component<Props, State> {
 
   obtainResult = (results: any) => {
     this.allocateList = results.data;
-    console.log(this.allocateList);
+    console.log("obtain result: " + this.allocateList.toString());
   };
 
   uploadData = async () => {
+    // // Send file to the backend when upload is CHOSEN 
+    const formData = new FormData();
+    formData.append('tas', this.csvFile);
+    console.log(this.csvFile);
+    axios.post("http://localhost:8888/upload/tas", formData);
+
+
     let tempList: string[] = this.allocateList[0];
     let unit_object: any;
     let staff_object: any;
