@@ -1,13 +1,13 @@
 import { Activity, Staff, Rule, Availability, Allocation } from "~/entity";
-import { getRepository } from "typeorm";
+import { getRepository, Repository } from "typeorm";
 
 /**
  * Calculate the time duration of the activity
  * @param activity activity to be determined
  */
 const activityDuration = (activity: Activity) => {
-  var activityStartTime = new Date("1970-1-1 " + activity.startTime);
-  var activityEndTime = new Date("1970-1-1  " + activity.endTime);
+  let activityStartTime = new Date("1970-1-1 " + activity.startTime);
+  let activityEndTime = new Date("1970-1-1  " + activity.endTime);
   return (
     (activityEndTime.valueOf() - activityStartTime.valueOf()) / 1000 / 60 / 60
   );
@@ -33,13 +33,10 @@ export const checkAllocation = async (
   // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
 
   const allocationsRepo = getRepository(Allocation);
-
   const currentAllocations = await allocationsRepo.find({
     relations: ["staff", "activity"],
     where: { staff: { id: staff.id } },
   });
-
-  //console.log(staff.lastName);
 
   let dayHours = activityDuration(newActivity);
   let weekHours = activityDuration(newActivity);
@@ -50,7 +47,7 @@ export const checkAllocation = async (
 
   // Checking the numbers against the constraints/rules.
   // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
-  const rules = await getRepository(Rule);
+  const rules: Repository<Rule> = await getRepository(Rule);
   const availability = await getRepository(Availability).findOne({
     relations: ["staff"],
     where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
@@ -89,8 +86,13 @@ export const checkAllocation = async (
     await rules.findOneOrFail({ ruleName: "consecutiveHours" })
   ).value;
 
-  //console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
-
+  console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
+  console.log(
+    maxHoursPerDayRule,
+    maxHoursPerWeekRule,
+    maxActivitiesPerUnitRule,
+    maxTotalActivitiesRule
+  );
   // TODO: Specific error message for each constraint violated
   if (
     dayHours > maxHoursPerDayRule ||
@@ -105,7 +107,13 @@ export const checkAllocation = async (
     availability.startTime <= newActivity.startTime &&
     availability.endTime >= newActivity.endTime;
 
-  //console.log(isWithinAvailableHours);
+  console.log(
+    availability.startTime,
+    newActivity.startTime,
+    availability.endTime,
+    newActivity.endTime
+  );
+  console.log(isWithinAvailableHours);
 
   if (!isWithinAvailableHours) return false;
 
@@ -115,7 +123,7 @@ export const checkAllocation = async (
     .filter((a) => a?.dayOfWeek === newActivity.dayOfWeek)
     .slice();
 
-  //console.log(sameDayActivities);
+  console.log(sameDayActivities);
 
   for (let a of sameDayActivities) {
     if (
@@ -147,7 +155,7 @@ export const checkAllocation = async (
       ...stack.map((a) => activityDuration(a))
     );
 
-    //console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
+    console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
 
     if (longestConsecutive > consecutiveHoursRule) return false;
   }

@@ -44,9 +44,9 @@ const Lecturing = () => {
     });
   }, []);
 
-  const [openRows, setOpenRows] = useState<boolean[]>(
-    Array(units.length).fill(false)
-  );
+  // const [openRows, setOpenRows] = useState<boolean[]>(
+  //   Array(units.length).fill(false)
+  // );
 
   const useRowStyles = makeStyles({
     root: {
@@ -58,20 +58,13 @@ const Lecturing = () => {
 
   function Row(props: { row: IUnit & { [key: string]: any } }) {
     const { row } = props;
+    const [open, setOpen] = useState(false);
     const classes = useRowStyles();
     return (
       <React.Fragment>
         <TableRow className={classes.root}>
           <TableCell>
-            <Button
-              onClick={() =>
-                setOpenRows((o) => {
-                  const rows = o.slice();
-                  rows[row.key] = true;
-                  return rows;
-                })
-              }
-            >
+            <Button onClick={() => setOpen(!open)}>
               {row.unitCode + "-" + row.campus + "-" + row.offeringPeriod}{" "}
             </Button>
           </TableCell>
@@ -81,7 +74,7 @@ const Lecturing = () => {
         </TableRow>
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={openRows[row.key]} timeout="auto" unmountOnExit>
+            <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
                 <Typography variant="h6" gutterBottom component="div">
                   {" "}

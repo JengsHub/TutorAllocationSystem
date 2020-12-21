@@ -27,6 +27,7 @@ const Activities = (props: { [key: string]: any }) => {
   const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
+    setChanged(false);
     let params: { [key: string]: any } = {
       ...props,
     };

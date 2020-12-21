@@ -34,6 +34,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
+    setChanged(false);
     const getActivities = async () => {
       try {
         //console.log(params.unitId);
