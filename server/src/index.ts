@@ -10,7 +10,6 @@ import { Server } from "typescript-rest";
 import "./services";
 import { DBConnect, TryDBConnect } from "./helpers";
 import authRoutes from "./services/AuthService";
-
 import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
@@ -19,7 +18,6 @@ import { getConnection } from "typeorm";
 import { Session } from "./entity/Session";
 import { TypeormStore } from "typeorm-store";
 import fileUpload from "express-fileupload";
-import { hasAdminAccessMiddleware } from "./helpers/controlAccess";
 
 const initServer = async () => {
   const app: express.Application = express();
@@ -71,10 +69,12 @@ const initServer = async () => {
   app.use(passport.session());
 
   // file upload middleware
-  app.use(fileUpload({
-    useTempFiles : true,
-    tempFileDir : '/tmp/'
-  }))
+  app.use(
+    fileUpload({
+      useTempFiles: true,
+      tempFileDir: "/tmp/",
+    })
+  );
 
   // set up routes
   app.use("/auth", authRoutes);

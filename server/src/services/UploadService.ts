@@ -10,8 +10,8 @@ class UploadService {
   @POST
   @Path("/tas")
   public uploadTas(@ContextRequest req: Request) {
-    const files = (req.files as unknown) as FileArray;
-    const path = (files.tas as UploadedFile).tempFilePath;
+    const file = (req.files as unknown) as FileArray;
+    const path = (file.tas as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
     fs.createReadStream(path)
       .pipe(csv())
@@ -27,8 +27,8 @@ class UploadService {
   @POST
   @Path("/tps")
   public uploadTps(@ContextRequest req: Request) {
-    const files = (req.files as unknown) as FileArray;
-    const path = (files.tps as UploadedFile).tempFilePath;
+    const file = (req.files as unknown) as FileArray;
+    const path = (file.tps as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
     fs.createReadStream(path)
       .pipe(csv())
@@ -44,8 +44,8 @@ class UploadService {
   @POST
   @Path("/allocate")
   public uploadAllocate(@ContextRequest req: Request) {
-    const files = (req.files as unknown) as FileArray;
-    const path = (files.tas as UploadedFile).tempFilePath;
+    const file = (req.files as unknown) as FileArray;
+    const path = (file.allocate as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
     fs.createReadStream(path)
       .pipe(csv())
@@ -55,6 +55,6 @@ class UploadService {
       })
       .on("end", () => {
         console.log("Allocate CSV file successfully processed");
-      });
-  }
+      })
+  };
 }

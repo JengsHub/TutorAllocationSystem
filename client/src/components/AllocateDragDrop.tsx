@@ -1,9 +1,6 @@
 import { Button, Grid } from "@material-ui/core";
 import Axios from "axios";
-import Papa from "papaparse";
 import React, { Component } from "react";
-import DatabaseFinder from "../apis/DatabaseFinder";
-import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 
