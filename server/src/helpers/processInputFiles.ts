@@ -237,51 +237,37 @@ export class ProcessFileService {
         throw err;
       }
 
-      var start: string = row["M start"];
-      var end: string = row["M end"];
-      this.createAvailabilityAndInsertIntoDB(
-        start,
-        end,
+      const starts: string[] = [
+        row["M start"],
+        row["T start"],
+        row["W start"],
+        row["Th start"],
+        row["F start"],
+      ];
+      const ends: string[] = [
+        row["M end"],
+        row["T end"],
+        row["W end"],
+        row["Th end"],
+        row["F end"],
+      ];
+      const days: DayOfWeek[] = [
         DayOfWeek.MONDAY,
-        row,
-        staff_object
-      );
-      start = row["T start"];
-      end = row["T end"];
-      this.createAvailabilityAndInsertIntoDB(
-        start,
-        end,
         DayOfWeek.TUESDAY,
-        row,
-        staff_object
-      );
-      start = row["W start"];
-      end = row["W end"];
-      this.createAvailabilityAndInsertIntoDB(
-        start,
-        end,
         DayOfWeek.WEDNESDAY,
-        row,
-        staff_object
-      );
-      start = row["Th start"];
-      end = row["Th end"];
-      this.createAvailabilityAndInsertIntoDB(
-        start,
-        end,
         DayOfWeek.THURSDAY,
-        row,
-        staff_object
-      );
-      start = row["F start"];
-      end = row["F end"];
-      this.createAvailabilityAndInsertIntoDB(
-        start,
-        end,
         DayOfWeek.FRIDAY,
-        row,
-        staff_object
-      );
+      ];
+
+      for (let i = 0; i < days.length; i++) {
+        this.createAvailabilityAndInsertIntoDB(
+          starts[i],
+          ends[i],
+          days[i],
+          row,
+          staff_object
+        );
+      }
     }
   };
 
