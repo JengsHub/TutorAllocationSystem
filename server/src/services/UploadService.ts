@@ -3,7 +3,7 @@ import { FileArray, UploadedFile } from "express-fileupload";
 import { ContextRequest, Path, POST } from "typescript-rest";
 import fs from "fs";
 import csv from "csv-parser";
-import ProcessFileService from "./ProcessFileService";
+import ProcessFileService from "../helpers/processInputFiles";
 
 @Path("/upload")
 class UploadService {
