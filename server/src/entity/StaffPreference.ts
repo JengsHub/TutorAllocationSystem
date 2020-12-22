@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   RelationId,
 } from "typeorm";
-import { IStaffPreference } from "../../../client/src/types";
+import { IStaffPreference } from "~/interfaces/typesInputEntites";
 import { Staff } from "./Staff";
 import { Unit } from "./Unit";
 

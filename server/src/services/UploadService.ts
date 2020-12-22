@@ -12,17 +12,49 @@ class UploadService {
   public uploadTas(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
     const path = (files.tas as UploadedFile).tempFilePath;
-    var processFileService : ProcessFileService = new ProcessFileService();
+    var processFileService: ProcessFileService = new ProcessFileService();
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
         console.log(row);
-        processFileService.processObject(row);
-        
+        processFileService.processTasObject(row);
       })
       .on("end", () => {
-        console.log("CSV file successfully processed");
-        
+        console.log("TAS CSV file successfully processed");
+      });
+  }
+
+  @POST
+  @Path("/tps")
+  public uploadTps(@ContextRequest req: Request) {
+    const files = (req.files as unknown) as FileArray;
+    const path = (files.tps as UploadedFile).tempFilePath;
+    var processFileService: ProcessFileService = new ProcessFileService();
+    fs.createReadStream(path)
+      .pipe(csv())
+      .on("data", (row) => {
+        console.log(row);
+        processFileService.processTpsObject(row);
+      })
+      .on("end", () => {
+        console.log("TPS CSV file successfully processed");
+      });
+  }
+
+  @POST
+  @Path("/allocate")
+  public uploadAllocate(@ContextRequest req: Request) {
+    const files = (req.files as unknown) as FileArray;
+    const path = (files.tas as UploadedFile).tempFilePath;
+    var processFileService: ProcessFileService = new ProcessFileService();
+    fs.createReadStream(path)
+      .pipe(csv())
+      .on("data", (row) => {
+        console.log(row);
+        processFileService.processAllocateObject(row);
+      })
+      .on("end", () => {
+        console.log("Allocate CSV file successfully processed");
       });
   }
 }

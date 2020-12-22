@@ -10,7 +10,7 @@ import {
   RelationId,
   Unique,
 } from "typeorm";
-import { IActivity } from "../../../client/src/types";
+import { IActivity } from "~/interfaces/typesInputEntites";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Allocation } from "./Allocation";
 import { Unit } from "./Unit";

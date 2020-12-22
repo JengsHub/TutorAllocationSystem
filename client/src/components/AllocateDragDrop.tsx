@@ -1,11 +1,11 @@
 import { Button, Grid } from "@material-ui/core";
+import Axios from "axios";
 import Papa from "papaparse";
 import React, { Component } from "react";
 import DatabaseFinder from "../apis/DatabaseFinder";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import cleanInputData from "../services/DataSanitizer";
 
 //dependencies:
 // npm install -g browserify
@@ -21,6 +21,7 @@ class AllocateDragDrop extends Component<Props, State> {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "text/csv",
   ];
+  inputCsvFile: File = new File(["foo"], "placeholder.txt");
 
   constructor(props: Props) {
     super(props);
@@ -66,9 +67,7 @@ class AllocateDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.dataTransfer.files[0] });
-        Papa.parse(event.dataTransfer.files[0], {
-          complete: this.obtainResult,
-        });
+        this.inputCsvFile = event.dataTransfer.files[0];
       }
     }
   };
@@ -83,68 +82,13 @@ class AllocateDragDrop extends Component<Props, State> {
 
   //asyncrhize function to upload the data from a file
   uploadData = async () => {
-    let tempList: string[] = this.allocateList[0];
-    let unit_object: any;
-
-    for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: Units = {
-        unitCode: this.allocateList[i][tempList.indexOf("subject_code")].slice(
-          0,
-          7
-        ),
-        offeringPeriod: this.allocateList[i][
-          tempList.indexOf("subject_code")
-        ].slice(11, 13),
-        campus: this.allocateList[i][tempList.indexOf("campus")],
-        year: 2020,
-        aqfTarget: 0,
-      };
-      unit = cleanInputData(unit);
-      try {
-        unit_object = await DatabaseFinder.post("/units", unit);
-        // console.log(unit_object)
-      } catch (err) {
-        throw err;
-      }
-
-      let DOW: DayOfWeek[] = [
-        DayOfWeek.MONDAY,
-        DayOfWeek.TUESDAY,
-        DayOfWeek.WEDNESDAY,
-        DayOfWeek.THURSDAY,
-        DayOfWeek.FRIDAY,
-      ];
-      let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-      var activity: Activity = {
-        activityCode: this.allocateList[i][tempList.indexOf("activity_code")],
-        activityGroup: this.allocateList[i][
-          tempList.indexOf("activity_group_code")
-        ],
-        campus: this.allocateList[i][tempList.indexOf("campus")],
-        location: this.allocateList[i][tempList.indexOf("location")],
-        duration: Number(this.allocateList[i][tempList.indexOf("duration")]),
-        dayOfWeek:
-          DOW[
-            dayStr.indexOf(
-              this.allocateList[i][tempList.indexOf("day_of_week")]
-            )
-          ],
-        startTime: this.allocateList[i][tempList.indexOf("start_time")],
-        unitId: unit_object["data"]["id"],
-      };
-      try {
-        await DatabaseFinder.post("/activities", activity);
-      } catch (err) {
-        throw err;
-      }
-
-      let staff_in_charge: string = this.allocateList[i][
-        tempList.indexOf("staff")
-      ];
-      if (staff_in_charge !== "-") {
-        // Prob gotta get the id of staff using name here but unable to do so with current api
-        // Then create a new allocation with activity_id and staff_id
-      }
+    try {
+      const formData = new FormData();
+      formData.append("allocate", this.inputCsvFile);
+      console.log(this.inputCsvFile);
+      await Axios.post("http://localhost:8888/upload/allocate", formData);
+    } catch (error) {
+      throw error;
     }
     this.showSuccess();
   };
@@ -186,9 +130,7 @@ class AllocateDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.target.files[0] });
-        Papa.parse(event.target.files[0], {
-          complete: this.obtainResult,
-        });
+        this.inputCsvFile = event.target.files[0];
       }
     }
   };

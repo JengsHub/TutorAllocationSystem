@@ -6,13 +6,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum } from "~/enums/RoleEnum";
+import { IStaff } from "~/interfaces/typesInputEntites";
 import { Unit } from ".";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
-import { IStaff } from "../../../client/src/types";
 
 @Entity()
 export class Staff extends BaseEntity {

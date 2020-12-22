@@ -8,7 +8,7 @@ import {
   getConnection,
 } from "typeorm";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
-import { IAllocation } from "../../../client/src/types";
+import { IAllocation } from "~/interfaces/typesInputEntites";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 

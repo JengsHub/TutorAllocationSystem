@@ -7,7 +7,7 @@ import {
   Unique,
   getConnection,
 } from "typeorm";
-import { IUnits } from "../../../client/src/types";
+import { IUnits } from "~/interfaces/typesInputEntites";
 import { Activity } from "./Activity";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";

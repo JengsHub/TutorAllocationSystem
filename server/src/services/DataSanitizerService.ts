@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { IUnits } from "../../../client/src/types";
+import { IUnits } from "~/interfaces/typesInputEntites";
 
 // List of preferred semester/teaching period names to be displayed on the front and stored in the database
 // Currently set to be `Moodle Semester` terminology
