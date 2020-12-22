@@ -17,7 +17,7 @@ type PresentationalProps = {
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
 };
 
-interface IUnits {
+interface Units {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
@@ -25,7 +25,7 @@ interface IUnits {
   aqfTarget: number;
 }
 
-interface IStaff {
+interface Staff {
   givenNames: string;
   lastName: string;
   aqf: number;
@@ -33,7 +33,7 @@ interface IStaff {
   email: string;
 }
 
-interface IStaffPreference {
+interface StaffPreference {
   preferenceScore: number;
   lecturerScore: number;
   isHeadTutorCandidate: boolean;
@@ -41,7 +41,7 @@ interface IStaffPreference {
   unitId: string;
 }
 
-interface IAvailability {
+interface Availability {
   day: DayOfWeek;
   startTime: string;
   endTime: string;
@@ -51,7 +51,7 @@ interface IAvailability {
   staffId: string;
 }
 
-interface IActivity {
+interface Activity {
   activityCode: string;
   activityGroup: string;
   campus: string;
@@ -62,7 +62,7 @@ interface IActivity {
   unitId: string;
 }
 
-interface IAllocation {
+interface Allocation {
   activityId: string;
   staffId: string;
 }
