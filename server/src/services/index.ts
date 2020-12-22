@@ -10,5 +10,5 @@ import "./UnitsService";
 import "./AuthService";
 import "./RolesService";
 import "./UploadService";
-import "./DataSanitizerService";
+import "../helpers/dataSanitizer";
 import "../helpers/processInputFiles";

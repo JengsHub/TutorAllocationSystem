@@ -7,7 +7,7 @@ import {
   Unique,
   getConnection,
 } from "typeorm";
-import { IUnits } from "~/interfaces/typesInputEntites";
+import { IUnit } from "~/interfaces/typesInputEntites";
 import { Activity } from "./Activity";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
@@ -48,7 +48,7 @@ export class Unit extends BaseEntity {
   @OneToMany(() => Role, (role) => role.unit)
   roles!: Role[];
 
-  static async insertUnitIntoDb(valueToInsert: IUnits) {
+  static async insertUnitIntoDb(valueToInsert: IUnit) {
     /**
      * Inserts new unit item into database if not present, else update the existing unit
      */

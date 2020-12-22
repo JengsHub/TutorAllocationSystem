@@ -1,5 +1,5 @@
 import { DayOfWeek } from "../enums/DayOfWeek";
-import cleanInputData from "../services/DataSanitizerService";
+import cleanInputData from "./dataSanitizer";
 import {
   Activity,
   Allocation,
@@ -9,7 +9,7 @@ import {
   Unit,
 } from "~/entity";
 import {
-  IUnits,
+  IUnit,
   IStaff,
   IStaffPreference,
   IActivity,
@@ -95,7 +95,7 @@ export class ProcessFileService {
     let activity_object: any;
 
     for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: IUnits = {
+      var unit: IUnit = {
         unitCode: row["Subject"],
         offeringPeriod: row["Subject Code"].slice(11, 13),
         campus: row["Campus"],
@@ -186,7 +186,7 @@ export class ProcessFileService {
     let staff_object: any;
 
     for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: IUnits = {
+      var unit: IUnit = {
         unitCode: row["unit"].slice(0, 7),
         offeringPeriod: row["unit"].slice(7),
         campus: row["campus"],
@@ -289,7 +289,7 @@ export class ProcessFileService {
     let unit_object: any;
 
     for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: IUnits = {
+      var unit: IUnit = {
         unitCode: row["subject_code"].slice(0, 7),
         offeringPeriod: row["subject_code"].slice(11, 13),
         campus: row["campus"],

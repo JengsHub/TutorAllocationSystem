@@ -5,7 +5,7 @@ export enum DayOfWeek {
   THURSDAY = "Th",
   FRIDAY = "F",
 }
-export interface IUnits {
+export interface IUnit {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
