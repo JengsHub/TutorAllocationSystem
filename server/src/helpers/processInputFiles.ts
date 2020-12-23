@@ -16,26 +16,34 @@ import {
   IAllocation,
   IAvailability,
 } from "~/interfaces/typesInputEntites";
+import {
+  AllocateObject,
+  mapRawAllocateFile,
+  mapRawTasFile,
+  mapRawTpsFile,
+  TpsObject,
+  TasObject,
+} from "./mapRawInputToEntity";
 
-type TasObject = {
+type RawTasObject = {
   Tutor: string;
   Email: string;
   "Tutor pref": string;
   "Lecturer pref": string;
-  "Head tutor": string;
+  "Head tutor": number;
   "Tutor AQF": string;
   Subject: string;
   "Subject Code": string;
   "Activity Group": string;
   "Activity Code": string;
   Campus: string;
-  "Day:": string;
-  "Time:": string;
-  "Duration:": string;
-  "Location:": string;
+  Day: string;
+  Time: string;
+  Duration: number;
+  Location: string;
 };
 
-type TpsObject = {
+type RawTpsObject = {
   unit: string;
   campus: string;
   "unit aqf target": string;
@@ -60,7 +68,7 @@ type TpsObject = {
   "lecturer_override min classes": string;
 };
 
-type AllocateObject = {
+type RawAllocateObject = {
   subject_code: string;
   campus: string;
   activity_code: string;
@@ -88,17 +96,18 @@ export class ProcessFileService {
     console.log("obtain result: " + this.allocateList.toString());
   };
 
-  processTasObject = async (row: TasObject) => {
-    let tempList: string[] = this.allocateList[0];
+  processTasObject = async (rawRow: any) => {
     let unit_object: any;
     let staff_object: any;
     let activity_object: any;
+    // map the raw row into a an tas object that matches the system's convention
+    let row: TasObject = mapRawTasFile(rawRow);
 
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: IUnit = {
-        unitCode: row["Subject"],
-        offeringPeriod: row["Subject Code"].slice(11, 13),
-        campus: row["Campus"],
+        unitCode: row["unitCode"],
+        offeringPeriod: row["offeringPeriod"],
+        campus: row["campus"],
         year: 2020,
         aqfTarget: 0,
       };
@@ -110,15 +119,14 @@ export class ProcessFileService {
         throw err;
       }
 
-      let name: string[] = row["Tutor"].split(" ");
       let studyAqf: number =
-        isNaN(Number(row["Tutor AQF"])) === true ? 0 : Number(row["Tutor AQF"]);
+        isNaN(Number(row["aqf"])) === true ? 0 : Number(row["aqf"]);
       var staffDetail: IStaff = {
-        givenNames: name[0],
-        lastName: name[1],
+        givenNames: row["givenNames"],
+        lastName: row["lastNames"],
         aqf: studyAqf,
         studyingAqf: 0,
-        email: this.allocateList[i][tempList.indexOf("Email")],
+        email: row["email"],
       };
       try {
         staff_object = await Staff.insertStaffIntoDb(staffDetail);
@@ -129,16 +137,10 @@ export class ProcessFileService {
 
       // Lecture pref could have decimals so we might need to modify database type
       let headCandidiate: boolean =
-        this.allocateList[i][tempList.indexOf("Head tutor")] === 1
-          ? true
-          : false;
+        row["isHeadTutorCandidate"] === 1 ? true : false;
       var staffPreference: IStaffPreference = {
-        preferenceScore: Math.floor(
-          Number(this.allocateList[i][tempList.indexOf("Tutor pref")])
-        ),
-        lecturerScore: Math.floor(
-          Number(this.allocateList[i][tempList.indexOf("Lecturer pref")])
-        ),
+        preferenceScore: Math.floor(Number(row["preferenceScore"])),
+        lecturerScore: Math.floor(Number(row["lecturerScore"])),
         isHeadTutorCandidate: headCandidiate,
         staffId: staff_object["data"]["id"],
         unitId: unit_object["data"]["id"],
@@ -151,15 +153,13 @@ export class ProcessFileService {
 
       let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
       var activity: IActivity = {
-        activityCode: this.allocateList[i][tempList.indexOf("Activity Code")],
-        activityGroup: this.allocateList[i][tempList.indexOf("Activity Group")],
-        campus: this.allocateList[i][tempList.indexOf("Campus")],
-        location: this.allocateList[i][tempList.indexOf("Location")],
-        duration: Number(this.allocateList[i][tempList.indexOf("Duration")]),
-        dayOfWeek: this.DOW[
-          dayStr.indexOf(this.allocateList[i][tempList.indexOf("Day")])
-        ],
-        startTime: this.allocateList[i][tempList.indexOf("Time")],
+        activityCode: row["activityCode"],
+        activityGroup: row["activityGroup"],
+        campus: row["campus"],
+        location: row["location"],
+        duration: row["duration"],
+        dayOfWeek: this.DOW[dayStr.indexOf(row["dayOfWeek"])],
+        startTime: row["startTime"],
         unitId: unit_object["data"]["id"],
       };
       try {
@@ -181,17 +181,19 @@ export class ProcessFileService {
     }
   };
 
-  processTpsObject = async (row: TpsObject) => {
+  processTpsObject = async (rawRow: any) => {
     let unit_object: any;
     let staff_object: any;
+    // map the raw row into an tps object
+    let row: TpsObject = mapRawTpsFile(rawRow);
 
     for (let i = 1; i < this.allocateList.length; i++) {
       var unit: IUnit = {
-        unitCode: row["unit"].slice(0, 7),
-        offeringPeriod: row["unit"].slice(7),
+        unitCode: row["unitCode"],
+        offeringPeriod: row["offeringPeriod"],
         campus: row["campus"],
         year: 2020,
-        aqfTarget: Number(row["unit aqf target"]),
+        aqfTarget: Number(row["aqfTarget"]),
       };
       unit = cleanInputData(unit);
       try {
@@ -201,15 +203,12 @@ export class ProcessFileService {
         throw err;
       }
 
-      let name: string[] = row["name"].split(" ");
       let studyAqf: number =
-        isNaN(Number(row["tutors studying aqf"])) === true
-          ? 0
-          : Number(row["tutors studying aqf"]);
+        isNaN(Number(row["studyAqf"])) === true ? 0 : Number(row["studyAqf"]);
       var staffDetail: IStaff = {
-        givenNames: name[0],
-        lastName: name[1],
-        aqf: Number(row["tutors aqf"]),
+        givenNames: row["givenNames"],
+        lastName: row["lastNames"],
+        aqf: Number(row["aqf"]),
         studyingAqf: studyAqf,
         email: row["email"],
       };
@@ -221,11 +220,10 @@ export class ProcessFileService {
       }
 
       // have to check for unit id and staf id in the future, works now as eveything is unique
-      let headCandidiate: boolean =
-        row["head tutor cand?"] === 1 ? true : false;
+      let headCandidiate: boolean = row["headCandidiate"] === 1 ? true : false;
       var staffPreference: IStaffPreference = {
-        preferenceScore: Number(row["tutors pref"]),
-        lecturerScore: Number(row["lec suitability"]),
+        preferenceScore: Number(row["preferenceScore"]),
+        lecturerScore: Number(row["lecturerScore"]),
         isHeadTutorCandidate: headCandidiate,
         staffId: staff_object["data"]["id"],
         unitId: unit_object["data"]["id"],
@@ -238,18 +236,18 @@ export class ProcessFileService {
       }
 
       const starts: string[] = [
-        row["M start"],
-        row["T start"],
-        row["W start"],
-        row["Th start"],
-        row["F start"],
+        row["startTimeMon"],
+        row["startTimeTue"],
+        row["startTimeWed"],
+        row["startTimeThu"],
+        row["startTimeFri"],
       ];
       const ends: string[] = [
-        row["M end"],
-        row["T end"],
-        row["W end"],
-        row["Th end"],
-        row["F end"],
+        row["endTimeMon"],
+        row["endTimeTue"],
+        row["endTimeWed"],
+        row["endTimeThu"],
+        row["endTimeFri"],
       ];
       const days: DayOfWeek[] = [
         DayOfWeek.MONDAY,
@@ -271,50 +269,6 @@ export class ProcessFileService {
     }
   };
 
-  processAllocateObject = async (row: AllocateObject) => {
-    let unit_object: any;
-
-    for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: IUnit = {
-        unitCode: row["subject_code"].slice(0, 7),
-        offeringPeriod: row["subject_code"].slice(11, 13),
-        campus: row["campus"],
-        year: 2020,
-        aqfTarget: 0,
-      };
-      unit = cleanInputData(unit);
-      try {
-        unit_object = await Unit.insertUnitIntoDb(unit);
-        // console.log(unit_object)
-      } catch (err) {
-        throw err;
-      }
-
-      let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-      var activity: IActivity = {
-        activityCode: row["activity_code"],
-        activityGroup: row["activity_group_code"],
-        campus: row["campus"],
-        location: row["location"],
-        duration: Number(row["duration"]),
-        dayOfWeek: this.DOW[dayStr.indexOf(row["day_of_week"])],
-        startTime: row["start_time"],
-        unitId: unit_object["data"]["id"],
-      };
-      try {
-        await Activity.insertActivityIntoDb(activity);
-      } catch (err) {
-        throw err;
-      }
-
-      let staff_in_charge: string = row["staff"];
-      if (staff_in_charge !== "-") {
-        // Prob gotta get the id of staff using name here but unable to do so with current api
-        // Then create a new allocation with activity_id and staff_id
-      }
-    }
-  };
-
   createAvailabilityAndInsertIntoDB = (
     start: string,
     end: string,
@@ -330,14 +284,59 @@ export class ProcessFileService {
       startTime: start,
       endTime: end,
       year: 2020,
-      maxHours: Number(row["max hr"]),
-      maxNumberActivities: Number(row["lecturer_override min classes"]),
+      maxHours: Number(row["maxHours"]),
+      maxNumberActivities: Number(row["maxNumberActivities"]),
       staffId: staff_object["data"]["id"],
     };
     try {
       Availability.insertAvailabilityIntoDb(availability);
     } catch (err) {
       throw err;
+    }
+  };
+
+  processAllocateObject = async (rawRow: any) => {
+    let unit_object: any;
+    let row: AllocateObject = mapRawAllocateFile(rawRow);
+
+    for (let i = 1; i < this.allocateList.length; i++) {
+      var unit: IUnit = {
+        unitCode: row["unitCode"],
+        offeringPeriod: row["offeringPeriod"],
+        campus: row["campus"],
+        year: 2020,
+        aqfTarget: 0,
+      };
+      unit = cleanInputData(unit);
+      try {
+        unit_object = await Unit.insertUnitIntoDb(unit);
+        // console.log(unit_object)
+      } catch (err) {
+        throw err;
+      }
+
+      let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+      var activity: IActivity = {
+        activityCode: row["activityCode"],
+        activityGroup: row["activityGroup"],
+        campus: row["campus"],
+        location: row["location"],
+        duration: Number(row["duration"]),
+        dayOfWeek: this.DOW[dayStr.indexOf(row["dayOfWeek"])],
+        startTime: row["startTime"],
+        unitId: unit_object["data"]["id"],
+      };
+      try {
+        await Activity.insertActivityIntoDb(activity);
+      } catch (err) {
+        throw err;
+      }
+
+      let staff_in_charge: string = row["staff_in_charge"];
+      if (staff_in_charge !== "-") {
+        // Prob gotta get the id of staff using name here but unable to do so with current api
+        // Then create a new allocation with activity_id and staff_id
+      }
     }
   };
 }
