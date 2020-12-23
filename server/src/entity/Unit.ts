@@ -54,6 +54,7 @@ export class Unit extends BaseEntity {
      */
     // find whether current value is already in database
     var inDB = true;
+    console.log("In DB: " + valueToInsert);
     try {
       await getConnection()
         .getRepository(Unit)
@@ -70,17 +71,18 @@ export class Unit extends BaseEntity {
     } catch (EntityNotFoundError) {
       inDB = false;
       // insert new unit row if entity not found in database
-      await getConnection()
+      let a = await getConnection()
         .createQueryBuilder()
         .insert()
         .into(Unit)
         .values(valueToInsert)
         .execute();
+      console.log("creating new unit in DB:" + a);
     }
 
     if (inDB) {
       // if already in db, then just update all the values
-      await getConnection()
+      let a = await getConnection()
         .createQueryBuilder()
         .update(Unit)
         .set({
@@ -96,6 +98,7 @@ export class Unit extends BaseEntity {
           }
         )
         .execute();
+        console.log("updating unit in DB:" + a);
     }
     const unit = await getConnection()
       .getRepository(Unit)
@@ -109,6 +112,8 @@ export class Unit extends BaseEntity {
         }
       )
       .getOne();
+    
+    console.log("get unit from db : "+unit);
 
     return unit;
   }

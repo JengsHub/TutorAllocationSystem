@@ -16,7 +16,6 @@ class UploadService {
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
-        console.log(row);
         processFileService.processTasObject(row);
       })
       .on("end", () => {
@@ -33,7 +32,6 @@ class UploadService {
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
-        console.log(row);
         processFileService.processTpsObject(row);
       })
       .on("end", () => {
@@ -50,7 +48,6 @@ class UploadService {
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
-        console.log(row);
         processFileService.processAllocateObject(row);
       })
       .on("end", () => {
