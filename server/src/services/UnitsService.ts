@@ -18,11 +18,27 @@ import { RoleEnum } from "~/enums/RoleEnum";
 import { AppRoleEnum } from "~/enums/RoleEnum";
 import { Unit } from "../entity/Unit";
 
+
+
 @Path("/units")
 class UnitsService {
   repo = getRepository(Unit);
   factory = new UnitControllerFactory();
 
+  /**
+ * @swagger
+ *
+ * /units:
+ *   get:
+ *     summary: get all units
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         schema:
+ *           type: object
+ *           $ref: '#/definitions/Unit'
+ */
   @GET
   public async getUnits(
     @QueryParam("unitCode") unitCode: string,
