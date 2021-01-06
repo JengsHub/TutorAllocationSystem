@@ -3,7 +3,11 @@ import { FileArray, UploadedFile } from "express-fileupload";
 import { ContextRequest, Path, POST } from "typescript-rest";
 import fs from "fs";
 import csv from "csv-parser";
-import ProcessFileService from "../helpers/processInputFiles";
+import ProcessFileService, {
+  mapRawAllocateFile,
+  mapRawTasFile,
+  mapRawTpsFile,
+} from "../helpers/processInputFiles";
 
 @Path("/upload")
 class UploadService {
@@ -16,7 +20,9 @@ class UploadService {
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
-        processFileService.processTasObject(row);
+        // map the raw row into a an tas object that matches the system's convention
+        const tasRow = mapRawTasFile(row);
+        processFileService.processTasObject(tasRow);
       })
       .on("end", () => {
         console.log("TAS CSV file successfully processed");
@@ -32,7 +38,9 @@ class UploadService {
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
-        processFileService.processTpsObject(row);
+        // map the raw row into an tps object
+        const tpsRow = mapRawTpsFile(row);
+        processFileService.processTpsObject(tpsRow);
       })
       .on("end", () => {
         console.log("TPS CSV file successfully processed");
@@ -48,7 +56,8 @@ class UploadService {
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
-        processFileService.processAllocateObject(row);
+        let allocateRow = mapRawAllocateFile(row);
+        processFileService.processAllocateObject(allocateRow);
       })
       .on("end", () => {
         console.log("Allocate CSV file successfully processed");

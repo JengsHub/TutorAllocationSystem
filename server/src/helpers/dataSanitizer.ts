@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { IUnit } from "~/interfaces/typesInputEntites";
+import { Unit } from "~/entity";
 
 // List of preferred semester/teaching period names to be displayed on the front and stored in the database
 // Currently set to be `Moodle Semester` terminology
@@ -143,7 +143,7 @@ let semesterNamesDict: { [key: string]: string } = {
   "MONASH ONLINE TEACHING PERIOD 1": preferredSemesterName[`MONASH ONLINE 1`],
 };
 
-const cleanInputData = (inputData: IUnit): IUnit => {
+const cleanInputData = (inputData: Unit): Unit => {
   // DOMPurify library sanitizes imported data for security reasons; prevents XSS
   let unitCode: string = DOMPurify.sanitize(inputData["unitCode"]);
   var offeringPeriod: string = DOMPurify.sanitize(inputData["offeringPeriod"]);
@@ -170,13 +170,13 @@ const cleanInputData = (inputData: IUnit): IUnit => {
   offeringPeriod = semesterNamesDict[oPeriod];
 
   // Reconstruct Units obj
-  const returnData: IUnit = {
+  const returnData = Unit.create({
     unitCode: unitCode,
     offeringPeriod: offeringPeriod,
     campus: campus,
     year: parseInt(year),
     aqfTarget: parseInt(aqfTarget),
-  };
+  });
 
   return returnData;
 };

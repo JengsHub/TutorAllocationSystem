@@ -7,7 +7,6 @@ import {
   Unique,
   getConnection,
 } from "typeorm";
-import { IUnit } from "~/interfaces/typesInputEntites";
 import { Activity } from "./Activity";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
@@ -48,7 +47,7 @@ export class Unit extends BaseEntity {
   @OneToMany(() => Role, (role) => role.unit)
   roles!: Role[];
 
-  static async insertUnitIntoDb(valueToInsert: IUnit) {
+  static async insertUnitIntoDb(valueToInsert: Unit) {
     /**
      * Inserts new unit item into database if not present, else update the existing unit
      */
@@ -98,7 +97,7 @@ export class Unit extends BaseEntity {
           }
         )
         .execute();
-        console.log("updating unit in DB:" + a);
+      console.log("updating unit in DB:" + a);
     }
     const unit = await getConnection()
       .getRepository(Unit)
@@ -112,8 +111,8 @@ export class Unit extends BaseEntity {
         }
       )
       .getOne();
-    
-    console.log("get unit from db : "+unit);
+
+    console.log("get unit from db : " + unit);
 
     return unit;
   }

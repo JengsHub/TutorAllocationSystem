@@ -4,17 +4,10 @@ import {
   Availability,
   Staff,
   StaffPreference,
-  Unit
+  Unit,
 } from "~/entity";
-import {
-  IActivity,
-  IAllocation,
-  IAvailability, IStaff,
-  IStaffPreference, IUnit
-} from "~/interfaces/typesInputEntites";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import cleanInputData from "./dataSanitizer";
-
 
 export class ProcessFileService {
   allocateList: any[] = [[]];
@@ -32,22 +25,21 @@ export class ProcessFileService {
     console.log("obtain result: " + this.allocateList.toString());
   };
 
-  processTasObject = async (rawRow: any) => {
+  processTasObject = async (row: TasObject) => {
     let unit_object: any;
     let staff_object: any;
     let activity_object: any;
-    // map the raw row into a an tas object that matches the system's convention
-    let row: TasObject = mapRawTasFile(rawRow);
-    console.log("Processing row: ");
-    console.log(row);
-    var unit: IUnit = {
+
+    let unit = Unit.create({
       unitCode: row["unitCode"],
       offeringPeriod: row["offeringPeriod"],
       campus: row["campus"],
-      year: 2020,
+      year: 2020, // TODO: optiion to change year
       aqfTarget: 0,
-    };
+    });
+
     unit = cleanInputData(unit);
+
     try {
       console.log("going to insert");
       console.log(unit);
@@ -59,13 +51,15 @@ export class ProcessFileService {
 
     let studyAqf: number =
       isNaN(Number(row["aqf"])) === true ? 0 : Number(row["aqf"]);
-    var staffDetail: IStaff = {
+
+    const staffDetail = Staff.create({
       givenNames: row["givenNames"],
       lastName: row["lastNames"],
       aqf: studyAqf,
       studyingAqf: 0,
       email: row["email"],
-    };
+    });
+
     try {
       staff_object = await Staff.insertStaffIntoDb(staffDetail);
       // console.log(staff_object)
@@ -76,13 +70,15 @@ export class ProcessFileService {
     // Lecture pref could have decimals so we might need to modify database type
     let headCandidiate: boolean =
       row["isHeadTutorCandidate"] === 1 ? true : false;
-    var staffPreference: IStaffPreference = {
+
+    const staffPreference = StaffPreference.create({
       preferenceScore: Math.floor(Number(row["preferenceScore"])),
       lecturerScore: Math.floor(Number(row["lecturerScore"])),
       isHeadTutorCandidate: headCandidiate,
       staffId: staff_object["data"]["id"],
       unitId: unit_object["data"]["id"],
-    };
+    });
+
     try {
       await StaffPreference.insertStaffPreferencesIntoDb(staffPreference);
     } catch (err) {
@@ -90,7 +86,7 @@ export class ProcessFileService {
     }
 
     let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    var activity: IActivity = {
+    const activity = Activity.create({
       activityCode: row["activityCode"],
       activityGroup: row["activityGroup"],
       campus: row["campus"],
@@ -99,7 +95,8 @@ export class ProcessFileService {
       dayOfWeek: this.DOW[dayStr.indexOf(row["dayOfWeek"])],
       startTime: row["startTime"],
       unitId: unit_object["data"]["id"],
-    };
+    });
+
     try {
       activity_object = await Activity.insertActivityIntoDb(activity);
       // console.log(activity_object)
@@ -107,31 +104,30 @@ export class ProcessFileService {
       throw err;
     }
 
-    var allocation: IAllocation = {
+    const allocation = Allocation.create({
       activityId: activity_object.id,
       staffId: staff_object.id,
-    };
+    });
+
     try {
       await Allocation.insertAllocationIntoDb(allocation);
     } catch (err) {
       throw err;
     }
-    
   };
 
-  processTpsObject = async (rawRow: any) => {
+  processTpsObject = async (row: TpsObject) => {
     let unit_object: any;
     let staff_object: any;
-    // map the raw row into an tps object
-    let row: TpsObject = mapRawTpsFile(rawRow);
 
-    var unit: IUnit = {
+    let unit = Unit.create({
       unitCode: row["unitCode"],
       offeringPeriod: row["offeringPeriod"],
       campus: row["campus"],
-      year: 2020,
+      year: 2020, // TODO: option to change year
       aqfTarget: Number(row["aqfTarget"]),
-    };
+    });
+
     unit = cleanInputData(unit);
     try {
       unit_object = await Unit.insertUnitIntoDb(unit);
@@ -142,13 +138,15 @@ export class ProcessFileService {
 
     let studyAqf: number =
       isNaN(Number(row["studyAqf"])) === true ? 0 : Number(row["studyAqf"]);
-    var staffDetail: IStaff = {
+
+    const staffDetail = Staff.create({
       givenNames: row["givenNames"],
       lastName: row["lastNames"],
       aqf: Number(row["aqf"]),
       studyingAqf: studyAqf,
       email: row["email"],
-    };
+    });
+
     try {
       staff_object = await Staff.insertStaffIntoDb(staffDetail);
       // console.log(staff_object)
@@ -158,13 +156,14 @@ export class ProcessFileService {
 
     // have to check for unit id and staf id in the future, works now as eveything is unique
     let headCandidiate: boolean = row["headCandidiate"] === 1 ? true : false;
-    var staffPreference: IStaffPreference = {
+    const staffPreference = StaffPreference.create({
       preferenceScore: Number(row["preferenceScore"]),
       lecturerScore: Number(row["lecturerScore"]),
       isHeadTutorCandidate: headCandidiate,
       staffId: staff_object["data"]["id"],
       unitId: unit_object["data"]["id"],
-    };
+    });
+
     try {
       await StaffPreference.insertStaffPreferencesIntoDb(staffPreference);
       // console.log(response)
@@ -172,33 +171,11 @@ export class ProcessFileService {
       throw err;
     }
 
-    const starts: string[] = [
-      row["startTimeMon"],
-      row["startTimeTue"],
-      row["startTimeWed"],
-      row["startTimeThu"],
-      row["startTimeFri"],
-    ];
-    const ends: string[] = [
-      row["endTimeMon"],
-      row["endTimeTue"],
-      row["endTimeWed"],
-      row["endTimeThu"],
-      row["endTimeFri"],
-    ];
-    const days: DayOfWeek[] = [
-      DayOfWeek.MONDAY,
-      DayOfWeek.TUESDAY,
-      DayOfWeek.WEDNESDAY,
-      DayOfWeek.THURSDAY,
-      DayOfWeek.FRIDAY,
-    ];
-
-    for (let i = 0; i < days.length; i++) {
+    for (const availability of row.availabilities) {
       this.createAvailabilityAndInsertIntoDB(
-        starts[i],
-        ends[i],
-        days[i],
+        availability.start,
+        availability.end,
+        availability.day,
         row,
         staff_object
       );
@@ -215,7 +192,7 @@ export class ProcessFileService {
     start = start.slice(0, -2) + ":" + start.slice(-2);
     end = end.slice(0, -2) + ":" + end.slice(-2);
 
-    var availability: IAvailability = {
+    const availability = Availability.create({
       day: dayOfWeek,
       startTime: start,
       endTime: end,
@@ -223,7 +200,8 @@ export class ProcessFileService {
       maxHours: Number(row["maxHours"]),
       maxNumberActivities: Number(row["maxNumberActivities"]),
       staffId: staff_object["data"]["id"],
-    };
+    });
+
     try {
       Availability.insertAvailabilityIntoDb(availability);
     } catch (err) {
@@ -231,17 +209,17 @@ export class ProcessFileService {
     }
   };
 
-  processAllocateObject = async (rawRow: any) => {
+  processAllocateObject = async (row: AllocateObject) => {
     let unit_object: any;
-    let row: AllocateObject = mapRawAllocateFile(rawRow);
 
-    var unit: IUnit = {
+    let unit = Unit.create({
       unitCode: row["unitCode"],
       offeringPeriod: row["offeringPeriod"],
       campus: row["campus"],
       year: 2020,
       aqfTarget: 0,
-    };
+    });
+
     unit = cleanInputData(unit);
     try {
       unit_object = await Unit.insertUnitIntoDb(unit);
@@ -251,7 +229,7 @@ export class ProcessFileService {
     }
 
     let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    var activity: IActivity = {
+    const activity = Activity.create({
       activityCode: row["activityCode"],
       activityGroup: row["activityGroup"],
       campus: row["campus"],
@@ -260,7 +238,8 @@ export class ProcessFileService {
       dayOfWeek: this.DOW[dayStr.indexOf(row["dayOfWeek"])],
       startTime: row["startTime"],
       unitId: unit_object["data"]["id"],
-    };
+    });
+
     try {
       await Activity.insertActivityIntoDb(activity);
     } catch (err) {
@@ -271,10 +250,13 @@ export class ProcessFileService {
     if (staff_in_charge !== "-") {
       // Prob gotta get the id of staff using name here but unable to do so with current api
       // Then create a new allocation with activity_id and staff_id
-    } 
+    }
   };
 }
 
+/**
+ * The Raw object property names should match the column names of the spreadsheet
+ */
 type RawTasObject = {
   Tutor: string;
   Email: string;
@@ -330,7 +312,7 @@ type RawAllocateObject = {
   staff: string;
 };
 
-export type TasObject = {
+type TasObject = {
   givenNames: string;
   lastNames: string;
   preferenceScore: string;
@@ -349,15 +331,11 @@ export type TasObject = {
   location: string;
 };
 
-export type TpsObject = {
+type TpsObject = {
   aqfTarget: string;
   unitCode: string;
   offeringPeriod: string;
   campus: string;
-  dayOfWeek: string;
-  startTime: string;
-  duration: string;
-  location: string;
   givenNames: string;
   lastNames: string;
   preferenceScore: string;
@@ -366,21 +344,12 @@ export type TpsObject = {
   aqf: string;
   email: string;
   headCandidiate: number;
-  startTimeMon: string;
-  startTimeTue: string;
-  startTimeWed: string;
-  startTimeThu: string;
-  startTimeFri: string;
-  endTimeMon: string;
-  endTimeTue: string;
-  endTimeWed: string;
-  endTimeThu: string;
-  endTimeFri: string;
+  availabilities: Array<{ day: DayOfWeek; start: any; end: any }>;
   maxHours: string;
   maxNumberActivities: string;
 };
 
-export type AllocateObject = {
+type AllocateObject = {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
@@ -416,17 +385,13 @@ export function mapRawTasFile(rawRow: RawTasObject) {
   return tasObject;
 }
 
-export function mapRawTpsFile(rawRow: any) {
+export function mapRawTpsFile(rawRow: RawTpsObject) {
   // create the tas object that will be returned
   const tpsObject: TpsObject = {
     aqfTarget: rawRow["unit aqf target"],
     unitCode: rawRow["unit"].slice(0, 7),
     offeringPeriod: rawRow["unit"].slice(7),
     campus: rawRow["campus"],
-    dayOfWeek: rawRow["Day"],
-    startTime: rawRow["Time"],
-    duration: rawRow["Duration"],
-    location: rawRow["Location"],
     givenNames: rawRow["name"].split(" ")[0],
     lastNames: rawRow["name"].split(" ")[1],
     studyAqf: rawRow["tutors studying aqf"],
@@ -435,17 +400,33 @@ export function mapRawTpsFile(rawRow: any) {
     headCandidiate: rawRow["head tutor cand?"],
     preferenceScore: rawRow["tutors pref"],
     lecturerScore: rawRow["lec suitability"],
-    // TODO: better to use array here for availabilities
-    startTimeMon: rawRow["M start"],
-    startTimeTue: rawRow["T start"],
-    startTimeWed: rawRow["W start"],
-    startTimeThu: rawRow["Th start"],
-    startTimeFri: rawRow["F start"],
-    endTimeMon: rawRow["M end"],
-    endTimeTue: rawRow["T end"],
-    endTimeWed: rawRow["W end"],
-    endTimeThu: rawRow["Th end"],
-    endTimeFri: rawRow["F end"],
+    availabilities: [
+      {
+        day: DayOfWeek.MONDAY,
+        start: rawRow["M start"],
+        end: rawRow["M end"],
+      },
+      {
+        day: DayOfWeek.TUESDAY,
+        start: rawRow["T start"],
+        end: rawRow["T end"],
+      },
+      {
+        day: DayOfWeek.WEDNESDAY,
+        start: rawRow["W start"],
+        end: rawRow["W end"],
+      },
+      {
+        day: DayOfWeek.THURSDAY,
+        start: rawRow["Th start"],
+        end: rawRow["Th end"],
+      },
+      {
+        day: DayOfWeek.FRIDAY,
+        start: rawRow["F start"],
+        end: rawRow["F end"],
+      },
+    ],
     maxHours: rawRow["max hr"],
     maxNumberActivities: rawRow["lecturer_override min classes"],
   };

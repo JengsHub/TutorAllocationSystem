@@ -10,7 +10,6 @@ import {
   RelationId,
   Unique,
 } from "typeorm";
-import { IActivity } from "~/interfaces/typesInputEntites";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Allocation } from "./Allocation";
 import { Unit } from "./Unit";
@@ -49,6 +48,9 @@ export class Activity extends BaseEntity {
   @Column({ type: "time" })
   startTime!: string; // TODO: Date object or string to store time only?
 
+  @Column({ default: 0 }) // TODO: need default?
+  duration!: number;
+
   @OneToMany(() => Allocation, (allocation) => allocation.activity)
   allocations!: Allocation[];
 
@@ -62,7 +64,7 @@ export class Activity extends BaseEntity {
   @Column()
   unitId!: string;
 
-  static async insertActivityIntoDb(valueToInsert: IActivity) {
+  static async insertActivityIntoDb(valueToInsert: Activity) {
     /**
      * Inserts new activity item into database if not present, else update the existing activity
      * Returns user
@@ -95,6 +97,12 @@ export class Activity extends BaseEntity {
     if (inDB) {
       // if already in db, then just update all the values
       // calculating the end time by adding duration to start time
+
+      /**
+       * TODO: some recommendations here
+       * - can calculate the end time on the database level
+       * - or if not, should use javascript date libraries to do the calculation
+       */
       var durationInHours = Math.floor(valueToInsert.duration / 60);
       var durationInMins = valueToInsert.duration % 60;
       var inputStartHour = parseInt(valueToInsert.startTime.split(":")[0]);
