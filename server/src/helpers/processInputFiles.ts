@@ -26,9 +26,9 @@ export class ProcessFileService {
   };
 
   processTasObject = async (row: TasObject) => {
-    let unit_object: any;
-    let staff_object: any;
-    let activity_object: any;
+    let unit_object: Unit;
+    let staff_object: Staff;
+    let activity_object: Activity;
 
     let unit = Unit.create({
       unitCode: row["unitCode"],
@@ -41,10 +41,9 @@ export class ProcessFileService {
     unit = cleanInputData(unit);
 
     try {
-      console.log("going to insert");
-      console.log(unit);
-      unit_object = await Unit.insertUnitIntoDb(unit);
-      // console.log(unit_object)
+      let unitRepo = Unit.getRepository();
+      unit_object = await unitRepo.save(unit);
+      // unit_object = await Unit.insertUnitIntoDb(unit);
     } catch (err) {
       throw err;
     }
@@ -61,8 +60,9 @@ export class ProcessFileService {
     });
 
     try {
-      staff_object = await Staff.insertStaffIntoDb(staffDetail);
-      // console.log(staff_object)
+      // staff_object = await Staff.insertStaffIntoDb(staffDetail);
+      let staffRepo = Staff.getRepository();
+      staff_object = await staffRepo.save(staffDetail);
     } catch (err) {
       throw err;
     }
@@ -72,19 +72,23 @@ export class ProcessFileService {
       row["isHeadTutorCandidate"] === 1 ? true : false;
 
     const staffPreference = StaffPreference.create({
+      staffId: staff_object["id"],
+      unitId: unit_object["id"],
       preferenceScore: Math.floor(Number(row["preferenceScore"])),
       lecturerScore: Math.floor(Number(row["lecturerScore"])),
       isHeadTutorCandidate: headCandidiate,
-      staffId: staff_object["data"]["id"],
-      unitId: unit_object["data"]["id"],
     });
 
+    console.log(staffPreference);
+
     try {
-      await StaffPreference.insertStaffPreferencesIntoDb(staffPreference);
+      let staffPrefRepo = StaffPreference.getRepository();
+      await staffPrefRepo.save(staffPreference);
     } catch (err) {
       throw err;
     }
 
+    let endTime = calculateEndTime(row["startTime"], row["duration"]);
     let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
     const activity = Activity.create({
       activityCode: row["activityCode"],
@@ -94,23 +98,25 @@ export class ProcessFileService {
       duration: row["duration"],
       dayOfWeek: this.DOW[dayStr.indexOf(row["dayOfWeek"])],
       startTime: row["startTime"],
-      unitId: unit_object["data"]["id"],
+      unitId: unit_object["id"],
+      endTime: endTime,
     });
 
     try {
-      activity_object = await Activity.insertActivityIntoDb(activity);
+      let activityRepo = Activity.getRepository();
+      activity_object = await activityRepo.save(activity);
       // console.log(activity_object)
     } catch (err) {
       throw err;
     }
-
     const allocation = Allocation.create({
       activityId: activity_object.id,
       staffId: staff_object.id,
     });
-
+    console.log(allocation);
     try {
-      await Allocation.insertAllocationIntoDb(allocation);
+      let allocateRepo = Allocation.getRepository();
+      await allocateRepo.save(allocation);
     } catch (err) {
       throw err;
     }
@@ -130,8 +136,9 @@ export class ProcessFileService {
 
     unit = cleanInputData(unit);
     try {
-      unit_object = await Unit.insertUnitIntoDb(unit);
-      // console.log(unit_object)
+      let unitRepo = Unit.getRepository();
+      unit_object = await unitRepo.save(unit);
+      console.log(unit_object);
     } catch (err) {
       throw err;
     }
@@ -148,8 +155,9 @@ export class ProcessFileService {
     });
 
     try {
-      staff_object = await Staff.insertStaffIntoDb(staffDetail);
-      // console.log(staff_object)
+      let staffRepo = Staff.getRepository();
+      staff_object = await staffRepo.save(staffDetail);
+      console.log(staff_object);
     } catch (err) {
       throw err;
     }
@@ -160,13 +168,13 @@ export class ProcessFileService {
       preferenceScore: Number(row["preferenceScore"]),
       lecturerScore: Number(row["lecturerScore"]),
       isHeadTutorCandidate: headCandidiate,
-      staffId: staff_object["data"]["id"],
-      unitId: unit_object["data"]["id"],
+      staffId: staff_object["id"],
+      unitId: unit_object["id"],
     });
-
+    console.log(staffPreference);
     try {
-      await StaffPreference.insertStaffPreferencesIntoDb(staffPreference);
-      // console.log(response)
+      let staffPrefRepo = StaffPreference.getRepository();
+      await staffPrefRepo.save(staffPreference); // console.log(response)
     } catch (err) {
       throw err;
     }
@@ -199,11 +207,12 @@ export class ProcessFileService {
       year: 2020,
       maxHours: Number(row["maxHours"]),
       maxNumberActivities: Number(row["maxNumberActivities"]),
-      staffId: staff_object["data"]["id"],
+      staffId: staff_object["id"],
     });
-
+    console.log(availability);
     try {
-      Availability.insertAvailabilityIntoDb(availability);
+      let availabilityRepo = Availability.getRepository();
+      availabilityRepo.save(availability);
     } catch (err) {
       throw err;
     }
@@ -222,13 +231,15 @@ export class ProcessFileService {
 
     unit = cleanInputData(unit);
     try {
-      unit_object = await Unit.insertUnitIntoDb(unit);
-      // console.log(unit_object)
+      let unitRepo = Unit.getRepository();
+      unit_object = await unitRepo.save(unit); // console.log(unit_object)
+      console.log(unit_object);
     } catch (err) {
       throw err;
     }
 
     let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    let endTime = calculateEndTime(row["startTime"], Number(row["duration"]));
     const activity = Activity.create({
       activityCode: row["activityCode"],
       activityGroup: row["activityGroup"],
@@ -237,11 +248,13 @@ export class ProcessFileService {
       duration: Number(row["duration"]),
       dayOfWeek: this.DOW[dayStr.indexOf(row["dayOfWeek"])],
       startTime: row["startTime"],
-      unitId: unit_object["data"]["id"],
+      unitId: unit_object["id"],
+      endTime: endTime,
     });
-
     try {
-      await Activity.insertActivityIntoDb(activity);
+      let activityRepo = Activity.getRepository();
+      let activity_object = await activityRepo.save(activity);
+      console.log(activity_object);
     } catch (err) {
       throw err;
     }
@@ -448,6 +461,33 @@ export function mapRawAllocateFile(rawRow: RawAllocateObject) {
     staff_in_charge: rawRow["staff"],
   };
   return allocateObject;
+}
+
+function calculateEndTime(startTimeParam: string, durationParam: number) {
+  /**
+   * TODO: some recommendations here
+   * - can calculate the end time on the database level
+   * - or if not, should use javascript date libraries to do the calculation
+   */
+  let inputEndMinuteStr;
+  let inputEndHourStr;
+  let durationInHours = Math.floor(durationParam / 60);
+  let durationInMins = durationParam % 60;
+  let inputStartHour = parseInt(startTimeParam.split(":")[0]);
+  let inputStartMinute = parseInt(startTimeParam.split(":")[1]);
+  let inputEndMinute = inputStartMinute + durationInMins;
+  let inputEndHour = inputStartHour + durationInHours;
+  inputEndHourStr = inputEndHour.toString();
+  if (inputEndMinute > 59) {
+    inputEndMinute = inputEndMinute - 60;
+    inputEndHourStr = (inputStartHour + durationInHours + 1).toString();
+  }
+  inputEndMinuteStr = inputEndMinute.toString();
+  if (inputEndMinute < 10) {
+    inputEndMinuteStr = "0" + inputEndMinute.toString();
+  }
+  let inputEndTime = inputEndHourStr + ":" + inputEndMinuteStr;
+  return inputEndTime;
 }
 
 export default ProcessFileService;

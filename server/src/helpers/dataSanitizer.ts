@@ -1,4 +1,3 @@
-import DOMPurify from "dompurify";
 import { Unit } from "~/entity";
 
 // List of preferred semester/teaching period names to be displayed on the front and stored in the database
@@ -144,13 +143,7 @@ let semesterNamesDict: { [key: string]: string } = {
 };
 
 const cleanInputData = (inputData: Unit): Unit => {
-  // DOMPurify library sanitizes imported data for security reasons; prevents XSS
-  let unitCode: string = DOMPurify.sanitize(inputData["unitCode"]);
-  var offeringPeriod: string = DOMPurify.sanitize(inputData["offeringPeriod"]);
-  let campus: string = DOMPurify.sanitize(inputData["campus"]);
-  let year: string = DOMPurify.sanitize(String(inputData["year"]));
-  let aqfTarget: string = DOMPurify.sanitize(String(inputData["aqfTarget"]));
-
+  let offeringPeriod: string = inputData["offeringPeriod"];
   // Further input cleaning
   let oPeriod = offeringPeriod
 
@@ -171,11 +164,11 @@ const cleanInputData = (inputData: Unit): Unit => {
 
   // Reconstruct Units obj
   const returnData = Unit.create({
-    unitCode: unitCode,
+    unitCode: inputData["unitCode"],
     offeringPeriod: offeringPeriod,
-    campus: campus,
-    year: parseInt(year),
-    aqfTarget: parseInt(aqfTarget),
+    campus: inputData["campus"],
+    year: inputData["year"],
+    aqfTarget: inputData["aqfTarget"],
   });
 
   return returnData;

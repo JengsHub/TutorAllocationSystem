@@ -76,7 +76,7 @@ class TpsDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("tps", this.csvFile);
       console.log(this.csvFile);
-      await Axios.post("http://localhost:8888/upload/tas", formData);
+      await Axios.post("http://localhost:8888/upload/tps", formData);
     } catch (err) {
       throw err;
     }
