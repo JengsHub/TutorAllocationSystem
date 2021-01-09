@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+import { Unit } from "~/entity";
 
 // List of preferred semester/teaching period names to be displayed on the front and stored in the database
 // Currently set to be `Moodle Semester` terminology
@@ -142,14 +142,8 @@ let semesterNamesDict: { [key: string]: string } = {
   "MONASH ONLINE TEACHING PERIOD 1": preferredSemesterName[`MONASH ONLINE 1`],
 };
 
-const cleanInputData = (inputData: Units): Units => {
-  // DOMPurify library sanitizes imported data for security reasons; prevents XSS
-  let unitCode: string = DOMPurify.sanitize(inputData["unitCode"]);
-  let offeringPeriod: string = DOMPurify.sanitize(inputData["offeringPeriod"]);
-  let campus: string = DOMPurify.sanitize(inputData["campus"]);
-  let year: string = DOMPurify.sanitize(String(inputData["year"]));
-  let aqfTarget: string = DOMPurify.sanitize(String(inputData["aqfTarget"]));
-
+const cleanInputData = (inputData: Unit): Unit => {
+  let offeringPeriod: string = inputData["offeringPeriod"];
   // Further input cleaning
   let oPeriod = offeringPeriod
 
@@ -169,13 +163,13 @@ const cleanInputData = (inputData: Units): Units => {
   offeringPeriod = semesterNamesDict[oPeriod];
 
   // Reconstruct Units obj
-  const returnData: Units = {
-    unitCode: unitCode,
+  const returnData = Unit.create({
+    unitCode: inputData["unitCode"],
     offeringPeriod: offeringPeriod,
-    campus: campus,
-    year: parseInt(year),
-    aqfTarget: parseInt(aqfTarget),
-  };
+    campus: inputData["campus"],
+    year: inputData["year"],
+    aqfTarget: inputData["aqfTarget"],
+  });
 
   return returnData;
 };

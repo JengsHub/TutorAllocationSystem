@@ -4,7 +4,6 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Staff } from "./Staff";
@@ -36,6 +35,6 @@ export class Availability extends BaseEntity {
   @ManyToOne(() => Staff, (staff) => staff.availability, { primary: true })
   staff!: Staff;
 
-  @RelationId((a: Availability) => a.staff)
+  @Column()
   staffId!: string;
 }
