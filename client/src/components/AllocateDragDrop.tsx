@@ -3,7 +3,7 @@ import Axios from "axios";
 import React, { Component } from "react";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import ReadFileFormat from "../../../server/src/services/ReadFileFormat";
+import ReadFileFormat from "../services/ReadFileFormat";
 
 //dependencies:
 // npm install -g browserify

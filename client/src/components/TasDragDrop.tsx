@@ -2,7 +2,7 @@ import { Button, Grid } from "@material-ui/core";
 import React, { Component } from "react";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import ReadFileFormat from "../../../server/src/services/ReadFileFormat";
+import ReadFileFormat from "../services/ReadFileFormat";
 
 // yarn add csv-parser
 import axios from "axios";
