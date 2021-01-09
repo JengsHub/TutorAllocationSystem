@@ -3,8 +3,7 @@ import Axios from "axios";
 import React, { Component } from "react";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import ReadFileFormat from "../../../server/src/helpers/ReadFileFormat";
-
+import ReadFileFormat from "../../../server/src/services/ReadFileFormat";
 
 // npm install -g browserify
 // yarn add csv-parser
