@@ -14,10 +14,6 @@ export class Allocation extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  // TODO: lec,staff,workforce Confirmation(s) booleans or Enum
-  @Column({ default: ApprovalEnum.INIT })
-  approval!: ApprovalEnum;
-
   @ManyToOne(() => Activity, (activity) => activity.allocations, {
     primary: true,
   })
@@ -31,4 +27,10 @@ export class Allocation extends BaseEntity {
 
   @Column()
   staffId!: string;
+
+  @Column({default: false})
+  isApproved!: boolean;
+
+  @Column({default: false})
+  isAccepted!: boolean;
 }

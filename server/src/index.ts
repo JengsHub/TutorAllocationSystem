@@ -100,5 +100,4 @@ const initServer = async () => {
   });
 };
 export const emailHelperInstance = new NodemailerEmailHelper();
-// emailHelperInstance.sendRegisterConfirmation({recipient: "utra0001@student.monash.edu", name: "Sara"})
 initServer();

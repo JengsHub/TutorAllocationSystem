@@ -87,7 +87,7 @@ const Units = () => {
                 <Activities
                   {...{
                     unitId: row.unitId,
-                    approval: ApprovalEnum.LECTURER,
+                    isApproved: true,   // TODO: should do back end validation to only show approved allocation
                   }}
                 ></Activities>
               </Box>

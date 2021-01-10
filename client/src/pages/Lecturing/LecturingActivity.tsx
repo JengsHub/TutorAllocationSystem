@@ -100,8 +100,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.post(
-      `http://localhost:8888/allocations/approval/${allocation.id}/Lecturer`
+    const result = await DatabaseFinder.put(
+      `http://localhost:8888/allocations/${allocation.id}/approval?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -114,7 +114,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
+    const result = await DatabaseFinder.put(
       `http://localhost:8888/allocations/${allocation.id}`
     );
     if (result.statusText === "OK") {
@@ -168,48 +168,34 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   function ApprovalCell(props: { allocation: IAllocation }) {
     const { allocation } = props;
-    let approval = allocation.approval;
-    switch (approval) {
-      case ApprovalEnum.INIT:
-        return (
-          <>
-            <IconButton onClick={() => allocationApproved(allocation)}>
-              <DoneIcon />
-            </IconButton>
-            <IconButton onClick={() => allocationRejected(allocation)}>
-              <ClearIcon />
-            </IconButton>
-          </>
-        );
-      case ApprovalEnum.LECTURER:
+    let approval = allocation.isApproved;
+    let acceptance = allocation.isAccepted;
+    if (!approval){
+      return (
+        <>
+          <IconButton onClick={() => allocationApproved(allocation)}>
+            <DoneIcon />
+          </IconButton>
+          <IconButton onClick={() => allocationRejected(allocation)}>
+            <ClearIcon />
+          </IconButton>
+        </>
+      );
+    } else {
+      if (!acceptance){
         return (
           <>
             {" "}
             <div> Waiting on TA response to offer </div>
           </>
         );
-      case ApprovalEnum.TA:
-        return (
-          <>
-            {" "}
-            <div> TA Has Accepted </div>{" "}
-          </>
-        );
-      case ApprovalEnum.WORKFORCE:
-        return (
-          <>
-            {" "}
-            <div> Work-Force Have Confirmed </div>{" "}
-          </>
-        );
-      default:
-        console.error("Unknown approval");
-        return (
-          <>
-            {" "}
-            <div>Error With Allocations Approval</div>{" "}
-          </>
-        );
+      }
+      return (
+        <>
+          {" "}
+          <div> TA Has Accepted </div>{" "}
+        </>
+      );
     }
   }
 

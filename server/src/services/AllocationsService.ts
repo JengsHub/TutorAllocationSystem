@@ -19,6 +19,7 @@ import { AllocationControllerFactory } from "~/controller";
 import { authCheck } from "~/helpers/auth";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { emailHelperInstance } from "..";
+import { Query } from "typeorm/driver/Query";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -55,16 +56,23 @@ class AllocationsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response,
     @QueryParam("unitId") unitId: string,
-    @QueryParam("approval") approval: ApprovalEnum
+    @QueryParam("isApproved") isApproved: boolean
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
   ) {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
+    const findOptions: { [key: string]: any } = {
+      isApproved
+    }
+    Object.keys(findOptions).forEach(key => findOptions[key] === undefined ? delete findOptions[key] : {});
+
+
     let allocations = await this.repo.find({
       where: {
-        staff: me,
+        staffId: me.id,
+        ...findOptions
       },
       relations: ["activity"],
     });
@@ -73,13 +81,7 @@ class AllocationsService {
       allocations = allocations.filter((a) => a.activity.unitId === unitId);
     }
     console.log(allocations);
-    if (approval) {
-      allocations = allocations.filter(
-        (a) =>
-          Object.values(ApprovalEnum).indexOf(a.approval) >=
-          Object.values(ApprovalEnum).indexOf(approval)
-      );
-    }
+
     console.log(allocations);
     return allocations;
   }
@@ -127,40 +129,59 @@ class AllocationsService {
     return this.repo.save(this.repo.create(newRecord));
   }
 
-  @POST
-  @Path("approval/:id/:approval")
+  @PUT
+  @Path(":id/approval")
   public async updateApproval(
     @PathParam("id") id: string,
-    @PathParam("approval") approval: ApprovalEnum
+    @QueryParam("value") value: boolean,
+    @ContextRequest req: Request
   ) {
-    console.log(id, approval);
-    let allocation = await this.repo.findOne({
+    let allocation = await this.repo.findOneOrFail({
       where: { id: id },
       relations: ["staff", "activity", "activity.unit"],
     });
-    console.log(allocation);
-    if (allocation) {
-      if (allocation.approval === ApprovalEnum.INIT) {
-        // Offer is made to TA when approval status changes from Init
-        const { staff, activity } = allocation;
-        const { unit } = activity;
-        emailHelperInstance.sendOfferToTa({
-          recipient: staff.email,
-          content: {
-            name: staff.givenNames,
-            unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
-            activity: activity.activityCode,
-          },
-        });
-      }
 
-      allocation.approval = approval;
-      return await this.repo.update(
-        { id: allocation.id },
-        { approval: approval }
-      );
+    const user = req.user as Staff;
+    const { staff, activity } = allocation;
+    const { unit } = activity;
+    const role = await user.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
+
+    // Offer is made to TA when approval status changes to true
+    if (value){
+      emailHelperInstance.sendOfferToTa({
+        recipient: staff.email,
+        content: {
+          name: staff.givenNames,
+          unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+          activity: activity.activityCode,
+        },
+      });
     }
-    console.error("No allocation by this id");
+    return controller.updateApproval(user, allocation, value);
+  }
+
+  @PUT
+  @Path(":id/acceptance")
+  public async updateAcceptance(
+    @PathParam("id") id: string,
+    @QueryParam("value") value: boolean,
+    @ContextRequest req: Request
+  ) {
+    let allocation = await this.repo.findOneOrFail({
+      where: { id: id },
+      relations: ["staff", "activity", "activity.unit"],
+    });
+
+    const user = req.user as Staff;
+    const { staff, activity } = allocation;
+    const { unit } = activity;
+    const role = await user.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
+
+    // TODO: send email noti to lecturer if accepted
+
+    return controller.updateAcceptance(user, allocation, value);
   }
 
   /**
@@ -170,17 +191,23 @@ class AllocationsService {
    */
   @PUT
   public async updateAllocation(
-    changedAllocation: Allocation
+    changedAllocation: Allocation,
+    @ContextRequest req: Request
   ): Promise<Allocation> {
     let allocationToUpdate = await this.repo.findOne(
       {
         id: changedAllocation.id,
       },
-      { relations: ["staff", "activity"] }
+      { relations: ["staff", "activity", "activity.unit"] }
     );
 
     if (!allocationToUpdate)
       throw new Errors.NotFoundError("Allocation not found.");
+
+    const user = req.user as Staff;
+    const unit = allocationToUpdate.activity.unit;
+    const role = await user.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
 
     // TODO: optimisation
     if (changedAllocation.staffId) {
@@ -207,7 +234,7 @@ class AllocationsService {
       );
     }
     allocationToUpdate = changedAllocation;
-    return this.repo.save(allocationToUpdate);
+    return controller.updateAllocation(user, allocationToUpdate);
   }
 
   /**

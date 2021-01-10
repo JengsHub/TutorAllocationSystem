@@ -142,8 +142,8 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.post(
-      `http://localhost:8888/allocations/approval/${allocation.id}/TA`
+    const result = await DatabaseFinder.put(
+      `http://localhost:8888/allocations/${allocation.id}/acceptance?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -169,27 +169,23 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const approvalStatus = (allocation: IAllocation & { [key: string]: any }) => {
-    switch (allocation.approval) {
-      case ApprovalEnum.INIT:
-        return "You Shouldn't See Me";
-      case ApprovalEnum.LECTURER:
-        return (
-          <>
-            <IconButton onClick={() => allocationApproved(allocation)}>
-              <DoneIcon />
-            </IconButton>
-            <IconButton onClick={() => allocationRejected(allocation)}>
-              <ClearIcon />
-            </IconButton>
-          </>
-        );
-      case ApprovalEnum.TA:
-        return "Accepted Offer";
-      case ApprovalEnum.WORKFORCE:
-        return "Accepted and Confirmed by WorkForce";
-      default:
-        return "Error With Approval Status";
+    if (!allocation.isApproved){
+      return "You Shouldn't See Me";
+    } 
+
+    if (!allocation.isAccepted){
+      return (
+        <>
+          <IconButton onClick={() => allocationApproved(allocation)}>
+            <DoneIcon />
+          </IconButton>
+          <IconButton onClick={() => allocationRejected(allocation)}>
+            <ClearIcon />
+          </IconButton>
+        </>
+      );
     }
+    return "Accepted Offer";
   };
 
   return (

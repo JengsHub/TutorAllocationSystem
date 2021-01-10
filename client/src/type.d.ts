@@ -52,6 +52,8 @@ interface IAllocation {
   activityId: string;
   staffId: string;
   approval: ApprovalEnum;
+  isApproved: boolean;
+  isAccepted: boolean;
 }
 
 interface IAvailability {
