@@ -4,6 +4,12 @@ import {
   TransactionalEmailsApiApiKeys,
 } from "sib-api-v3-typescript";
 import { createTransport, SendMailOptions } from "nodemailer";
+// @ts-ignore
+import hbs from "nodemailer-express-handlebars";
+
+// Configure .env file
+import dotenv from "dotenv";
+const result = dotenv.config();
 
 /**
  * Interface for email helpers
@@ -65,20 +71,41 @@ export class NodemailerEmailHelper implements emailHelper {
    * In production, we should have a dedicated SMTP server or service provider like SendGrid
    * for better mail management, quota, etc.
    */
-  private transporter = createTransport({
-    service: "gmail",
-    auth: {
-      user: "fit3170tas@gmail.com",
-      pass: "}zT#JC3]8ke#G`*:", // TODO: in .env file instead
-    },
-  });
+  private transporter;
+
+  constructor() {
+    // create nodemailer mail transporter
+    this.transporter = createTransport({
+      service: process.env.SMTP_SERVICE,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+
+    // options for nodemailer-express-handlebars to compile the templates
+    const options = {
+      viewEngine: {
+        partialsDir: "src/email/views/partials",
+        layoutsDir: "src/email/views/layouts",
+        extname: ".hbs",
+      },
+      extName: ".hbs",
+      viewPath: "src/email/views",
+    };
+
+    this.transporter.use("compile", hbs(options));
+  }
 
   async sendRegisterConfirmation(content: { recipient: string; name: string }) {
-    const mailOptions: SendMailOptions = {
-      from: "fit3170tas@gmail.com",
+    const mailOptions = {
+      from: process.env.FROM_EMAIL,
       to: content.recipient,
       subject: "Registration confirmation - Monash Tutor Allocation System",
-      text: "Registered!", // TODO: template with handlebars?
+      template: "registrationConfirmation",
+      context: {
+        name: content.name,
+      },
     };
     try {
       const data = await this.transporter.sendMail(mailOptions);
