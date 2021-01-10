@@ -18,6 +18,7 @@ import { checkAllocation } from "../helpers/checkConstraints";
 import { AllocationControllerFactory } from "~/controller";
 import { authCheck } from "~/helpers/auth";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
+import { emailHelperInstance } from "..";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -133,9 +134,26 @@ class AllocationsService {
     @PathParam("approval") approval: ApprovalEnum
   ) {
     console.log(id, approval);
-    let allocation = await this.repo.findOne({ where: { id: id } });
+    let allocation = await this.repo.findOne({
+      where: { id: id },
+      relations: ["staff", "activity", "activity.unit"],
+    });
     console.log(allocation);
     if (allocation) {
+      if (allocation.approval === ApprovalEnum.INIT) {
+        // Offer is made to TA when approval status changes from Init
+        const { staff, activity } = allocation;
+        const { unit } = activity;
+        emailHelperInstance.sendOfferToTa({
+          recipient: staff.email,
+          content: {
+            name: staff.givenNames,
+            unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+            activity: activity.activityCode,
+          },
+        });
+      }
+
       allocation.approval = approval;
       return await this.repo.update(
         { id: allocation.id },

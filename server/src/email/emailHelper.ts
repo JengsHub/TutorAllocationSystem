@@ -18,6 +18,10 @@ const result = dotenv.config();
  */
 interface emailHelper {
   sendRegisterConfirmation(content: { recipient: string; name: string }): any;
+  sendOfferToTa(data: {
+    recipient: string;
+    content: { name: string; activity: string; unit: string };
+  }): any;
 }
 
 /**
@@ -33,6 +37,12 @@ export class SibEmailHelper implements emailHelper {
   };
   constructor(apiKey: string) {
     this.apiKey = apiKey;
+  }
+  sendOfferToTa(data: {
+    recipient: string;
+    content: { name: string; activity: string; unit: string };
+  }) {
+    throw new Error("Method not implemented.");
   }
 
   async sendRegisterConfirmation(content: { recipient: string; name: string }) {
@@ -95,6 +105,29 @@ export class NodemailerEmailHelper implements emailHelper {
     };
 
     this.transporter.use("compile", hbs(options));
+  }
+  async sendOfferToTa(data: {
+    recipient: string;
+    content: { name: string; activity: string; unit: string };
+  }) {
+    const { recipient, content } = data;
+    const mailOptions = {
+      from: process.env.FROM_EMAIL,
+      to: data.recipient,
+      subject: "Activity Offer - Monash Tutor Allocation System",
+      template: "offerToTa",
+      context: {
+        name: content.name,
+        activity: content.activity,
+        unit: content.unit,
+      },
+    };
+    try {
+      const data = await this.transporter.sendMail(mailOptions);
+      console.log("Email sent: ", data);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async sendRegisterConfirmation(content: { recipient: string; name: string }) {
