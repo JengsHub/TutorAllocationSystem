@@ -3,11 +3,9 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   Column,
 } from "typeorm";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
-import { DayOfWeek } from "../enums/DayOfWeek";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
@@ -25,12 +23,12 @@ export class Allocation extends BaseEntity {
   })
   activity!: Activity;
 
-  @RelationId((a: Allocation) => a.activity)
+  @Column()
   activityId!: string;
 
   @ManyToOne(() => Staff, (staff) => staff.allocations, { primary: true })
   staff!: Staff;
 
-  @RelationId((a: Allocation) => a.staff)
+  @Column()
   staffId!: string;
 }

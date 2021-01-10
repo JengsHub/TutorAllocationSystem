@@ -6,7 +6,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
   Unique,
 } from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
@@ -46,6 +45,9 @@ export class Activity extends BaseEntity {
 
   @Column({ type: "time" })
   startTime!: string; // TODO: Date object or string to store time only?
+
+  @Column({ default: 0 }) // TODO: need default?
+  duration!: number;
 
   @OneToMany(() => Allocation, (allocation) => allocation.activity)
   allocations!: Allocation[];

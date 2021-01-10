@@ -2,13 +2,10 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  JoinTable,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
-import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum } from "~/enums/RoleEnum";
 import { Unit } from ".";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";

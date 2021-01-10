@@ -1,11 +1,8 @@
 import { Button, Grid } from "@material-ui/core";
-import Papa from "papaparse";
+import Axios from "axios";
 import React, { Component } from "react";
-import DatabaseFinder from "../apis/DatabaseFinder";
-import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import cleanInputData from "../services/DataSanitizer";
 import ReadFileFormat from "../services/ReadFileFormat";
 
 // npm install -g browserify
@@ -17,6 +14,7 @@ class TpsDragDrop extends Component<Props, State> {
   allocateList: any[] = [[]];
   fileFormats: ReadFileFormat = new ReadFileFormat();
   readonly validTypes: String[];
+  csvFile: File = new File(["foo"], "placeholder.txt");
 
   constructor(props: Props) {
     super(props);
@@ -61,9 +59,7 @@ class TpsDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.dataTransfer.files[0] });
-        Papa.parse(event.dataTransfer.files[0], {
-          complete: this.obtainResult,
-        });
+        this.csvFile = event.dataTransfer.files[0];
       }
     }
   };
@@ -74,126 +70,16 @@ class TpsDragDrop extends Component<Props, State> {
   };
 
   uploadData = async () => {
-    let tempList: string[] = this.allocateList[0];
-    let unit_object: any;
-    let staff_object: any;
-
-    for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: Units = {
-        unitCode: this.allocateList[i][tempList.indexOf("unit")].slice(0, 7),
-        offeringPeriod: this.allocateList[i][tempList.indexOf("unit")].slice(7),
-        campus: this.allocateList[i][tempList.indexOf("campus")],
-        year: 2020,
-        aqfTarget: Number(
-          this.allocateList[i][tempList.indexOf("unit aqf target")]
-        ),
-      };
-      console.log("unit", unit, "i", i, this.allocateList.length);
-      unit = cleanInputData(unit);
-      try {
-        unit_object = await DatabaseFinder.post("/units", unit);
-        // console.log(unit_object)
-      } catch (err) {
-        throw err;
-      }
-
-      let name: string[] = this.allocateList[i][tempList.indexOf("name")].split(
-        " "
-      );
-      let studyAqf: number =
-        isNaN(
-          Number(this.allocateList[i][tempList.indexOf("tutors studying aqf")])
-        ) === true
-          ? 0
-          : Number(
-              this.allocateList[i][tempList.indexOf("tutors studying aqf")]
-            );
-      var staffDetail: Staff = {
-        givenNames: name[0],
-        lastName: name[1],
-        aqf: Number(this.allocateList[i][tempList.indexOf("tutors aqf")]),
-        studyingAqf: studyAqf,
-        email: this.allocateList[i][tempList.indexOf("email")],
-      };
-      try {
-        staff_object = await DatabaseFinder.post("/staff", staffDetail);
-        // console.log(staff_object)
-      } catch (err) {
-        throw err;
-      }
-
-      // have to check for unit id and staf id in the future, works now as eveything is unique
-      let headCandidiate: boolean =
-        this.allocateList[i][tempList.indexOf("head tutor cand?")] === 1
-          ? true
-          : false;
-      var staffPreference: StaffPreference = {
-        preferenceScore: Number(
-          this.allocateList[i][tempList.indexOf("tutors pref")]
-        ),
-        lecturerScore: Number(
-          this.allocateList[i][tempList.indexOf("lec suitability")]
-        ),
-        isHeadTutorCandidate: headCandidiate,
-        staffId: staff_object["data"]["id"],
-        unitId: unit_object["data"]["id"],
-      };
-      try {
-        await DatabaseFinder.post("/staffpreferences", staffPreference);
-        // console.log(response)
-      } catch (err) {
-        throw err;
-      }
-
-      // needs to check if M end/start has N/A
-      let startEnd: string[] = [
-        "M start",
-        "M end",
-        "T start",
-        "T end",
-        "W start",
-        "W end",
-        "Th start",
-        "Th end",
-        "F start",
-        "F end",
-      ];
-      let DOW: DayOfWeek[] = [
-        DayOfWeek.MONDAY,
-        DayOfWeek.TUESDAY,
-        DayOfWeek.WEDNESDAY,
-        DayOfWeek.THURSDAY,
-        DayOfWeek.FRIDAY,
-      ];
-
-      for (let j = 0; j < startEnd.length; j += 2) {
-        let start: string = this.allocateList[i][tempList.indexOf(startEnd[j])];
-        let end: string = this.allocateList[i][
-          tempList.indexOf(startEnd[j + 1])
-        ];
-        start = start.slice(0, -2) + ":" + start.slice(-2);
-        end = end.slice(0, -2) + ":" + end.slice(-2);
-
-        var availability: Availability = {
-          day: DOW[j / 2],
-          startTime: start,
-          endTime: end,
-          year: 2020,
-          maxHours: Number(this.allocateList[i][tempList.indexOf("max hr")]),
-          maxNumberActivities: Number(
-            this.allocateList[i][
-              tempList.indexOf("lecturer_override min classes")
-            ]
-          ),
-          staffId: staff_object["data"]["id"],
-        };
-        try {
-          await DatabaseFinder.post("/availabilities", availability);
-        } catch (err) {
-          throw err;
-        }
-      }
+    // // Send file to the backend when upload is CHOSEN
+    try {
+      const formData = new FormData();
+      formData.append("tps", this.csvFile);
+      console.log(this.csvFile);
+      await Axios.post("http://localhost:8888/upload/tps", formData);
+    } catch (err) {
+      throw err;
     }
+
     this.showSuccess();
   };
 
@@ -231,9 +117,7 @@ class TpsDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.target.files[0] });
-        Papa.parse(event.target.files[0], {
-          complete: this.obtainResult,
-        });
+        this.csvFile = event.target.files[0];
       }
     }
   };
