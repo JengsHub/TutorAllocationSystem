@@ -100,7 +100,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.put(
+    const result = await DatabaseFinder.patch(
       `http://localhost:8888/allocations/${allocation.id}/approval?value=true`
     );
     if (result.statusText === "OK") {
@@ -114,7 +114,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.put(
+    const result = await DatabaseFinder.delete(
       `http://localhost:8888/allocations/${allocation.id}`
     );
     if (result.statusText === "OK") {

@@ -28,9 +28,9 @@ export class Allocation extends BaseEntity {
   @Column()
   staffId!: string;
 
-  @Column({default: false})
+  @Column({ default: false })
   isApproved!: boolean;
 
-  @Column({default: false})
+  @Column({ default: false })
   isAccepted!: boolean;
 }

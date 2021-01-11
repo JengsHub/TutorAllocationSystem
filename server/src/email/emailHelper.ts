@@ -106,7 +106,7 @@ export class NodemailerEmailHelper implements emailHelper {
 
     this.transporter.use("compile", hbs(options));
   }
-  
+
   async sendOfferToTa(data: {
     recipient: string;
     content: { name: string; activity: string; unit: string };

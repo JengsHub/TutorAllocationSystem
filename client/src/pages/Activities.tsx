@@ -142,7 +142,7 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.put(
+    const result = await DatabaseFinder.patch(
       `http://localhost:8888/allocations/${allocation.id}/acceptance?value=true`
     );
     if (result.statusText === "OK") {

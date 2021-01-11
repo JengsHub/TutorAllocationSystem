@@ -13,6 +13,6 @@ export class UnauthorisedAccessedError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "UnauthorisedRoleError";
-    this.stack = (<any> new Error()).stack;
+    this.stack = (<any>new Error()).stack;
   }
 }

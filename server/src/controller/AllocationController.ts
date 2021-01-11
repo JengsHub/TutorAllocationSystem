@@ -19,11 +19,24 @@ export class AllocationControllerFactory {
 
 export interface IAllocationController {
   updateAllocation(user: Staff, changedRecord: Allocation): any;
+  createAllocation(user: Staff, newRecord: Allocation): any;
+  deleteAllocation(user: Staff, recordToDelete: Allocation): any;
   updateApproval(user: Staff, record: Allocation, value: boolean): any;
   updateAcceptance(user: Staff, record: Allocation, value: boolean): any;
 }
 
 class TaAllocationController implements IAllocationController {
+  deleteAllocation(user: Staff, recordToDelete: Allocation) {
+    if (user.id === recordToDelete.staffId && recordToDelete.isApproved) {
+      return Allocation.delete({ id: recordToDelete.id });
+    }
+    return new UnauthorisedAccessedError(
+      "TA user cannot delete this Allocation"
+    );
+  }
+  createAllocation(user: Staff, newRecord: Allocation) {
+    return new UnauthorisedAccessedError("TA cannot create an Allocation");
+  }
   updateAcceptance(user: Staff, record: Allocation, value: boolean) {
     if (record.staffId !== user.id) {
       return new UnauthorisedAccessedError(
@@ -49,6 +62,17 @@ class TaAllocationController implements IAllocationController {
 }
 
 class LecturerAllocationController implements IAllocationController {
+  deleteAllocation(user: Staff, recordToDelete: Allocation) {
+    if (!recordToDelete.isAccepted) {
+      return Allocation.delete({ id: recordToDelete.id });
+    }
+    return new UnauthorisedAccessedError(
+      "Lecturer cannot delete this Allocation: Allocation has already been accepted"
+    );
+  }
+  createAllocation(user: Staff, newRecord: Allocation) {
+    return Allocation.save(newRecord);
+  }
   updateAcceptance(user: Staff, record: Allocation, value: boolean) {
     if (record.staffId !== user.id) {
       return new UnauthorisedAccessedError(
@@ -76,6 +100,12 @@ class LecturerAllocationController implements IAllocationController {
 }
 
 class AdminAllocationController implements IAllocationController {
+  deleteAllocation(user: Staff, recordToDelete: Allocation) {
+    return Allocation.delete({ id: recordToDelete.id });
+  }
+  createAllocation(user: Staff, newRecord: Allocation) {
+    return Allocation.save(newRecord);
+  }
   updateAcceptance(user: Staff, record: Allocation, value: boolean) {
     return Allocation.update(
       {
