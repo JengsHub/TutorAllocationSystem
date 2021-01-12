@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, SelectQueryBuilder } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -62,23 +62,39 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
-    const findOptions: { [key: string]: any } = {
-      isApproved,
-    };
-    Object.keys(findOptions).forEach((key) =>
-      findOptions[key] === undefined ? delete findOptions[key] : {}
-    );
+    
+    // let findOptions: { [key: string]: any } = {
+    //   isApproved,
+    //   activity: {
+    //     unitId
+    //   }
+    // };
 
-    let allocations = await this.repo.find({
-      where: {
-        staffId: me.id,
-        ...findOptions,
-        activity: {
-          unitId: unitId,
-        },
-      },
-      relations: ["activity"],
-    });
+    // findOptions = removeEmpty(findOptions);
+
+    // console.log(findOptions);
+    // let allocations = await this.repo.find({
+    //   where: {
+    //     staffId: me.id,
+    //     ...findOptions,
+    //   },
+    //   relations: ["activity"],
+    // });
+
+    /**
+     * Note: have to use query builder instead of TypeORM find() because find()
+     * support for WHERE clause on joined columns is not consistent/doesn't work.
+     * Seems like this feature will be added in future version of TypeORM
+     * 
+     * See: https://github.com/typeorm/typeorm/issues/2707
+     */
+
+    const allocations = await Allocation.createQueryBuilder("allocation")
+      .leftJoinAndSelect("allocation.activity", "activity")
+      .where("activity.unitId = :unitId", { unitId })
+      .andWhere("allocation.staffId = :id", { id: me.id })
+      .getMany();
+
     console.log(allocations);
     return allocations;
   }
@@ -292,4 +308,13 @@ class AllocationsService {
     const controller = this.factory.getController(role);
     return controller.deleteAllocation(me, allocation);
   }
+}
+
+function removeEmpty(obj: any): any {
+  return Object.entries(obj)
+    .filter(([_, v]) => v != null)
+    .reduce(
+      (acc, [k, v]) => ({ ...acc, [k]: v === Object(v) ? removeEmpty(v) : v }),
+      {}
+    );
 }
