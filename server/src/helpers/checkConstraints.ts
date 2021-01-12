@@ -1,5 +1,12 @@
-import { Activity, Staff, Rule, Availability, Allocation } from "~/entity";
-import { getRepository, Repository } from "typeorm";
+import {
+  Activity,
+  Staff,
+  Rule,
+  Availability,
+  Allocation,
+  Unit,
+} from "~/entity";
+import { getRepository, Repository, In } from "typeorm";
 
 /**
  * Calculate the time duration of the activity
@@ -32,10 +39,25 @@ export const checkAllocation = async (
 ): Promise<boolean> => {
   // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
 
+  const activityUnit = await getRepository(Unit).findOne({
+    id: newActivity.unitId,
+  });
+  if (!activityUnit) return false;
+
+  console.log(activityUnit);
+
   const allocationsRepo = getRepository(Allocation);
   const currentAllocations = await allocationsRepo.find({
-    relations: ["staff", "activity"],
-    where: { staff: { id: staff.id } },
+    relations: ["staff", "activity", "activity.unit"],
+    where: {
+      staff: { id: staff.id },
+      // activity: {
+      //   unit: {
+      //     year: activityUnit.year,
+      //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
+      //   },
+      // },
+    },
   });
 
   let dayHours = activityDuration(newActivity);
@@ -43,14 +65,26 @@ export const checkAllocation = async (
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
-  const activities = currentAllocations.map((a) => a.activity);
+  const activities = currentAllocations
+    .map((a) => a.activity)
+    .filter(
+      (a) =>
+        a.unit.year === activityUnit.year &&
+        (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
+          a.unit.offeringPeriod === "Full Year")
+    );
+  console.log(activities);
 
   // Checking the numbers against the constraints/rules.
   // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
   const rules: Repository<Rule> = await getRepository(Rule);
   const availability = await getRepository(Availability).findOne({
     relations: ["staff"],
-    where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
+    where: {
+      staff: { id: staff.id },
+      day: newActivity.dayOfWeek,
+      year: activityUnit.year,
+    },
   });
   if (!availability) return false;
 
