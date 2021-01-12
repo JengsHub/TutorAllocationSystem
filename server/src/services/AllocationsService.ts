@@ -15,7 +15,7 @@ import {
   QueryParam,
 } from "typescript-rest";
 import { AllocationControllerFactory } from "~/controller";
-import { Activity, Allocation, Staff } from "~/entity";
+import { Activity, Allocation, Staff, Role } from "~/entity";
 import { authCheck } from "~/helpers/auth";
 import { emailHelperInstance } from "..";
 import { checkAllocation } from "../helpers/checkConstraints";
@@ -62,7 +62,7 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
-    
+
     // let findOptions: { [key: string]: any } = {
     //   isApproved,
     //   activity: {
@@ -85,7 +85,7 @@ class AllocationsService {
      * Note: have to use query builder instead of TypeORM find() because find()
      * support for WHERE clause on joined columns is not consistent/doesn't work.
      * Seems like this feature will be added in future version of TypeORM
-     * 
+     *
      * See: https://github.com/typeorm/typeorm/issues/2707
      */
 
@@ -95,7 +95,7 @@ class AllocationsService {
       .andWhere("allocation.staffId = :id", { id: me.id })
       .getMany();
 
-    console.log(allocations);
+    // console.log(allocations);
     return allocations;
   }
 
@@ -222,7 +222,32 @@ class AllocationsService {
     const role = await me.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
 
-    // TODO: send email noti to lecturer if accepted
+    // get the person who with lecturer role
+    const lecturerRole = await Role.createQueryBuilder("role")
+      .leftJoinAndSelect("role.staff", "staff")
+      .where("role.title = :title", { title: "Lecturer" })
+      .andWhere("role.unitId = :unitId", { unitId: unit.id })
+      .getMany();
+
+    let lecturers: Staff[] = [];
+    for (var eachRole of lecturerRole) {
+      lecturers.push(eachRole.staff);
+    }
+
+    //send email noti to each lecturers if accepted
+    for (var lecturer of lecturers) {
+      if (value) {
+        emailHelperInstance.replyToLecturer({
+          recipient: lecturer.email,
+          content: {
+            lecturerName: lecturer.givenNames,
+            staffName: staff.givenNames,
+            unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+            activity: activity.activityCode,
+          },
+        });
+      }
+    }
 
     return controller.updateAcceptance(me, allocation, value);
   }

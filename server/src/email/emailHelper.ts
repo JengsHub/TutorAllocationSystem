@@ -107,6 +107,7 @@ export class NodemailerEmailHelper implements emailHelper {
     this.transporter.use("compile", hbs(options));
   }
 
+  // send email to TA once lecturer approve the offer
   async sendOfferToTa(data: {
     recipient: string;
     content: { name: string; activity: string; unit: string };
@@ -119,6 +120,38 @@ export class NodemailerEmailHelper implements emailHelper {
       template: "offerToTa",
       context: {
         name: content.name,
+        activity: content.activity,
+        unit: content.unit,
+      },
+    };
+    try {
+      const data = await this.transporter.sendMail(mailOptions);
+      console.log("Email sent: ", data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  // send email to lecturer once TA accepted the offer
+  async replyToLecturer(data: {
+    recipient: string;
+    content: {
+      lecturerName: string;
+      staffName: string;
+      activity: string;
+      unit: string;
+    };
+  }) {
+    const { recipient, content } = data;
+    console.log(recipient);
+    const mailOptions = {
+      from: process.env.FROM_EMAIL,
+      to: recipient,
+      subject: "Accepting Offer - Monash Tutor Allocation System",
+      template: "replyToLecturer",
+      context: {
+        lecturerName: content.lecturerName,
+        staffName: content.staffName,
         activity: content.activity,
         unit: content.unit,
       },
