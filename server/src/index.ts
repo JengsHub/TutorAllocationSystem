@@ -17,6 +17,7 @@ import { authCheckMiddleware } from "./helpers/auth";
 import { getConnection } from "typeorm";
 import { Session } from "./entity/Session";
 import { TypeormStore } from "typeorm-store";
+import { NodemailerEmailHelper, SibEmailHelper } from "./email/emailHelper";
 import fileUpload from "express-fileupload";
 
 const initServer = async () => {
@@ -98,5 +99,5 @@ const initServer = async () => {
     console.log(`Server Started at PORT: ${port}`);
   });
 };
-
+export const emailHelperInstance = new NodemailerEmailHelper();
 initServer();
