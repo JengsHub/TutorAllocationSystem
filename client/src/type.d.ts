@@ -80,3 +80,26 @@ interface IRule {
   ruleDescription: string;
   value: number;
 }
+
+interface myAllocations {
+  allocation_id: string;
+  allocation_approval: string;
+  allocation_activityId: string;
+  allocation_staffId: string;
+  activity_id: string;
+  activity_activityCode: string;
+  activity_activityGroup: string;
+  activity_campus: string;
+  activity_location: string;
+  activity_endTime: string;
+  activity_dayOfWeek: DayOfWeek;
+  activity_startTime: string;
+  activity_duration: number;
+  activity_unitId: string;
+  unit_id: string;
+  unit_unitCode: string;
+  unit_offeringPeriod: string;
+  unit_campus: string;
+  unit_year: number;
+  unit_aqfTarget: number;
+}

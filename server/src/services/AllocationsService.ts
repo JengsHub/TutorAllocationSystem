@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getManager, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -13,7 +13,7 @@ import {
   Errors,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Staff, Allocation } from "~/entity";
+import { Activity, Staff, Allocation, Unit } from "~/entity";
 import { checkAllocation } from "../helpers/checkConstraints";
 import { AllocationControllerFactory } from "~/controller";
 import { authCheck } from "~/helpers/auth";
@@ -53,7 +53,7 @@ class AllocationsService {
   public async getMyAllocation(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
-    @QueryParam("unitId") unitId: string,
+    // @QueryParam("unitId") unitId: string,
     @QueryParam("approval") approval: ApprovalEnum
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
@@ -61,21 +61,33 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
-    let allocations = await this.repo.find({
-      where: {
-        staff: me,
-      },
-      relations: ["activity"],
-    });
+    let allocations = await getManager()
+      .createQueryBuilder(Allocation, "allocation")
+      .innerJoinAndSelect(
+        Activity,
+        "activity",
+        "allocation.activityId = activity.id"
+      )
+      .innerJoinAndSelect(Unit, "unit", "activity.unitId = unit.id")
+      .where("allocation.staffId = :id", { id: me.id })
+      .getRawMany();
 
-    if (unitId) {
-      allocations = allocations.filter((a) => a.activity.unitId === unitId);
-    }
+    // let allocations = await this.repo.find({
+    //   where: {
+    //     staff: me,
+    //   },
+    //   relations: ["activity"],
+    // });
+
+    // if (unitId) {
+    //   allocations = allocations.filter((a) => a.activity.unitId === unitId);
+    // }
+
     console.log(allocations);
     if (approval) {
       allocations = allocations.filter(
         (a) =>
-          Object.values(ApprovalEnum).indexOf(a.approval) >=
+          Object.values(ApprovalEnum).indexOf(a.allocation_approval) >=
           Object.values(ApprovalEnum).indexOf(approval)
       );
     }
