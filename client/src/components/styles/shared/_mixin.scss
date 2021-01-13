@@ -1,0 +1,35 @@
+@mixin buttonDefault {
+  position: relative;
+  font-family: $defaultFont;
+  font-size: $defaultFontSize;
+  font-weight: bold;
+  color: white;
+  height: $elementHeight;
+  border-radius: $borderRadius;
+  border: none;
+  width: fit-content;
+  min-width: $elementHeight;
+  padding: 0px $defaultPadding;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  outline: none;
+}
+
+@mixin icon-check {
+  background-image: url(../../styles/shared/assets/check.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@mixin icon-cross {
+  background-image: url(../../styles/shared/assets/x.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@mixin icon-trash {
+  background-image: url(../../styles/shared/assets/trash.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
