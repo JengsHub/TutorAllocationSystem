@@ -4,10 +4,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
 } from "typeorm";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
+import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Allocation extends BaseEntity {
@@ -33,4 +35,7 @@ export class Allocation extends BaseEntity {
 
   @Column({ default: false })
   isAccepted!: boolean;
+
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.allocation)
+  statusLog!: StatusLog[];
 }

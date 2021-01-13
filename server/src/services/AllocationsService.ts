@@ -16,7 +16,11 @@ import {
 } from "typescript-rest";
 import { AllocationControllerFactory } from "~/controller";
 import { Activity, Allocation, Staff } from "~/entity";
+import { StatusLog } from "~/entity/StatusLog";
+import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
+import { createStatusLog } from "~/helpers/createStatusLog";
+import { createCurrentDate } from "~/helpers/getDate";
 import { emailHelperInstance } from "..";
 import { checkAllocation } from "../helpers/checkConstraints";
 
@@ -146,7 +150,19 @@ class AllocationsService {
     const controller = this.factory.getController(
       await me.getRoleTitle(activity.unitId)
     );
-    return controller.createAllocation(me, newRecord);
+
+    let allocation = controller.createAllocation(me, newRecord);
+    let statusLogObj = StatusLog.create({
+      allocationId: allocation["id"],
+      offerorId: me.id,
+      staffId: newRecord.staffId,
+      action: ActionEnums.MAKE_OFFER ,
+      time: createCurrentDate()
+    })
+
+    StatusLog.save(statusLogObj);
+
+    return allocation;
   }
 
   /**
@@ -318,3 +334,4 @@ function removeEmpty(obj: any): any {
       {}
     );
 }
+

@@ -11,6 +11,7 @@ import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
+import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -43,6 +44,12 @@ export class Staff extends BaseEntity {
 
   @OneToMany(() => Availability, (availability) => availability.staff)
   availability!: Availability[];
+
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.offeror)
+  offerorStatusLog!: StatusLog[];
+
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.staff)
+  offereeStatusLog!: StatusLog[];
 
   @Column({ nullable: true })
   googleId?: string;
