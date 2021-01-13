@@ -82,13 +82,6 @@ const googleStrategy = new Strategy(
         givenNames: profile.name?.givenName,
         lastName: profile.name?.familyName,
       }).save();
-
-      // TODO: new user may already have their email in the system because of the import feature
-      // need to flag for first login
-      emailHelperInstance.sendRegisterConfirmation({
-        recipient: user.email,
-        name: user.givenNames,
-      });
     } else if (!user.googleId) {
       // merge account
       // we found user by email

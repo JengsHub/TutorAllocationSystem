@@ -14,7 +14,6 @@ import { IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import DatabaseFinder from "../apis/DatabaseFinder";
-import { ApprovalEnum } from "../enums/ApprovalEnum";
 
 const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
@@ -143,7 +142,7 @@ const Activities = (props: { [key: string]: any }) => {
 
   const allocationApproved = async (allocation: IAllocation) => {
     const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/acceptance?value=true`
+      `http://localhost:8888/allocations/${allocation.id}/ta-acceptance?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -169,11 +168,11 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const approvalStatus = (allocation: IAllocation & { [key: string]: any }) => {
-    if (!allocation.isApproved){
+    if (!allocation.isLecturerApproved) {
       return "You Shouldn't See Me";
-    } 
+    }
 
-    if (!allocation.isAccepted){
+    if (!allocation.isTaAccepted) {
       return (
         <>
           <IconButton onClick={() => allocationApproved(allocation)}>

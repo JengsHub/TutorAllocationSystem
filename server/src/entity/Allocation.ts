@@ -5,7 +5,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
 } from "typeorm";
-import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
@@ -28,9 +27,12 @@ export class Allocation extends BaseEntity {
   @Column()
   staffId!: string;
 
-  @Column({ default: false })
-  isApproved!: boolean;
+  @Column({ nullable: true, default: null })
+  isLecturerApproved?: boolean;
 
-  @Column({ default: false })
-  isAccepted!: boolean;
+  @Column({ nullable: true, default: false })
+  isTaAccepted?: boolean;
+
+  @Column({ nullable: true, default: null })
+  isWorkforceApproved?: boolean;
 }

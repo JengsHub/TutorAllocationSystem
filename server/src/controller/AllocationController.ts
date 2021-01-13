@@ -21,13 +21,19 @@ export interface IAllocationController {
   updateAllocation(user: Staff, changedRecord: Allocation): any;
   createAllocation(user: Staff, newRecord: Allocation): any;
   deleteAllocation(user: Staff, recordToDelete: Allocation): any;
-  updateApproval(user: Staff, record: Allocation, value: boolean): any;
-  updateAcceptance(user: Staff, record: Allocation, value: boolean): any;
+  updateLecturerApproval(user: Staff, record: Allocation, value: boolean): any;
+  updateTaAcceptance(user: Staff, record: Allocation, value: boolean): any;
+  updateWorkforceApproval(user: Staff, record: Allocation, value: boolean): any;
 }
 
 class TaAllocationController implements IAllocationController {
+  updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
+    return new UnauthorisedAccessedError(
+      "TA cannot Workforce approve an Allocation"
+    );
+  }
   deleteAllocation(user: Staff, recordToDelete: Allocation) {
-    if (user.id === recordToDelete.staffId && recordToDelete.isApproved) {
+    if (user.id === recordToDelete.staffId && recordToDelete.isTaAccepted) {
       return Allocation.delete({ id: recordToDelete.id });
     }
     return new UnauthorisedAccessedError(
@@ -37,10 +43,10 @@ class TaAllocationController implements IAllocationController {
   createAllocation(user: Staff, newRecord: Allocation) {
     return new UnauthorisedAccessedError("TA cannot create an Allocation");
   }
-  updateAcceptance(user: Staff, record: Allocation, value: boolean) {
+  updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
     if (record.staffId !== user.id) {
       return new UnauthorisedAccessedError(
-        "Cannot approve an Allocation that is not assigned to the user"
+        "Cannot accept an Allocation that is not assigned to the user"
       );
     }
 
@@ -49,11 +55,11 @@ class TaAllocationController implements IAllocationController {
         id: record.id,
       },
       {
-        isAccepted: value,
+        isTaAccepted: value,
       }
     );
   }
-  updateApproval(user: Staff, record: Allocation, value: boolean) {
+  updateLecturerApproval(user: Staff, record: Allocation, value: boolean) {
     return new UnauthorisedAccessedError("TA cannot approve an Allocation");
   }
   updateAllocation(user: Staff, changedRecord: Allocation) {
@@ -62,8 +68,13 @@ class TaAllocationController implements IAllocationController {
 }
 
 class LecturerAllocationController implements IAllocationController {
+  updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
+    return new UnauthorisedAccessedError(
+      "Lecturer cannot Workforce approve an Allocation"
+    );
+  }
   deleteAllocation(user: Staff, recordToDelete: Allocation) {
-    if (!recordToDelete.isAccepted) {
+    if (!recordToDelete.isTaAccepted) {
       return Allocation.delete({ id: recordToDelete.id });
     }
     return new UnauthorisedAccessedError(
@@ -73,7 +84,7 @@ class LecturerAllocationController implements IAllocationController {
   createAllocation(user: Staff, newRecord: Allocation) {
     return Allocation.save(newRecord);
   }
-  updateAcceptance(user: Staff, record: Allocation, value: boolean) {
+  updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
     if (record.staffId !== user.id) {
       return new UnauthorisedAccessedError(
         "Cannot approve an Allocation that is not assigned to the user"
@@ -85,12 +96,16 @@ class LecturerAllocationController implements IAllocationController {
         id: record.id,
       },
       {
-        isAccepted: value,
+        isTaAccepted: value,
       }
     );
   }
-  async updateApproval(user: Staff, record: Allocation, value: boolean) {
-    return Allocation.update({ id: record.id }, { isApproved: value });
+  async updateLecturerApproval(
+    user: Staff,
+    record: Allocation,
+    value: boolean
+  ) {
+    return Allocation.update({ id: record.id }, { isLecturerApproved: value });
   }
 
   updateAllocation(user: Staff, changedRecord: Allocation) {
@@ -100,24 +115,27 @@ class LecturerAllocationController implements IAllocationController {
 }
 
 class AdminAllocationController implements IAllocationController {
+  updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
+    return Allocation.update({ id: record.id }, { isWorkforceApproved: value });
+  }
   deleteAllocation(user: Staff, recordToDelete: Allocation) {
     return Allocation.delete({ id: recordToDelete.id });
   }
   createAllocation(user: Staff, newRecord: Allocation) {
     return Allocation.save(newRecord);
   }
-  updateAcceptance(user: Staff, record: Allocation, value: boolean) {
+  updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
     return Allocation.update(
       {
         id: record.id,
       },
       {
-        isAccepted: value,
+        isTaAccepted: value,
       }
     );
   }
-  updateApproval(user: Staff, record: Allocation, value: boolean) {
-    return Allocation.update({ id: record.id }, { isApproved: value });
+  updateLecturerApproval(user: Staff, record: Allocation, value: boolean) {
+    return Allocation.update({ id: record.id }, { isLecturerApproved: value });
   }
   updateAllocation(user: Staff, changedRecord: Allocation) {
     // Full access

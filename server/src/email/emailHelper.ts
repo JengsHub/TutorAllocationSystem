@@ -1,32 +1,41 @@
+// Configure .env file
+import dotenv from "dotenv";
+import { createTransport } from "nodemailer";
+// @ts-ignore
+import hbs from "nodemailer-express-handlebars";
 import {
   SendSmtpEmail,
   TransactionalEmailsApi,
   TransactionalEmailsApiApiKeys,
 } from "sib-api-v3-typescript";
-import { createTransport, SendMailOptions } from "nodemailer";
-// @ts-ignore
-import hbs from "nodemailer-express-handlebars";
 
-// Configure .env file
-import dotenv from "dotenv";
 const result = dotenv.config();
 
 /**
  * Interface for email helpers
  *
- * This allows for easy swapping of email services if needed.
+ * This allows for easy swapping of email services if needed as the services will only need to implement this interface.
  */
-interface emailHelper {
-  sendRegisterConfirmation(content: { recipient: string; name: string }): any;
+export interface emailHelper {
   sendOfferToTa(data: {
     recipient: string;
     content: { name: string; activity: string; unit: string };
+  }): any;
+  replyToLecturer(data: {
+    recipient: string;
+    content: {
+      lecturerName: string;
+      staffName: string;
+      activity: string;
+      unit: string;
+    };
   }): any;
 }
 
 /**
  * Sendinblue implementation
  * Note:
+ * - WIP, incomplete implementation
  * - typescript/nodejs API clients documentation seem not to be up-to-date
  * - require domain name for SMTP server to send transactional email
  */
@@ -37,6 +46,17 @@ export class SibEmailHelper implements emailHelper {
   };
   constructor(apiKey: string) {
     this.apiKey = apiKey;
+  }
+  replyToLecturer(data: {
+    recipient: string;
+    content: {
+      lecturerName: string;
+      staffName: string;
+      activity: string;
+      unit: string;
+    };
+  }) {
+    throw new Error("Method not implemented.");
   }
   sendOfferToTa(data: {
     recipient: string;
@@ -154,24 +174,6 @@ export class NodemailerEmailHelper implements emailHelper {
         staffName: content.staffName,
         activity: content.activity,
         unit: content.unit,
-      },
-    };
-    try {
-      const data = await this.transporter.sendMail(mailOptions);
-      console.log("Email sent: ", data);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  async sendRegisterConfirmation(content: { recipient: string; name: string }) {
-    const mailOptions = {
-      from: process.env.FROM_EMAIL,
-      to: content.recipient,
-      subject: "Registration confirmation - Monash Tutor Allocation System",
-      template: "registrationConfirmation",
-      context: {
-        name: content.name,
       },
     };
     try {

@@ -6,13 +6,6 @@ enum DayOfWeek {
   FRIDAY = "F",
 }
 
-enum ApprovalEnum {
-  INIT = "Init",
-  LECTURER = "Lecturer",
-  TA = "TA",
-  WORKFORCE = "WorkForce",
-}
-
 interface IActivity {
   activityCode: string;
   activityGroup: string;
@@ -52,8 +45,8 @@ interface IAllocation {
   activityId: string;
   staffId: string;
   approval: ApprovalEnum;
-  isApproved: boolean;
-  isAccepted: boolean;
+  isLecturerApproved: boolean;
+  isTaAccepted: boolean;
 }
 
 interface IAvailability {

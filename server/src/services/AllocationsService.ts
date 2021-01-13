@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository, SelectQueryBuilder } from "typeorm";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -55,7 +55,7 @@ class AllocationsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response,
     @QueryParam("unitId") unitId: string,
-    @QueryParam("isApproved") isApproved: boolean
+    @QueryParam("isLecturerApproved") isLecturerApproved: boolean
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
   ) {
@@ -64,7 +64,7 @@ class AllocationsService {
     const me = req.user as Staff;
 
     // let findOptions: { [key: string]: any } = {
-    //   isApproved,
+    //   isLecturerApproved,
     //   activity: {
     //     unitId
     //   }
@@ -93,6 +93,9 @@ class AllocationsService {
       .leftJoinAndSelect("allocation.activity", "activity")
       .where("activity.unitId = :unitId", { unitId })
       .andWhere("allocation.staffId = :id", { id: me.id })
+      .andWhere("allocation.isLecturerApproved = :approval", {
+        approval: isLecturerApproved,
+      })
       .getMany();
 
     // console.log(allocations);
@@ -150,7 +153,7 @@ class AllocationsService {
   }
 
   /**
-   * Update approval status for specified allocation
+   * Update lecturer approval status for specified allocation
    *
    * Role authorisation:
    *  - TA: not allowed
@@ -162,8 +165,8 @@ class AllocationsService {
    * @param req request object
    */
   @PATCH
-  @Path(":id/approval")
-  public async updateApproval(
+  @Path(":id/lecturer-approval")
+  public async updateLecturerApproval(
     @PathParam("id") id: string,
     @QueryParam("value") value: boolean,
     @ContextRequest req: Request
@@ -190,11 +193,12 @@ class AllocationsService {
         },
       });
     }
-    return controller.updateApproval(me, allocation, value);
+
+    return controller.updateLecturerApproval(me, allocation, value);
   }
 
   /**
-   * Update acceptance status for specified allocation
+   * Update acceptance status for the specified allocation
    *
    * Role authorisation:
    *  - TA/Lecturer: can accept allocation assigned to them (i.e. allocation.staffId == user.id)
@@ -205,8 +209,8 @@ class AllocationsService {
    * @param req request object
    */
   @PATCH
-  @Path(":id/acceptance")
-  public async updateAcceptance(
+  @Path(":id/ta-acceptance")
+  public async updateTaAcceptance(
     @PathParam("id") id: string,
     @QueryParam("value") value: boolean,
     @ContextRequest req: Request
@@ -249,7 +253,40 @@ class AllocationsService {
       }
     }
 
-    return controller.updateAcceptance(me, allocation, value);
+    return controller.updateTaAcceptance(me, allocation, value);
+  }
+
+  /**
+   * Update workforce approval status for the specified allocation
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: can approve allocation in any unit
+   *
+   * @param id allocation id
+   * @param value approval value
+   * @param req request object
+   */
+  @PATCH
+  @Path(":id/workforce-approval")
+  public async updateWorkforceApproval(
+    @PathParam("id") id: string,
+    @QueryParam("value") value: boolean,
+    @ContextRequest req: Request
+  ) {
+    let allocation = await this.repo.findOneOrFail({
+      where: { id: id },
+      relations: ["staff", "activity", "activity.unit"],
+    });
+
+    const me = req.user as Staff;
+    const { activity } = allocation;
+    const { unit } = activity;
+    const role = await me.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
+
+    return controller.updateLecturerApproval(me, allocation, value);
   }
 
   /**
@@ -263,6 +300,7 @@ class AllocationsService {
     @ContextRequest req: Request
   ): Promise<Allocation> {
     // TODO: Role-based authorisation
+    // I guess that full update access to Allocation should be given to Admin only?
     let allocationToUpdate = await this.repo.findOne(
       {
         id: changedAllocation.id,
@@ -333,13 +371,4 @@ class AllocationsService {
     const controller = this.factory.getController(role);
     return controller.deleteAllocation(me, allocation);
   }
-}
-
-function removeEmpty(obj: any): any {
-  return Object.entries(obj)
-    .filter(([_, v]) => v != null)
-    .reduce(
-      (acc, [k, v]) => ({ ...acc, [k]: v === Object(v) ? removeEmpty(v) : v }),
-      {}
-    );
 }

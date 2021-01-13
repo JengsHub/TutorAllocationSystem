@@ -12,7 +12,6 @@ import Collapse from "@material-ui/core/Collapse";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
-import { ApprovalEnum } from "../enums/ApprovalEnum";
 
 const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
@@ -87,7 +86,7 @@ const Units = () => {
                 <Activities
                   {...{
                     unitId: row.unitId,
-                    isApproved: true,   // TODO: should do back end validation to only show approved allocation
+                    isLecturerApproved: true, // TODO: should do back end validation to only show approved allocation
                   }}
                 ></Activities>
               </Box>

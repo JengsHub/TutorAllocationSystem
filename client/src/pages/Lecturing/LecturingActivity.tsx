@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import { ApprovalEnum } from "../../enums/ApprovalEnum";
 import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -101,7 +100,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationApproved = async (allocation: IAllocation) => {
     const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/approval?value=true`
+      `http://localhost:8888/allocations/${allocation.id}/lecturer-approval?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -168,9 +167,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   function ApprovalCell(props: { allocation: IAllocation }) {
     const { allocation } = props;
-    let approval = allocation.isApproved;
-    let acceptance = allocation.isAccepted;
-    if (!approval){
+    let approval = allocation.isLecturerApproved;
+    let acceptance = allocation.isTaAccepted;
+    if (!approval) {
       return (
         <>
           <IconButton onClick={() => allocationApproved(allocation)}>
@@ -182,7 +181,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
         </>
       );
     } else {
-      if (!acceptance){
+      if (!acceptance) {
         return (
           <>
             {" "}
