@@ -46,35 +46,46 @@ export const checkAllocation = async (
 
   console.log(activityUnit);
 
-  const allocationsRepo = getRepository(Allocation);
-  const currentAllocations = await allocationsRepo.find({
-    relations: ["staff", "activity", "activity.unit"],
-    where: {
-      staff: { id: staff.id },
-      // activity: {
-      //   unit: {
-      //     year: activityUnit.year,
-      //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
-      //   },
-      // },
-    },
-  });
+  //const allocationsRepo = getRepository(Allocation);
+  // const currentAllocations = await allocationsRepo.find({
+  //   relations: ["staff", "activity", "activity.unit"],
+  //   where: {
+  //     staff: { id: staff.id },
+  //     // activity: {
+  //     //   unit: {
+  //     //     year: activityUnit.year,
+  //     //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
+  //     //   },
+  //     // },
+  //   },
+  // });
+
+  const currentAllocations = await Allocation.createQueryBuilder("allocation")
+    .innerJoinAndSelect("allocation.activity", "activity")
+    .innerJoinAndSelect("activity.unit", "unit")
+    .where("unit.year = :year", { year: activityUnit.year })
+    .andWhere("unit.offeringPeriod IN (:...offeringPeriod)", {
+      offeringPeriod: [activityUnit.offeringPeriod, "Full Year"],
+    })
+    .andWhere("allocation.staffId = :id", { id: staff.id })
+    .getMany();
 
   let dayHours = activityDuration(newActivity);
   let weekHours = activityDuration(newActivity);
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
-  const activities = currentAllocations
-    .map((a) => a.activity)
-    .filter(
-      (a) =>
-        a.unit.year === activityUnit.year &&
-        (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
-          a.unit.offeringPeriod === "Full Year")
-    );
-  console.log(activities);
+  //console.log(currentAllocations);
 
+  const activities = currentAllocations.map((a) => a.activity);
+  // .filter(
+  //   (a) =>
+  //     a.unit.year === activityUnit.year &&
+  //     (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
+  //       a.unit.offeringPeriod === "Full Year")
+  // );
+
+  console.log(activities);
   // Checking the numbers against the constraints/rules.
   // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
   const rules: Repository<Rule> = await getRepository(Rule);
