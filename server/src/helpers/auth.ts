@@ -3,6 +3,7 @@ import { Strategy } from "passport-google-oauth20";
 import { getRepository } from "typeorm";
 import { Staff } from "~/entity";
 import { Request, Response, NextFunction } from "express";
+import { emailHelperInstance } from "..";
 
 console.log("----Setting up Passport and Strategy----");
 

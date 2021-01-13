@@ -4,20 +4,21 @@ import {
   ContextRequest,
   ContextResponse,
   DELETE,
+  Errors,
   GET,
   IgnoreNextMiddlewares,
+  PATCH,
   Path,
   PathParam,
   POST,
   PUT,
-  Errors,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Staff, Allocation } from "~/entity";
-import { checkNewAllocation } from "../helpers/checkConstraints";
+import { Activity, Staff, Allocation, Role } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
 import { authCheck } from "~/helpers/auth";
-import { ApprovalEnum } from "~/enums/ApprovalEnum";
+import { emailHelperInstance } from "..";
+import { checkNewAllocation } from "../helpers/checkConstraints";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -31,14 +32,14 @@ class AllocationsService {
   repo = getRepository(Allocation);
   factory = new AllocationControllerFactory();
 
-  /**
-   * Returns a list of allocations
-   * @return Array<Allocation> allocations list
-   */
-  @GET
-  public getAllAllocations(): Promise<Array<Allocation>> {
-    return this.repo.find();
-  }
+  // /**
+  //  * Returns a list of allocations
+  //  * @return Array<Allocation> allocations list
+  //  */
+  // @GET
+  // public getAllAllocations(): Promise<Array<Allocation>> {
+  //   return this.repo.find();
+  // }
 
   /**
    * Get the allocated activities of the current user
@@ -54,32 +55,50 @@ class AllocationsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response,
     @QueryParam("unitId") unitId: string,
-    @QueryParam("approval") approval: ApprovalEnum
+    @QueryParam("isLecturerApproved") isLecturerApproved: boolean
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
   ) {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
-    let allocations = await this.repo.find({
-      where: {
-        staff: me,
-      },
-      relations: ["activity"],
-    });
 
-    if (unitId) {
-      allocations = allocations.filter((a) => a.activity.unitId === unitId);
-    }
-    console.log(allocations);
-    if (approval) {
-      allocations = allocations.filter(
-        (a) =>
-          Object.values(ApprovalEnum).indexOf(a.approval) >=
-          Object.values(ApprovalEnum).indexOf(approval)
-      );
-    }
-    console.log(allocations);
+    // let findOptions: { [key: string]: any } = {
+    //   isLecturerApproved,
+    //   activity: {
+    //     unitId
+    //   }
+    // };
+
+    // findOptions = removeEmpty(findOptions);
+
+    // console.log(findOptions);
+    // let allocations = await this.repo.find({
+    //   where: {
+    //     staffId: me.id,
+    //     ...findOptions,
+    //   },
+    //   relations: ["activity"],
+    // });
+
+    /**
+     * Note: have to use query builder instead of TypeORM find() because find()
+     * support for WHERE clause on joined columns is not consistent/doesn't work.
+     * Seems like this feature will be added in future version of TypeORM
+     *
+     * See: https://github.com/typeorm/typeorm/issues/2707
+     */
+
+    const allocations = await Allocation.createQueryBuilder("allocation")
+      .leftJoinAndSelect("allocation.activity", "activity")
+      .where("activity.unitId = :unitId", { unitId })
+      .andWhere("allocation.staffId = :id", { id: me.id })
+      .andWhere("allocation.isLecturerApproved = :approval", {
+        approval: isLecturerApproved,
+      })
+      .getMany();
+
+    // console.log(allocations);
     return allocations;
   }
 
@@ -98,13 +117,21 @@ class AllocationsService {
 
   /**
    * Creates an allocation
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: can create allocation for unit they're lecturing
+   *  - Admin: can create allocation in any unit
+   *
    * @param newRecord allocation data
    * @return Allocation new allocation
    */
   @POST
-  public async createAllocation(newRecord: Allocation): Promise<Allocation> {
+  public async createAllocation(
+    newRecord: Allocation,
+    @ContextRequest req: Request
+  ): Promise<Allocation> {
     // TODO: error message because constraints not met
-
     let staff = await getRepository(Staff).findOneOrFail({
       id: newRecord.staffId,
     });
@@ -118,31 +145,148 @@ class AllocationsService {
       );
     }
 
-    // TODO: optimisation
-
-    newRecord.staff = staff;
-
-    newRecord.activity = activity;
-    return this.repo.save(this.repo.create(newRecord));
+    const me = req.user as Staff;
+    const controller = this.factory.getController(
+      await me.getRoleTitle(activity.unitId)
+    );
+    return controller.createAllocation(me, newRecord);
   }
 
-  @POST
-  @Path("approval/:id/:approval")
-  public async updateApproval(
+  /**
+   * Update lecturer approval status for specified allocation
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: can approve allocation in unit they're lecturing
+   *  - Admin: can approve allocation in any unit
+   *
+   * @param id allocation id
+   * @param value approval value
+   * @param req request object
+   */
+  @PATCH
+  @Path(":id/lecturer-approval")
+  public async updateLecturerApproval(
     @PathParam("id") id: string,
-    @PathParam("approval") approval: ApprovalEnum
+    @QueryParam("value") value: boolean,
+    @ContextRequest req: Request
   ) {
-    console.log(id, approval);
-    let allocation = await this.repo.findOne({ where: { id: id } });
-    console.log(allocation);
-    if (allocation) {
-      allocation.approval = approval;
-      return await this.repo.update(
-        { id: allocation.id },
-        { approval: approval }
-      );
+    let allocation = await this.repo.findOneOrFail({
+      where: { id: id },
+      relations: ["staff", "activity", "activity.unit"],
+    });
+
+    const me = req.user as Staff;
+    const { staff, activity } = allocation;
+    const { unit } = activity;
+    const role = await me.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
+
+    // Offer is made to TA when approval status changes to true
+    if (value) {
+      emailHelperInstance.sendOfferToTa({
+        recipient: staff.email,
+        content: {
+          name: staff.givenNames,
+          unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+          activity: activity.activityCode,
+        },
+      });
     }
-    console.error("No allocation by this id");
+
+    return controller.updateLecturerApproval(me, allocation, value);
+  }
+
+  /**
+   * Update acceptance status for the specified allocation
+   *
+   * Role authorisation:
+   *  - TA/Lecturer: can accept allocation assigned to them (i.e. allocation.staffId == user.id)
+   *  - Admin: can accept allocation in any unit (on behalf of the assignee)
+   *
+   * @param id allocation id
+   * @param value acceptance value
+   * @param req request object
+   */
+  @PATCH
+  @Path(":id/ta-acceptance")
+  public async updateTaAcceptance(
+    @PathParam("id") id: string,
+    @QueryParam("value") value: boolean,
+    @ContextRequest req: Request
+  ) {
+    let allocation = await this.repo.findOneOrFail({
+      where: { id: id },
+      relations: ["staff", "activity", "activity.unit"],
+    });
+
+    const me = req.user as Staff;
+    const { staff, activity } = allocation;
+    const { unit } = activity;
+    const role = await me.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
+
+    // get the person who with lecturer role
+    const lecturerRole = await Role.createQueryBuilder("role")
+      .leftJoinAndSelect("role.staff", "staff")
+      .where("role.title = :title", { title: "Lecturer" })
+      .andWhere("role.unitId = :unitId", { unitId: unit.id })
+      .getMany();
+
+    let lecturers: Staff[] = [];
+    for (var eachRole of lecturerRole) {
+      lecturers.push(eachRole.staff);
+    }
+
+    //send email noti to each lecturers if accepted
+    for (var lecturer of lecturers) {
+      if (value) {
+        emailHelperInstance.replyToLecturer({
+          recipient: lecturer.email,
+          content: {
+            lecturerName: lecturer.givenNames,
+            staffName: staff.givenNames,
+            unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+            activity: activity.activityCode,
+          },
+        });
+      }
+    }
+
+    return controller.updateTaAcceptance(me, allocation, value);
+  }
+
+  /**
+   * Update workforce approval status for the specified allocation
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: can approve allocation in any unit
+   *
+   * @param id allocation id
+   * @param value approval value
+   * @param req request object
+   */
+  @PATCH
+  @Path(":id/workforce-approval")
+  public async updateWorkforceApproval(
+    @PathParam("id") id: string,
+    @QueryParam("value") value: boolean,
+    @ContextRequest req: Request
+  ) {
+    let allocation = await this.repo.findOneOrFail({
+      where: { id: id },
+      relations: ["staff", "activity", "activity.unit"],
+    });
+
+    const me = req.user as Staff;
+    const { activity } = allocation;
+    const { unit } = activity;
+    const role = await me.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
+
+    return controller.updateLecturerApproval(me, allocation, value);
   }
 
   /**
@@ -152,17 +296,25 @@ class AllocationsService {
    */
   @PUT
   public async updateAllocation(
-    changedAllocation: Allocation
+    changedAllocation: Allocation,
+    @ContextRequest req: Request
   ): Promise<Allocation> {
+    // TODO: Role-based authorisation
+    // I guess that full update access to Allocation should be given to Admin only?
     let allocationToUpdate = await this.repo.findOne(
       {
         id: changedAllocation.id,
       },
-      { relations: ["staff", "activity"] }
+      { relations: ["staff", "activity", "activity.unit"] }
     );
 
     if (!allocationToUpdate)
       throw new Errors.NotFoundError("Allocation not found.");
+
+    const user = req.user as Staff;
+    const unit = allocationToUpdate.activity.unit;
+    const role = await user.getRoleTitle(unit.id);
+    const controller = this.factory.getController(role);
 
     // TODO: optimisation
     if (changedAllocation.staffId) {
@@ -189,20 +341,34 @@ class AllocationsService {
       );
     }
     allocationToUpdate = changedAllocation;
-    return this.repo.save(allocationToUpdate);
+    return controller.updateAllocation(user, allocationToUpdate);
   }
 
   /**
    * Deletes an allocation
+   *
+   * Role authorisation:
+   *  - TA: can delete allocation assigned to them and if the allocation is already approved
+   *  - Lecturer: can delete allocation in unit they're lecturing and if the allocation is not already accepted
+   *  - Admin: can delete allocation in any unit, regardless of the acceptance status
+   *
    * @param unitCode unit code for the allocation
    * @param offeringPeriod offering period for the unit in allocation
    * @return DeleteResult result of delete request
    */
   @DELETE
   @Path(":id")
-  public deleteAllocation(@PathParam("id") id: string): Promise<DeleteResult> {
-    return this.repo.delete({
-      id: id,
+  public async deleteAllocation(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request
+  ): Promise<DeleteResult> {
+    const me = req.user as Staff;
+    const allocation = await Allocation.findOneOrFail({
+      where: { id },
+      relations: ["activity", "activity.unit"],
     });
+    const role = await me.getRoleTitle(allocation.activity.unitId);
+    const controller = this.factory.getController(role);
+    return controller.deleteAllocation(me, allocation);
   }
 }
