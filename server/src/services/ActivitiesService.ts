@@ -1,6 +1,9 @@
+import { Request, Response } from "express";
 import { exception } from "console";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, Not } from "typeorm";
 import {
+  ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
   Path,
@@ -10,11 +13,12 @@ import {
   QueryParam,
   Security,
 } from "typescript-rest";
-import { StaffPreference, Unit } from "~/entity";
+import { Allocation, Staff, StaffPreference, Unit } from "~/entity";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
-import { checkAllocation } from "../helpers/checkConstraints";
+import { checkNewAllocation } from "../helpers/checkConstraints";
+import { authCheck } from "~/helpers/auth";
 
 @Path("/activities")
 class ActivitiesService {
@@ -100,7 +104,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -169,7 +173,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -231,6 +235,56 @@ class ActivitiesService {
     }
 
     return candidates;
+  }
+
+  @GET
+  @Path("/swappable/:activityId")
+  public async getSwappableActivites(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @PathParam("activityId") activityId: string
+  ) {
+    if (!authCheck(req, res)) return;
+    const me = req.user as Staff;
+
+    let activity = await getRepository(Activity).findOneOrFail({
+      id: activityId,
+    });
+
+    let unit = await getRepository(Unit).findOneOrFail({
+      id: activity.unitId,
+    });
+
+    let allocations = await getRepository(Allocation).find({
+      where: {
+        staff: me,
+      },
+      relations: ["activity"],
+    });
+    allocations = allocations.filter((alc) => alc.activity.unitId === unit.id);
+    let myActivities: Activity[] = [];
+    allocations.forEach((alc) => myActivities.push(alc.activity));
+
+    let alternateActivities = await getRepository(Activity).find({
+      relations: ["allocations"],
+      where: {
+        unitId: unit.id,
+      },
+    });
+
+    alternateActivities = alternateActivities.filter((act) => {
+      for (let alc of act.allocations) {
+        if (alc.staffId == me.id) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    console.log("Mine", alternateActivities);
+    console.log("Alts", myActivities);
+
+    return [alternateActivities, myActivities];
   }
 
   /**

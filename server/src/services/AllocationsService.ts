@@ -14,7 +14,7 @@ import {
   QueryParam,
 } from "typescript-rest";
 import { Activity, Staff, Allocation } from "~/entity";
-import { checkAllocation } from "../helpers/checkConstraints";
+import { checkNewAllocation } from "../helpers/checkConstraints";
 import { AllocationControllerFactory } from "~/controller";
 import { authCheck } from "~/helpers/auth";
 import { ApprovalEnum } from "~/enums/ApprovalEnum";
@@ -112,7 +112,7 @@ class AllocationsService {
       id: newRecord.activityId,
     });
 
-    if (!(await checkAllocation(staff, activity))) {
+    if (!(await checkNewAllocation(staff, activity))) {
       throw new ConstraintError(
         "Allocation not made because constraints not met"
       );
@@ -179,7 +179,7 @@ class AllocationsService {
     }
 
     if (
-      !(await checkAllocation(
+      !(await checkNewAllocation(
         changedAllocation.staff || allocationToUpdate.staff,
         changedAllocation.activity || allocationToUpdate.activity
       ))

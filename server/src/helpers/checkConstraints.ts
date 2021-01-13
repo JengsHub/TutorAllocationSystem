@@ -21,38 +21,54 @@ const timeStringToDate = (time: string) => {
   return new Date("1970-1-1 " + time);
 };
 
-/**
- * Checks if an allocation fits the constraints (global rules as well as individual staff preferences)
- * @param newRecord the new allocation
- * @param staff the staff member taking the allocation
- */
-export const checkAllocation = async (
+export const checkSwapAllocation = async (
+  staff: Staff,
+  activities: Activity[],
+  swap: Activity
+): Promise<boolean> => {
+  return checkAllocation(staff, activities, swap);
+};
+
+export const checkNewAllocation = async (
   staff: Staff,
   newActivity: Activity
 ): Promise<boolean> => {
-  // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
-
   const allocationsRepo = getRepository(Allocation);
   const currentAllocations = await allocationsRepo.find({
     relations: ["staff", "activity"],
     where: { staff: { id: staff.id } },
   });
 
-  let dayHours = activityDuration(newActivity);
-  let weekHours = activityDuration(newActivity);
-  let activitiesInUnit = 1;
-  let totalActivities = 1;
-
   const activities = currentAllocations.map((a) => a.activity);
 
-  // Checking the numbers against the constraints/rules.
-  // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
-  const rules: Repository<Rule> = await getRepository(Rule);
+  return checkAllocation(staff, activities, newActivity);
+};
+
+/**
+ * Checks if an allocation fits the constraints (global rules as well as individual staff preferences)
+ * @param newActivity the new allocation
+ * @param staff the staff member taking the allocation
+ */
+export const checkAllocation = async (
+  staff: Staff,
+  activities: Activity[],
+  newActivity: Activity
+): Promise<boolean> => {
+  // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
+
   const availability = await getRepository(Availability).findOne({
     relations: ["staff"],
     where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
   });
   if (!availability) return false;
+
+  let dayHours = activityDuration(newActivity);
+  let weekHours = activityDuration(newActivity);
+  let activitiesInUnit = 1;
+  let totalActivities = 1;
+
+  // Checking the numbers against the constraints/rules.
+  // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
 
   activities.forEach((activity) => {
     if (activity && newActivity) {
@@ -67,6 +83,8 @@ export const checkAllocation = async (
       totalActivities++;
     }
   });
+
+  const rules: Repository<Rule> = await getRepository(Rule);
 
   const maxHoursPerDayRule = (
     await rules.findOneOrFail({ ruleName: "maxHoursPerDay" })
