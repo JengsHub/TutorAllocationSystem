@@ -19,8 +19,7 @@ import { Activity, Allocation, Staff } from "~/entity";
 import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
-import { createStatusLog } from "~/helpers/createStatusLog";
-import { createCurrentDate } from "~/helpers/getDate";
+import { createAndSaveStatusLog, createAndSaveStatusLogMakeOffer } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
 import { checkAllocation } from "../helpers/checkConstraints";
 
@@ -151,16 +150,9 @@ class AllocationsService {
       await me.getRoleTitle(activity.unitId)
     );
 
-    let allocation = controller.createAllocation(me, newRecord);
-    let statusLogObj = StatusLog.create({
-      allocationId: allocation["id"],
-      offerorId: me.id,
-      staffId: newRecord.staffId,
-      action: ActionEnums.MAKE_OFFER ,
-      time: createCurrentDate()
-    })
-
-    StatusLog.save(statusLogObj);
+    let allocation = await controller.createAllocation(me, newRecord);
+    console.log(allocation);
+    createAndSaveStatusLogMakeOffer(allocation["id"], me.id, newRecord.staffId)
 
     return allocation;
   }
@@ -205,7 +197,15 @@ class AllocationsService {
           activity: activity.activityCode,
         },
       });
+
+      // Log the status approval here
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id);
     }
+    // If approval status is false, create status log
+    else if (!value){ 
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id);
+    }
+
     return controller.updateApproval(me, allocation, value);
   }
 
@@ -239,7 +239,12 @@ class AllocationsService {
     const controller = this.factory.getController(role);
 
     // TODO: send email noti to lecturer if accepted
-
+    if(value){  // if value is true, which means the TA accept, log the acceptance in status log
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id);
+    }
+    else{  // if value is false, which means the TA accept, log the acceptance in status log
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id);
+    }
     return controller.updateAcceptance(me, allocation, value);
   }
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import { ApprovalEnum } from "../../enums/ApprovalEnum";
 import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -11,7 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, TableFooter } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
 import DatabaseFinder from "../../apis/DatabaseFinder";
@@ -21,11 +20,13 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 interface ILecturingActivityProps {
   unitId: string;
   setModalOpen: (activityId: string) => void;
+  setStatusLogModalOpen: (allocationId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   unitId,
   setModalOpen,
+  setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -114,8 +115,11 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.id}`
+    // const result = await DatabaseFinder.delete(
+    //   `http://localhost:8888/allocations/${allocation.id}`
+    // );
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -225,7 +229,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {activity.activityCode}
+                  <TableRow>{activity.activityCode}</TableRow>  
+                  <Button size="small" href="#text-buttons" color="primary" onClick={() => setStatusLogModalOpen(activity.id)}>
+                  Status Log
+                  </Button>
                 </TableCell>
                 <TableCell align="left">{activity.activityGroup}</TableCell>
                 <TableCell align="left">{activity.campus}</TableCell>

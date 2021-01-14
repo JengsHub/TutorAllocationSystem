@@ -13,8 +13,8 @@ import DoneIcon from "@material-ui/icons/Done";
 import { IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import Modal from '@material-ui/core/Modal';
 import DatabaseFinder from "../apis/DatabaseFinder";
-import { ApprovalEnum } from "../enums/ApprovalEnum";
 
 const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
@@ -25,6 +25,7 @@ const Activities = (props: { [key: string]: any }) => {
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
+  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     setChanged(false);
@@ -96,6 +97,14 @@ const Activities = (props: { [key: string]: any }) => {
     setOpenApproval(false);
     setOpenError(false);
     setOpenRejected(false);
+  };
+
+  const handleModalOpen = () => {
+    setOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setOpen(false);
   };
 
   const timeReducer = (time: String) =>
@@ -209,6 +218,11 @@ const Activities = (props: { [key: string]: any }) => {
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
                   {allocation.activity.activityCode}
+                  {/* <div>
+                    <button type="button" onClick={handleModalOpen}>
+                      Open Modal
+                    </button>
+                  </div> */}
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.activityGroup}
