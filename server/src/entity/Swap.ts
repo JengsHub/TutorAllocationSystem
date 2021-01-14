@@ -1,10 +1,10 @@
 import {
   BaseEntity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   Entity,
   ManyToOne,
+  Column,
 } from "typeorm";
 import { Allocation } from ".";
 import { Activity } from "./Activity";
@@ -15,13 +15,20 @@ export class Swap extends BaseEntity {
   id!: string;
 
   @OneToOne(() => Allocation)
-  @JoinColumn({ name: "allocationFrom" })
   from!: Allocation;
+
+  @Column({ nullable: false })
+  fromAllocationId!: String;
 
   @ManyToOne(() => Activity, (activity) => activity.swaps)
   desired!: Activity;
 
+  @Column({ nullable: false })
+  desiredActivityId!: String;
+
   @OneToOne(() => Allocation)
-  @JoinColumn({ name: "allocationInto" })
   into!: Allocation;
+
+  @Column({ nullable: true })
+  intoAllocationId!: String;
 }
