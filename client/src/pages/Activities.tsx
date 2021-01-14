@@ -80,6 +80,7 @@ const Activities = (props: { [key: string]: any }) => {
     getAllocations().then((res) => {
       setAllocations(res);
       setAllocationsToDisplay(res);
+      // eslint-disable-next-line
       setUpAutoComplete(res);
     });
   }, [props, hasChanged]);
@@ -89,15 +90,8 @@ const Activities = (props: { [key: string]: any }) => {
       initialRender.current = false;
     } else {
       // Handle autocomplete changes
-      console.log(
-        selectedYear,
-        selectedOfferingPeriod,
-        selectedUnitCode,
-        selectedCampus
-      );
       let tempArray: (myAllocations & { [key: string]: any })[] = allocations;
       if (selectedYear !== "All") {
-        console.log(selectedYear);
         tempArray = tempArray.filter(function (allocation) {
           return allocation.activity.unit.year.toString() === selectedYear;
         });
@@ -120,10 +114,15 @@ const Activities = (props: { [key: string]: any }) => {
         });
       }
 
-      console.log(tempArray);
       setAllocationsToDisplay(tempArray);
     }
-  }, [selectedYear, selectedCampus, selectedOfferingPeriod, selectedUnitCode]);
+  }, [
+    selectedYear,
+    selectedCampus,
+    selectedOfferingPeriod,
+    selectedUnitCode,
+    allocations,
+  ]);
 
   function setUpAutoComplete(res: myAllocations & { [key: string]: any }[]) {
     let uniqueList: string[] = [];
@@ -135,7 +134,6 @@ const Activities = (props: { [key: string]: any }) => {
     }
     uniqueList.push("All");
     setUnitCodeOption(uniqueList);
-    console.log(uniqueList);
     uniqueList = [];
 
     for (let i = 0; i < res.length; i++) {
@@ -145,7 +143,6 @@ const Activities = (props: { [key: string]: any }) => {
     }
     uniqueList.push("All");
     setOfferingPeriodOption(uniqueList);
-    console.log(uniqueList);
     uniqueList = [];
 
     for (let i = 0; i < res.length; i++) {
@@ -155,7 +152,6 @@ const Activities = (props: { [key: string]: any }) => {
     }
     uniqueList.push("All");
     setYearOption(uniqueList);
-    console.log(uniqueList);
     uniqueList = [];
 
     for (let i = 0; i < res.length; i++) {
@@ -165,11 +161,7 @@ const Activities = (props: { [key: string]: any }) => {
     }
     uniqueList.push("All");
     setCampusOption(uniqueList);
-    console.log(uniqueList);
     uniqueList = [];
-
-    console.log(yearOption, offeringPeriodOption, unitCodeOption, campusOption);
-    console.log("test");
   }
 
   const useRowStyles = makeStyles({
