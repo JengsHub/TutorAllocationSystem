@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -24,10 +24,27 @@ const Activities = (props: { [key: string]: any }) => {
     (myAllocations & { [key: string]: any })[]
   >([]);
 
+  const [allocationsToDisplay, setAllocationsToDisplay] = useState<
+    (myAllocations & { [key: string]: any })[]
+  >([]);
+
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
+  const [yearOption, setYearOption] = useState<string[]>([]);
+  const [offeringPeriodOption, setOfferingPeriodOption] = useState<string[]>(
+    []
+  );
+  const [unitCodeOption, setUnitCodeOption] = useState<string[]>([]);
+  const [campusOption, setCampusOption] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<any>("All");
+  const [selectedOfferingPeriod, setSelectedOfferingPeriod] = useState<any>(
+    "All"
+  );
+  const [selectedUnitCode, setSelectedUnitCode] = useState<any>("All");
+  const [selectedCampus, setSelectedCampus] = useState<any>("All");
+  const initialRender = useRef(true);
 
   useEffect(() => {
     setChanged(false);
@@ -62,8 +79,98 @@ const Activities = (props: { [key: string]: any }) => {
 
     getAllocations().then((res) => {
       setAllocations(res);
+      setAllocationsToDisplay(res);
+      setUpAutoComplete(res);
     });
   }, [props, hasChanged]);
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      // Handle autocomplete changes
+      console.log(
+        selectedYear,
+        selectedOfferingPeriod,
+        selectedUnitCode,
+        selectedCampus
+      );
+      let tempArray: (myAllocations & { [key: string]: any })[] = allocations;
+      if (selectedYear !== "All") {
+        console.log(selectedYear);
+        tempArray = tempArray.filter(function (allocation) {
+          return allocation.activity.unit.year.toString() === selectedYear;
+        });
+      }
+      if (selectedOfferingPeriod !== "All") {
+        tempArray = tempArray.filter(function (allocation) {
+          return (
+            allocation.activity.unit.offeringPeriod === selectedOfferingPeriod
+          );
+        });
+      }
+      if (selectedCampus !== "All") {
+        tempArray = tempArray.filter(function (allocation) {
+          return allocation.activity.unit.campus === selectedCampus;
+        });
+      }
+      if (selectedUnitCode !== "All") {
+        tempArray = tempArray.filter(function (allocation) {
+          return allocation.activity.unit.unitCode === selectedUnitCode;
+        });
+      }
+
+      console.log(tempArray);
+      setAllocationsToDisplay(tempArray);
+    }
+  }, [selectedYear, selectedCampus, selectedOfferingPeriod, selectedUnitCode]);
+
+  function setUpAutoComplete(res: myAllocations & { [key: string]: any }[]) {
+    let uniqueList: string[] = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].activity.unit.unitCode)) {
+        uniqueList.push(res[i].activity.unit.unitCode);
+      }
+    }
+    uniqueList.push("All");
+    setUnitCodeOption(uniqueList);
+    console.log(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].activity.unit.offeringPeriod)) {
+        uniqueList.push(res[i].activity.unit.offeringPeriod);
+      }
+    }
+    uniqueList.push("All");
+    setOfferingPeriodOption(uniqueList);
+    console.log(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].activity.unit.year.toString())) {
+        uniqueList.push(res[i].activity.unit.year.toString());
+      }
+    }
+    uniqueList.push("All");
+    setYearOption(uniqueList);
+    console.log(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].activity.unit.campus)) {
+        uniqueList.push(res[i].activity.unit.campus);
+      }
+    }
+    uniqueList.push("All");
+    setCampusOption(uniqueList);
+    console.log(uniqueList);
+    uniqueList = [];
+
+    console.log(yearOption, offeringPeriodOption, unitCodeOption, campusOption);
+    console.log("test");
+  }
 
   const useRowStyles = makeStyles({
     error: {
@@ -110,18 +217,18 @@ const Activities = (props: { [key: string]: any }) => {
   const sortDayTime = (list: (myAllocations & { [key: string]: any })[]) => {
     return list.sort((a, b) => {
       if (
-        Object.values(DayOfWeek).indexOf(a.activity_dayOfWeek) <
-        Object.values(DayOfWeek).indexOf(b.activity_dayOfWeek)
+        Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) <
+        Object.values(DayOfWeek).indexOf(b.activity.dayOfWeek)
       ) {
         return -1;
       } else if (
-        Object.values(DayOfWeek).indexOf(a.activity_dayOfWeek) >
-        Object.values(DayOfWeek).indexOf(b.activity_dayOfWeek)
+        Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) >
+        Object.values(DayOfWeek).indexOf(b.activity.dayOfWeek)
       ) {
         return 1;
       } else {
         return (
-          timeReducer(a.activity_startTime) - timeReducer(b.activity_startTime)
+          timeReducer(a.activity.startTime) - timeReducer(b.activity.startTime)
         );
       }
     });
@@ -146,7 +253,7 @@ const Activities = (props: { [key: string]: any }) => {
 
   const allocationApproved = async (allocation: myAllocations) => {
     const result = await DatabaseFinder.post(
-      `http://localhost:8888/allocations/approval/${allocation.allocation_id}/TA`
+      `http://localhost:8888/allocations/approval/${allocation.id}/TA`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -160,7 +267,7 @@ const Activities = (props: { [key: string]: any }) => {
   const allocationRejected = async (allocation: myAllocations) => {
     // TODO: Handle approval
     const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.allocation_id}`
+      `http://localhost:8888/allocations/${allocation.id}`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -174,7 +281,7 @@ const Activities = (props: { [key: string]: any }) => {
   const approvalStatus = (
     allocation: myAllocations & { [key: string]: any }
   ) => {
-    switch (allocation.allocation_approval) {
+    switch (allocation.approval) {
       case ApprovalEnum.INIT:
         return "You Shouldn't See Me";
       case ApprovalEnum.LECTURER:
@@ -210,50 +317,62 @@ const Activities = (props: { [key: string]: any }) => {
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <Autocomplete
-            options={allocations}
-            getOptionLabel={(allocation) => allocation.unit_year.toString()}
+            options={yearOption}
+            getOptionLabel={(option) => option.toString()}
             renderInput={(params) => (
               <TextField {...params} label="Year" variant="outlined" />
             )}
-            // Might need to change default value to handle case when user has no allocations
-            defaultValue={allocations[0]}
+            value={selectedYear}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedYear(newValue);
+            }}
           />
         </Grid>
         <Grid item xs={3}>
           <Autocomplete
-            options={allocations}
-            getOptionLabel={(allocation) => allocation.unit_offeringPeriod}
+            options={offeringPeriodOption}
+            getOptionLabel={(option) => option}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Oferring Period"
+                label="Offering Period"
                 variant="outlined"
               />
             )}
-            // Might need to change default value to handle case when user has no allocations
-            defaultValue={allocations[0]}
+            value={selectedOfferingPeriod}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedOfferingPeriod(newValue);
+            }}
           />
         </Grid>
         <Grid item xs={3}>
           <Autocomplete
-            options={allocations}
-            getOptionLabel={(allocation) => allocation.unit_campus}
+            options={campusOption}
+            getOptionLabel={(option) => option}
             renderInput={(params) => (
               <TextField {...params} label="Campus" variant="outlined" />
             )}
-            // Might need to change default value to handle case when user has no allocations
-            defaultValue={allocations[0]}
+            value={selectedCampus}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedCampus(newValue);
+            }}
           />
         </Grid>
         <Grid item xs={3}>
           <Autocomplete
-            options={allocations}
-            getOptionLabel={(allocation) => allocation.unit_unitCode}
+            options={unitCodeOption}
+            getOptionLabel={(option) => option}
             renderInput={(params) => (
               <TextField {...params} label="Unit Code" variant="outlined" />
             )}
-            // Might need to change default value to handle case when user has no allocations
-            defaultValue={allocations[0]}
+            value={selectedUnitCode}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedUnitCode(newValue);
+            }}
           />
         </Grid>
       </Grid>
@@ -269,33 +388,35 @@ const Activities = (props: { [key: string]: any }) => {
                 <StyledTableCell align="left">Day</StyledTableCell>
                 <StyledTableCell align="left">Location </StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
-                <StyledTableCell align="left">Status</StyledTableCell>
+                <StyledTableCell align="center">Status</StyledTableCell>
                 <StyledTableCell align="left">Action</StyledTableCell>
                 <StyledTableCell align="left">Time Remaining</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <EmptyAllocations />
-              {sortDayTime(allocations).map((allocation, i) => (
+              {sortDayTime(allocationsToDisplay).map((allocation, i) => (
                 <TableRow key={i}>
                   <TableCell component="th" scope="row">
-                    {allocation.unit_unitCode}
-                  </TableCell>
-                  <TableCell align="left">{allocation.unit_campus}</TableCell>
-                  <TableCell align="left">
-                    {allocation.activity_activityGroup}
+                    {allocation.activity.unit.unitCode}
                   </TableCell>
                   <TableCell align="left">
-                    {allocation.activity_activityCode}
+                    {allocation.activity.unit.campus}
                   </TableCell>
                   <TableCell align="left">
-                    {dayConverter(allocation.activity_dayOfWeek)}
+                    {allocation.activity.activityGroup}
                   </TableCell>
                   <TableCell align="left">
-                    {allocation.activity_location}
+                    {allocation.activity.activityCode}
                   </TableCell>
                   <TableCell align="left">
-                    {allocation.activity_startTime}
+                    {dayConverter(allocation.activity.dayOfWeek)}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.location}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.startTime}
                   </TableCell>
                   <TableCell align="left">
                     {approvalStatus(allocation)}

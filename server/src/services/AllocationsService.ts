@@ -61,16 +61,14 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
-    let allocations = await getManager()
-      .createQueryBuilder(Allocation, "allocation")
-      .innerJoinAndSelect(
-        Activity,
-        "activity",
-        "allocation.activityId = activity.id"
-      )
-      .innerJoinAndSelect(Unit, "unit", "activity.unitId = unit.id")
+    let allocations = await Allocation.createQueryBuilder("allocation")
+      .innerJoinAndSelect("allocation.activity", "activity")
+      .innerJoinAndSelect("activity.unit", "unit")
       .where("allocation.staffId = :id", { id: me.id })
-      .getRawMany();
+      // .andWhere("allocation.isLecturerApproved = :approval", {
+      //   approval: isLecturerApproved,
+      // })
+      .getMany();
 
     // let allocations = await this.repo.find({
     //   where: {
@@ -87,11 +85,11 @@ class AllocationsService {
     if (approval) {
       allocations = allocations.filter(
         (a) =>
-          Object.values(ApprovalEnum).indexOf(a.allocation_approval) >=
+          Object.values(ApprovalEnum).indexOf(a.approval) >=
           Object.values(ApprovalEnum).indexOf(approval)
       );
     }
-    console.log(allocations);
+    console.log(allocations[0].activity.unit);
     return allocations;
   }
 
