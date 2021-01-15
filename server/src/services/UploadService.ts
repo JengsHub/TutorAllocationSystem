@@ -1,66 +1,61 @@
 import { Request } from "express";
-import { FileArray, UploadedFile } from "express-fileupload";
+import { FileArray } from "express-fileupload";
 import { ContextRequest, Path, POST } from "typescript-rest";
-import fs from "fs";
-import csv from "csv-parser";
-import ProcessFileService, {
-  mapRawAllocateFile,
-  mapRawTasFile,
-  mapRawTpsFile,
-} from "../helpers/processInputFiles";
+import { UploadControllerFactory } from "~/controller/UploadController";
+import { Staff } from "~/entity/Staff";
 
 @Path("/upload")
 class UploadService {
+  factory = new UploadControllerFactory();
+
+  /**
+   * Uploads the TAS csv file to be used by the rest of the system
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   */
   @POST
   @Path("/tas")
-  public uploadTas(@ContextRequest req: Request) {
+  public async uploadTas(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
-    const path = (files.tas as UploadedFile).tempFilePath;
-    var processFileService: ProcessFileService = new ProcessFileService();
-    fs.createReadStream(path)
-      .pipe(csv())
-      .on("data", (row) => {
-        // map the raw row into a an tas object that matches the system's convention
-        const tasRow = mapRawTasFile(row);
-        processFileService.processTasObject(tasRow);
-      })
-      .on("end", () => {
-        console.log("TAS CSV file successfully processed");
-      });
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.uploadTas(files);
   }
 
+  /**
+   * Uploads the TPS csv file to be used by the rest of the system
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   */
   @POST
   @Path("/tps")
-  public uploadTps(@ContextRequest req: Request) {
+  public async uploadTps(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
-    const path = (files.tps as UploadedFile).tempFilePath;
-    var processFileService: ProcessFileService = new ProcessFileService();
-    fs.createReadStream(path)
-      .pipe(csv())
-      .on("data", (row) => {
-        // map the raw row into an tps object
-        const tpsRow = mapRawTpsFile(row);
-        processFileService.processTpsObject(tpsRow);
-      })
-      .on("end", () => {
-        console.log("TPS CSV file successfully processed");
-      });
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.uploadTps(files);
   }
 
+  /**
+   * Uploads the Allocate+ csv file to be used by the rest of the system
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   */
   @POST
   @Path("/allocate")
-  public uploadAllocate(@ContextRequest req: Request) {
+  public async uploadAllocate(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
-    const path = (files.allocate as UploadedFile).tempFilePath;
-    var processFileService: ProcessFileService = new ProcessFileService();
-    fs.createReadStream(path)
-      .pipe(csv())
-      .on("data", (row) => {
-        let allocateRow = mapRawAllocateFile(row);
-        processFileService.processAllocateObject(allocateRow);
-      })
-      .on("end", () => {
-        console.log("Allocate CSV file successfully processed");
-      });
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.uploadAllocate(files);
   }
 }
