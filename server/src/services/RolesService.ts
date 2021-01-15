@@ -83,7 +83,7 @@ class RolesService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
    *  - Admin: allowed
    *
    * @param unitId id of the unit to get roles for
@@ -116,7 +116,7 @@ class RolesService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
    *  - Admin: allowed
    *
    * @param newRecord role data
@@ -142,7 +142,7 @@ class RolesService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
    *  - Admin: allowed
    *
    * @param changedRole new role object to change the existing role to
@@ -169,7 +169,7 @@ class RolesService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
    *  - Admin: allowed
    *
    * @param id id of the role

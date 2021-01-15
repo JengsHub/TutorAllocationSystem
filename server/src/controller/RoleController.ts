@@ -43,19 +43,22 @@ class TaRoleController implements IRoleController {
 
 class LecturerRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
-    return new UnauthorisedAccessedError("Lecturer cannot delete role");
+    return Role.delete({ id: roleId });
   }
-  updateRole(user: Staff, unitId: string, changedRecord: Role) {
-    // TODO: only update Role of the unit if the user is a lecturer of that unit (i.e. need to check if user is Lecturer of that unit)
-    return new UnauthorisedAccessedError("Lecturer cannot update role");
+  async updateRole(user: Staff, unitId: string, changedRecord: Role) {
+    console.log(changedRecord);
+    let roleToUpdate = await Role.findOneOrFail({
+      staffId: changedRecord.staffId,
+      unitId: unitId,
+    });
+    console.log(roleToUpdate);
+    return Role.update({ id: roleToUpdate.id }, changedRecord);
   }
   createRole(user: Staff, unitId: string, newRecord: Role) {
-    // TODO: only create Role of the unit if the user is a lecturer of that unit (i.e. need to check if user is Lecturer of that unit)
-    return new UnauthorisedAccessedError("Lecturer cannot create role");
+    return Role.save(Role.create(newRecord));
   }
   getRolesByUnit(user: Staff, unitId: string) {
-    // TODO: only get Roles of the unit if the user is a lecturer of that unit
-    return new UnauthorisedAccessedError("Lecturer cannot get roles by unit");
+    return Role.find({ unitId });
   }
 }
 

@@ -109,8 +109,7 @@ class LecturerAllocationController implements IAllocationController {
   }
 
   updateAllocation(user: Staff, changedRecord: Allocation) {
-    // TODO: Only allow Lecturer of that unit to update
-    return new UnauthorisedAccessedError("Lecturer cannot update allocation");
+    Allocation.save(changedRecord);
   }
 }
 
