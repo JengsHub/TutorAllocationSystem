@@ -22,10 +22,16 @@ class StaffService {
   repo = getRepository(Staff);
   factory = new StaffControllerFactory();
 
-  // /**
-  //  * Returns a list of staff
-  //  * @return Array<Staff> staff list
-  //  */
+  /**
+   * Returns a list of staff
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
+   * @return Array<Staff> staff list
+   */
   @GET
   public async getAllStaff(
     @ContextRequest req: Request
@@ -105,6 +111,12 @@ class StaffService {
 
   /**
    * Returns a staff member
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
    * @param id id for the staff member
    * @return Staff single staff member
    */
@@ -122,6 +134,12 @@ class StaffService {
 
   /**
    * Creates a staff member
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param newRecord staff data
    * @return Staff new staff member
    */
@@ -137,6 +155,12 @@ class StaffService {
 
   /**
    * Updates a staff member
+   *
+   * Role authorisation:
+   *  - TA: can only update themselves (as staff members)
+   *  - Lecturer: can only update themselves (as staff members)
+   *  - Admin: can update any staff member
+   *
    * @param changedStaff new staff object to change existing staff to
    * @return Staff changed staff member
    */
@@ -152,6 +176,12 @@ class StaffService {
 
   /**
    * Deletes a staff member
+   *
+   * Role authorisation:
+   *  - TA: can only delete themselves (as staff members)
+   *  - Lecturer: can only delete themselves (as staff members)
+   *  - Admin: can delete any staff member
+   *
    * @param id id for the staff member
    * @return DeleteResult result of delete request
    */
