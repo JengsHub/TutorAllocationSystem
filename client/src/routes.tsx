@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-import AdminSidebar from "./components/AdminSidebar"
+import AdminSidebar from "./components/AdminSidebar";
 // import Activities from "./pages/Activities";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
@@ -46,7 +46,7 @@ const Routes = () => {
 
   console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`);
 
-  if (adminAccess){
+  if (adminAccess) {
     return (
       <AuthContext.Provider
         value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
@@ -74,8 +74,7 @@ const Routes = () => {
         </Switch>
       </AuthContext.Provider>
     );
-  }
-  else{
+  } else {
     return (
       <AuthContext.Provider
         value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
