@@ -63,7 +63,7 @@ class TaAllocationController implements IAllocationController {
     return new UnauthorisedAccessedError("TA cannot approve an Allocation");
   }
   updateAllocation(user: Staff, changedRecord: Allocation) {
-    throw new Error("Method not implemented.");
+    return new UnauthorisedAccessedError("TA cannot update allocation");
   }
 }
 
@@ -109,8 +109,8 @@ class LecturerAllocationController implements IAllocationController {
   }
 
   updateAllocation(user: Staff, changedRecord: Allocation) {
-    // Only allow Lecturer of that unit to update
-    throw new Error("Method not implemented.");
+    // TODO: Only allow Lecturer of that unit to update
+    return new UnauthorisedAccessedError("Lecturer cannot update allocation");
   }
 }
 

@@ -286,6 +286,11 @@ class ActivitiesService {
 
   /**
    * Updates an activity
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed to update activities where they are lecturer
+   *  - Admin: can update any activity
    * @param changedActivity new activity object to change existing activity to
    * @return Activity changed activity
    */

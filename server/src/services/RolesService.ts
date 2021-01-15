@@ -78,6 +78,17 @@ class RolesService {
     return role;
   }
 
+  /**
+   * Gets a unit's roles
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
+   * @param unitId id of the unit to get roles for
+   * @returns Roles list of roles
+   */
   @GET
   @Path("unit/:unitId")
   public async getRolesByUnit(
@@ -102,6 +113,12 @@ class RolesService {
 
   /**
    * Creates a role record for the unit
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param newRecord role data
    * @returns Role new role record
    */
@@ -122,6 +139,12 @@ class RolesService {
 
   /**
    * Updates a role
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param changedRole new role object to change the existing role to
    * @returns Role changed role
    */
@@ -143,6 +166,12 @@ class RolesService {
 
   /**
    * Deletes a role
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param id id of the role
    * @returns DeleteReults reult of the delete request
    */

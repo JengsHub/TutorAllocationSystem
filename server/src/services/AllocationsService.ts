@@ -291,6 +291,12 @@ class AllocationsService {
 
   /**
    * Updates an allocation
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: can update allocation in any unit, regardless of the acceptance status
+   *
    * @param changedAllocation new allocation object to change existing allocation to
    * @return Allocation changed allocation
    */
