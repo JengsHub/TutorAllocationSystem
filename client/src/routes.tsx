@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
+import AdminSidebar from "./components/AdminSidebar"
 // import Activities from "./pages/Activities";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
@@ -45,59 +46,90 @@ const Routes = () => {
 
   console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`);
 
-  return (
-    <AuthContext.Provider
-      value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
-    >
-      <Sidebar />
-      <Switch>
-        <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/"
-          exact
-          component={Dashboard}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/unit"
-          exact
-          component={Units}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/lecturing"
-          component={Lecturing}
-        />
-        {/* <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/staff"
-          component={Staff}
-        /> */}
-        {/* <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/preferences"
-          component={Preferences}
-        /> */}
-        {/* <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/activities"
-          component={Activities}
-        /> */}
-        <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/dataimport"
-          component={DataImport}
-        />
-        <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/admin"
-          component={Admin}
-        />
-        <Route path="/profile" component={Profile} />
-        <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
-      </Switch>
-    </AuthContext.Provider>
-  );
+  if (adminAccess){
+    return (
+      <AuthContext.Provider
+        value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
+      >
+        <AdminSidebar />
+        <Switch>
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/"
+            exact
+            component={Dashboard}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/dataimport"
+            component={DataImport}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/admin"
+            component={Admin}
+          />
+          <Route path="/profile" component={Profile} />
+          <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
+        </Switch>
+      </AuthContext.Provider>
+    );
+  }
+  else{
+    return (
+      <AuthContext.Provider
+        value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
+      >
+        <Sidebar />
+        <Switch>
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/"
+            exact
+            component={Dashboard}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/unit"
+            exact
+            component={Units}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/lecturing"
+            component={Lecturing}
+          />
+          {/* <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/staff"
+            component={Staff}
+          /> */}
+          {/* <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/preferences"
+            component={Preferences}
+          /> */}
+          {/* <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/activities"
+            component={Activities}
+          /> */}
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/dataimport"
+            component={DataImport}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/admin"
+            component={Admin}
+          />
+          <Route path="/profile" component={Profile} />
+          <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
+        </Switch>
+      </AuthContext.Provider>
+    );
+  }
 };
 
 export default Routes;
