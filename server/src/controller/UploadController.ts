@@ -2,7 +2,11 @@ import csv from "csv-parser";
 import { FileArray, UploadedFile } from "express-fileupload";
 import fs from "fs";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
-import ProcessFileService, { mapRawAllocateFile, mapRawTasFile, mapRawTpsFile } from "~/helpers/processInputFiles";
+import ProcessFileService, {
+  mapRawAllocateFile,
+  mapRawTasFile,
+  mapRawTpsFile,
+} from "~/helpers/processInputFiles";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
 
 export class UploadControllerFactory {
@@ -28,35 +32,25 @@ export interface IUploadController {
 
 class TaUploadController implements IUploadController {
   uploadTas(files: FileArray) {
-    return new UnauthorisedAccessedError(
-      "TAs cannot upload TAS files"
-    );
+    return new UnauthorisedAccessedError("TAs cannot upload TAS files");
   }
 
   uploadTps(files: FileArray) {
-    return new UnauthorisedAccessedError(
-      "TAs cannot upload TPS files"
-    );
+    return new UnauthorisedAccessedError("TAs cannot upload TPS files");
   }
 
   uploadAllocate(files: FileArray) {
-    return new UnauthorisedAccessedError(
-      "TAs cannot upload Allocate+ files"
-    );
+    return new UnauthorisedAccessedError("TAs cannot upload Allocate+ files");
   }
 }
 
 class LecturerUploadController implements IUploadController {
   uploadTas(files: FileArray) {
-    return new UnauthorisedAccessedError(
-      "Lecturers cannot upload TAS files"
-    );
+    return new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
   }
 
   uploadTps(files: FileArray) {
-    return new UnauthorisedAccessedError(
-      "Lecturers cannot upload TPS files"
-    );
+    return new UnauthorisedAccessedError("Lecturers cannot upload TPS files");
   }
 
   uploadAllocate(files: FileArray) {
@@ -110,6 +104,4 @@ class AdminUploadController implements IUploadController {
         console.log("Allocate CSV file successfully processed");
       });
   }
-  }
-
 }
