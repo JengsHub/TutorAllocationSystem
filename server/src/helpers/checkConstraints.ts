@@ -1,5 +1,13 @@
-import { Activity, Staff, Rule, Availability, Allocation } from "~/entity";
-import { getRepository, Repository } from "typeorm";
+import {
+  Activity,
+  Staff,
+  Rule,
+  Availability,
+  Allocation,
+  Unit,
+} from "~/entity";
+import { getRepository, Repository, In } from "typeorm";
+import { RuleEnum } from "../enums/RuleEnum";
 
 /**
  * Calculate the time duration of the activity
@@ -32,25 +40,62 @@ export const checkAllocation = async (
 ): Promise<boolean> => {
   // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
 
-  const allocationsRepo = getRepository(Allocation);
-  const currentAllocations = await allocationsRepo.find({
-    relations: ["staff", "activity"],
-    where: { staff: { id: staff.id } },
+  const activityUnit = await getRepository(Unit).findOne({
+    id: newActivity.unitId,
   });
+  if (!activityUnit) return false;
+
+  console.log(activityUnit);
+
+  //const allocationsRepo = getRepository(Allocation);
+  // const currentAllocations = await allocationsRepo.find({
+  //   relations: ["staff", "activity", "activity.unit"],
+  //   where: {
+  //     staff: { id: staff.id },
+  //     // activity: {
+  //     //   unit: {
+  //     //     year: activityUnit.year,
+  //     //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
+  //     //   },
+  //     // },
+  //   },
+  // });
+
+  const currentAllocations = await Allocation.createQueryBuilder("allocation")
+    .innerJoinAndSelect("allocation.activity", "activity")
+    .innerJoinAndSelect("activity.unit", "unit")
+    .where("unit.year = :year", { year: activityUnit.year })
+    .andWhere("unit.offeringPeriod IN (:...offeringPeriod)", {
+      offeringPeriod: [activityUnit.offeringPeriod, "Full Year"],
+    })
+    .andWhere("allocation.staffId = :id", { id: staff.id })
+    .getMany();
 
   let dayHours = activityDuration(newActivity);
   let weekHours = activityDuration(newActivity);
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
-  const activities = currentAllocations.map((a) => a.activity);
+  //console.log(currentAllocations);
 
+  const activities = currentAllocations.map((a) => a.activity);
+  // .filter(
+  //   (a) =>
+  //     a.unit.year === activityUnit.year &&
+  //     (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
+  //       a.unit.offeringPeriod === "Full Year")
+  // );
+
+  console.log(activities);
   // Checking the numbers against the constraints/rules.
-  // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
   const rules: Repository<Rule> = await getRepository(Rule);
   const availability = await getRepository(Availability).findOne({
     relations: ["staff"],
-    where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
+    where: {
+      staff: { id: staff.id },
+      day: newActivity.dayOfWeek,
+      year: activityUnit.year,
+    },
   });
   if (!availability) return false;
 
@@ -69,30 +114,31 @@ export const checkAllocation = async (
   });
 
   const maxHoursPerDayRule = (
-    await rules.findOneOrFail({ ruleName: "maxHoursPerDay" })
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_DAY_HRS })
   ).value;
   const maxHoursPerWeekRule = Math.min(
-    (await rules.findOneOrFail({ ruleName: "maxHoursPerWeek" })).value,
+    (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_WEEK_HRS })).value,
     availability.maxHours
   );
   const maxActivitiesPerUnitRule = (
-    await rules.findOneOrFail({ ruleName: "maxActivitiesPerUnit" })
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_UNIT_ACTIVITIES })
   ).value;
   const maxTotalActivitiesRule = Math.min(
-    (await rules.findOneOrFail({ ruleName: "maxTotalActivities" })).value,
+    (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_TOTAL_ACTIVITIES }))
+      .value,
     availability.maxNumberActivities
   );
   const consecutiveHoursRule = (
-    await rules.findOneOrFail({ ruleName: "consecutiveHours" })
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_CONSEC_HRS })
   ).value;
 
-  console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
-  console.log(
-    maxHoursPerDayRule,
-    maxHoursPerWeekRule,
-    maxActivitiesPerUnitRule,
-    maxTotalActivitiesRule
-  );
+  // console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
+  // console.log(
+  //   maxHoursPerDayRule,
+  //   maxHoursPerWeekRule,
+  //   maxActivitiesPerUnitRule,
+  //   maxTotalActivitiesRule
+  // );
   // TODO: Specific error message for each constraint violated
   if (
     dayHours > maxHoursPerDayRule ||

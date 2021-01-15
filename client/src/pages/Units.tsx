@@ -12,7 +12,6 @@ import React, { useEffect } from "react";
 // import Box from "@material-ui/core/Box";
 // import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
-import { ApprovalEnum } from "../enums/ApprovalEnum";
 
 const Units = () => {
   // const [units, setUnits] = useState<IPreferences[]>([]);
@@ -122,7 +121,7 @@ const Units = () => {
       <h1>My Units</h1>
       <Activities
         {...{
-          approval: ApprovalEnum.LECTURER,
+          isLecturerApproved: true,
         }}
       ></Activities>
     </div>

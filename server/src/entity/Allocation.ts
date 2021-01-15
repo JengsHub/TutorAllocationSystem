@@ -5,7 +5,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
 } from "typeorm";
-import { ApprovalEnum } from "~/enums/ApprovalEnum";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
@@ -13,10 +12,6 @@ import { Staff } from "./Staff";
 export class Allocation extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
-
-  // TODO: lec,staff,workforce Confirmation(s) booleans or Enum
-  @Column({ default: ApprovalEnum.INIT })
-  approval!: ApprovalEnum;
 
   @ManyToOne(() => Activity, (activity) => activity.allocations, {
     primary: true,
@@ -31,4 +26,13 @@ export class Allocation extends BaseEntity {
 
   @Column()
   staffId!: string;
+
+  @Column({ nullable: true, default: null })
+  isLecturerApproved?: boolean;
+
+  @Column({ nullable: true, default: false })
+  isTaAccepted?: boolean;
+
+  @Column({ nullable: true, default: null })
+  isWorkforceApproved?: boolean;
 }

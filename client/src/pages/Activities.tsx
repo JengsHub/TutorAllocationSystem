@@ -14,7 +14,6 @@ import { IconButton, makeStyles, Grid, TextField } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import DatabaseFinder from "../apis/DatabaseFinder";
-import { ApprovalEnum } from "../enums/ApprovalEnum";
 import { withStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
 import "../index.css";
@@ -244,8 +243,8 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationApproved = async (allocation: myAllocations) => {
-    const result = await DatabaseFinder.post(
-      `http://localhost:8888/allocations/approval/${allocation.id}/TA`
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/ta-acceptance?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -270,30 +269,24 @@ const Activities = (props: { [key: string]: any }) => {
     }
   };
 
-  const approvalStatus = (
-    allocation: myAllocations & { [key: string]: any }
-  ) => {
-    switch (allocation.approval) {
-      case ApprovalEnum.INIT:
-        return "You Shouldn't See Me";
-      case ApprovalEnum.LECTURER:
-        return (
-          <>
-            <IconButton onClick={() => allocationApproved(allocation)}>
-              <DoneIcon />
-            </IconButton>
-            <IconButton onClick={() => allocationRejected(allocation)}>
-              <ClearIcon />
-            </IconButton>
-          </>
-        );
-      case ApprovalEnum.TA:
-        return "Accepted Offer";
-      case ApprovalEnum.WORKFORCE:
-        return "Accepted and Confirmed by WorkForce";
-      default:
-        return "Error With Approval Status";
+  const approvalStatus = (allocation: myAllocations & { [key: string]: any }) => {
+    if (!allocation.isLecturerApproved) {
+      return "You Shouldn't See Me";
     }
+
+    if (!allocation.isTaAccepted) {
+      return (
+        <>
+          <IconButton onClick={() => allocationApproved(allocation)}>
+            <DoneIcon />
+          </IconButton>
+          <IconButton onClick={() => allocationRejected(allocation)}>
+            <ClearIcon />
+          </IconButton>
+        </>
+      );
+    }
+    return "Accepted Offer";
   };
 
   const StyledTableCell = withStyles(() => ({
