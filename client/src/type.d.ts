@@ -78,7 +78,9 @@ interface IRule {
 
 interface myAllocations {
   id: string;
-  approval: string;
+  isLecturerApproved: boolean;
+  isTaAccepted: boolean;
+  isWorkforceApproved: boolean;
   activityId: string;
   staffId: string;
   activity: IActivity;
