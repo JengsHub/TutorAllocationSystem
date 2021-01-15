@@ -33,6 +33,7 @@ class StaffService {
    * @return Array<Staff> staff list
    */
   @GET
+  @Path("/all")
   public async getAllStaff(
     @ContextRequest req: Request
   ): Promise<Array<Staff>> {
