@@ -61,4 +61,23 @@ export class Activity extends BaseEntity {
 
   @Column()
   unitId!: string;
+
+  static async createOrUpdateActivity(newRecord: Activity) {
+    let unit = await Unit.findOneOrFail({
+      id: newRecord.unitId,
+    });
+
+    // newRecord.unit = unit;
+    let activityToUpdate = await Activity.findOne({
+      activityCode: newRecord.activityCode,
+      unit: unit,
+    });
+
+    if (activityToUpdate) {
+      Activity.update({ id: activityToUpdate.id }, newRecord);
+      newRecord.id = activityToUpdate.id;
+      return newRecord;
+    }
+    return Activity.save(Activity.create(newRecord));
+  }
 }

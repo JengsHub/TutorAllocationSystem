@@ -41,9 +41,10 @@ export class ProcessFileService {
     unit = cleanInputData(unit);
 
     try {
-      let unitRepo = Unit.getRepository();
-      unit_object = await unitRepo.save(unit);
+      // let unitRepo = Unit.getRepository();
+      // unit_object = await unitRepo.save(unit);
       // unit_object = await Unit.insertUnitIntoDb(unit);
+      unit_object = await Unit.createOrUpdateUnit(unit);
     } catch (err) {
       throw err;
     }
@@ -61,8 +62,9 @@ export class ProcessFileService {
 
     try {
       // staff_object = await Staff.insertStaffIntoDb(staffDetail);
-      let staffRepo = Staff.getRepository();
-      staff_object = await staffRepo.save(staffDetail);
+      // let staffRepo = Staff.getRepository();
+      // staff_object = await staffRepo.save(staffDetail);
+      staff_object = await Staff.createOrUpdateStaff(staffDetail);
     } catch (err) {
       throw err;
     }
@@ -79,11 +81,12 @@ export class ProcessFileService {
       isHeadTutorCandidate: headCandidiate,
     });
 
-    console.log(staffPreference);
+    // console.log(staffPreference);
 
     try {
-      let staffPrefRepo = StaffPreference.getRepository();
-      await staffPrefRepo.save(staffPreference);
+      // let staffPrefRepo = StaffPreference.getRepository();
+      // await staffPrefRepo.save(staffPreference);
+      StaffPreference.createOrUpdateStaffPreference(staffPreference);
     } catch (err) {
       throw err;
     }
@@ -103,9 +106,10 @@ export class ProcessFileService {
     });
 
     try {
-      let activityRepo = Activity.getRepository();
-      activity_object = await activityRepo.save(activity);
+      // let activityRepo = Activity.getRepository();
+      // activity_object = await activityRepo.save(activity);
       // console.log(activity_object)
+      activity_object = await Activity.createOrUpdateActivity(activity);
     } catch (err) {
       throw err;
     }
@@ -113,7 +117,7 @@ export class ProcessFileService {
       activityId: activity_object.id,
       staffId: staff_object.id,
     });
-    console.log(allocation);
+    // console.log(allocation);
     try {
       let allocateRepo = Allocation.getRepository();
       await allocateRepo.save(allocation);
@@ -136,9 +140,10 @@ export class ProcessFileService {
 
     unit = cleanInputData(unit);
     try {
-      let unitRepo = Unit.getRepository();
-      unit_object = await unitRepo.save(unit);
-      console.log(unit_object);
+      // let unitRepo = Unit.getRepository();
+      // unit_object = await unitRepo.save(unit);
+      // console.log(unit_object);
+      unit_object = await Unit.createOrUpdateUnit(unit);
     } catch (err) {
       throw err;
     }
@@ -155,9 +160,9 @@ export class ProcessFileService {
     });
 
     try {
-      let staffRepo = Staff.getRepository();
-      staff_object = await staffRepo.save(staffDetail);
-      console.log(staff_object);
+      // let staffRepo = Staff.getRepository();
+      staff_object = await Staff.createOrUpdateStaff(staffDetail);
+      // console.log(staff_object);
     } catch (err) {
       throw err;
     }
@@ -171,10 +176,10 @@ export class ProcessFileService {
       staffId: staff_object["id"],
       unitId: unit_object["id"],
     });
-    console.log(staffPreference);
+    // console.log(staffPreference);
     try {
-      let staffPrefRepo = StaffPreference.getRepository();
-      await staffPrefRepo.save(staffPreference); // console.log(response)
+      // let staffPrefRepo = StaffPreference.getRepository();
+      await StaffPreference.createOrUpdateStaffPreference(staffPreference); // console.log(response)
     } catch (err) {
       throw err;
     }
@@ -209,7 +214,7 @@ export class ProcessFileService {
       maxNumberActivities: Number(row["maxNumberActivities"]),
       staffId: staff_object["id"],
     });
-    console.log(availability);
+    // console.log(availability);
     try {
       let availabilityRepo = Availability.getRepository();
       availabilityRepo.save(availability);
@@ -231,9 +236,10 @@ export class ProcessFileService {
 
     unit = cleanInputData(unit);
     try {
-      let unitRepo = Unit.getRepository();
-      unit_object = await unitRepo.save(unit); // console.log(unit_object)
-      console.log(unit_object);
+      // let unitRepo = Unit.getRepository();
+      // unit_object = await unitRepo.save(unit); // console.log(unit_object)
+      unit_object = await Unit.createOrUpdateUnit(unit);
+      // console.log(unit_object);
     } catch (err) {
       throw err;
     }
@@ -252,9 +258,10 @@ export class ProcessFileService {
       endTime: endTime,
     });
     try {
-      let activityRepo = Activity.getRepository();
-      let activity_object = await activityRepo.save(activity);
-      console.log(activity_object);
+      // let activityRepo = Activity.getRepository();
+      // let activity_object = await activityRepo.save(activity);
+      await Activity.createOrUpdateActivity(activity);
+      // console.log(activity_object);
     } catch (err) {
       throw err;
     }
@@ -486,7 +493,7 @@ function calculateEndTime(startTimeParam: string, durationParam: number) {
   if (inputEndMinute < 10) {
     inputEndMinuteStr = "0" + inputEndMinute.toString();
   }
-  let inputEndTime = inputEndHourStr + ":" + inputEndMinuteStr;
+  let inputEndTime = inputEndHourStr + ":" + inputEndMinuteStr + ":00";
   return inputEndTime;
 }
 

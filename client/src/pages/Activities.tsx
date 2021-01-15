@@ -269,7 +269,9 @@ const Activities = (props: { [key: string]: any }) => {
     }
   };
 
-  const approvalStatus = (allocation: myAllocations & { [key: string]: any }) => {
+  const approvalStatus = (
+    allocation: myAllocations & { [key: string]: any }
+  ) => {
     if (!allocation.isLecturerApproved) {
       return "You Shouldn't See Me";
     }
