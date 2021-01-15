@@ -49,18 +49,35 @@ class UploadService {
 
   @POST
   @Path("/allocate")
-  public uploadAllocate(@ContextRequest req: Request) {
+  public async uploadAllocate(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
     const path = (files.allocate as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
+    let allRows: {
+      unitCode: string;
+      offeringPeriod: string;
+      campus: string;
+      activityCode: string;
+      activityGroup: string;
+      dayOfWeek: string;
+      startTime: string;
+      duration: string;
+      location: string;
+      staff_in_charge: string;
+    }[] = [];
     fs.createReadStream(path)
       .pipe(csv())
       .on("data", (row) => {
         let allocateRow = mapRawAllocateFile(row);
-        processFileService.processAllocateObject(allocateRow);
+        allRows.push(allocateRow);
       })
-      .on("end", () => {
-        console.log("Allocate CSV file successfully processed");
+      .on("end", async () => {
+        console.log("Allocate CSV file successfully read");
+        console.log(allRows);
+        for (let row of allRows) {
+          await processFileService.processAllocateObject(row);
+        }
+        console.log("Allocate CSV file Successfully processed");
       });
   }
 }
