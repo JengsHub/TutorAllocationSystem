@@ -62,7 +62,7 @@ const CustomButton: React.FC<Props> = ({
       onClick={onButtonClick}
       disabled={isDisabled}
     >
-      {value ? value : <img className={iconClasses} />}
+      {value ? value : <img className={iconClasses} alt="img-icon" />}
     </button>
   );
 };
