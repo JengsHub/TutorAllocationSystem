@@ -1,0 +1,71 @@
+@import "../styles/shared/index";
+
+.custom-status {
+  @include statusDefault;
+  @include userSelect;
+
+  &--blue {
+    background-color: $blue;
+  }
+  &--green {
+    background-color: $green;
+  }
+  &--red {
+    background-color: $red;
+  }
+  &--yellow {
+    background-color: $yellow;
+  }
+
+  &--grey {
+    background-color: $grey;
+  }
+
+  &--small {
+    width: $elementHeight * 3;
+  }
+
+  &--compact {
+    width: $elementHeight/2;
+    justify-content: center;
+    color: inherit;
+  }
+
+  &__icon {
+    &--check-icon {
+      @include check-icon;
+    }
+
+    &--cross-icon {
+      @include cross-icon;
+    }
+
+    &--hourglass-icon {
+      @include trash-icon;
+    }
+
+    &--clock-icon {
+      @include clock-icon;
+    }
+
+    &--exclamation-circle-icon {
+      @include exclamation-circle-icon;
+    }
+
+    &--exclamation-diamond-icon {
+      @include exclamation-diamond-icon;
+    }
+
+    &--exclamation-octagon-icon {
+      @include exclamation-octagon-icon;
+    }
+
+    &--exclamation-square-icon {
+      @include exclamation-square-icon;
+    }
+
+    &--exclamation-triangle-icon {
+      @include exclamation-triangle-icon;
+    }
+  }
+}

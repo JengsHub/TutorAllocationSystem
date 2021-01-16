@@ -28,15 +28,33 @@
     }
   }
 
-  &--isCheck {
-    @include icon-check;
+  &--grey {
+    background-color: $grey;
+    &:hover {
+      background-color: $grey-hover;
+    }
   }
 
-  &--isCross {
-    @include icon-cross;
+  &--small {
+    width: $elementHeight * 2;
   }
 
-  &--isTrash {
-    @include icon-trash;
+  &--compact {
+    width: $elementHeight;
+  }
+
+  &__icon {
+    pointer-events: none;
+    &--check-icon {
+      @include large-check-icon;
+    }
+
+    &--cross-icon {
+      @include large-cross-icon;
+    }
+
+    &--trash-icon {
+      @include trash-icon;
+    }
   }
 }

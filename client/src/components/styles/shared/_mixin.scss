@@ -7,29 +7,84 @@
   height: $elementHeight;
   border-radius: $borderRadius;
   border: none;
-  width: fit-content;
-  min-width: $elementHeight;
+  width: $elementHeight * 3;
   padding: 0px $defaultPadding;
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
+}
+
+@mixin statusDefault {
+  position: relative;
+  font-family: $defaultFont;
+  font-size: $defaultFontSize;
+  font-weight: bold;
+  color: white;
+  height: $elementHeight;
+  border: none;
+  width: $elementHeight * 5;
+  padding: 0px $defaultPadding;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   outline: none;
+  cursor: help;
 }
 
-@mixin icon-check {
-  background-image: url(../../styles/shared/assets/check.svg);
-  background-repeat: no-repeat;
-  background-position: center;
+@mixin userSelect {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
 }
 
-@mixin icon-cross {
-  background-image: url(../../styles/shared/assets/x.svg);
-  background-repeat: no-repeat;
-  background-position: center;
+@mixin check-icon {
+  content: url(../../styles/shared/assets/check.svg);
 }
 
-@mixin icon-trash {
-  background-image: url(../../styles/shared/assets/trash.svg);
-  background-repeat: no-repeat;
-  background-position: center;
+@mixin cross-icon {
+  content: url(../../styles/shared/assets/x.svg);
+}
+
+@mixin large-check-icon {
+  content: url(../../styles/shared/assets/large-check.svg);
+}
+
+@mixin large-cross-icon {
+  content: url(../../styles/shared/assets/large-x.svg);
+}
+
+@mixin trash-icon {
+  content: url(../../styles/shared/assets/trash.svg);
+}
+
+@mixin hourglass-icon {
+  content: url(../../styles/shared/assets/hourglass.svg);
+}
+
+@mixin clock-icon {
+  content: url(../../styles/shared/assets/clock.svg);
+}
+
+@mixin exclamation-circle-icon {
+  content: url(../../styles/shared/assets/exclamation-circle.svg);
+}
+
+@mixin exclamation-diamond-icon {
+  content: url(../../styles/shared/assets/exclamation-diamond.svg);
+}
+
+@mixin exclamation-octagon-icon {
+  content: url(../../styles/shared/assets/exclamation-octagon.svg);
+}
+
+@mixin exclamation-square-icon {
+  content: url(../../styles/shared/assets/exclamation-square.svg);
+}
+
+@mixin exclamation-triangle-icon {
+  content: url(../../styles/shared/assets/exclamation-triangle.svg);
 }

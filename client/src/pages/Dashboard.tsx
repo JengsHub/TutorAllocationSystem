@@ -1,20 +1,161 @@
-import React from "react";
-import { CustomButton } from "../components";
+import React, { MouseEvent } from "react";
+import { CustomButton, CustomStatus } from "../components";
 
 const Dashboard = () => {
+  const handleButtonClick = (event: MouseEvent) => {
+    console.log(event);
+  };
+
   return (
     <div id="main">
       <h1>Dashboard</h1>
-      <CustomButton id='red-btn' value='' isCross type="button" isRed/>
-      <CustomButton id='green-btn' value='' isCheck type="button" isGreen/>
-      <CustomButton id='green-btn' value='' isTrash type="button" isRed/>
+      <CustomButton
+        id="red-btn"
+        value=""
+        type="button"
+        isCross
+        isRed
+        onButtonClick={handleButtonClick}
+      />
+      <CustomButton
+        id="green-btn"
+        value=""
+        type="button"
+        isCheck
+        isGreen
+        onButtonClick={handleButtonClick}
+      />
+      <CustomButton
+        id="trash-btn"
+        value=""
+        type="button"
+        isRed
+        isTrash
+        onButtonClick={handleButtonClick}
+      />
+      <CustomButton
+        id="swap-btn"
+        value="Swap"
+        type="button"
+        isBlue
+        onButtonClick={handleButtonClick}
+      />
+      <CustomButton
+        id="cancel-swap-btn"
+        value="Cancel Swap"
+        type="button"
+        isRed
+        onButtonClick={handleButtonClick}
+      />
+      <CustomButton
+        id="add-btn"
+        value="Add"
+        type="button"
+        isGrey
+        onButtonClick={handleButtonClick}
+      />
 
-      <CustomButton id='waiting-res-btn' value='Waiting for response' type="button" isBlue/>
-      <CustomButton id='yellow-btn' value='Accepted Offer' type="button" isYellow/>
-      <CustomButton id='yellow-btn' value='Confirmed' type="button" isGreen/>
+      <p></p>
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Waiting for response"
+        isBlue
+        isClock
+      />
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Error With Approval"
+        isRed
+        isExclamationTriangle
+      />
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Swap Offered"
+        isGreen
+        isExclamationCircle
+      />
+      <CustomStatus id="yellow-btn" value="Accepted Offer" isBlue isCheck />
+      <CustomStatus id="yellow-btn" value="Confirmed" isGreen isCheck />
+      <CustomStatus
+        id="yellow-btn"
+        value="Swap Available"
+        isYellow
+        isExclamationDiamond
+      />
+      <CustomStatus id="yellow-btn" value="Accepted Offer" isGreen isCheck />
 
+      <CustomStatus
+        id="yellow-btn"
+        value="TA has rejected"
+        isRed
+        isExclamationTriangle
+      />
+      <CustomStatus
+        id="yellow-btn"
+        value="Workforce has approved"
+        isGreen
+        isCheck
+      />
+      <CustomStatus
+        id="yellow-btn"
+        value="Workforce has rejected"
+        isRed
+        isCross
+      />
+      <CustomStatus
+        id="yellow-btn"
+        value="Lecturer has approved"
+        isGreen
+        isCheck
+      />
+      <CustomStatus id="yellow-btn" value="No actions yet" isGrey />
 
+      <p></p>
 
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Waiting for response"
+        isBlue
+        isClock
+        isSmall
+      />
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Error With Approval"
+        isRed
+        isExclamationTriangle
+        isSmall
+      />
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Swap Offered"
+        isGreen
+        isExclamationCircle
+        isSmall
+      />
+
+      <p></p>
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Waiting for response"
+        isBlue
+        isClock
+        isCompact
+      />
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Error With Approval"
+        isRed
+        isExclamationTriangle
+        isCompact
+      />
+      <CustomStatus
+        id="waiting-res-btn"
+        value="Swap Offered"
+        isGreen
+        isExclamationCircle
+        isCompact
+      />
     </div>
   );
 };
