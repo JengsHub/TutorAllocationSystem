@@ -24,7 +24,6 @@ const Activities = (props: { [key: string]: any }) => {
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
-  const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     setChanged(false);
@@ -96,14 +95,6 @@ const Activities = (props: { [key: string]: any }) => {
     setOpenApproval(false);
     setOpenError(false);
     setOpenRejected(false);
-  };
-
-  const handleModalOpen = () => {
-    setOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setOpen(false);
   };
 
   const timeReducer = (time: String) =>
