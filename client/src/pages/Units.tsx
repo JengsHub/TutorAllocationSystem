@@ -97,24 +97,24 @@ const Units = () => {
   //   );
   // }
 
-  const sortPreferenceScore = (list: IPreferences[], way: String) => {
-    console.log(list);
-    list.sort((a, b) => {
-      if (way === "desc") {
-        return b.preferenceScore > a.preferenceScore
-          ? 1
-          : b.preferenceScore < a.preferenceScore
-            ? -1
-            : 0;
-      } else {
-        return a.preferenceScore > b.preferenceScore
-          ? 1
-          : a.preferenceScore < b.preferenceScore
-            ? -1
-            : 0;
-      }
-    });
-  };
+  // const sortPreferenceScore = (list: IPreferences[], way: String) => {
+  //   console.log(list);
+  //   list.sort((a, b) => {
+  //     if (way === "desc") {
+  //       return b.preferenceScore > a.preferenceScore
+  //         ? 1
+  //         : b.preferenceScore < a.preferenceScore
+  //           ? -1
+  //           : 0;
+  //     } else {
+  //       return a.preferenceScore > b.preferenceScore
+  //         ? 1
+  //         : a.preferenceScore < b.preferenceScore
+  //           ? -1
+  //           : 0;
+  //     }
+  //   });
+  // };
 
   return (
     <div id="main">
