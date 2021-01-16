@@ -77,6 +77,7 @@ const initServer = async () => {
     })
   );
 
+
   // set up routes
   app.use("/auth", authRoutes);
 
@@ -88,6 +89,10 @@ const initServer = async () => {
   // app.use("/activities", authCheckMiddleware);
 
   Server.buildServices(app);
+  app.get("/health", (req, res) => {
+    
+    res.status(200).send("Server is running")
+  })
 
   // Just checking if given PORT variable is an integer or not
   let port = parseInt(process.env.PORT || "");

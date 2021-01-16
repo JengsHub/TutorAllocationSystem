@@ -7,10 +7,12 @@ import { emailHelperInstance } from "..";
 
 console.log("----Setting up Passport and Strategy----");
 
+// @ts-ignore
 passport.serializeUser((user: Staff, done) => {
   done(null, user.id);
 });
 
+// @ts-ignore
 passport.deserializeUser(async (id: string, done) => {
   const staffRepo = getRepository(Staff);
   const user = await staffRepo.findOne({ id });

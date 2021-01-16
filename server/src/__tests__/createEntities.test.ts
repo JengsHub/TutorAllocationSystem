@@ -14,7 +14,7 @@ import {
   Staff,
   StaffPreference,
   Unit,
-} from "../entity/index";
+} from "~/entity";
 
 // Use to provide to other models, and use ID in fetch/delete
 let staff: Staff;
