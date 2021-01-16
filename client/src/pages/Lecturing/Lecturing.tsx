@@ -106,8 +106,7 @@ const Lecturing = () => {
       <StatusLogModal
         activityId={statusLogModalOpen}
         closeModal={() => setStatusLogModalOpen(null)}
-      >
-      </StatusLogModal>
+      />
       <h1>Lecturing</h1>
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">

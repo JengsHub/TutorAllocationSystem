@@ -37,14 +37,11 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
           `http://localhost:8888/statuslog/${allocationId}/staffs`
         );
         let statusLogJson: Object[] = await statusLogsResponse.json();
-  
         statusLogs = statusLogs.concat(statusLogJson);
       }
-
-
       return statusLogs;
     }
-
+    
     getStatusLogs(activityId).then((res) => {
       setStatusLog(res || []);
     });

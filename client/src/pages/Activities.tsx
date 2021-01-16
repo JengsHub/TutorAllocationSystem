@@ -10,17 +10,18 @@ import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import ClearIcon from "@material-ui/icons/Clear";
 import DoneIcon from "@material-ui/icons/Done";
-import { IconButton, makeStyles } from "@material-ui/core";
+import { Button, IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import Modal from '@material-ui/core/Modal';
 import DatabaseFinder from "../apis/DatabaseFinder";
+import StatusLogModal from "./StatusLogModal";
 
 const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
     (IAllocation & { [key: string]: any })[]
   >([]);
-
+  let setStatusLogModalOpen = props.statusLogModalOpen;
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
@@ -217,12 +218,10 @@ const Activities = (props: { [key: string]: any }) => {
             {sortDayTime(allocations).map((allocation, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {allocation.activity.activityCode}
-                  {/* <div>
-                    <button type="button" onClick={handleModalOpen}>
-                      Open Modal
-                    </button>
-                  </div> */}
+                  <TableRow>{allocation.activity.activityCode}</TableRow>
+                  <Button size="small" href="#text-buttons" color="primary" onClick={() => setStatusLogModalOpen(allocation.activityId)}>
+                  Status Log
+                  </Button>
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.activityGroup}
