@@ -38,7 +38,7 @@ class ActivitiesService {
     });
   }
 
-    /**
+  /**
    * Returns an allocation based on the activity id given
    * @param id acitivity id
    */
@@ -47,7 +47,7 @@ class ActivitiesService {
   public async getAllocations(@PathParam("activityId") id: string) {
     let allocation: Allocation[];
     try {
-      allocation = await Allocation.find({activityId: id})
+      allocation = await Allocation.find({ activityId: id });
     } catch (e) {
       return resError(
         "Query to find allocations failed - this is probably because the uuid syntax is wrong"

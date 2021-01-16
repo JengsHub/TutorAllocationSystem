@@ -16,7 +16,9 @@ import StatusLogModal from "./StatusLogModal";
 
 const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
-  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(null);
+  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -88,7 +90,7 @@ const Units = () => {
                 <Activities
                   {...{
                     unitId: row.unitId,
-                    isApproved: true,   // TODO: should do back end validation to only show approved allocation
+                    isApproved: true, // TODO: should do back end validation to only show approved allocation
                     statusLogModalOpen: setStatusLogModalOpen,
                   }}
                 ></Activities>

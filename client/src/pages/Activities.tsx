@@ -13,9 +13,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Button, IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import Modal from '@material-ui/core/Modal';
 import DatabaseFinder from "../apis/DatabaseFinder";
-import StatusLogModal from "./StatusLogModal";
 
 const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
@@ -179,11 +177,11 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const approvalStatus = (allocation: IAllocation & { [key: string]: any }) => {
-    if (!allocation.isApproved){
+    if (!allocation.isApproved) {
       return "You Shouldn't See Me";
-    } 
+    }
 
-    if (!allocation.isAccepted){
+    if (!allocation.isAccepted) {
       return (
         <>
           <IconButton onClick={() => allocationApproved(allocation)}>
@@ -219,8 +217,13 @@ const Activities = (props: { [key: string]: any }) => {
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
                   <TableRow>{allocation.activity.activityCode}</TableRow>
-                  <Button size="small" href="#text-buttons" color="primary" onClick={() => setStatusLogModalOpen(allocation.activityId)}>
-                  Status Log
+                  <Button
+                    size="small"
+                    href="#text-buttons"
+                    color="primary"
+                    onClick={() => setStatusLogModalOpen(allocation.activityId)}
+                  >
+                    Status Log
                   </Button>
                 </TableCell>
                 <TableCell align="left">

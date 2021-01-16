@@ -18,7 +18,9 @@ import LecturingActivity from "./LecturingActivity";
 const Lecturing = () => {
   const [units, setUnits] = useState<IUnit[]>([]);
   const [modalOpen, setModalOpen] = useState<string | null>(null);
-  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(null);
+  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     // let user: IStaff | undefined;

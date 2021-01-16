@@ -16,14 +16,14 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
 }) => {
   const [statusLog, setStatusLog] = useState<Object[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     setChanged(false);
     /**
      * Gets all the status logs from the backend given the activity id associated with allocation
      * @param activityId id of the activity
      */
-    const getStatusLogs = async(activityId: string | null) => {
+    const getStatusLogs = async (activityId: string | null) => {
       let statusLogs: Array<Object> = [];
       // get all the allocations associated with the activity id
       let allocationsResponse = await fetch(
@@ -40,12 +40,11 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
         statusLogs = statusLogs.concat(statusLogJson);
       }
       return statusLogs;
-    }
-    
+    };
+
     getStatusLogs(activityId).then((res) => {
       setStatusLog(res || []);
     });
-    
   }, [activityId, hasChanged]);
 
   // Columns of the status log modal
@@ -81,10 +80,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
               <h2 id="simple-modal-title" className="alignleft">
                 Status Log
               </h2>
-              <StickyHeadTable
-                rows={statusLog}
-                columns={modalColumns}
-              />
+              <StickyHeadTable rows={statusLog} columns={modalColumns} />
             </Paper>
           </div>
         </Fade>

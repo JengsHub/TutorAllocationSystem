@@ -10,7 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, TableFooter } from "@material-ui/core";
+import { makeStyles} from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
 import DatabaseFinder from "../../apis/DatabaseFinder";
@@ -174,7 +174,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     const { allocation } = props;
     let approval = allocation.isApproved;
     let acceptance = allocation.isAccepted;
-    if (!approval){
+    if (!approval) {
       return (
         <>
           <IconButton onClick={() => allocationApproved(allocation)}>
@@ -186,7 +186,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
         </>
       );
     } else {
-      if (!acceptance){
+      if (!acceptance) {
         return (
           <>
             {" "}
@@ -229,9 +229,14 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  <TableRow>{activity.activityCode}</TableRow>  
-                  <Button size="small" href="#text-buttons" color="primary" onClick={() => setStatusLogModalOpen(activity.id)}>
-                  Status Log
+                  <TableRow>{activity.activityCode}</TableRow>
+                  <Button
+                    size="small"
+                    href="#text-buttons"
+                    color="primary"
+                    onClick={() => setStatusLogModalOpen(activity.id)}
+                  >
+                    Status Log
                   </Button>
                 </TableCell>
                 <TableCell align="left">{activity.activityGroup}</TableCell>

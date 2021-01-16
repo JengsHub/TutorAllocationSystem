@@ -19,7 +19,7 @@ import { Activity, Allocation, Staff } from "~/entity";
 import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
-import { createAndSaveStatusLog} from "~/helpers/statusLogHelper";
+import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
 import { checkAllocation } from "../helpers/checkConstraints";
 
@@ -65,7 +65,7 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
-    
+
     // let findOptions: { [key: string]: any } = {
     //   isApproved,
     //   activity: {
@@ -88,7 +88,7 @@ class AllocationsService {
      * Note: have to use query builder instead of TypeORM find() because find()
      * support for WHERE clause on joined columns is not consistent/doesn't work.
      * Seems like this feature will be added in future version of TypeORM
-     * 
+     *
      * See: https://github.com/typeorm/typeorm/issues/2707
      */
 
@@ -152,7 +152,11 @@ class AllocationsService {
 
     let allocation = await controller.createAllocation(me, newRecord);
     console.log(allocation);
-    createAndSaveStatusLog(allocation["id"], ActionEnums.MAKE_OFFER, newRecord.staffId)
+    createAndSaveStatusLog(
+      allocation["id"],
+      ActionEnums.MAKE_OFFER,
+      newRecord.staffId
+    );
 
     return allocation;
   }
@@ -202,7 +206,7 @@ class AllocationsService {
       createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id);
     }
     // If approval status is false, create status log
-    else if (!value){ 
+    else if (!value) {
       createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id);
     }
 
@@ -239,10 +243,11 @@ class AllocationsService {
     const controller = this.factory.getController(role);
 
     // TODO: send email noti to lecturer if accepted
-    if(value){  // if value is true, which means the TA accept, log the acceptance in status log
+    if (value) {
+      // if value is true, which means the TA accept, log the acceptance in status log
       createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id);
-    }
-    else{  // if value is false, which means the TA accept, log the acceptance in status log
+    } else {
+      // if value is false, which means the TA accept, log the acceptance in status log
       createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id);
     }
     return controller.updateAcceptance(me, allocation, value);
@@ -339,4 +344,3 @@ function removeEmpty(obj: any): any {
       {}
     );
 }
-
