@@ -19,7 +19,7 @@ import { Activity, Allocation, Staff } from "~/entity";
 import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
-import { createAndSaveStatusLog, createAndSaveStatusLogMakeOffer } from "~/helpers/statusLogHelper";
+import { createAndSaveStatusLog} from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
 import { checkAllocation } from "../helpers/checkConstraints";
 
@@ -152,7 +152,7 @@ class AllocationsService {
 
     let allocation = await controller.createAllocation(me, newRecord);
     console.log(allocation);
-    createAndSaveStatusLogMakeOffer(allocation["id"], me.id, newRecord.staffId)
+    createAndSaveStatusLog(allocation["id"], ActionEnums.MAKE_OFFER, newRecord.staffId)
 
     return allocation;
   }

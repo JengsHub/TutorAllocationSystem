@@ -18,26 +18,42 @@ const useStyles = makeStyles({
     },
   });
 
-export default function StickyHeadTable(rows: any, columns: any) {
+export default function StickyHeadTable(input: any) {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  
     const handleChangePage = (event:any, newPage:any) => {
       setPage(newPage);
     };
-  
+
+    let rows:any[] = [];
+    for(let i = 0 ; i < input.rows.length ; i++){
+      let row = input.rows[i];
+      let statusLogObject = {
+        user: row.staff.givenNames +" "+ row.staff.lastName,
+        action: row.action,
+        time: row.time
+      };
+      rows.push(statusLogObject);
+    }
+
+    const columns = input.columns;
     const handleChangeRowsPerPage = (event:any) => {
       setRowsPerPage(+event.target.value);
       setPage(0);
     };
-  
+
+    console.log("inside table");
+    console.log(rows);
+    console.log(columns);
+
     return (
       <Paper className={classes.root}>
         <TableContainer className={classes.container}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
+                {/* {columns.map((column:any) => ( */}
                 {columns.map((column:any) => (
                   <TableCell
                     key={column.id}
@@ -52,7 +68,7 @@ export default function StickyHeadTable(rows: any, columns: any) {
             <TableBody>
               {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     {columns.map((column:any) => {
                       const value = row[column.id];
                       return (
@@ -68,7 +84,7 @@ export default function StickyHeadTable(rows: any, columns: any) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          rowsPerPageOptions={[5, 10, 20]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

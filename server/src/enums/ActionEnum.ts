@@ -1,5 +1,5 @@
 export enum ActionEnums{
-    MAKE_OFFER = "Makes Offer",
+    MAKE_OFFER = "TA is made an offer",
     LECTURER_APPROVE = "Lecturer approves offer",
     TA_ACCEPT = "TA accepts offer",
     WORKFORCE_APPROVE = "Workforce team approves offer",

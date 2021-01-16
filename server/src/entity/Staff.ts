@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { AppRoleEnum } from "~/enums/RoleEnum";
-import { Unit } from ".";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
 import { Role } from "./Role";
@@ -44,9 +43,6 @@ export class Staff extends BaseEntity {
 
   @OneToMany(() => Availability, (availability) => availability.staff)
   availability!: Availability[];
-
-  @OneToMany(() => StatusLog, (statusLog) => statusLog.offeror)
-  offerorStatusLog!: StatusLog[];
 
   @OneToMany(() => StatusLog, (statusLog) => statusLog.staff)
   offereeStatusLog!: StatusLog[];

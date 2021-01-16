@@ -15,12 +15,6 @@ export class StatusLog extends BaseEntity{
     @Column()
     allocationId!: string;
 
-    @ManyToOne(()=>Staff, (staff)=>staff.offerorStatusLog)
-    offeror!: Staff;
-
-    @Column({nullable: true})
-    offerorId!: string;
-
     @ManyToOne(()=>Staff, (staff) => staff.offereeStatusLog, {primary: true,})
     staff!: Staff;
 

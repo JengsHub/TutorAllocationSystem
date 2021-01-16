@@ -20,7 +20,7 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 interface ILecturingActivityProps {
   unitId: string;
   setModalOpen: (activityId: string) => void;
-  setStatusLogModalOpen: (allocationId: string) => void;
+  setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({

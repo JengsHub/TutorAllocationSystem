@@ -12,15 +12,3 @@ export function createAndSaveStatusLog(allocationId: string, action: ActionEnums
 
     StatusLog.save(statusLogObj);
 }
-
-export function createAndSaveStatusLogMakeOffer(allocationId: string, offerorId: string, staffId: string){
-    let statusLogObj = StatusLog.create({
-      allocationId: allocationId,
-      offerorId: offerorId,
-      staffId: staffId,
-      action: ActionEnums.MAKE_OFFER ,
-      time: createCurrentDate()
-    })
-
-    StatusLog.save(statusLogObj);
-}

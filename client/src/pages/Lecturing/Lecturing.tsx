@@ -104,7 +104,7 @@ const Lecturing = () => {
         closeModal={() => setModalOpen(null)}
       />
       <StatusLogModal
-        allocationId={statusLogModalOpen}
+        activityId={statusLogModalOpen}
         closeModal={() => setStatusLogModalOpen(null)}
       >
       </StatusLogModal>

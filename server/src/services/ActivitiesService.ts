@@ -10,7 +10,7 @@ import {
   QueryParam,
   Security,
 } from "typescript-rest";
-import { StaffPreference, Unit } from "~/entity";
+import { Allocation, StaffPreference, Unit } from "~/entity";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
@@ -36,6 +36,24 @@ class ActivitiesService {
     return this.repo.find({
       relations: ["allocations", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
     });
+  }
+
+    /**
+   * Returns an allocation based on the activity id given
+   * @param id acitivity id
+   */
+  @GET
+  @Path(":activityId/allocation")
+  public async getAllocations(@PathParam("activityId") id: string) {
+    let allocation: Allocation[];
+    try {
+      allocation = await Allocation.find({activityId: id})
+    } catch (e) {
+      return resError(
+        "Query to find allocations failed - this is probably because the uuid syntax is wrong"
+      );
+    }
+    return allocation;
   }
 
   /**
