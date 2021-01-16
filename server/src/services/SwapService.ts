@@ -107,7 +107,7 @@ class SwapsService {
 
     let unitSwaps = await this.repo
       .createQueryBuilder("swap")
-      .innerJoin("user.desired", "activity")
+      .innerJoin("swap.desired", "activity")
       .where("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
@@ -134,6 +134,23 @@ class SwapsService {
     });
 
     return eligableSwaps;
+  }
+
+  @GET
+  @Path("/mine/:unitId")
+  public async getMySwaps(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @PathParam("unitId") unitId: string
+  ): Promise<Array<Swap>> {
+    if (!authCheck(req, res)) return Array<Swap>();
+    const me = req.user as Staff;
+    return await this.repo
+      .createQueryBuilder("swap")
+      .innerJoin("swap.from", "allocation")
+      .where("allocation.staffId = :staffId", { staffId: me.id })
+      .where("activity.unitId = :unitId", { unitId: unitId })
+      .getMany();
   }
 
   @POST

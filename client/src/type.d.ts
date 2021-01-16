@@ -75,3 +75,13 @@ interface IRule {
   ruleDescription: string;
   value: number;
 }
+
+interface ISwap {
+  id: string;
+  fromAllocationId: string;
+  intoAllocationId: string | null;
+  desiredActivityId: string;
+  from: IAllocation;
+  into: IAllocation | null;
+  desired: IActivity;
+}
