@@ -38,7 +38,7 @@ const Units = () => {
 
     getUnits().then((res) => {
       // console.log(res);
-      sortPreferenceScore(res, "desc");
+      // sortPreferenceScore(res, "desc");
       // setUnits(res || []);
     });
   }, []);
@@ -104,14 +104,14 @@ const Units = () => {
         return b.preferenceScore > a.preferenceScore
           ? 1
           : b.preferenceScore < a.preferenceScore
-          ? -1
-          : 0;
+            ? -1
+            : 0;
       } else {
         return a.preferenceScore > b.preferenceScore
           ? 1
           : a.preferenceScore < b.preferenceScore
-          ? -1
-          : 0;
+            ? -1
+            : 0;
       }
     });
   };

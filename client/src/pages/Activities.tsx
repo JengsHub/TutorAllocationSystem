@@ -178,7 +178,7 @@ const Activities = (props: { [key: string]: any }) => {
       return (
         <TableRow>
           <TableCell className={classes.error} align="center">
-            You currently have no allocations for this unit.{" "}
+            You currently have no allocations.{" "}
           </TableCell>
         </TableRow>
       );
