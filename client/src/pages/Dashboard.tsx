@@ -11,6 +11,7 @@ const Dashboard = () => {
       <h1>Dashboard</h1>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>Default Button</span>
           <CustomButton
             id="red-btn"
             value=""
@@ -59,6 +60,7 @@ const Dashboard = () => {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>Small Button</span>
           <CustomButton
             id="red-btn"
             value=""
@@ -112,6 +114,7 @@ const Dashboard = () => {
           />
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>Compact Button</span>
           <CustomButton
             id="red-btn"
             value=""
@@ -144,6 +147,7 @@ const Dashboard = () => {
 
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>Default Status</span>
           <CustomStatus
             id="waiting-res-btn"
             value="Waiting for response"
@@ -204,6 +208,7 @@ const Dashboard = () => {
           <CustomStatus id="yellow-btn" value="No actions yet" isGrey />
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>Small Status</span>
           <CustomStatus
             id="waiting-res-btn"
             value="Waiting for response"
@@ -227,6 +232,7 @@ const Dashboard = () => {
           />
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
+          <span>Compact Status</span>
           <CustomStatus
             id="waiting-res-btn"
             value="Waiting for response"
