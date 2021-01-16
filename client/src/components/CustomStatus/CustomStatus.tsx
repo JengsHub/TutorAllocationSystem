@@ -70,7 +70,7 @@ const CustomStatus: React.FC<Props> = ({
   return (
     <div className={classes} id={id}>
       {isCompact ? "" : <div className="custom-status__value">{value}</div>}
-      <img className={iconClasses} alt="img-icon" />
+      <img className={iconClasses} alt="" />
     </div>
   );
 };
