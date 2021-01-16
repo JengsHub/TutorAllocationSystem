@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   Column,
+  JoinColumn,
 } from "typeorm";
 import { Allocation } from ".";
 import { Activity } from "./Activity";
@@ -15,6 +16,7 @@ export class Swap extends BaseEntity {
   id!: string;
 
   @OneToOne(() => Allocation)
+  @JoinColumn({ name: "fromAllocationId" })
   from!: Allocation;
 
   @Column({ nullable: false })
@@ -27,6 +29,7 @@ export class Swap extends BaseEntity {
   desiredActivityId!: String;
 
   @OneToOne(() => Allocation)
+  @JoinColumn({ name: "intoAllocationId" })
   into!: Allocation;
 
   @Column({ nullable: true })

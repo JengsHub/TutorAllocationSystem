@@ -90,13 +90,11 @@ const Units = () => {
                     isLecturerApproved: true, // TODO: should do back end validation to only show approved allocation
                   }}
                 ></Activities>
-              </Box>
-              <Box>
-                <Swaps>
-                  {{
+                <Swaps
+                  {...{
                     unitId: row.unitId,
                   }}
-                </Swaps>
+                ></Swaps>
               </Box>
             </Collapse>
           </TableCell>

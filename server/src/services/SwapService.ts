@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { exception } from "console";
-import { DeleteResult, getRepository, Not } from "typeorm";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -10,17 +9,12 @@ import {
   PathParam,
   POST,
   PUT,
-  QueryParam,
-  Security,
 } from "typescript-rest";
 import { Activity, Allocation, Staff, Unit, Swap } from "~/entity";
-import {
-  checkNewAllocation,
-  checkSwapAllocation,
-} from "../helpers/checkConstraints";
+import { checkSwapAllocation } from "../helpers/checkConstraints";
 import { authCheck } from "~/helpers/auth";
 
-Path("/swaps");
+@Path("/swaps")
 class SwapsService {
   // factory = new SwapControllerFactory();
   repo = getRepository(Swap);
@@ -33,9 +27,7 @@ class SwapsService {
   @GET
   @Path(":id")
   public getSwap(@PathParam("id") id: string) {
-    return this.repo.findOne({
-      id,
-    });
+    return this.repo.findOne(id);
   }
   /**
    * Get a list of activities a user could potentially swap into provided an activity they want to swap out of
@@ -107,7 +99,11 @@ class SwapsService {
 
     let unitSwaps = await this.repo
       .createQueryBuilder("swap")
-      .innerJoin("swap.desired", "activity")
+      .innerJoinAndSelect(
+        Activity,
+        "activity",
+        "activity.id = swap.fromActivityId"
+      )
       .where("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
@@ -132,7 +128,7 @@ class SwapsService {
 
       return checkSwapAllocation(me, myActivities, swap.from.activity);
     });
-
+    console.log(eligableSwaps);
     return eligableSwaps;
   }
 
@@ -145,12 +141,16 @@ class SwapsService {
   ): Promise<Array<Swap>> {
     if (!authCheck(req, res)) return Array<Swap>();
     const me = req.user as Staff;
-    return await this.repo
+
+    let mySwaps = await this.repo
       .createQueryBuilder("swap")
-      .innerJoin("swap.from", "allocation")
+      .innerJoinAndSelect("swap.from", "allocation")
+      .innerJoinAndSelect("allocation.activity", "activity")
       .where("allocation.staffId = :staffId", { staffId: me.id })
       .where("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
+    console.log(mySwaps);
+    return mySwaps;
   }
 
   @POST

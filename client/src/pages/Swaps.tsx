@@ -76,9 +76,9 @@ const Swaps = (props: { [key: string]: any }) => {
     getMySwaps().then((res) => {
       setMySwaps(res);
     });
-    getOpenSwaps().then((res) => {
-      setOpenSwaps(res);
-    });
+    // getOpenSwaps().then((res) => {
+    //   setOpenSwaps(res);
+    // });
   }, [props, hasChanged]);
 
   return (
@@ -87,13 +87,10 @@ const Swaps = (props: { [key: string]: any }) => {
         <Table className={""} size="small" aria-label="activities table">
           <TableHead>
             <TableRow>
-              {/* <TableCell align="left">Activity Code</TableCell>
-              <TableCell align="left">Activity Group</TableCell>
-              <TableCell align="left">Campus</TableCell>
-              <TableCell align="left">Day of Week</TableCell>
-              <TableCell align="left">Location </TableCell>
-              <TableCell align="left">Start Time</TableCell>
-              <TableCell align="left">Status</TableCell> */}
+              <TableCell align="left">swap id</TableCell>
+              <TableCell align="left"> from</TableCell>
+              <TableCell align="left">into</TableCell>
+              <TableCell align="left">desired</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -102,15 +99,15 @@ const Swaps = (props: { [key: string]: any }) => {
                 <TableCell> {swap.id} </TableCell>]
                 <TableCell> {swap.fromAllocationId} </TableCell>
                 <TableCell> {swap.intoAllocationId} </TableCell>]
-                <TableCell> {swap.desired.activityCode} </TableCell>
+                <TableCell> {swap.desiredActivityId} </TableCell>
               </TableRow>
             ))}
             {mySwaps.map((swap, i) => (
               <TableRow key={i}>
-                <TableCell> {swap.id} </TableCell>]
+                <TableCell> {swap.id} </TableCell>
                 <TableCell> {swap.fromAllocationId} </TableCell>
                 <TableCell> {swap.intoAllocationId} </TableCell>
-                <TableCell> {swap.desired.activityCode} </TableCell>
+                <TableCell> {swap.desiredActivityId} </TableCell>
               </TableRow>
             ))}
           </TableBody>
