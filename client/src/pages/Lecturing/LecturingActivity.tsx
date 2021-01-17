@@ -172,13 +172,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   function ApprovalCell(props: { allocation: IAllocation }) {
     const { allocation } = props;
-<<<<<<< HEAD
     let approval = allocation.isLecturerApproved;
     let acceptance = allocation.isTaAccepted;
-=======
-    let approval = allocation.isApproved;
-    let acceptance = allocation.isAccepted;
->>>>>>> 30-activity-log
     if (!approval) {
       return (
         <>
