@@ -10,7 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import ClearIcon from "@material-ui/icons/Clear";
 import DoneIcon from "@material-ui/icons/Done";
-import { Button, IconButton, makeStyles } from "@material-ui/core";
+import { IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import DatabaseFinder from "../apis/DatabaseFinder";
@@ -19,7 +19,6 @@ const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
     (IAllocation & { [key: string]: any })[]
   >([]);
-  let setStatusLogModalOpen = props.statusLogModalOpen;
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
@@ -155,8 +154,8 @@ const Activities = (props: { [key: string]: any }) => {
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.id}`
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/acceptance?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -208,14 +207,6 @@ const Activities = (props: { [key: string]: any }) => {
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
                   <TableRow>{allocation.activity.activityCode}</TableRow>
-                  <Button
-                    size="small"
-                    href="#text-buttons"
-                    color="primary"
-                    onClick={() => setStatusLogModalOpen(allocation.activityId)}
-                  >
-                    Status Log
-                  </Button>
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.activityGroup}

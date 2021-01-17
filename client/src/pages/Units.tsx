@@ -12,13 +12,9 @@ import Collapse from "@material-ui/core/Collapse";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
-import StatusLogModal from "./StatusLogModal";
 
 const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
-  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
-    null
-  );
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -91,7 +87,6 @@ const Units = () => {
                   {...{
                     unitId: row.unitId,
                     isApproved: true, // TODO: should do back end validation to only show approved allocation
-                    statusLogModalOpen: setStatusLogModalOpen,
                   }}
                 ></Activities>
               </Box>
@@ -125,10 +120,6 @@ const Units = () => {
 
   return (
     <div id="main">
-      <StatusLogModal
-        activityId={statusLogModalOpen}
-        closeModal={() => setStatusLogModalOpen(null)}
-      />
       <h1>My Units</h1>
       <TableContainer component={Paper}>
         <Table className={""} aria-label="a dense table">
