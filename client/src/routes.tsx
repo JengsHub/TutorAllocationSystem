@@ -113,16 +113,6 @@ const Routes = () => {
             path="/activities"
             component={Activities}
           /> */}
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/dataimport"
-            component={DataImport}
-          />
-          <PrivateRoute
-            isAuthenticated={isAuth}
-            path="/admin"
-            component={Admin}
-          />
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
         </Switch>

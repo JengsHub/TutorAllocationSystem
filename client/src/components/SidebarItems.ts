@@ -24,16 +24,8 @@ const SidebarItems = [
     route: "/lecturing",
   },
   {
-    name: "Data Import",
-    route: "/dataimport",
-  },
-  {
     name: "Profile",
     route: "/profile",
-  },
-  {
-    name: "Admin",
-    route: "/admin",
   },
 ];
 

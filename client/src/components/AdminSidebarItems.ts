@@ -8,12 +8,12 @@ const AdminSidebarItems = [
     route: "/dataimport",
   },
   {
-    name: "Profile",
-    route: "/profile",
-  },
-  {
     name: "Admin",
     route: "/admin",
+  },
+  {
+    name: "Profile",
+    route: "/profile",
   },
 ];
 
