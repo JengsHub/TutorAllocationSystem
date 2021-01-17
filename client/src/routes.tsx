@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
+import baseApi from "./apis/baseApi";
 import Sidebar from "./components/Sidebar";
 // import Activities from "./pages/Activities";
 import Admin from "./pages/Admin";
@@ -22,22 +23,13 @@ const Routes = () => {
   useEffect(() => {
     // Check if user is logged in every time they change page
     const fetchAuthState = async () => {
-      const authRes = await fetch("http://localhost:8888/auth/login/success", {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": "true",
-        },
-      });
-
-      if (authRes.status === 401) {
+      const res = await baseApi.get('/auth/login/success')
+      if (res.status === 401) {
         setAuth(false);
       } else {
         setAuth(true);
-        const resJson = await authRes.json();
-        setAdminAccess(resJson.user.adminAccess);
+        const resData = await res.data;
+        setAdminAccess(resData.user.adminAccess);
       }
     };
     fetchAuthState();

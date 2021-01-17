@@ -10,19 +10,19 @@ import {
   TextField,
   Button,
 } from "@material-ui/core";
-import DatabaseFinder from "../apis/DatabaseFinder";
+import baseApi from "../apis/baseApi";
 
 const Rules = () => {
   const [rules, setRules] = useState<IRule[]>([]);
 
   const getRules = async () => {
-    const res = await fetch("http://localhost:8888/rules");
-    return res.json();
+    const res = await baseApi.get('rules');
+    return res.data;
   };
 
   const postRules = async () => {
     try {
-      DatabaseFinder.put("/rules", rules).then((res) => {
+      baseApi.put("/rules", rules).then((res) => {
         setRules(res.data);
       });
     } catch (err) {

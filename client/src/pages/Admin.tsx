@@ -17,6 +17,7 @@ import TextField from "@material-ui/core/TextField";
 import { Clear, Done, Edit } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useState } from "react";
+import baseApi from "../apis/baseApi";
 import { RoleEnum } from "../enums/RoleEnum";
 
 /***
@@ -115,19 +116,10 @@ const Admin = () => {
     const data = rows.find((r) => r.id === id);
     if (data) {
       // TODO: handle status of request to provide feedback to user, especially if update failed
-      await fetch(`http://localhost:8888/roles/unit/${data.unitId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: JSON.stringify({
-          title: data.role,
-          staffId: data.staffId,
-        }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": "true",
-        },
-      });
+      await baseApi.put(`/roles/unit/${data.unitId}`, {
+        title: data.role,
+        staffId: data.staffId
+      })
     }
   };
 
@@ -173,25 +165,14 @@ const Admin = () => {
       (key) => params[key] === undefined && delete params[key]
     );
 
-    const res = await fetch(
-      "http://localhost:8888/staff?" + new URLSearchParams(params),
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Credentials": "true",
-        },
-      }
-    );
+    const res = await baseApi.get('staff', {params: {params}})
 
     // TODO: better way for row id?
-    const resJson = (await res.json()).map((e: any, index: number) => ({
+    const resJson = (await res.data).map((e: any, index: number) => ({
       ...e,
       id: index,
     }));
-    console.log(resJson);
+    // console.log(resJson);
     setRows(resJson);
   };
 

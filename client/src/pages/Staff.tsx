@@ -7,15 +7,15 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import baseApi from "../apis/baseApi";
 
 const Staff = () => {
   const [staffs, setStaffs] = useState<IStaff[]>([]);
 
   const getAllStaff = async () => {
     try {
-      const response = await fetch("http://localhost:8888/staff");
-      const jsonData = await response.json();
-
+      const res = await baseApi.get('/staff');
+      const jsonData = await res.data;
       setStaffs(jsonData);
     } catch (err) {
       console.error(err.message);

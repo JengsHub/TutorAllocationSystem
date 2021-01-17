@@ -1,11 +1,10 @@
 import { Button, Grid } from "@material-ui/core";
 import React, { Component } from "react";
+import baseApi from "../apis/baseApi";
+import ReadFileFormat from "../services/ReadFileFormat";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import ReadFileFormat from "../services/ReadFileFormat";
 
-// yarn add csv-parser
-import axios from "axios";
 
 class TasDragDrop extends Component<Props, State> {
   static counter = 0;
@@ -78,7 +77,7 @@ class TasDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("tas", this.csvFile);
       console.log(this.csvFile);
-      await axios.post("http://localhost:8888/upload/tas", formData);
+      baseApi.post('/upload/tas', formData);
     } catch (err) {
       throw err;
     }
