@@ -11,12 +11,16 @@
 // import TableRow from "@material-ui/core/TableRow";
 // import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
+import StatusLogModal from "../StatusLogModal";
 import CandidatesModal from "./CandidatesModal";
 import LecturingActivity from "./LecturingActivity";
 
 const Lecturing = () => {
   // const [units, setUnits] = useState<IUnit[]>([]);
   const [modalOpen, setModalOpen] = useState<string | null>(null);
+  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -99,6 +103,10 @@ const Lecturing = () => {
       <CandidatesModal
         activityId={modalOpen}
         closeModal={() => setModalOpen(null)}
+      />
+      <StatusLogModal
+        activityId={statusLogModalOpen}
+        closeModal={() => setStatusLogModalOpen(null)}
       />
       <h1>Lecturing</h1>
       <LecturingActivity

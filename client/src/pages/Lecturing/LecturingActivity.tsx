@@ -22,11 +22,13 @@ import { Autocomplete } from "@material-ui/lab";
 interface ILecturingActivityProps {
   // unitId: string;
   setModalOpen: (activityId: string) => void;
+  setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   // unitId,
   setModalOpen,
+  setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [activitiesToDisplay, setActivitiesToDisplay] = useState<IActivity[]>(
@@ -210,8 +212,11 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.id}`
+    // const result = await DatabaseFinder.delete(
+    //   `http://localhost:8888/allocations/${allocation.id}`
+    // );
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);

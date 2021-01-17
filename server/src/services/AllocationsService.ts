@@ -16,7 +16,10 @@ import {
 } from "typescript-rest";
 import { AllocationControllerFactory } from "~/controller";
 import { Activity, Allocation, Staff, Role } from "~/entity";
+import { StatusLog } from "~/entity/StatusLog";
+import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
+import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
 import { checkAllocation } from "../helpers/checkConstraints";
 
@@ -148,7 +151,16 @@ class AllocationsService {
     const controller = this.factory.getController(
       await me.getRoleTitle(activity.unitId)
     );
-    return controller.createAllocation(me, newRecord);
+
+    let allocation = await controller.createAllocation(me, newRecord);
+    console.log(allocation);
+    createAndSaveStatusLog(
+      allocation["id"],
+      ActionEnums.MAKE_OFFER,
+      newRecord.staffId
+    );
+
+    return allocation;
   }
 
   /**
@@ -191,6 +203,13 @@ class AllocationsService {
           activity: activity.activityCode,
         },
       });
+
+      // Log the status approval here
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id);
+    }
+    // If approval status is false, create status log
+    else {
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id);
     }
 
     return controller.updateLecturerApproval(me, allocation, value);
@@ -252,6 +271,13 @@ class AllocationsService {
       }
     }
 
+    if (value) {
+      // if value is true, which means the TA accept, log the acceptance in status log
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id);
+    } else {
+      // if value is false, which means the TA reject, log the rejection in status log
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id);
+    }
     return controller.updateTaAcceptance(me, allocation, value);
   }
 
@@ -285,7 +311,23 @@ class AllocationsService {
     const role = await me.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
 
-    return controller.updateLecturerApproval(me, allocation, value);
+    // TODO: send email noti to lecturer if accepted
+    if (value) {
+      // if value is true, which means the Workforce accept, log the acceptance in status log
+      createAndSaveStatusLog(
+        allocation.id,
+        ActionEnums.WORKFORCE_APPROVE,
+        me.id
+      );
+    } else {
+      // if value is false, which means the Workforce reject, log the rejection in status log
+      createAndSaveStatusLog(
+        allocation.id,
+        ActionEnums.WORKFORCE_REJECT,
+        me.id
+      );
+    }
+    return controller.updateWorkforceApproval(me, allocation, value);
   }
 
   /**
