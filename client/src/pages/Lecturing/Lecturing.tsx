@@ -112,6 +112,7 @@ const Lecturing = () => {
       <LecturingActivity
         {...{
           setModalOpen,
+          setStatusLogModalOpen,
         }}
       ></LecturingActivity>
     </div>

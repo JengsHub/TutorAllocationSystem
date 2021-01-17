@@ -13,11 +13,7 @@ import {
   ContextRequest,
   ContextResponse,
 } from "typescript-rest";
-<<<<<<< HEAD
 import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
-=======
-import { Allocation, StaffPreference, Unit } from "~/entity";
->>>>>>> origin/30-activity-log
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";

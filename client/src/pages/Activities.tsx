@@ -258,7 +258,7 @@ const Activities = (props: { [key: string]: any }) => {
   const allocationRejected = async (allocation: myAllocations) => {
     // TODO: Handle approval
     const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/acceptance?value=false`
+      `http://localhost:8888/allocations/${allocation.id}/ta-acceptance?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -425,6 +425,7 @@ const Activities = (props: { [key: string]: any }) => {
                           isRed
                           isCompact
                           style={{ margin: "0 5px" }}
+                          onButtonClick={() => allocationRejected(allocation)}
                         />
                         <CustomButton
                           value=""
@@ -433,6 +434,7 @@ const Activities = (props: { [key: string]: any }) => {
                           isGreen
                           isCompact
                           style={{ margin: "0 5px" }}
+                          onButtonClick={() => allocationApproved(allocation)}
                         />
                       </div>
                     ) : null}

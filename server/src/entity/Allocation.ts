@@ -32,7 +32,7 @@ export class Allocation extends BaseEntity {
   @Column({ nullable: true, default: null })
   isLecturerApproved?: boolean;
 
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true, default: null })
   isTaAccepted?: boolean;
 
   @Column({ nullable: true, default: null })
