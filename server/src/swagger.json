@@ -1,0 +1,789 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": " This is the api documentation for the Monash Tutor Allocation System",
+    "version": "1.0.0",
+    "title": "Monash Tutor Allocation System"
+  },
+  "tags": [
+    {
+      "name": "Activity",
+      "description": "Activities of a unit"
+    },
+    {
+      "name": "Allocation",
+      "description": "Allocation of TA to a unit"
+    },
+    {
+      "name": "Auth",
+      "description": "User authentication service"
+    },
+    {
+      "name": "Availability",
+      "description": "Staff availabilities"
+    },
+    {
+      "name": "Role",
+      "description": "Staff role per unit"
+    },
+    {
+      "name": "Rule",
+      "description": "Rules for activity allocations"
+    },
+    {
+      "name": "Staff Preference",
+      "description": "Staff's preference for unit"
+    },
+    {
+      "name": "Staff",
+      "description": "Information about staff"
+    },
+    {
+      "name": "Unit",
+      "description": "Information about unit"
+    },
+    {
+      "name": "Upload",
+      "description": "Operations for uploading data"
+    }
+  ],
+  "schemes": ["http"],
+  "paths": {
+    "/activities": {
+      "get": {
+        "tags": ["Activity"],
+        "summary": "Get all activities with corresponding unit and allocations",
+        "description": "",
+        "operationId": "getAllActivities",
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "$ref": "#/definitions/Activity"
+            }
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": ["write:pets", "read:pets"]
+          }
+        ]
+      },
+      "put":{
+        "tags": ["Activity"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "post":{
+        "tags": ["Activity"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/activities/{activityId}": {
+      "get": {
+        "tags": ["Activity"],
+        "summary": "Get activity by activityId",
+        "description": "Return one activity with corresponding unit and allocations",
+        "operationId": "getActivity",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Id of the activity",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Allocation"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": ["write:pets", "read:pets"]
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Activity"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/activities/{activityId}/candidates":{
+      "get":{
+        "tags": ["Activity"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/activities/{activityId}/candidates/{sortingCriteria}":{
+      "get":{
+        "tags": ["Activity"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/allocations":{
+      "post": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/allocations/mine":{
+      "get": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/allocations/{id}":{
+      "get": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/allocations/{id}/lecturer-approval":{
+      "patch": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/allocations/{id}/workforce-approval":{
+      "patch": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/allocations/{id}/ta-acceptance":{
+      "patch": {
+        "tags": ["Allocation"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/availabilities":{
+      "get": {
+        "tags": ["Availability"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Availability"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Availability"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/availabilities/{id}":{
+      "get": {
+        "tags": ["Availability"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Availability"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/roles":{
+      "get": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/roles/{id}":{
+      "get": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/roles/unit/{unitId}":{
+      "get": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/roles/unit/{unitId}/me":{
+      "get": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/roles/unit/{unitId}/{roleId}":{
+      "delete": {
+        "tags": ["Role"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/rules":{
+      "get": {
+        "tags": ["Rule"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Rule"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/rules/{id}":{
+      "get": {
+        "tags": ["Rule"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/staffpreferences":{
+      "get": {
+        "tags": ["Staff Preference"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Staff Preference"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Staff Preference"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/staffpreferences/{id}":{
+      "get": {
+        "tags": ["Staff Preference"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Staff Preference"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/staffpreferences/mine":{
+      "get": {
+        "tags": ["Staff Preference"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/staff":{
+      "get": {
+        "tags": ["Staff"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Staff"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Staff"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/staff/{id}":{
+      "get": {
+        "tags": ["Staff"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Staff"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/units":{
+      "get": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/units/{id}":{
+      "get": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/units/{id}/activities":{
+      "get": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/units/byRole/{title}":{
+      "get": {
+        "tags": ["Unit"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/upload/tas":{
+      "post": {
+        "tags": ["Upload"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/upload/tps":{
+      "post": {
+        "tags": ["Upload"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/upload/allocate":{
+      "post": {
+        "tags": ["Upload"],
+        "responses":{
+          "200":{
+            "description": "successful operation"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "petstore_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:pets": "modify pets in your account",
+        "read:pets": "read your pets"
+      }
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Activity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "activityCode": {
+          "type": "string"
+        },
+        "activityGroup": {
+          "type": "string"
+        },
+        "campus": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "endTime": {
+          "type": "string"
+        },
+        "dayOfWeek": {
+          "type": "string",
+          "enum": ["M", "T", "W", "Th", "F"]
+        },
+        "startTime": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "number",
+          "default": "0"
+        },
+        "unitId": {
+          "type": "string"
+        }
+      }
+    },
+    "Allocation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "activityId": {
+          "type": "string"
+        },
+        "staff": {
+          "type": "string"
+        },
+        "isLecturerApproved": {
+          "type": "boolean"
+        },
+        "isTaAccepted": {
+          "type": "boolean"
+        },
+        "isWorkforceApproved": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Availability": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "day": {
+          "type": "string",
+          "enum": ["M", "T", "W", "Th", "F"]
+        },
+        "starttime": {
+          "type": "string"
+        },
+        "endTime": {
+          "type": "string"
+        },
+        "year": {
+          "type": "number"
+        },
+        "maxHours": {
+          "type": "number"
+        },
+        "maxNumberActivities": {
+          "type": "number"
+        },
+        "staffId": {
+          "type": "string"
+        }
+      }
+    },
+    "Role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string",
+          "enum": ["TA", "Lecturer"]
+        },
+        "unitId": {
+          "type": "string"
+        },
+        "staffId": {
+          "type": "string"
+        }
+      }
+    },
+    "Rule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ruleName": {
+          "readOnly": true,
+          "type": "string"
+        },
+        "ruleDescription": {
+          "readOnly": true,
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "Staff": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "givenNames": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "aqf": {
+          "type": "number"
+        },
+        "studyingAqf": {
+          "type": "number"
+        },
+        "email": {
+          "uniqueItems": true,
+          "type": "string"
+        },
+        "googleId": {
+          "type": "string"
+        },
+        "appRole": {
+          "type": "string",
+          "enum": ["User", "Admin"]
+        }
+      }
+    },
+    "StaffPreference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "preferenceScore": {
+          "type": "number"
+        },
+        "lecturerScore": {
+          "type": "number"
+        },
+        "isHeadTutorCandidate": {
+          "type": "boolean"
+        },
+        "staffId": {
+          "type": "string"
+        },
+        "unitId": {
+          "type": "string"
+        }
+      }
+    },
+    "Unit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "unitCode": {
+          "type": "string"
+        },
+        "offeringPeriod": {
+          "type": "string"
+        },
+        "campus": {
+          "type": "string"
+        },
+        "year": {
+          "type": "number"
+        },
+        "aqfTarget": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

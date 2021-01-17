@@ -30,15 +30,17 @@ const initServer = async () => {
   const options = {
     swaggerDefinition: {
       info: {
-        title: 'Hello World',
-        version: '1.0.0',
+        title: "Hello World",
+        version: "1.0.0",
       },
     },
-    apis: ['src/services/*'],
+    apis: ["src/services/*"],
   };
 
   const swaggerSpec = swaggerJSDoc(options);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+  const swaggerUi = require("swagger-ui-express");
+  const swaggerDocument = require("./swagger.json");
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   if (result.error) {
     throw result.error;
