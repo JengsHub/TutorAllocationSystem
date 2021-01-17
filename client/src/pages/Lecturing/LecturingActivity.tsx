@@ -20,11 +20,13 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 interface ILecturingActivityProps {
   unitId: string;
   setModalOpen: (activityId: string) => void;
+  setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   unitId,
   setModalOpen,
+  setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -113,8 +115,11 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.id}`
+    // const result = await DatabaseFinder.delete(
+    //   `http://localhost:8888/allocations/${allocation.id}`
+    // );
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -224,7 +229,15 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {activity.activityCode}
+                  <TableRow>{activity.activityCode}</TableRow>
+                  <Button
+                    size="small"
+                    href="#text-buttons"
+                    color="primary"
+                    onClick={() => setStatusLogModalOpen(activity.id)}
+                  >
+                    Status Log
+                  </Button>
                 </TableCell>
                 <TableCell align="left">{activity.activityGroup}</TableCell>
                 <TableCell align="left">{activity.campus}</TableCell>

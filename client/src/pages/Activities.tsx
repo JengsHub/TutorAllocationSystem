@@ -19,7 +19,6 @@ const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
     (IAllocation & { [key: string]: any })[]
   >([]);
-
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
@@ -155,8 +154,8 @@ const Activities = (props: { [key: string]: any }) => {
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.id}`
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/acceptance?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -207,7 +206,7 @@ const Activities = (props: { [key: string]: any }) => {
             {sortDayTime(allocations).map((allocation, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {allocation.activity.activityCode}
+                  <TableRow>{allocation.activity.activityCode}</TableRow>
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.activityGroup}
