@@ -97,7 +97,6 @@ class AllocationsService {
         approval: isLecturerApproved,
       })
       .getMany();
-
     // console.log(allocations);
     return allocations;
   }

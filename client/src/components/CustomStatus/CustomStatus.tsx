@@ -4,7 +4,6 @@ import classNames from "classnames";
 
 interface Props {
   value: string;
-  id: string;
   isBlue?: boolean;
   isGreen?: boolean;
   isRed?: boolean;
@@ -26,7 +25,6 @@ interface Props {
 
 const CustomStatus: React.FC<Props> = ({
   value,
-  id,
   isBlue,
   isGreen,
   isRed,
@@ -68,7 +66,7 @@ const CustomStatus: React.FC<Props> = ({
   });
 
   return (
-    <div className={classes} id={id}>
+    <div className={classes}>
       {isCompact ? "" : <div className="custom-status__value">{value}</div>}
       <img className={iconClasses} alt="" />
     </div>

@@ -13,7 +13,6 @@ const Dashboard = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Default Button</span>
           <CustomButton
-            id="red-btn"
             value=""
             type="button"
             isCross
@@ -21,7 +20,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="green-btn"
             value=""
             type="button"
             isCheck
@@ -29,7 +27,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="trash-btn"
             value=""
             type="button"
             isRed
@@ -37,21 +34,18 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="swap-btn"
             value="Swap"
             type="button"
             isBlue
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="cancel-swap-btn"
             value="Cancel Swap"
             type="button"
             isRed
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="add-btn"
             value="Add"
             type="button"
             isGrey
@@ -62,7 +56,6 @@ const Dashboard = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Small Button</span>
           <CustomButton
-            id="red-btn"
             value=""
             type="button"
             isCross
@@ -71,7 +64,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="green-btn"
             value=""
             type="button"
             isCheck
@@ -80,7 +72,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="trash-btn"
             value=""
             type="button"
             isRed
@@ -89,7 +80,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="swap-btn"
             value="Swap"
             type="button"
             isBlue
@@ -97,7 +87,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="cancel-swap-btn"
             value="Cancel Swap"
             type="button"
             isRed
@@ -105,7 +94,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="add-btn"
             value="Add"
             type="button"
             isGrey
@@ -116,7 +104,6 @@ const Dashboard = () => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Compact Button</span>
           <CustomButton
-            id="red-btn"
             value=""
             type="button"
             isCross
@@ -125,7 +112,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="green-btn"
             value=""
             type="button"
             isCheck
@@ -134,7 +120,6 @@ const Dashboard = () => {
             onButtonClick={handleButtonClick}
           />
           <CustomButton
-            id="trash-btn"
             value=""
             type="button"
             isRed
@@ -148,83 +133,34 @@ const Dashboard = () => {
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Default Status</span>
+          <CustomStatus value="Waiting for response" isBlue isClock />
           <CustomStatus
-            id="waiting-res-btn"
-            value="Waiting for response"
-            isBlue
-            isClock
-          />
-          <CustomStatus
-            id="waiting-res-btn"
             value="Error With Approval"
             isRed
             isExclamationTriangle
           />
-          <CustomStatus
-            id="waiting-res-btn"
-            value="Swap Offered"
-            isGreen
-            isExclamationCircle
-          />
-          <CustomStatus id="yellow-btn" value="Accepted Offer" isBlue isCheck />
-          <CustomStatus id="yellow-btn" value="Confirmed" isGreen isCheck />
-          <CustomStatus
-            id="yellow-btn"
-            value="Swap Available"
-            isYellow
-            isExclamationDiamond
-          />
-          <CustomStatus
-            id="yellow-btn"
-            value="Accepted Offer"
-            isGreen
-            isCheck
-          />
+          <CustomStatus value="Swap Offered" isGreen isExclamationCircle />
+          <CustomStatus value="Accepted Offer" isBlue isCheck />
+          <CustomStatus value="Confirmed" isGreen isCheck />
+          <CustomStatus value="Swap Available" isYellow isExclamationDiamond />
+          <CustomStatus value="Accepted Offer" isGreen isCheck />
 
-          <CustomStatus
-            id="yellow-btn"
-            value="TA has rejected"
-            isRed
-            isExclamationTriangle
-          />
-          <CustomStatus
-            id="yellow-btn"
-            value="Workforce has approved"
-            isGreen
-            isCheck
-          />
-          <CustomStatus
-            id="yellow-btn"
-            value="Workforce has rejected"
-            isRed
-            isCross
-          />
-          <CustomStatus
-            id="yellow-btn"
-            value="Lecturer has approved"
-            isGreen
-            isCheck
-          />
-          <CustomStatus id="yellow-btn" value="No actions yet" isGrey />
+          <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
+          <CustomStatus value="Workforce has approved" isGreen isCheck />
+          <CustomStatus value="Workforce has rejected" isRed isCross />
+          <CustomStatus value="Lecturer has approved" isGreen isCheck />
+          <CustomStatus value="No actions yet" isGrey />
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Small Status</span>
+          <CustomStatus value="Waiting for response" isBlue isClock isSmall />
           <CustomStatus
-            id="waiting-res-btn"
-            value="Waiting for response"
-            isBlue
-            isClock
-            isSmall
-          />
-          <CustomStatus
-            id="waiting-res-btn"
             value="Error With Approval"
             isRed
             isExclamationTriangle
             isSmall
           />
           <CustomStatus
-            id="waiting-res-btn"
             value="Swap Offered"
             isGreen
             isExclamationCircle
@@ -233,22 +169,14 @@ const Dashboard = () => {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Compact Status</span>
+          <CustomStatus value="Waiting for response" isBlue isClock isCompact />
           <CustomStatus
-            id="waiting-res-btn"
-            value="Waiting for response"
-            isBlue
-            isClock
-            isCompact
-          />
-          <CustomStatus
-            id="waiting-res-btn"
             value="Error With Approval"
             isRed
             isExclamationTriangle
             isCompact
           />
           <CustomStatus
-            id="waiting-res-btn"
             value="Swap Offered"
             isGreen
             isExclamationCircle

@@ -4,7 +4,6 @@ import classNames from "classnames";
 
 interface Props {
   value: string;
-  id: string;
   type: "submit" | "button" | "reset";
   isBlue?: boolean;
   isGreen?: boolean;
@@ -17,12 +16,12 @@ interface Props {
   isDisabled?: boolean;
   isSmall?: boolean;
   isCompact?: boolean;
+  style?: React.CSSProperties;
   onButtonClick?: (event: MouseEvent) => void;
 }
 
 const CustomButton: React.FC<Props> = ({
   value,
-  id,
   type,
   isBlue,
   isGreen,
@@ -36,6 +35,7 @@ const CustomButton: React.FC<Props> = ({
   isSmall,
   isCompact,
   onButtonClick,
+  style,
 }) => {
   const classes = classNames({
     "custom-btn": true,
@@ -58,9 +58,9 @@ const CustomButton: React.FC<Props> = ({
     <button
       className={classes}
       type={type}
-      id={id}
       onClick={onButtonClick}
       disabled={isDisabled}
+      style={style}
     >
       {value ? value : <img className={iconClasses} alt="" />}
     </button>

@@ -16,6 +16,7 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import DatabaseFinder from "../apis/DatabaseFinder";
 import { withStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
+import { CustomButton, CustomStatus } from "../components";
 import "../index.css";
 
 const Activities = (props: { [key: string]: any }) => {
@@ -273,22 +274,26 @@ const Activities = (props: { [key: string]: any }) => {
     allocation: myAllocations & { [key: string]: any }
   ) => {
     if (!allocation.isLecturerApproved) {
-      return "You Shouldn't See Me";
-    }
-
-    if (!allocation.isTaAccepted) {
       return (
-        <>
-          <IconButton onClick={() => allocationApproved(allocation)}>
-            <DoneIcon />
-          </IconButton>
-          <IconButton onClick={() => allocationRejected(allocation)}>
-            <ClearIcon />
-          </IconButton>
-        </>
+        <CustomStatus value="Error With Approval" isRed isExclamationTriangle />
       );
     }
-    return "Accepted Offer";
+
+    if (allocation.isTaAccepted === null) {
+      return <CustomStatus value="Waiting for response" isBlue isClock />;
+    } else if (allocation.isTaAccepted === false) {
+      return (
+        <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
+      );
+    }
+
+    if (allocation.isWorkforceApproved === true) {
+      return <CustomStatus value="Workforce has approved" isGreen isCheck />;
+    } else if (allocation.isWorkforceApproved === false) {
+      return <CustomStatus value="Workforce has rejected" isRed isCross />;
+    }
+
+    return <CustomStatus value="Accepted Offer" isBlue isCheck />;
   };
 
   const StyledTableCell = withStyles(() => ({
@@ -376,7 +381,7 @@ const Activities = (props: { [key: string]: any }) => {
                 <StyledTableCell align="left">Location </StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
                 <StyledTableCell align="center">Status</StyledTableCell>
-                <StyledTableCell align="left">Action</StyledTableCell>
+                <StyledTableCell align="center">Action</StyledTableCell>
                 <StyledTableCell align="left">Time Remaining</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -408,7 +413,31 @@ const Activities = (props: { [key: string]: any }) => {
                   <TableCell align="left">
                     {approvalStatus(allocation)}
                   </TableCell>
-                  <TableCell align="left">PlaceHolder</TableCell>
+                  <TableCell align="left">
+                    {allocation.isLecturerApproved === true &&
+                    allocation.isTaAccepted === null ? (
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <CustomButton
+                          value=""
+                          type="button"
+                          isCross
+                          isRed
+                          isCompact
+                          style={{ margin: "0 5px" }}
+                        />
+                        <CustomButton
+                          value=""
+                          type="button"
+                          isCheck
+                          isGreen
+                          isCompact
+                          style={{ margin: "0 5px" }}
+                        />
+                      </div>
+                    ) : null}
+                  </TableCell>
                   <TableCell align="left">PlaceHolder</TableCell>
                 </TableRow>
               ))}
