@@ -1,14 +1,11 @@
 import { Button, Grid } from "@material-ui/core";
-import Papa from "papaparse";
 import React, { Component } from "react";
-import DatabaseFinder from "../apis/DatabaseFinder";
-import { DayOfWeek } from "../enums/DayOfWeek";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import cleanInputData from "../services/DataSanitizer";
 import ReadFileFormat from "../services/ReadFileFormat";
 
 // yarn add csv-parser
+import axios from "axios";
 
 class TasDragDrop extends Component<Props, State> {
   static counter = 0;
@@ -16,6 +13,7 @@ class TasDragDrop extends Component<Props, State> {
   allocateList: any[] = [[]];
   fileFormats: ReadFileFormat = new ReadFileFormat();
   readonly validTypes: String[];
+  csvFile: File = new File(["foo"], "placeholder.txt");
 
   constructor(props: Props) {
     super(props);
@@ -60,16 +58,14 @@ class TasDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.dataTransfer.files[0] });
-        Papa.parse(event.dataTransfer.files[0], {
-          complete: this.obtainResult,
-        });
+        this.csvFile = event.dataTransfer.files[0];
       }
     }
   };
 
   obtainResult = (results: any) => {
     this.allocateList = results.data;
-    console.log(this.allocateList);
+    console.log("obtain result: " + this.allocateList.toString());
   };
 
   getEndTime = (start: Date, minutes: string) => {
@@ -77,129 +73,16 @@ class TasDragDrop extends Component<Props, State> {
   };
 
   uploadData = async () => {
-    let tempList: string[] = this.allocateList[0];
-    let unit_object: any;
-    let staff_object: any;
-    let activity_object: any;
-
-    for (let i = 1; i < this.allocateList.length; i++) {
-      var unit: Units = {
-        unitCode: this.allocateList[i][tempList.indexOf("Subject")],
-        offeringPeriod: this.allocateList[i][
-          tempList.indexOf("Subject Code")
-        ].slice(11, 13),
-        campus: this.allocateList[i][tempList.indexOf("Campus")],
-        year: 2020,
-        aqfTarget: 0,
-      };
-      unit = cleanInputData(unit);
-      try {
-        unit_object = await DatabaseFinder.post("/units", unit);
-        // console.log(unit_object)
-      } catch (err) {
-        throw err;
-      }
-
-      let name: string[] = this.allocateList[i][
-        tempList.indexOf("Tutor")
-      ].split(" ");
-      let studyAqf: number =
-        isNaN(Number(this.allocateList[i][tempList.indexOf("Tutor AQF")])) ===
-        true
-          ? 0
-          : Number(this.allocateList[i][tempList.indexOf("Tutor AQF")]);
-      var staffDetail: Staff = {
-        givenNames: name[0],
-        lastName: name[1],
-        aqf: studyAqf,
-        studyingAqf: 0,
-        email: this.allocateList[i][tempList.indexOf("Email")],
-      };
-      try {
-        staff_object = await DatabaseFinder.post("/staff", staffDetail);
-        // console.log(staff_object)
-      } catch (err) {
-        throw err;
-      }
-
-      // Lecture pref could have decimals so we might need to modify database type
-      let headCandidiate: boolean =
-        this.allocateList[i][tempList.indexOf("Head tutor")] === 1
-          ? true
-          : false;
-      var staffPreference: StaffPreference = {
-        preferenceScore: Math.floor(
-          Number(this.allocateList[i][tempList.indexOf("Tutor pref")])
-        ),
-        lecturerScore: Math.floor(
-          Number(this.allocateList[i][tempList.indexOf("Lecturer pref")])
-        ),
-        isHeadTutorCandidate: headCandidiate,
-        staffId: staff_object["data"]["id"],
-        unitId: unit_object["data"]["id"],
-      };
-      try {
-        await DatabaseFinder.post("/staffpreferences", staffPreference);
-      } catch (err) {
-        throw err;
-      }
-
-      let DOW: DayOfWeek[] = [
-        DayOfWeek.MONDAY,
-        DayOfWeek.TUESDAY,
-        DayOfWeek.WEDNESDAY,
-        DayOfWeek.THURSDAY,
-        DayOfWeek.FRIDAY,
-      ];
-      let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-      let startHour: Date = new Date();
-      startHour.setHours(
-        Number(this.allocateList[i][tempList.indexOf("Time")].slice(0, 2))
-      );
-      startHour.setMinutes(
-        Number(this.allocateList[i][tempList.indexOf("Time")].slice(3, 5))
-      );
-      var activity: Activity = {
-        activityCode: this.allocateList[i][tempList.indexOf("Activity Code")],
-        activityGroup: this.allocateList[i][tempList.indexOf("Activity Group")],
-        campus: this.allocateList[i][tempList.indexOf("Campus")],
-        location: this.allocateList[i][tempList.indexOf("Location")],
-        dayOfWeek:
-          DOW[dayStr.indexOf(this.allocateList[i][tempList.indexOf("Day")])],
-        startTime: this.allocateList[i][tempList.indexOf("Time")],
-        unitId: unit_object["data"]["id"],
-        endTime:
-          this.getEndTime(
-            startHour,
-            this.allocateList[i][tempList.indexOf("Duration")]
-          )
-            .getHours()
-            .toString() +
-          ":" +
-          this.getEndTime(
-            startHour,
-            this.allocateList[i][tempList.indexOf("Duration")]
-          )
-            .getMinutes()
-            .toString(),
-      };
-      try {
-        activity_object = await DatabaseFinder.post("/activities", activity);
-        // console.log(activity_object)
-      } catch (err) {
-        throw err;
-      }
-
-      var allocation: Allocation = {
-        activityId: activity_object["data"]["id"],
-        staffId: staff_object["data"]["id"],
-      };
-      try {
-        await DatabaseFinder.post("/allocations", allocation);
-      } catch (err) {
-        throw err;
-      }
+    // // Send file to the backend when upload is CHOSEN
+    try {
+      const formData = new FormData();
+      formData.append("tas", this.csvFile);
+      console.log(this.csvFile);
+      await axios.post("http://localhost:8888/upload/tas", formData);
+    } catch (err) {
+      throw err;
     }
+
     this.showSuccess();
   };
 
@@ -237,9 +120,7 @@ class TasDragDrop extends Component<Props, State> {
         // have to prompt user here
       } else {
         this.setState({ file: event.target.files[0] });
-        Papa.parse(event.target.files[0], {
-          complete: this.obtainResult,
-        });
+        this.csvFile = event.target.files[0];
       }
     }
   };

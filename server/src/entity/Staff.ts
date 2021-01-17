@@ -2,13 +2,10 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  JoinTable,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from "typeorm";
-import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
+import { AppRoleEnum } from "~/enums/RoleEnum";
 import { Unit } from ".";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
@@ -56,17 +53,6 @@ export class Staff extends BaseEntity {
   @Column({ default: AppRoleEnum.USER })
   appRole!: AppRoleEnum;
 
-  async getRoleForUnit(unit: Unit) {
-    // if (this.isAdmin) return { title: AppRoleEnum.ADMIN, staffId: this.id };
-    const role = await Role.findOneOrFail({
-      where: {
-        staffId: this.id,
-        unitId: unit.id,
-      },
-    });
-    return role;
-  }
-
   async getRoleTitle(unitId?: string) {
     if (this.isAdmin()) return AppRoleEnum.ADMIN;
 
@@ -78,15 +64,6 @@ export class Staff extends BaseEntity {
       },
     });
     return role.title;
-  }
-  async getRoles() {
-    // if (this.isAdmin) return [{ title: AppRoleEnum.ADMIN, staffId: this.id }];
-    const roles = await Role.find({
-      where: {
-        staffId: this.id,
-      },
-    });
-    return roles;
   }
 
   isAdmin() {

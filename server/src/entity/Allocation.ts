@@ -3,11 +3,8 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   Column,
 } from "typeorm";
-import { ApprovalEnum } from "~/enums/ApprovalEnum";
-import { DayOfWeek } from "../enums/DayOfWeek";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 
@@ -16,21 +13,26 @@ export class Allocation extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  // TODO: lec,staff,workforce Confirmation(s) booleans or Enum
-  @Column({ default: ApprovalEnum.INIT })
-  approval!: ApprovalEnum;
-
   @ManyToOne(() => Activity, (activity) => activity.allocations, {
     primary: true,
   })
   activity!: Activity;
 
-  @RelationId((a: Allocation) => a.activity)
+  @Column()
   activityId!: string;
 
   @ManyToOne(() => Staff, (staff) => staff.allocations, { primary: true })
   staff!: Staff;
 
-  @RelationId((a: Allocation) => a.staff)
+  @Column()
   staffId!: string;
+
+  @Column({ nullable: true, default: null })
+  isLecturerApproved?: boolean;
+
+  @Column({ nullable: true, default: false })
+  isTaAccepted?: boolean;
+
+  @Column({ nullable: true, default: null })
+  isWorkforceApproved?: boolean;
 }

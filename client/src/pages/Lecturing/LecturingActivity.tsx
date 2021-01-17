@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import { ApprovalEnum } from "../../enums/ApprovalEnum";
 import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -34,6 +33,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
+    setChanged(false);
     const getActivities = async () => {
       try {
         //console.log(params.unitId);
@@ -99,8 +99,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.post(
-      `http://localhost:8888/allocations/approval/${allocation.id}/Lecturer`
+    const result = await DatabaseFinder.patch(
+      `http://localhost:8888/allocations/${allocation.id}/lecturer-approval?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -167,48 +167,34 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   function ApprovalCell(props: { allocation: IAllocation }) {
     const { allocation } = props;
-    let approval = allocation.approval;
-    switch (approval) {
-      case ApprovalEnum.INIT:
-        return (
-          <>
-            <IconButton onClick={() => allocationApproved(allocation)}>
-              <DoneIcon />
-            </IconButton>
-            <IconButton onClick={() => allocationRejected(allocation)}>
-              <ClearIcon />
-            </IconButton>
-          </>
-        );
-      case ApprovalEnum.LECTURER:
+    let approval = allocation.isLecturerApproved;
+    let acceptance = allocation.isTaAccepted;
+    if (!approval) {
+      return (
+        <>
+          <IconButton onClick={() => allocationApproved(allocation)}>
+            <DoneIcon />
+          </IconButton>
+          <IconButton onClick={() => allocationRejected(allocation)}>
+            <ClearIcon />
+          </IconButton>
+        </>
+      );
+    } else {
+      if (!acceptance) {
         return (
           <>
             {" "}
             <div> Waiting on TA response to offer </div>
           </>
         );
-      case ApprovalEnum.TA:
-        return (
-          <>
-            {" "}
-            <div> TA Has Accepted </div>{" "}
-          </>
-        );
-      case ApprovalEnum.WORKFORCE:
-        return (
-          <>
-            {" "}
-            <div> Work-Force Have Confirmed </div>{" "}
-          </>
-        );
-      default:
-        console.error("Unknown approval");
-        return (
-          <>
-            {" "}
-            <div>Error With Allocations Approval</div>{" "}
-          </>
-        );
+      }
+      return (
+        <>
+          {" "}
+          <div> TA Has Accepted </div>{" "}
+        </>
+      );
     }
   }
 

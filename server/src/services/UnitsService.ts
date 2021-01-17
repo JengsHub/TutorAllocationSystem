@@ -156,7 +156,7 @@ class UnitsService {
 
     const role = user.isAdmin()
       ? AppRoleEnum.ADMIN
-      : (await user.getRoleForUnit(unit)).title;
+      : await user.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
     return controller.getActivities(unit, user);
   }
