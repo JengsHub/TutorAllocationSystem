@@ -4,9 +4,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Column,
+  OneToMany,
 } from "typeorm";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
+import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Allocation extends BaseEntity {
@@ -35,4 +37,7 @@ export class Allocation extends BaseEntity {
 
   @Column({ nullable: true, default: null })
   isWorkforceApproved?: boolean;
+
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.allocation)
+  statusLog!: StatusLog[];
 }
