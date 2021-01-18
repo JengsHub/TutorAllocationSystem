@@ -104,7 +104,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await baseApi.patch(`/allocations/${allocation.id}/approval?value=false`);
+    const result = await baseApi.patch(
+      `/allocations/${allocation.id}/approval?value=false`
+    );
     if (result.statusText === "OK") {
       setChanged(true);
       setOpenRejected(true);

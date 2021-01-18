@@ -145,7 +145,9 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationRejected = async (allocation: IAllocation) => {
-    const result = await baseApi.patch(`allocations/${allocation.id}/acceptance?value=false`);
+    const result = await baseApi.patch(
+      `allocations/${allocation.id}/acceptance?value=false`
+    );
     if (result.statusText === "OK") {
       setChanged(true);
       setOpenRejected(true);
