@@ -49,7 +49,7 @@ const initServer = async () => {
       cookie: {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
-        secure: false, // TODO: set to true when https is set up
+        secure: true, // TODO: set to true when https is set up
       },
       rolling: true, // automatically set new expiration when user makes request
       resave: true,

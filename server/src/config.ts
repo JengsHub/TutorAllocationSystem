@@ -17,7 +17,7 @@ const prod = {
   SMTP_USER: "fit3170tas@gmail.com",
   SMTP_PASSWORD: "}zT#JC3]8ke#G`*:",
   FROM_EMAIL: "fit3170tas@gmail.com",
-  CLIENT_URL: "http://monash-tas.herokuapp.com",
+  CLIENT_URL: "https://monash-tas.herokuapp.com",
   CLIENT_DOMAIN: "monash-tas.herokuapp.com",
 };
 

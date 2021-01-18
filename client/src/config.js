@@ -1,14 +1,14 @@
 const prod = {
   url: {
     API_URL:
-      "http://EC2Co-EcsEl-8SACJ3Q3NOYD-1731678902.ap-southeast-2.elb.amazonaws.com",
+      "https://api.monash-tas.tk",
   },
 };
 
 const dev = {
   url: {
     API_URL:
-      "http://EC2Co-EcsEl-8SACJ3Q3NOYD-1731678902.ap-southeast-2.elb.amazonaws.com",
+      "http://localhost:8888",
   },
 };
 
