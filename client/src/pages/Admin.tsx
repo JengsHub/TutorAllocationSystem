@@ -118,8 +118,8 @@ const Admin = () => {
       // TODO: handle status of request to provide feedback to user, especially if update failed
       await baseApi.put(`/roles/unit/${data.unitId}`, {
         title: data.role,
-        staffId: data.staffId
-      })
+        staffId: data.staffId,
+      });
     }
   };
 
@@ -165,7 +165,7 @@ const Admin = () => {
       (key) => params[key] === undefined && delete params[key]
     );
 
-    const res = await baseApi.get('staff', {params: {params}})
+    const res = await baseApi.get("staff", { params: { params } });
 
     // TODO: better way for row id?
     const resJson = (await res.data).map((e: any, index: number) => ({

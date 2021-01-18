@@ -5,7 +5,6 @@ import ReadFileFormat from "../services/ReadFileFormat";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 
-
 class TasDragDrop extends Component<Props, State> {
   static counter = 0;
   fileUploaderInput: HTMLElement | null = null;
@@ -77,7 +76,7 @@ class TasDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("tas", this.csvFile);
       console.log(this.csvFile);
-      baseApi.post('/upload/tas', formData);
+      baseApi.post("/upload/tas", formData);
     } catch (err) {
       throw err;
     }

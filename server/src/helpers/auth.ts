@@ -4,7 +4,10 @@ import { getRepository } from "typeorm";
 import { Staff } from "~/entity";
 import { Request, Response, NextFunction } from "express";
 import { emailHelperInstance } from "..";
+import { config } from "~/config";
 
+console.log(process.env.NODE_ENV);
+console.log(config);
 console.log("----Setting up Passport and Strategy----");
 
 // @ts-ignore
@@ -55,8 +58,8 @@ export const authCheckMiddleware = (
 const googleStrategy = new Strategy(
   {
     // options for google strategy
-    clientID: process.env.GOOGLE_CLIENT_ID || "",
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    clientID: config.GOOGLE_CLIENT_ID || "",
+    clientSecret: config.GOOGLE_CLIENT_SECRET || "",
     callbackURL: "/auth/google/redirect",
   },
   async (accessToken, refreshToken, profile, done) => {

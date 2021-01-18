@@ -102,9 +102,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await baseApi.delete(
-      `/allocations/${allocation.id}`
-    );
+    const result = await baseApi.delete(`/allocations/${allocation.id}`);
     if (result.statusText === "OK") {
       setChanged(true);
       setOpenRejected(true);

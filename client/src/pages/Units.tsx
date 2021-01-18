@@ -21,7 +21,7 @@ const Units = () => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const r = await baseApi.get('/staffpreferences/mine/')
+        const r = await baseApi.get("/staffpreferences/mine/");
         return r.data;
       } catch (err) {
         console.log("No preferences found");

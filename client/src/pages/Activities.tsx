@@ -38,7 +38,9 @@ const Activities = (props: { [key: string]: any }) => {
           .map((key) => `${key}=${params[key]}`)
           .join("&");
 
-        const res = await baseApi.get('/allocations/mine', {params: {query}})
+        const res = await baseApi.get("/allocations/mine", {
+          params: { query },
+        });
         return await res.data;
       } catch (e) {
         console.log("Error fetching user activities");
@@ -131,7 +133,9 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const res = await baseApi.patch(`/allocations/${allocation.id}/ta-acceptance?value=true`)
+    const res = await baseApi.patch(
+      `/allocations/${allocation.id}/ta-acceptance?value=true`
+    );
     if (res.statusText === "OK") {
       setChanged(true);
       setOpenApproval(true);
@@ -143,7 +147,7 @@ const Activities = (props: { [key: string]: any }) => {
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const res = await baseApi.delete(`allocations/${allocation.id}`)
+    const res = await baseApi.delete(`allocations/${allocation.id}`);
     if (res.statusText === "OK") {
       setChanged(true);
       setOpenRejected(true);

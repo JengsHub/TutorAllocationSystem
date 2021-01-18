@@ -75,7 +75,7 @@ class TpsDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("tps", this.csvFile);
       console.log(this.csvFile);
-      await baseApi.post('/upload/tps', formData)
+      await baseApi.post("/upload/tps", formData);
     } catch (err) {
       throw err;
     }

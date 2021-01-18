@@ -12,7 +12,7 @@ const Preferences = () => {
   const [preferences, setStaffPreferences] = useState<IPreferences[]>([]);
 
   const getStaffPreferences = async () => {
-    const res = await baseApi.get('/staffpreferences')
+    const res = await baseApi.get("/staffpreferences");
     return res.data;
   };
 

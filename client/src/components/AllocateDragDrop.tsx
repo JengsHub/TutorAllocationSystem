@@ -86,7 +86,7 @@ class AllocateDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("allocate", this.inputCsvFile);
       console.log(this.inputCsvFile);
-      await baseApi.post('/upload/allocate', formData)
+      await baseApi.post("/upload/allocate", formData);
     } catch (error) {
       throw error;
     }

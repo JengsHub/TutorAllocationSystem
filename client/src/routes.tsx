@@ -23,7 +23,7 @@ const Routes = () => {
   useEffect(() => {
     // Check if user is logged in every time they change page
     const fetchAuthState = async () => {
-      const res = await baseApi.get('/auth/login/success')
+      const res = await baseApi.get("/auth/login/success");
       if (res.status === 401) {
         setAuth(false);
       } else {

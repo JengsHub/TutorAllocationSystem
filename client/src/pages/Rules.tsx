@@ -16,7 +16,7 @@ const Rules = () => {
   const [rules, setRules] = useState<IRule[]>([]);
 
   const getRules = async () => {
-    const res = await baseApi.get('rules');
+    const res = await baseApi.get("rules");
     return res.data;
   };
 
