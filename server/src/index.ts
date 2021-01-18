@@ -20,7 +20,7 @@ import { TypeormStore } from "typeorm-store";
 import { NodemailerEmailHelper, SibEmailHelper } from "./email/emailHelper";
 import fileUpload from "express-fileupload";
 import { config } from "./config";
-import { SessionOptions } from "http2";
+import { shouldSendSameSiteNone } from "should-send-same-site-none";
 
 const initServer = async () => {
   const app: express.Application = express();
@@ -38,6 +38,8 @@ const initServer = async () => {
   });
 
   await DBConnect();
+
+  app.use(shouldSendSameSiteNone);
   app.set("trust proxy", 1); // trust first proxy
   let cookieOptions: session.SessionOptions = {
     store: new TypeormStore({
