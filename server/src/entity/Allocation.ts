@@ -1,13 +1,15 @@
 import {
-  AfterLoad,
   BaseEntity,
-  Column,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  AfterLoad,
 } from "typeorm";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
+import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Allocation extends BaseEntity {
@@ -29,7 +31,7 @@ export class Allocation extends BaseEntity {
   staffId!: string;
 
   //expiry date default: 7 days from current date
-  @Column({ type: "timestamp", default: new Date().getDate() + 7 })
+  @Column({ type: "timestamp", default: new Date().getDate() + 5 })
   offerExpiryDate!: Date;
 
   @Column({ nullable: true, default: null })
@@ -41,10 +43,11 @@ export class Allocation extends BaseEntity {
   @Column({ nullable: true, default: null })
   isWorkforceApproved?: boolean;
 
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.allocation)
+  statusLog!: StatusLog[];
+
   isExpired!: boolean; //status
 
-  //check every time you retrieve the data from the allocation table.
-  //if current date == offer expiry date, then isExpired= true
   @AfterLoad()
   checkExpiry() {
     const todayDate = new Date();
