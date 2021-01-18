@@ -1,14 +1,12 @@
 const prod = {
   url: {
-    API_URL:
-      "https://api.monash-tas.tk",
+    API_URL: "https://api.monash-tas.tk",
   },
 };
 
 const dev = {
   url: {
-    API_URL:
-      "http://localhost:8888",
+    API_URL: "http://localhost:8888",
   },
 };
 

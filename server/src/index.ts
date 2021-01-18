@@ -20,6 +20,7 @@ import { TypeormStore } from "typeorm-store";
 import { NodemailerEmailHelper, SibEmailHelper } from "./email/emailHelper";
 import fileUpload from "express-fileupload";
 import { config } from "./config";
+import { SessionOptions } from "http2";
 
 const initServer = async () => {
   const app: express.Application = express();
@@ -38,24 +39,30 @@ const initServer = async () => {
 
   await DBConnect();
   app.set("trust proxy", 1); // trust first proxy
-  app.use(
-    session({
-      store: new TypeormStore({
-        repository: getConnection().getRepository(Session),
-      }),
-      name: "sid",
-      proxy: true,
-      secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
-      cookie: {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
-        secure: true, // TODO: set to true when https is set up
-      },
-      rolling: true, // automatically set new expiration when user makes request
-      resave: true,
-      saveUninitialized: false, // do no set cookie if user is not authenticated
-    })
-  );
+  let cookieOptions: session.SessionOptions = {
+    store: new TypeormStore({
+      repository: getConnection().getRepository(Session),
+    }),
+    name: "sid",
+    proxy: true,
+    secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
+    cookie: {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+    },
+    rolling: true, // automatically set new expiration when user makes request
+    resave: true,
+    saveUninitialized: false, // do no set cookie if user is not authenticated
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.cookie = {
+      ...cookieOptions.cookie,
+      secure: true,
+      sameSite: "none",
+    };
+  }
+  app.use(session(cookieOptions));
 
   // parse cookies
   app.use(cookieParser());
