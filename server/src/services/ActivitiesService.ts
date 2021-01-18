@@ -55,8 +55,8 @@ class ActivitiesService {
   ) {
     const user = req.user as Staff;
     let activities = await Activity.createQueryBuilder("activity")
-      .innerJoinAndSelect("activity.allocations", "allocations")
-      .innerJoinAndSelect("allocations.staff", "staff")
+      .leftJoinAndSelect("activity.allocations", "allocations")
+      .leftJoinAndSelect("allocations.staff", "staff")
       .innerJoinAndSelect("activity.unit", "unit")
       .innerJoin(Role, "role", "role.unitId = unit.id")
       .where("role.staffId = :id", { id: user.id })

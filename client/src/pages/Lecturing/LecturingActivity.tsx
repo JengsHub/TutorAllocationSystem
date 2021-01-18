@@ -18,6 +18,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { withStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
+import { CustomButton, CustomStatus } from "../../components";
 
 interface ILecturingActivityProps {
   // unitId: string;
@@ -216,7 +217,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     //   `http://localhost:8888/allocations/${allocation.id}`
     // );
     const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/approval?value=false`
+      `http://localhost:8888/allocations/${allocation.id}/lecturer-approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -242,7 +243,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       return (
         <TableRow>
           <TableCell className={classes.error} align="center">
-            You have no allocated activities.{" "}
+            No activities to display.{" "}
           </TableCell>
         </TableRow>
       );
@@ -269,35 +270,36 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   function ApprovalCell(props: { allocation: IAllocation }) {
     const { allocation } = props;
-    let approval = allocation.isLecturerApproved;
-    let acceptance = allocation.isTaAccepted;
-    if (!approval) {
+    const approval = allocation.isLecturerApproved;
+    const acceptance = allocation.isTaAccepted;
+    const workforce = allocation.isWorkforceApproved;
+    if (approval === null) {
       return (
-        <>
-          <IconButton onClick={() => allocationApproved(allocation)}>
-            <DoneIcon />
-          </IconButton>
-          <IconButton onClick={() => allocationRejected(allocation)}>
-            <ClearIcon />
-          </IconButton>
-        </>
+        <CustomStatus
+          value="Waiting for Lecturer"
+          isBlue
+          isExclamationDiamond
+        />
       );
-    } else {
-      if (!acceptance) {
-        return (
-          <>
-            {" "}
-            <div> Waiting on TA response to offer </div>
-          </>
-        );
-      }
-      return (
-        <>
-          {" "}
-          <div> TA Has Accepted </div>{" "}
-        </>
-      );
+    } else if (approval === false) {
+      return <CustomStatus value="Lecturer has rejected" isRed isCross />;
     }
+
+    if (acceptance === null) {
+      return <CustomStatus value="Waiting for TA response" isBlue isClock />;
+    } else if (acceptance === false) {
+      <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
+    }
+
+    if (workforce === true) {
+      return <CustomStatus value="Workforce has approved" isGreen isCheck />;
+    } else if (workforce === false) {
+      return <CustomStatus value="Workforce has rejected" isRed isCross />;
+    }
+
+    return (
+      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
+    );
   }
 
   const StyledTableCell = withStyles(() => ({
@@ -309,7 +311,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   /*
   NOTE
   For the approval tablecell, we could prob display the status e.g. APPROVED/REJECTED is it has been dealt with. 
-  Else, we just provide the buttons for approval/rekjection.
+  Else, we just provide the buttons for approval/rejection.
    */
   return (
     <div>
@@ -323,7 +325,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             )}
             value={selectedYear}
             onChange={(event, newValue) => {
-              // @ts-ignore
               setSelectedYear(newValue);
             }}
           />
@@ -341,7 +342,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             )}
             value={selectedOfferingPeriod}
             onChange={(event, newValue) => {
-              // @ts-ignore
               setSelectedOfferingPeriod(newValue);
             }}
           />
@@ -355,7 +355,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             )}
             value={selectedCampus}
             onChange={(event, newValue) => {
-              // @ts-ignore
               setSelectedCampus(newValue);
             }}
           />
@@ -369,7 +368,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             )}
             value={selectedUnitCode}
             onChange={(event, newValue) => {
-              // @ts-ignore
               setSelectedUnitCode(newValue);
             }}
           />
@@ -380,85 +378,201 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
           <Table className={""} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <StyledTableCell align="left">Unit Code</StyledTableCell>
-                <StyledTableCell align="left">Campus</StyledTableCell>
-                <StyledTableCell align="left">Activity Group</StyledTableCell>
-                <StyledTableCell align="left">Activity Code</StyledTableCell>
-                <StyledTableCell align="left">Day</StyledTableCell>
-                <StyledTableCell align="left">Location </StyledTableCell>
-                <StyledTableCell align="left">Start Time</StyledTableCell>
-                <StyledTableCell align="left">End Time</StyledTableCell>
-                <StyledTableCell align="center">Allocations</StyledTableCell>
-                <StyledTableCell align="center">Status</StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Unit Code
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Campus
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Activity Group
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Activity Code
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Day
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Location{" "}
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  Start Time
+                </StyledTableCell>
+                <StyledTableCell rowSpan={2} align="left">
+                  End Time
+                </StyledTableCell>
+                <StyledTableCell align="center" colSpan={4}>
+                  Allocations
+                </StyledTableCell>
+              </TableRow>
+              <TableRow>
+                <StyledTableCell align="left">Name</StyledTableCell>
+                <StyledTableCell align="left">Status</StyledTableCell>
                 <StyledTableCell align="left">Action</StyledTableCell>
-                <StyledTableCell align="right">Time Remaining</StyledTableCell>
+                <StyledTableCell align="left">Time Remaining</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               <EmptyAllocations />
-              {activitiesToDisplay.map((activity, i) => (
-                <TableRow key={i}>
-                  <TableCell align="left">{activity.unit.unitCode}</TableCell>
-                  <TableCell align="left">{activity.unit.campus}</TableCell>
-                  <TableCell align="left">{activity.activityGroup}</TableCell>
-                  <TableCell component="th" scope="row">
-                    {activity.activityCode}
-                  </TableCell>
-                  <TableCell align="left">
-                    {dayConverter(activity.dayOfWeek)}
-                  </TableCell>
-                  <TableCell align="left">{activity.location}</TableCell>
-                  <TableCell align="left">{activity.startTime}</TableCell>
-                  <TableCell align="left">{activity.endTime}</TableCell>
-                  <TableCell align="left" colSpan={4}>
-                    {activity.allocations.length > 0 ? (
-                      activity.allocations.map(
-                        (
-                          allocation: IAllocation & { [key: string]: any },
-                          j
-                        ) => (
-                          <Table key={j}>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell align="left">
-                                  {" "}
-                                  PlaceHolder{" "}
+              {activitiesToDisplay.map((activity, i) => {
+                const n = activity.allocations.length;
+                return n > 0 ? (
+                  activity.allocations.map(
+                    (allocation: IAllocation & { [key: string]: any }, j) => {
+                      return (
+                        <>
+                          <TableRow key={j}>
+                            {j === 0 ? (
+                              <>
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {activity.unit.unitCode}
                                 </TableCell>
-                                <TableCell align="left" width="50%">
-                                  {" "}
-                                  {allocation.staff.givenNames}{" "}
-                                  {allocation.staff.lastName}
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {activity.unit.campus}
                                 </TableCell>
-                                <TableCell align="left" width="50%">
-                                  <ApprovalCell allocation={allocation} />
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {activity.activityGroup}
                                 </TableCell>
-                                <TableCell align="left">
-                                  {" "}
-                                  PlaceHolder{" "}
+                                <TableCell
+                                  rowSpan={n + 1}
+                                  component="th"
+                                  scope="row"
+                                >
+                                  {activity.activityCode}
                                 </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        )
-                      )
-                    ) : (
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>No Allocations yet.</TableCell>
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {dayConverter(activity.dayOfWeek)}
+                                </TableCell>
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {activity.location}
+                                </TableCell>
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {activity.startTime}
+                                </TableCell>
+                                <TableCell rowSpan={n + 1} align="left">
+                                  {activity.endTime}
+                                </TableCell>
+                              </>
+                            ) : null}
+                            <TableCell align="left" width="50%">
+                              {" "}
+                              {allocation.staff.givenNames}{" "}
+                              {allocation.staff.lastName}
+                            </TableCell>
+                            <TableCell align="left" width="50%">
+                              <ApprovalCell allocation={allocation} />
+                            </TableCell>
+
+                            <TableCell align="center">
+                              {allocation.isLecturerApproved === null ? (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  <CustomButton
+                                    value=""
+                                    type="button"
+                                    isCross
+                                    isRed
+                                    isCompact
+                                    style={{ margin: "0 5px" }}
+                                    onButtonClick={() =>
+                                      allocationRejected(allocation)
+                                    }
+                                  />
+                                  <CustomButton
+                                    value=""
+                                    type="button"
+                                    isCheck
+                                    isGreen
+                                    isCompact
+                                    style={{ margin: "0 5px" }}
+                                    onButtonClick={() =>
+                                      allocationApproved(allocation)
+                                    }
+                                  />
+                                </div>
+                              ) : null}
+                            </TableCell>
+                            <TableCell align="left"> PlaceHolder </TableCell>
                           </TableRow>
-                        </TableBody>
-                      </Table>
-                    )}
-                    <Button
-                      variant="contained"
-                      onClick={() => setModalOpen(activity.id)}
-                    >
-                      Manually add allocations
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                          {j === n - 1 ? (
+                            <TableRow>
+                              <TableCell colSpan={4}>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    padding: 5,
+                                  }}
+                                >
+                                  <Button
+                                    variant="contained"
+                                    onClick={() => setModalOpen(activity.id)}
+                                  >
+                                    Manually add allocations
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ) : null}
+                        </>
+                      );
+                    }
+                  )
+                ) : (
+                  <>
+                    <TableRow key={i}>
+                      <TableCell rowSpan={2} align="left">
+                        {activity.unit.unitCode}
+                      </TableCell>
+                      <TableCell rowSpan={2} align="left">
+                        {activity.unit.campus}
+                      </TableCell>
+                      <TableCell rowSpan={2} align="left">
+                        {activity.activityGroup}
+                      </TableCell>
+                      <TableCell rowSpan={2} component="th" scope="row">
+                        {activity.activityCode}
+                      </TableCell>
+                      <TableCell rowSpan={2} align="left">
+                        {dayConverter(activity.dayOfWeek)}
+                      </TableCell>
+                      <TableCell rowSpan={2} align="left">
+                        {activity.location}
+                      </TableCell>
+                      <TableCell rowSpan={2} align="left">
+                        {activity.startTime}
+                      </TableCell>
+                      <TableCell rowSpan={2} align="left">
+                        {activity.endTime}
+                      </TableCell>
+                      <TableCell colSpan={4}>No Allocations yet.</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={4}>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            padding: 5,
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            onClick={() => setModalOpen(activity.id)}
+                          >
+                            Manually add allocations
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

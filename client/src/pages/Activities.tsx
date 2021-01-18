@@ -277,11 +277,15 @@ const Activities = (props: { [key: string]: any }) => {
     }
 
     if (allocation.isTaAccepted === null) {
-      return <CustomStatus value="Waiting for response" isBlue isClock />;
-    } else if (allocation.isTaAccepted === false) {
       return (
-        <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
+        <CustomStatus
+          value="Waiting for response"
+          isBlue
+          isExclamationDiamond
+        />
       );
+    } else if (allocation.isTaAccepted === false) {
+      return <CustomStatus value="TA has rejected" isRed isCross />;
     }
 
     if (allocation.isWorkforceApproved === true) {
@@ -290,7 +294,9 @@ const Activities = (props: { [key: string]: any }) => {
       return <CustomStatus value="Workforce has rejected" isRed isCross />;
     }
 
-    return <CustomStatus value="Accepted Offer" isBlue isCheck />;
+    return (
+      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
+    );
   };
 
   const StyledTableCell = withStyles(() => ({
@@ -377,8 +383,8 @@ const Activities = (props: { [key: string]: any }) => {
                 <StyledTableCell align="left">Day</StyledTableCell>
                 <StyledTableCell align="left">Location </StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
-                <StyledTableCell align="center">Status</StyledTableCell>
-                <StyledTableCell align="center">Action</StyledTableCell>
+                <StyledTableCell align="left">Status</StyledTableCell>
+                <StyledTableCell align="left">Action</StyledTableCell>
                 <StyledTableCell align="left">Time Remaining</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -407,10 +413,10 @@ const Activities = (props: { [key: string]: any }) => {
                   <TableCell align="left">
                     {allocation.activity.startTime}
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="center">
                     {approvalStatus(allocation)}
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="center">
                     {allocation.isLecturerApproved === true &&
                     allocation.isTaAccepted === null ? (
                       <div

@@ -47,6 +47,7 @@ interface IAllocation {
   approval: ApprovalEnum;
   isLecturerApproved: boolean;
   isTaAccepted: boolean;
+  isWorkforceApproved: boolean;
 }
 
 interface IAvailability {

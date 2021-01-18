@@ -108,7 +108,7 @@ const Lecturing = () => {
         activityId={statusLogModalOpen}
         closeModal={() => setStatusLogModalOpen(null)}
       />
-      <h1>Lecturing</h1>
+      <h1>Offering</h1>
       <LecturingActivity
         {...{
           setModalOpen,
