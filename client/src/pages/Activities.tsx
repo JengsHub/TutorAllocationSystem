@@ -13,8 +13,9 @@ import DoneIcon from "@material-ui/icons/Done";
 import { IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import DatabaseFinder from "../apis/DatabaseFinder";
+import baseApi from "../apis/baseApi";
 
+// TODO: define props type
 const Activities = (props: { [key: string]: any }) => {
   const [allocations, setAllocations] = useState<
     (IAllocation & { [key: string]: any })[]
@@ -36,19 +37,10 @@ const Activities = (props: { [key: string]: any }) => {
           .map((key) => `${key}=${params[key]}`)
           .join("&");
 
-        const res = await fetch(
-          `http://localhost:8888/allocations/mine?${query}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
-        return await res.json();
+        const res = await baseApi.get("/allocations/mine", {
+          params: { query },
+        });
+        return await res.data;
       } catch (e) {
         console.log("Error fetching user activities");
         return [];
@@ -140,10 +132,10 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/ta-acceptance?value=true`
+    const res = await baseApi.patch(
+      `/allocations/${allocation.id}/ta-acceptance?value=true`
     );
-    if (result.statusText === "OK") {
+    if (res.statusText === "OK") {
       setChanged(true);
       setOpenApproval(true);
     } else {
@@ -153,9 +145,8 @@ const Activities = (props: { [key: string]: any }) => {
   };
 
   const allocationRejected = async (allocation: IAllocation) => {
-    // TODO: Handle approval
-    const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/acceptance?value=false`
+    const result = await baseApi.patch(
+      `allocations/${allocation.id}/acceptance?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);

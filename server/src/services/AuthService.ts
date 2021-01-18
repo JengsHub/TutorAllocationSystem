@@ -3,8 +3,9 @@ import { Router } from "express";
 import { Staff } from "~/entity";
 import { authCheckMiddleware } from "~/helpers/auth";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
+import { config } from "~/config";
 
-const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
+const CLIENT_HOME_PAGE_URL = config.CLIENT_URL;
 
 /**
  * Note: I'm using the regular express router instead of typescript-rest because
@@ -18,10 +19,6 @@ router.get("/google/logout", (req, res) => {
   req.logout();
   req.session.cookie.expires = new Date(); // delete session cookie
   res.redirect(CLIENT_HOME_PAGE_URL);
-
-  // req.session.destroy(()=>{
-  //   res.redirect(CLIENT_HOME_PAGE_URL);
-  // });
 });
 
 // auth with google+

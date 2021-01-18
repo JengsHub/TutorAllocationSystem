@@ -1,4 +1,6 @@
 #!/bin/bash
+parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$parent_path"
 
 CONTAINER_NAME="monash-tas-database"
 POSTGRES_USER=$(grep DB_USERNAME ../.env | cut -d '=' -f 2-)
@@ -14,6 +16,7 @@ if [[ ! "$(docker ps -aqf name=$CONTAINER_NAME)" ]]; then
     -e "POSTGRES_USER=$POSTGRES_USER" \
     -e "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" \
     -e "POSTGRES_DB=$POSTGRES_DB" \
+    -e "POSTGRES_HOST_AUTH_METHOD"="trust" \
     -p 5432:5432 \
     --name "$CONTAINER_NAME" \
     postgres:alpine

@@ -10,7 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
-import DatabaseFinder from "../../apis/DatabaseFinder";
+import baseApi from "../../apis/baseApi";
 
 interface ICandidateProps {
   activityId: string;
@@ -78,7 +78,7 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         staffId: candidatesPreference[i].staffId,
       };
       try {
-        await DatabaseFinder.post("/allocations", allocation);
+        await baseApi.post("/allocations", allocation);
         setSelected([]);
 
         getCandidatePreference(activityId).then((res) => {
