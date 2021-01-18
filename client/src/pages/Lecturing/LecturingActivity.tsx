@@ -1,24 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
-import { DayOfWeek } from "../../enums/DayOfWeek";
+import { Grid, makeStyles, TextField } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, Grid, TextField } from "@material-ui/core";
-import DoneIcon from "@material-ui/icons/Done";
-import ClearIcon from "@material-ui/icons/Clear";
-import DatabaseFinder from "../../apis/DatabaseFinder";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import { withStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useEffect, useRef, useState } from "react";
+import DatabaseFinder from "../../apis/DatabaseFinder";
 import { CustomButton, CustomStatus } from "../../components";
+import { DayOfWeek } from "../../enums/DayOfWeek";
 
 interface ILecturingActivityProps {
   // unitId: string;
