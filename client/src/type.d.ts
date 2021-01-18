@@ -43,7 +43,9 @@ interface IPreferences {
 interface IAllocation {
   id: string;
   activityId: string;
+  activity: IActivity;
   staffId: string;
+  staff: IStaff;
   approval: ApprovalEnum;
   isLecturerApproved: boolean;
   isTaAccepted: boolean;

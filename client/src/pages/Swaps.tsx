@@ -76,10 +76,27 @@ const Swaps = (props: { [key: string]: any }) => {
     getMySwaps().then((res) => {
       setMySwaps(res);
     });
-    // getOpenSwaps().then((res) => {
-    //   setOpenSwaps(res);
-    // });
+    getOpenSwaps().then((res) => {
+      setOpenSwaps(res);
+    });
   }, [props, hasChanged]);
+
+  const dayConverter = (day: DayOfWeek) => {
+    switch (day) {
+      case DayOfWeek.MONDAY:
+        return "Monday";
+      case DayOfWeek.TUESDAY:
+        return "Tuesday";
+      case DayOfWeek.WEDNESDAY:
+        return "Wednesday";
+      case DayOfWeek.THURSDAY:
+        return "Thursday";
+      case DayOfWeek.FRIDAY:
+        return "Friday";
+      default:
+        return "Invalid Day";
+    }
+  };
 
   return (
     <Box>
@@ -96,18 +113,46 @@ const Swaps = (props: { [key: string]: any }) => {
           <TableBody>
             {openSwaps.map((swap, i) => (
               <TableRow key={i}>
-                <TableCell> {swap.id} </TableCell>]
-                <TableCell> {swap.fromAllocationId} </TableCell>
-                <TableCell> {swap.intoAllocationId} </TableCell>]
-                <TableCell> {swap.desiredActivityId} </TableCell>
+                <TableCell> {swap.id} </TableCell>
+                <TableCell>
+                  {" "}
+                  {swap.from.activity.activityCode}-
+                  {swap.from.activity.activityGroup}{" "}
+                  {dayConverter(swap.from.activity.dayOfWeek)}{" "}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {swap.into
+                    ? swap.into.activity.activityCode
+                    : "not swapped yet"}{" "}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
+                  {dayConverter(swap.desired.dayOfWeek)}{" "}
+                </TableCell>
               </TableRow>
             ))}
             {mySwaps.map((swap, i) => (
               <TableRow key={i}>
                 <TableCell> {swap.id} </TableCell>
-                <TableCell> {swap.fromAllocationId} </TableCell>
-                <TableCell> {swap.intoAllocationId} </TableCell>
-                <TableCell> {swap.desiredActivityId} </TableCell>
+                <TableCell>
+                  {" "}
+                  {swap.from.activity.activityCode}-
+                  {swap.from.activity.activityGroup}{" "}
+                  {dayConverter(swap.from.activity.dayOfWeek)}{" "}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {swap.into
+                    ? swap.into.activity.activityCode
+                    : "not swapped yet"}{" "}
+                </TableCell>
+                <TableCell>
+                  {" "}
+                  {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
+                  {dayConverter(swap.desired.dayOfWeek)}{" "}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

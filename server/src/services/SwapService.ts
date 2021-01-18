@@ -99,34 +99,31 @@ class SwapsService {
 
     let unitSwaps = await this.repo
       .createQueryBuilder("swap")
-      .innerJoinAndSelect(
-        Activity,
-        "activity",
-        "activity.id = swap.fromActivityId"
-      )
-      .where("activity.unitId = :unitId", { unitId: unitId })
+      .addSelect("swap.desired")
+      .innerJoinAndSelect("swap.from", "allocation")
+      .innerJoinAndSelect("allocation.activity", "activity")
+      .leftJoinAndSelect("swap.desired", "activty")
+      .where("allocation.staffId != :staffId", { staffId: me.id })
+      .andWhere("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
-    let myActivities = await getRepository(Activity).find({
-      where: {
-        staff: me,
-      },
-    });
+    console.log(unitSwaps);
 
-    let myUnitActivities = await getRepository(Activity).find({
-      where: {
-        staff: me,
-        unit: myUnit,
-      },
-    });
+    let myActivities = await getRepository(Activity)
+      .createQueryBuilder("activity")
+      .leftJoin("activity.allocations", "allocation")
+      .where("allocation.staffId = :staffId", { staffId: me.id })
+      .getMany();
+    console.log(myActivities);
 
-    // let myActivityIds = [];
-    // for (let act of myActivities) myActivityIds.push(act.id);
+    let myUnitActivities = myActivities.filter((act) => act.unitId == unitId);
+    console.log(myUnitActivities);
 
     let eligableSwaps = unitSwaps.filter((swap) => {
       if (myUnitActivities.includes(swap.desired)) return false;
 
       return checkSwapAllocation(me, myActivities, swap.from.activity);
+      // return true;
     });
     console.log(eligableSwaps);
     return eligableSwaps;
@@ -144,12 +141,16 @@ class SwapsService {
 
     let mySwaps = await this.repo
       .createQueryBuilder("swap")
+      .addSelect("swap.desired")
       .innerJoinAndSelect("swap.from", "allocation")
       .innerJoinAndSelect("allocation.activity", "activity")
+      .leftJoinAndSelect("swap.desired", "activty")
       .where("allocation.staffId = :staffId", { staffId: me.id })
       .where("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
+
     console.log(mySwaps);
+
     return mySwaps;
   }
 

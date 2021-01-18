@@ -112,7 +112,7 @@ const Activities = (props: { [key: string]: any }) => {
         return -1;
       } else if (
         Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) >
-        Object.values(DayOfWeek).indexOf(b.activity.ayOfWeek)
+        Object.values(DayOfWeek).indexOf(b.activity.dayOfWeek)
       ) {
         return 1;
       } else {
