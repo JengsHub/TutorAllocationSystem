@@ -17,30 +17,16 @@ import { authCheckMiddleware } from "./helpers/auth";
 import { getConnection } from "typeorm";
 import { Session } from "./entity/Session";
 import { TypeormStore } from "typeorm-store";
-import swaggerUi from "swagger-ui-express";
-import swaggerJSDoc from "swagger-jsdoc";
-
-
 import { NodemailerEmailHelper, SibEmailHelper } from "./email/emailHelper";
 import fileUpload from "express-fileupload";
 
 const initServer = async () => {
   const app: express.Application = express();
 
-  const options = {
-    swaggerDefinition: {
-      info: {
-        title: "Hello World",
-        version: "1.0.0",
-      },
-    },
-    apis: ["src/services/*"],
-  };
-
-  const swaggerSpec = swaggerJSDoc(options);
   const swaggerUi = require("swagger-ui-express");
-  const swaggerDocument = require("./swagger.json");
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  console.log(require("./swagger").swaggerDocument.paths);
+  
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger").swaggerDocument));
 
   if (result.error) {
     throw result.error;
