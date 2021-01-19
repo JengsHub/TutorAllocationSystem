@@ -9,3 +9,6 @@ server/dist
 
 # session files
 server/sessions
+
+# Config
+server/src/config.ts
