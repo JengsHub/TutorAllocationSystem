@@ -13,18 +13,20 @@ import IconButton from "@material-ui/core/IconButton";
 import { makeStyles } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
-import DatabaseFinder from "../../apis/DatabaseFinder";
+import baseApi from "../../apis/baseApi";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 interface ILecturingActivityProps {
   unitId: string;
   setModalOpen: (activityId: string) => void;
+  setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   unitId,
   setModalOpen,
+  setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -37,19 +39,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     const getActivities = async () => {
       try {
         //console.log(params.unitId);
-        const res = await fetch(
-          `http://localhost:8888/units/${unitId}/activities`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
-        return await res.json();
+        const res = await baseApi.get(`/units/${unitId}/activities/`);
+        return await res.data;
       } catch (e) {
         console.log("Error fetching user activities");
         return [];
@@ -99,8 +90,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   };
 
   const allocationApproved = async (allocation: IAllocation) => {
-    const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/lecturer-approval?value=true`
+    const result = await baseApi.patch(
+      `/allocations/${allocation.id}/lecturer-approval?value=true`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -113,8 +104,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-    const result = await DatabaseFinder.delete(
-      `http://localhost:8888/allocations/${allocation.id}`
+    const result = await baseApi.patch(
+      `/allocations/${allocation.id}/approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -224,7 +215,15 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
             {sortDayTime(activities).map((activity, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  {activity.activityCode}
+                  <TableRow>{activity.activityCode}</TableRow>
+                  <Button
+                    size="small"
+                    href="#text-buttons"
+                    color="primary"
+                    onClick={() => setStatusLogModalOpen(activity.id)}
+                  >
+                    Status Log
+                  </Button>
                 </TableCell>
                 <TableCell align="left">{activity.activityGroup}</TableCell>
                 <TableCell align="left">{activity.campus}</TableCell>
