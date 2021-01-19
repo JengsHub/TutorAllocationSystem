@@ -1,13 +1,9 @@
 import { Button, Grid } from "@material-ui/core";
-import Axios from "axios";
 import React, { Component } from "react";
+import baseApi from "../apis/baseApi";
+import ReadFileFormat from "../services/ReadFileFormat";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import ReadFileFormat from "../services/ReadFileFormat";
-
-//dependencies:
-// npm install -g browserify
-// yarn add csv-parser
 
 class AllocateDragDrop extends Component<Props, State> {
   //initialzier to accept file types.
@@ -90,7 +86,7 @@ class AllocateDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("allocate", this.inputCsvFile);
       console.log(this.inputCsvFile);
-      await Axios.post("http://localhost:8888/upload/allocate", formData);
+      await baseApi.post("/upload/allocate", formData);
     } catch (error) {
       throw error;
     }

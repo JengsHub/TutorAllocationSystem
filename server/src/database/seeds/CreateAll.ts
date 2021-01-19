@@ -1,4 +1,4 @@
-import { Staff } from "src/entity/Staff";
+import { Staff } from "~/entity";
 import { Connection, getManager } from "typeorm";
 import { Factory, Seeder } from "typeorm-seeding";
 import {

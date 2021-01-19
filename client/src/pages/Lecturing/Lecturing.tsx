@@ -11,27 +11,24 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
+import baseApi from "../../apis/baseApi";
+import StatusLogModal from "../StatusLogModal";
 import CandidatesModal from "./CandidatesModal";
 import LecturingActivity from "./LecturingActivity";
 
 const Lecturing = () => {
   const [units, setUnits] = useState<IUnit[]>([]);
   const [modalOpen, setModalOpen] = useState<string | null>(null);
+  const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const res = await fetch(`http://localhost:8888/units/byRole/Lecturer`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": "true",
-          },
-        });
-        return await res.json();
+        const res = await baseApi.get("/units/byRole/Lecturer");
+        return await res.data;
       } catch (err) {
         // console.log("No units found with lecturer roll");
         console.error(err);
@@ -84,6 +81,7 @@ const Lecturing = () => {
                   {...{
                     unitId: row.id,
                     setModalOpen,
+                    setStatusLogModalOpen,
                   }}
                 ></LecturingActivity>
               </Box>
@@ -99,6 +97,10 @@ const Lecturing = () => {
       <CandidatesModal
         activityId={modalOpen}
         closeModal={() => setModalOpen(null)}
+      />
+      <StatusLogModal
+        activityId={statusLogModalOpen}
+        closeModal={() => setStatusLogModalOpen(null)}
       />
       <h1>Lecturing</h1>
       <TableContainer component={Paper}>
