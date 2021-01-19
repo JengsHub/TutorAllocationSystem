@@ -8,9 +8,8 @@ import {
   TransactionalEmailsApi,
   TransactionalEmailsApiApiKeys,
 } from "sib-api-v3-typescript";
-import { config } from "~/config";
 
-// const result = dotenv.config();
+const result = dotenv.config();
 
 /**
  * Interface for email helpers
@@ -107,10 +106,10 @@ export class NodemailerEmailHelper implements emailHelper {
   constructor() {
     // create nodemailer mail transporter
     this.transporter = createTransport({
-      service: config.SMTP_SERVICE,
+      service: process.env.SMTP_SERVICE,
       auth: {
-        user: config.SMTP_USER,
-        pass: config.SMTP_PASSWORD,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
       },
     });
 
@@ -135,7 +134,7 @@ export class NodemailerEmailHelper implements emailHelper {
   }) {
     const { recipient, content } = data;
     const mailOptions = {
-      from: config.FROM_EMAIL,
+      from: process.env.FROM_EMAIL,
       to: data.recipient,
       subject: "Activity Offer - Monash Tutor Allocation System",
       template: "offerToTa",
@@ -166,7 +165,7 @@ export class NodemailerEmailHelper implements emailHelper {
     const { recipient, content } = data;
     console.log(recipient);
     const mailOptions = {
-      from: config.FROM_EMAIL,
+      from: process.env.FROM_EMAIL,
       to: recipient,
       subject: "Accepting Offer - Monash Tutor Allocation System",
       template: "replyToLecturer",
