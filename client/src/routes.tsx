@@ -14,6 +14,7 @@ import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
+import Staff from "./pages/Staff";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
@@ -69,6 +70,12 @@ const Routes = () => {
             path="/admin"
             component={Admin}
           />
+          <PrivateRoute 
+            isAuthenticated={isAuth}
+            path="/staff"
+            component={Staff}
+          />
+
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
         </Switch>

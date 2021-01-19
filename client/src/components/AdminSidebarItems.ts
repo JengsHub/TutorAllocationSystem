@@ -4,6 +4,10 @@ const AdminSidebarItems = [
     route: "/",
   },
   {
+    name: "Staff",
+    route: "/staff",
+  },
+  {
     name: "Data Import",
     route: "/dataimport",
   },
