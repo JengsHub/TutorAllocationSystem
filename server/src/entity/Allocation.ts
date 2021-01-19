@@ -32,7 +32,10 @@ export class Allocation extends BaseEntity {
   staffId!: string;
 
   //expiry date default: 7 days from current date
-  @Column({ type: "timestamptz", default: addDays(new Date(), 5).toUTCString()})
+  @Column({
+    type: "timestamptz",
+    default: addDays(new Date(), 5).toUTCString(),
+  })
   offerExpiryDate!: Date;
 
   @Column({ nullable: true, default: null })
