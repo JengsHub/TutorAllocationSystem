@@ -10,32 +10,21 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-<<<<<<< HEAD
 import { Autocomplete } from "@material-ui/lab";
-=======
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from "@material-ui/core";
-import DoneIcon from "@material-ui/icons/Done";
-import ClearIcon from "@material-ui/icons/Clear";
-import baseApi from "../../apis/baseApi";
-import Snackbar from "@material-ui/core/Snackbar";
->>>>>>> 26-timer-on-offer-s-2
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useRef, useState } from "react";
-import DatabaseFinder from "../../apis/DatabaseFinder";
+import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 
 interface ILecturingActivityProps {
-  // unitId: string;
+  unitId: string;
   setModalOpen: (activityId: string) => void;
   setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
-  // unitId,
+  unitId,
   setModalOpen,
   setStatusLogModalOpen,
 }) => {
@@ -66,24 +55,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     const getActivities = async () => {
       try {
         //console.log(params.unitId);
-<<<<<<< HEAD
-        const res = await fetch(
-          `http://localhost:8888/activities/all-my-lecturing`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
-        return await res.json();
-=======
         const res = await baseApi.get(`/units/${unitId}/activities/`);
         return await res.data;
->>>>>>> 26-timer-on-offer-s-2
       } catch (e) {
         console.log("Error fetching user activities");
         return [];
@@ -96,7 +69,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       // eslint-disable-next-line
       setUpAutoComplete(res);
     });
-  }, [hasChanged]);
+  }, [unitId, hasChanged]);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -226,16 +199,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const allocationRejected = async (allocation: IAllocation) => {
     // TODO: Handle approval
-<<<<<<< HEAD
-    // const result = await DatabaseFinder.delete(
-    //   `http://localhost:8888/allocations/${allocation.id}`
-    // );
-    const result = await DatabaseFinder.patch(
-      `http://localhost:8888/allocations/${allocation.id}/lecturer-approval?value=false`
-=======
     const result = await baseApi.patch(
       `/allocations/${allocation.id}/approval?value=false`
->>>>>>> 26-timer-on-offer-s-2
     );
     if (result.statusText === "OK") {
       setChanged(true);
