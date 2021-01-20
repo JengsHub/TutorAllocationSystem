@@ -53,7 +53,7 @@ const Routes = () => {
             exact
             component={Dashboard}
           />
-          <PrivateRoute 
+          <PrivateRoute
             isAuthenticated={isAuth}
             path="/staff"
             component={Staff}
@@ -63,7 +63,7 @@ const Routes = () => {
             path="/dataimport"
             component={DataImport}
           />
-          <PrivateRoute 
+          <PrivateRoute
             isAuthenticated={isAuth}
             path="/rules"
             component={Rules}
@@ -73,7 +73,6 @@ const Routes = () => {
             path="/admin"
             component={Admin}
           />
-          
 
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
