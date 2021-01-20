@@ -44,4 +44,8 @@ const dev = {
 };
 
 console.log(process.env.NODE_ENV);
-export const config: any = process.env.NODE_ENV === "development" ? dev : prod;
+
+export const config: any =
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined
+    ? dev
+    : prod;

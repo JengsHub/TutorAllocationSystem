@@ -148,6 +148,7 @@ class AllocationsService {
     }
 
     const me = req.user as Staff;
+
     const controller = this.factory.getController(
       await me.getRoleTitle(activity.unitId)
     );

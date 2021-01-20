@@ -13,6 +13,13 @@ import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Allocation extends BaseEntity {
+  // getDefaultDate(daysToAdd: number = 0) {
+  //   let d = new Date();
+  //   let newDate = new Date(d.setTime(d.getTime() + daysToAdd * 86400000));
+  //   newDate.setTime(newDate.getTime() + 12 * 1000 * 60 * 60);
+  //   return newDate;
+  // }
+
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
@@ -31,7 +38,10 @@ export class Allocation extends BaseEntity {
   staffId!: string;
 
   //expiry date default: 7 days from current date
-  @Column({ type: "timestamp", default: new Date().getDate() + 5 })
+  @Column({
+    type: "timestamp",
+    default: new Date(new Date().setTime(new Date().getTime() + 5 * 86400000)),
+  })
   offerExpiryDate!: Date;
 
   @Column({ nullable: true, default: null })
