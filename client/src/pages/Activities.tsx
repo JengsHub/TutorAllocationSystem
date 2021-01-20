@@ -27,18 +27,13 @@ const Activities = (props: { [key: string]: any }) => {
 
   useEffect(() => {
     setChanged(false);
-    let params: { [key: string]: any } = {
+    let query: { [key: string]: any } = {
       ...props,
     };
     const getAllocations = async () => {
       try {
-        let query = Object.keys(params)
-          .filter((key) => params[key] !== undefined)
-          .map((key) => `${key}=${params[key]}`)
-          .join("&");
-
         const res = await baseApi.get("/allocations/mine", {
-          params: { query },
+          params: query ,
         });
         return await res.data;
       } catch (e) {
@@ -146,7 +141,7 @@ const Activities = (props: { [key: string]: any }) => {
 
   const allocationRejected = async (allocation: IAllocation) => {
     const result = await baseApi.patch(
-      `allocations/${allocation.id}/acceptance?value=false`
+      `allocations/${allocation.id}/ta-acceptance?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -189,6 +184,7 @@ const Activities = (props: { [key: string]: any }) => {
               <TableCell align="left">Day of Week</TableCell>
               <TableCell align="left">Location </TableCell>
               <TableCell align="left">Start Time</TableCell>
+              <TableCell align="left">Student Number</TableCell>
               <TableCell align="left">Status</TableCell>
             </TableRow>
           </TableHead>
@@ -197,7 +193,7 @@ const Activities = (props: { [key: string]: any }) => {
             {sortDayTime(allocations).map((allocation, i) => (
               <TableRow key={i}>
                 <TableCell component="th" scope="row">
-                  <TableRow>{allocation.activity.activityCode}</TableRow>
+                  {allocation.activity.activityCode}
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.activityGroup}
@@ -211,6 +207,9 @@ const Activities = (props: { [key: string]: any }) => {
                 </TableCell>
                 <TableCell align="left">
                   {allocation.activity.startTime}
+                </TableCell>
+                <TableCell align="left">
+                  {allocation.activity.studentCount}
                 </TableCell>
                 <TableCell align="left">{approvalStatus(allocation)}</TableCell>
               </TableRow>

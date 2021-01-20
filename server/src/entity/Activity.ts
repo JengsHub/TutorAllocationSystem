@@ -61,4 +61,7 @@ export class Activity extends BaseEntity {
 
   @Column()
   unitId!: string;
+
+  @Column({default: 0})
+  studentCount!: number;
 }
