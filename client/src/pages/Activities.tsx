@@ -33,7 +33,7 @@ const Activities = (props: { [key: string]: any }) => {
     const getAllocations = async () => {
       try {
         const res = await baseApi.get("/allocations/mine", {
-          params: query ,
+          params: query,
         });
         return await res.data;
       } catch (e) {

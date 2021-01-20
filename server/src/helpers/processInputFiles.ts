@@ -375,7 +375,7 @@ type AllocateObject = {
   duration: string;
   location: string;
   staff_in_charge: string;
-  studentCount: number
+  studentCount: number;
 };
 
 export function mapRawTasFile(rawRow: RawTasObject) {
