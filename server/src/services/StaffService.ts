@@ -4,6 +4,7 @@ import {
   ContextRequest,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
   PATCH,
   Path,
   PathParam,
@@ -34,6 +35,7 @@ class StaffService {
    */
   @GET
   @Path("/all")
+  @IgnoreNextMiddlewares
   public async getAllStaff(
     @ContextRequest req: Request
   ): Promise<Array<Staff>> {
