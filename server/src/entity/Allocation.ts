@@ -7,6 +7,7 @@ import {
   OneToMany,
   AfterLoad,
 } from "typeorm";
+import { addDays } from "~/helpers";
 import { Activity } from "./Activity";
 import { Staff } from "./Staff";
 import { StatusLog } from "./StatusLog";
@@ -39,8 +40,8 @@ export class Allocation extends BaseEntity {
 
   //expiry date default: 7 days from current date
   @Column({
-    type: "timestamp",
-    default: new Date(new Date().setTime(new Date().getTime() + 5 * 86400000)),
+    type: "timestamptz",
+    default: addDays(new Date(), 5).toUTCString(),
   })
   offerExpiryDate!: Date;
 
