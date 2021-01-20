@@ -60,6 +60,7 @@ class SwapsService {
       relations: ["activity"],
     });
     allocations = allocations.filter((alc) => alc.activity.unitId === unit.id);
+
     let myActivities: Activity[] = [];
     allocations.forEach((alc) => myActivities.push(alc.activity));
 
@@ -72,17 +73,16 @@ class SwapsService {
 
     alternateActivities = alternateActivities.filter((act) => {
       for (let alc of act.allocations) {
-        if (alc.staffId == me.id) {
+        if (alc.staffId === me.id) {
           return false;
         }
-        return checkSwapAllocation(me, myActivities, alc.activity);
       }
+      const eligable = checkSwapAllocation(me, myActivities, act);
+      console.log(eligable, act);
+      return eligable;
     });
 
-    console.log("Mine", alternateActivities);
-    console.log("Alts", myActivities);
-
-    return [alternateActivities, myActivities];
+    return alternateActivities;
   }
 
   @GET

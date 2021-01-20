@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import { DayOfWeek } from "../../enums/DayOfWeek";
+import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -13,9 +14,19 @@ import DoneIcon from "@material-ui/icons/Done";
 import { IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import DatabaseFinder from "../apis/DatabaseFinder";
+import DatabaseFinder from "../../apis/DatabaseFinder";
 
-const Activities = (props: { [key: string]: any }) => {
+interface IActivityProps {
+  unitId: string;
+  isLecturerApproved: boolean;
+  setModalOpen: (activityId: string) => void;
+}
+
+const Activities: React.FC<IActivityProps> = ({
+  unitId,
+  isLecturerApproved,
+  setModalOpen,
+}) => {
   const [allocations, setAllocations] = useState<
     (IAllocation & { [key: string]: any })[]
   >([]);
@@ -28,7 +39,8 @@ const Activities = (props: { [key: string]: any }) => {
   useEffect(() => {
     setChanged(false);
     let params: { [key: string]: any } = {
-      ...props,
+      unitId: unitId,
+      isLecturerApproved: isLecturerApproved,
     };
     const getAllocations = async () => {
       try {
@@ -59,7 +71,7 @@ const Activities = (props: { [key: string]: any }) => {
     getAllocations().then((res) => {
       setAllocations(res);
     });
-  }, [props, hasChanged]);
+  }, [unitId, hasChanged]);
 
   const useRowStyles = makeStyles({
     error: {
@@ -200,6 +212,7 @@ const Activities = (props: { [key: string]: any }) => {
               <TableCell align="left">Location </TableCell>
               <TableCell align="left">Start Time</TableCell>
               <TableCell align="left">Status</TableCell>
+              <TableCell align="center">Swap</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -223,6 +236,15 @@ const Activities = (props: { [key: string]: any }) => {
                   {allocation.activity.startTime}
                 </TableCell>
                 <TableCell align="left">{approvalStatus(allocation)}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    onClick={() => setModalOpen(allocation.activity.id)}
+                  >
+                    {" "}
+                    Swap{" "}
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -104,13 +104,6 @@ export const checkAllocation = async (
     await rules.findOneOrFail({ ruleName: "consecutiveHours" })
   ).value;
 
-  console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
-  console.log(
-    maxHoursPerDayRule,
-    maxHoursPerWeekRule,
-    maxActivitiesPerUnitRule,
-    maxTotalActivitiesRule
-  );
   // TODO: Specific error message for each constraint violated
   if (
     dayHours > maxHoursPerDayRule ||
@@ -125,14 +118,6 @@ export const checkAllocation = async (
     availability.startTime <= newActivity.startTime &&
     availability.endTime >= newActivity.endTime;
 
-  console.log(
-    availability.startTime,
-    newActivity.startTime,
-    availability.endTime,
-    newActivity.endTime
-  );
-  console.log(isWithinAvailableHours);
-
   if (!isWithinAvailableHours) return false;
 
   // Check for clashes
@@ -140,8 +125,6 @@ export const checkAllocation = async (
   const sameDayActivities = activities
     .filter((a) => a?.dayOfWeek === newActivity.dayOfWeek)
     .slice();
-
-  console.log(sameDayActivities);
 
   for (let a of sameDayActivities) {
     if (
@@ -172,8 +155,6 @@ export const checkAllocation = async (
     const longestConsecutive = Math.max(
       ...stack.map((a) => activityDuration(a))
     );
-
-    console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
 
     if (longestConsecutive > consecutiveHoursRule) return false;
   }

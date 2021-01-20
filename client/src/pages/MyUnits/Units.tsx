@@ -13,9 +13,12 @@ import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
 import Swaps from "./Swaps";
+import OfferSwapModal from "./OfferSwapModal";
 
 const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
+
+  const [modalOpen, setModalOpen] = useState<string | null>(null);
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -88,6 +91,7 @@ const Units = () => {
                   {...{
                     unitId: row.unitId,
                     isLecturerApproved: true, // TODO: should do back end validation to only show approved allocation
+                    setModalOpen,
                   }}
                 ></Activities>
                 <Swaps
@@ -126,6 +130,10 @@ const Units = () => {
 
   return (
     <div id="main">
+      <OfferSwapModal
+        activityId={modalOpen}
+        closeModal={() => setModalOpen(null)}
+      />
       <h1>My Units</h1>
       <TableContainer component={Paper}>
         <Table className={""} aria-label="a dense table">
