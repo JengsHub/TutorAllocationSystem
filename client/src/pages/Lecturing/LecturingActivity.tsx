@@ -18,13 +18,11 @@ import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 
 interface ILecturingActivityProps {
-  unitId: string;
   setModalOpen: (activityId: string) => void;
   setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
-  unitId,
   setModalOpen,
   setStatusLogModalOpen,
 }) => {
@@ -55,7 +53,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     const getActivities = async () => {
       try {
         //console.log(params.unitId);
-        const res = await baseApi.get(`/units/${unitId}/activities/`);
+        const res = await baseApi.get(`/activities`);
         return await res.data;
       } catch (e) {
         console.log("Error fetching user activities");
@@ -69,7 +67,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       // eslint-disable-next-line
       setUpAutoComplete(res);
     });
-  }, [unitId, hasChanged]);
+  }, [hasChanged]);
 
   useEffect(() => {
     if (initialRender.current) {

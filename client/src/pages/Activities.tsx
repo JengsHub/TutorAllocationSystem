@@ -232,7 +232,9 @@ const Activities = (props: { [key: string]: any }) => {
     }
   };
 
-  const allocationApproved = async (allocation: IAllocation) => {
+  const allocationApproved = async (
+    allocation: myAllocations & { [key: string]: any }
+  ) => {
     const res = await baseApi.patch(
       `/allocations/${allocation.id}/ta-acceptance?value=true`
     );
@@ -245,7 +247,9 @@ const Activities = (props: { [key: string]: any }) => {
     }
   };
 
-  const allocationRejected = async (allocation: IAllocation) => {
+  const allocationRejected = async (
+    allocation: myAllocations & { [key: string]: any }
+  ) => {
     const result = await baseApi.patch(
       `allocations/${allocation.id}/acceptance?value=false`
     );
