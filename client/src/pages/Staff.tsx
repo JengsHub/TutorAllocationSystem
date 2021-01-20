@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -33,25 +33,25 @@ const Staff = () => {
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">Last Name</TableCell>
-              <TableCell align="right">First Name</TableCell>
-              <TableCell align="right">Email</TableCell>
+              <TableCell align="left">Name</TableCell>
+              <TableCell align="left">Email</TableCell>
               <TableCell align="right">AQF</TableCell>
               <TableCell align="right">Studying AQF</TableCell>
-              <TableCell align="center">Preference</TableCell>
+              {/* <TableCell align="center">Preference</TableCell>
               <TableCell align="center">Availability</TableCell>
-              <TableCell align="center">Allocation</TableCell>
+              <TableCell align="center">Allocation</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
             {staffs.map((staff) => (
               <TableRow key={staff.id}>
-                <TableCell align="right">{staff.lastName}</TableCell>
-                <TableCell align="right">{staff.givenNames}</TableCell>
-                <TableCell align="right">{staff.email}</TableCell>
+                <TableCell align="left">
+                  {staff.givenNames} {staff.lastName}
+                </TableCell>
+                <TableCell align="left">{staff.email}</TableCell>
                 <TableCell align="right">{staff.aqf}</TableCell>
                 <TableCell align="right">{staff.studyingAqf}</TableCell>
-                <TableCell align="right">
+                {/* <TableCell align="right">
                   <Button variant="contained" color="default">
                     View Preferences
                   </Button>
@@ -65,7 +65,7 @@ const Staff = () => {
                   <Button variant="contained" color="secondary">
                     View Allocations
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

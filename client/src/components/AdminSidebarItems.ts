@@ -12,6 +12,10 @@ const AdminSidebarItems = [
     route: "/dataimport",
   },
   {
+    name: "Rules",
+    route: "/rules",
+  },
+  {
     name: "Admin",
     route: "/admin",
   },

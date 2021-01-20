@@ -16,6 +16,7 @@ import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
 import Staff from "./pages/Staff";
+import Rules from "./pages/Rules";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
@@ -52,21 +53,27 @@ const Routes = () => {
             exact
             component={Dashboard}
           />
+          <PrivateRoute 
+            isAuthenticated={isAuth}
+            path="/staff"
+            component={Staff}
+          />
           <PrivateRoute
             isAuthenticated={isAuth}
             path="/dataimport"
             component={DataImport}
+          />
+          <PrivateRoute 
+            isAuthenticated={isAuth}
+            path="/rules"
+            component={Rules}
           />
           <PrivateRoute
             isAuthenticated={isAuth}
             path="/admin"
             component={Admin}
           />
-          <PrivateRoute 
-            isAuthenticated={isAuth}
-            path="/staff"
-            component={Staff}
-          />
+          
 
           <Route path="/profile" component={Profile} />
           <PrivateRoute isAuthenticated={isAuth} component={NotFound} />
