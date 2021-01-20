@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+import baseApi from "../apis/baseApi";
+import { config } from "../config";
 import { AuthContext } from "../session";
-// import "../components/styles/Login.css";
 
 const Profile = () => {
   const { isAuth } = React.useContext(AuthContext); // TODO: create context hook for updating value
   const [user, setUser] = useState({});
-  // const [error, setError] = useState("");
 
   // TODO: loading state
   useEffect(() => {
@@ -13,21 +13,12 @@ const Profile = () => {
   }, [isAuth]);
 
   const getProfile = async () => {
-    const authRes = await fetch("http://localhost:8888/auth/login/success", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": "true",
-      },
-    });
-
+    const authRes = await baseApi.get(`auth/login/success`);
     if (authRes.status !== 200) {
       return;
     }
 
-    const resBody = await authRes.json();
+    const resBody = await authRes.data;
     // console.log(resBody);
     try {
       setUser(resBody.user);
@@ -37,11 +28,11 @@ const Profile = () => {
   };
 
   const logout = async () => {
-    window.open("http://localhost:8888/auth/google/logout", "_self");
+    window.open(`${config.url.API_URL}/auth/google/logout`, "_self");
   };
 
   const login = async () => {
-    window.open("http://localhost:8888/auth/google", "_self");
+    window.open(`${config.url.API_URL}/auth/google`, "_self");
   };
 
   return (

@@ -3,6 +3,7 @@ import Fade from "@material-ui/core/Fade";
 import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
 import React, { useEffect, useState } from "react";
+import baseApi from "../apis/baseApi";
 import StickyHeadTable from "../components/StickyHeadTable";
 
 interface IStatusLogModal {
@@ -26,17 +27,17 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
     const getStatusLogs = async (activityId: string | null) => {
       let statusLogs: Array<Object> = [];
       // get all the allocations associated with the activity id
-      let allocationsResponse = await fetch(
-        `http://localhost:8888/activities/${activityId}/allocation`
+      let allocationsResponse = await baseApi(
+        `/activities/${activityId}/allocation`
       );
-      let allocations = await allocationsResponse.json();
+      let allocations = allocationsResponse.data;
       // loop through the allocations and get the associated status logs
       for (let i = 0; i < allocations.length; i++) {
         let allocationId = allocations[i].id;
-        let statusLogsResponse = await fetch(
-          `http://localhost:8888/statuslog/${allocationId}/staffs`
+        let statusLogsResponse = await baseApi(
+          `statuslog/${allocationId}/staffs`
         );
-        let statusLogJson: Object[] = await statusLogsResponse.json();
+        let statusLogJson: Object[] = await statusLogsResponse.data;
         statusLogs = statusLogs.concat(statusLogJson);
       }
       return statusLogs;

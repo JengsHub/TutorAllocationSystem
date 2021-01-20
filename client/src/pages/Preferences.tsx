@@ -6,13 +6,14 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import baseApi from "../apis/baseApi";
 
 const Preferences = () => {
   const [preferences, setStaffPreferences] = useState<IPreferences[]>([]);
 
   const getStaffPreferences = async () => {
-    const res = await fetch("http://localhost:8888/staffpreferences");
-    return res.json();
+    const res = await baseApi.get("/staffpreferences");
+    return res.data;
   };
 
   useEffect(() => {

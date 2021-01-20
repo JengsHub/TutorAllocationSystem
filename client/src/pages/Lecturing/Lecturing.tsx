@@ -11,6 +11,7 @@
 // import TableRow from "@material-ui/core/TableRow";
 // import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
+import baseApi from "../../apis/baseApi";
 import StatusLogModal from "../StatusLogModal";
 import CandidatesModal from "./CandidatesModal";
 import LecturingActivity from "./LecturingActivity";
@@ -26,16 +27,8 @@ const Lecturing = () => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const res = await fetch(`http://localhost:8888/units/byRole/Lecturer`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": "true",
-          },
-        });
-        return await res.json();
+        const res = await baseApi.get("/units/byRole/Lecturer");
+        return await res.data;
       } catch (err) {
         // console.log("No units found with lecturer roll");
         console.error(err);

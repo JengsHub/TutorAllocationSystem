@@ -12,6 +12,7 @@ import React, { useEffect } from "react";
 // import Box from "@material-ui/core/Box";
 // import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
+import baseApi from "../apis/baseApi";
 
 const Units = () => {
   // const [units, setUnits] = useState<IPreferences[]>([]);
@@ -20,16 +21,8 @@ const Units = () => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const res = await fetch(`http://localhost:8888/staffpreferences/mine`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": "true",
-          },
-        });
-        return await res.json();
+        const r = await baseApi.get("/staffpreferences/mine/");
+        return r.data;
       } catch (err) {
         console.log("No preferences found");
         return [];
