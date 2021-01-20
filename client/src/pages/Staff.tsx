@@ -14,7 +14,7 @@ const Staff = () => {
 
   const getAllStaff = async () => {
     try {
-      const res = await baseApi.get("/staff");
+      const res = await baseApi.get("/staff/all");
       const jsonData = await res.data;
       setStaffs(jsonData);
     } catch (err) {
