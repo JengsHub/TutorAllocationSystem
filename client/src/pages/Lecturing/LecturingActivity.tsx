@@ -1,4 +1,4 @@
-import { Grid, makeStyles, TextField } from "@material-ui/core";
+import { Grid, makeStyles, TextField, Tooltip } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
@@ -48,6 +48,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const [selectedCampus, setSelectedCampus] = useState<any>("All");
   const initialRender = useRef(true);
 
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
+
   useEffect(() => {
     setChanged(false);
     const getActivities = async () => {
@@ -67,6 +69,12 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       setUpAutoComplete(res);
     });
   }, [hasChanged]);
+
+  useEffect(() => {
+    setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+  }, []);
 
   useEffect(() => {
     if (initialRender.current) {
@@ -153,25 +161,35 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
     //dates cons
     const expDateFormat = new Date(expiryDate);
-    const todayDate = new Date();
-    const timeDifference = expDateFormat.getTime() - todayDate.getTime();
+    const timeDifference = expDateFormat.getTime() - currentTime.getTime();
     const daysDifference = timeDifference / (1000 * 3600 * 24);
 
     //if offer expired.
-    if (timeDifference <= 0){
-      return "Offer has expired";
+    if (timeDifference <= 0) {
+      return (
+        <CustomStatus
+          value="Tutor has not responded in time"
+          isYellow
+          isExclamationDiamond
+          isCompact
+        />
+      );
     }
-    
+
     //deciding to show days or hours/minutes
     if (daysDifference > 1) {
       return Math.floor(daysDifference).toString() + " days";
     } else {
       const roundedHours = Math.floor(timeDifference / 3600000);
-      if (roundedHours >= 1){ //if greater or equal to an hour: just show the hours
+      if (roundedHours >= 1) {
+        //if greater or equal to an hour: just show the hours
         return roundedHours.toString() + (roundedHours === 1 ? " hr" : " hrs");
-      }else{ //else, show the minutes instead
+      } else {
+        //else, show the minutes instead
         const roundedMinutes = Math.floor(timeDifference / 60000);
-        return roundedMinutes.toString() + (roundedMinutes === 1 ? " min" : " mins");
+        return (
+          roundedMinutes.toString() + (roundedMinutes === 1 ? " min" : " mins")
+        );
       }
     }
   };
@@ -510,8 +528,8 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                   </div>
                                 ) : null}
                               </TableCell>
-                              <TableCell align="left"> 
-                              {getDaysCountDown(allocation.offerExpiryDate)} 
+                              <TableCell align="left">
+                                {getDaysCountDown(allocation.offerExpiryDate)}
                               </TableCell>
                             </TableRow>
                             {j === n - 1 ? (

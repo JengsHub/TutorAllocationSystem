@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import { Grid, makeStyles, TextField } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
-import { makeStyles, Grid, TextField } from "@material-ui/core";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import { withStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 import { Autocomplete } from "@material-ui/lab";
-import { CustomButton, CustomStatus } from "../components";
-import "../index.css";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../apis/baseApi";
+import { CustomButton, CustomStatus } from "../components";
+import { DayOfWeek } from "../enums/DayOfWeek";
+import "../index.css";
 
 const Activities = () => {
   const [allocations, setAllocations] = useState<
@@ -42,6 +43,8 @@ const Activities = () => {
   const [selectedUnitCode, setSelectedUnitCode] = useState<any>("All");
   const [selectedCampus, setSelectedCampus] = useState<any>("All");
   const initialRender = useRef(true);
+
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   useEffect(() => {
     setChanged(false);
@@ -111,6 +114,12 @@ const Activities = () => {
     selectedUnitCode,
     allocations,
   ]);
+
+  useEffect(() => {
+    setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+  }, []);
 
   function setUpAutoComplete(res: myAllocations & { [key: string]: any }[]) {
     let uniqueList: string[] = [];
@@ -184,25 +193,35 @@ const Activities = () => {
 
     //dates cons
     const expDateFormat = new Date(expiryDate);
-    const todayDate = new Date();
-    const timeDifference = expDateFormat.getTime() - todayDate.getTime();
+    const timeDifference = expDateFormat.getTime() - currentTime.getTime();
     const daysDifference = timeDifference / (1000 * 3600 * 24);
 
     //if offer expired.
-    if (timeDifference <= 0){
-      return "Offer has expired";
+    if (timeDifference <= 0) {
+      return (
+        <CustomStatus
+          value="Please respond soon or offer may be retracted"
+          isYellow
+          isCompact
+          isExclamationDiamond
+        />
+      );
     }
-    
+
     //deciding to show days or hours/minutes
     if (daysDifference > 1) {
       return Math.floor(daysDifference).toString() + " days";
     } else {
       const roundedHours = Math.floor(timeDifference / 3600000);
-      if (roundedHours >= 1){ //if greater or equal to an hour: just show the hours
+      if (roundedHours >= 1) {
+        //if greater or equal to an hour: just show the hours
         return roundedHours.toString() + (roundedHours === 1 ? " hr" : " hrs");
-      }else{ //else, show the minutes instead
+      } else {
+        //else, show the minutes instead
         const roundedMinutes = Math.floor(timeDifference / 60000);
-        return roundedMinutes.toString() + (roundedMinutes === 1 ? " min" : " mins");
+        return (
+          roundedMinutes.toString() + (roundedMinutes === 1 ? " min" : " mins")
+        );
       }
     }
   };

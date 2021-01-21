@@ -1,6 +1,7 @@
 import React from "react";
 import "./CustomStatus.scss";
 import classNames from "classnames";
+import { Tooltip } from "@material-ui/core";
 
 interface Props {
   value: string;
@@ -67,8 +68,16 @@ const CustomStatus: React.FC<Props> = ({
 
   return (
     <div className={classes}>
-      {isCompact ? "" : <div className="custom-status__value">{value}</div>}
-      <img className={iconClasses} alt="" />
+      {isCompact ? (
+        <Tooltip title={value}>
+          <img className={iconClasses} alt="" />
+        </Tooltip>
+      ) : (
+        <>
+          <div className="custom-status__value">{value}</div>
+          <img className={iconClasses} alt="" />
+        </>
+      )}
     </div>
   );
 };
