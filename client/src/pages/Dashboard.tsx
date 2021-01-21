@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React from "react";
 
 const Dashboard = () => {
   // const handleButtonClick = (event: MouseEvent) => {
