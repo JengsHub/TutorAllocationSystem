@@ -16,6 +16,7 @@ interface IActivity {
   location: string;
   startTime: string;
   endTime: string;
+  studentCount: number;
   unit: IUnit;
   unitId: string;
 }

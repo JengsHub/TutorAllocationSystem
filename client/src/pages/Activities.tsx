@@ -300,7 +300,7 @@ const Activities = () => {
     allocation: myAllocations & { [key: string]: any }
   ) => {
     const result = await baseApi.patch(
-      `allocations/${allocation.id}/acceptance?value=false`
+      `allocations/${allocation.id}/ta-acceptance?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -409,7 +409,6 @@ const Activities = () => {
             )}
             value={selectedUnitCode}
             onChange={(event, newValue) => {
-              // @ts-ignore
               setSelectedUnitCode(newValue);
             }}
           />
@@ -433,6 +432,7 @@ const Activities = () => {
                 <StyledTableCell align="left">Location </StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
                 <StyledTableCell align="left">End Time</StyledTableCell>
+                <StyledTableCell align="left">Student Count</StyledTableCell>
                 <StyledTableCell align="left">Status</StyledTableCell>
                 <StyledTableCell align="left">Action</StyledTableCell>
                 <StyledTableCell align="left">Time Remaining</StyledTableCell>
@@ -465,6 +465,9 @@ const Activities = () => {
                   </TableCell>
                   <TableCell align="left">
                     {allocation.activity.endTime.substring(0, 5)}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.studentCount}
                   </TableCell>
                   <TableCell align="center">
                     {approvalStatus(allocation)}

@@ -108,6 +108,7 @@ class UploadService {
       startTime: string;
       duration: string;
       location: string;
+      studentCount: number;
       staff_in_charge: string;
     }[] = [];
     fs.createReadStream(path)

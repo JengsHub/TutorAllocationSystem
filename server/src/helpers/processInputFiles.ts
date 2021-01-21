@@ -254,6 +254,7 @@ export class ProcessFileService {
       startTime: row["startTime"],
       unitId: unit_object["id"],
       endTime: endTime,
+      studentCount: row["studentCount"],
     });
     try {
       // let activityRepo = Activity.getRepository();
@@ -328,6 +329,7 @@ type RawAllocateObject = {
   day_of_week: string;
   start_time: string;
   staff: string;
+  student_count: number;
 };
 
 type TasObject = {
@@ -378,6 +380,7 @@ type AllocateObject = {
   duration: string;
   location: string;
   staff_in_charge: string;
+  studentCount: number;
 };
 
 export function mapRawTasFile(rawRow: RawTasObject) {
@@ -464,6 +467,7 @@ export function mapRawAllocateFile(rawRow: RawAllocateObject) {
     dayOfWeek: rawRow["day_of_week"],
     startTime: rawRow["start_time"],
     staff_in_charge: rawRow["staff"],
+    studentCount: rawRow["student_count"],
   };
   return allocateObject;
 }

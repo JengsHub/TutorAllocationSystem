@@ -77,4 +77,6 @@ export class Activity extends BaseEntity {
     }
     return Activity.save(Activity.create(newRecord));
   }
+  @Column({ default: 0 })
+  studentCount!: number;
 }

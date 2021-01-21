@@ -9,7 +9,7 @@ const Dashboard = () => {
   return (
     <div id="main">
       <h1>Dashboard</h1>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      {/* <div style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span>Default Button</span>
           <CustomButton
@@ -183,7 +183,7 @@ const Dashboard = () => {
             isCompact
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
