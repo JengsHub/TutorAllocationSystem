@@ -12,7 +12,6 @@ import Collapse from "@material-ui/core/Collapse";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
-import Swaps from "./Swaps";
 
 const Units = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);

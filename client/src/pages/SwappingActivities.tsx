@@ -73,7 +73,7 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
         desiredActivityId: selectedActivity.id,
       };
       try {
-        const result = await DatabaseFinder.post("/swaps", swap);
+        await DatabaseFinder.post("/swaps", swap);
       } catch (e) {}
     }
   };
