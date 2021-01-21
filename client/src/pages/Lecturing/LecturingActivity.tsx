@@ -579,10 +579,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                         {activity.location}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
-                        {activity.startTime}
+                        {activity.startTime.substring(0, 5)}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
-                        {activity.endTime}
+                        {activity.endTime.substring(0, 5)}
                       </TableCell>
                       <TableCell colSpan={4}>No Allocations yet.</TableCell>
                     </TableRow>
