@@ -40,172 +40,171 @@ export const checkAllocation = async (
 ): Promise<boolean> => {
   // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
 
-  return true;
-  // const activityUnit = await getRepository(Unit).findOne({
-  //   id: newActivity.unitId,
-  // });
-  // if (!activityUnit) return false;
+  const activityUnit = await getRepository(Unit).findOne({
+    id: newActivity.unitId,
+  });
+  if (!activityUnit) return false;
 
-  // console.log(activityUnit);
+  console.log(activityUnit);
 
-  // //const allocationsRepo = getRepository(Allocation);
-  // // const currentAllocations = await allocationsRepo.find({
-  // //   relations: ["staff", "activity", "activity.unit"],
-  // //   where: {
-  // //     staff: { id: staff.id },
-  // //     // activity: {
-  // //     //   unit: {
-  // //     //     year: activityUnit.year,
-  // //     //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
-  // //     //   },
-  // //     // },
-  // //   },
-  // // });
-
-  // const currentAllocations = await Allocation.createQueryBuilder("allocation")
-  //   .innerJoinAndSelect("allocation.activity", "activity")
-  //   .innerJoinAndSelect("activity.unit", "unit")
-  //   .where("unit.year = :year", { year: activityUnit.year })
-  //   .andWhere("unit.offeringPeriod IN (:...offeringPeriod)", {
-  //     offeringPeriod: [activityUnit.offeringPeriod, "Full Year"],
-  //   })
-  //   .andWhere("allocation.staffId = :id", { id: staff.id })
-  //   .getMany();
-
-  // let dayHours = activityDuration(newActivity);
-  // let weekHours = activityDuration(newActivity);
-  // let activitiesInUnit = 1;
-  // let totalActivities = 1;
-
-  // //console.log(currentAllocations);
-
-  // const activities = currentAllocations.map((a) => a.activity);
-  // // .filter(
-  // //   (a) =>
-  // //     a.unit.year === activityUnit.year &&
-  // //     (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
-  // //       a.unit.offeringPeriod === "Full Year")
-  // // );
-
-  // console.log(activities);
-  // // Checking the numbers against the constraints/rules.
-  // const rules: Repository<Rule> = await getRepository(Rule);
-  // const availability = await getRepository(Availability).findOne({
-  //   relations: ["staff"],
+  //const allocationsRepo = getRepository(Allocation);
+  // const currentAllocations = await allocationsRepo.find({
+  //   relations: ["staff", "activity", "activity.unit"],
   //   where: {
   //     staff: { id: staff.id },
-  //     day: newActivity.dayOfWeek,
-  //     year: activityUnit.year,
+  //     // activity: {
+  //     //   unit: {
+  //     //     year: activityUnit.year,
+  //     //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
+  //     //   },
+  //     // },
   //   },
   // });
-  // if (!availability) return false;
 
-  // activities.forEach((activity) => {
-  //   if (activity && newActivity) {
-  //     // Total hours in day
-  //     if (activity.dayOfWeek === newActivity.dayOfWeek)
-  //       dayHours += activityDuration(activity);
-  //     // Total hours in week
-  //     weekHours += activityDuration(activity);
-  //     // Activities in unit
-  //     if (activity.unitId === newActivity.unitId) activitiesInUnit++;
-  //     // Total activities
-  //     totalActivities++;
-  //   }
-  // });
+  const currentAllocations = await Allocation.createQueryBuilder("allocation")
+    .innerJoinAndSelect("allocation.activity", "activity")
+    .innerJoinAndSelect("activity.unit", "unit")
+    .where("unit.year = :year", { year: activityUnit.year })
+    .andWhere("unit.offeringPeriod IN (:...offeringPeriod)", {
+      offeringPeriod: [activityUnit.offeringPeriod, "Full Year"],
+    })
+    .andWhere("allocation.staffId = :id", { id: staff.id })
+    .getMany();
 
-  // const maxHoursPerDayRule = (
-  //   await rules.findOneOrFail({ ruleName: RuleEnum.MAX_DAY_HRS })
-  // ).value;
-  // const maxHoursPerWeekRule = Math.min(
-  //   (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_WEEK_HRS })).value,
-  //   availability.maxHours
+  let dayHours = activityDuration(newActivity);
+  let weekHours = activityDuration(newActivity);
+  let activitiesInUnit = 1;
+  let totalActivities = 1;
+
+  //console.log(currentAllocations);
+
+  const activities = currentAllocations.map((a) => a.activity);
+  // .filter(
+  //   (a) =>
+  //     a.unit.year === activityUnit.year &&
+  //     (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
+  //       a.unit.offeringPeriod === "Full Year")
   // );
-  // const maxActivitiesPerUnitRule = (
-  //   await rules.findOneOrFail({ ruleName: RuleEnum.MAX_UNIT_ACTIVITIES })
-  // ).value;
-  // const maxTotalActivitiesRule = Math.min(
-  //   (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_TOTAL_ACTIVITIES }))
-  //     .value,
-  //   availability.maxNumberActivities
-  // );
-  // const consecutiveHoursRule = (
-  //   await rules.findOneOrFail({ ruleName: RuleEnum.MAX_CONSEC_HRS })
-  // ).value;
 
-  // // console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
-  // // console.log(
-  // //   maxHoursPerDayRule,
-  // //   maxHoursPerWeekRule,
-  // //   maxActivitiesPerUnitRule,
-  // //   maxTotalActivitiesRule
-  // // );
-  // // TODO: Specific error message for each constraint violated
-  // if (
-  //   dayHours > maxHoursPerDayRule ||
-  //   weekHours > maxHoursPerWeekRule ||
-  //   activitiesInUnit > maxActivitiesPerUnitRule ||
-  //   totalActivities > maxTotalActivitiesRule
-  // )
-  //   return false;
+  console.log(activities);
+  // Checking the numbers against the constraints/rules.
+  const rules: Repository<Rule> = await getRepository(Rule);
+  const availability = await getRepository(Availability).findOne({
+    relations: ["staff"],
+    where: {
+      staff: { id: staff.id },
+      day: newActivity.dayOfWeek,
+      year: activityUnit.year,
+    },
+  });
+  if (!availability) return false;
 
-  // // Check if fits staff member's availability hours
-  // const isWithinAvailableHours =
-  //   availability.startTime <= newActivity.startTime &&
-  //   availability.endTime >= newActivity.endTime;
+  activities.forEach((activity) => {
+    if (activity && newActivity) {
+      // Total hours in day
+      if (activity.dayOfWeek === newActivity.dayOfWeek)
+        dayHours += activityDuration(activity);
+      // Total hours in week
+      weekHours += activityDuration(activity);
+      // Activities in unit
+      if (activity.unitId === newActivity.unitId) activitiesInUnit++;
+      // Total activities
+      totalActivities++;
+    }
+  });
 
+  const maxHoursPerDayRule = (
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_DAY_HRS })
+  ).value;
+  const maxHoursPerWeekRule = Math.min(
+    (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_WEEK_HRS })).value,
+    availability.maxHours
+  );
+  const maxActivitiesPerUnitRule = (
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_UNIT_ACTIVITIES })
+  ).value;
+  const maxTotalActivitiesRule = Math.min(
+    (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_TOTAL_ACTIVITIES }))
+      .value,
+    availability.maxNumberActivities
+  );
+  const consecutiveHoursRule = (
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_CONSEC_HRS })
+  ).value;
+
+  // console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
   // console.log(
-  //   availability.startTime,
-  //   newActivity.startTime,
-  //   availability.endTime,
-  //   newActivity.endTime
+  //   maxHoursPerDayRule,
+  //   maxHoursPerWeekRule,
+  //   maxActivitiesPerUnitRule,
+  //   maxTotalActivitiesRule
   // );
-  // console.log(isWithinAvailableHours);
+  // TODO: Specific error message for each constraint violated
+  if (
+    dayHours > maxHoursPerDayRule ||
+    weekHours > maxHoursPerWeekRule ||
+    activitiesInUnit > maxActivitiesPerUnitRule ||
+    totalActivities > maxTotalActivitiesRule
+  )
+    return false;
 
-  // if (!isWithinAvailableHours) return false;
+  // Check if fits staff member's availability hours
+  const isWithinAvailableHours =
+    availability.startTime <= newActivity.startTime &&
+    availability.endTime >= newActivity.endTime;
 
-  // // Check for clashes
+  console.log(
+    availability.startTime,
+    newActivity.startTime,
+    availability.endTime,
+    newActivity.endTime
+  );
+  console.log(isWithinAvailableHours);
 
-  // const sameDayActivities = activities
-  //   .filter((a) => a?.dayOfWeek === newActivity.dayOfWeek)
-  //   .slice();
+  if (!isWithinAvailableHours) return false;
 
-  // console.log(sameDayActivities);
+  // Check for clashes
 
-  // for (let a of sameDayActivities) {
-  //   if (
-  //     timeStringToDate(a.startTime) < timeStringToDate(newActivity.endTime) &&
-  //     timeStringToDate(a.endTime) > timeStringToDate(newActivity.startTime)
-  //   )
-  //     return false;
-  // }
+  const sameDayActivities = activities
+    .filter((a) => a?.dayOfWeek === newActivity.dayOfWeek)
+    .slice();
 
-  // // Check consecutive hours
+  console.log(sameDayActivities);
 
-  // let stack: Activity[] = [];
-  // sameDayActivities.forEach((a) => {
-  //   let lastActivity = stack[stack.length - 1];
-  //   if (!a) return;
-  //   if (!stack.length) {
-  //     stack.push(a);
-  //     return;
-  //   }
-  //   if (timeStringToDate(a.startTime) > timeStringToDate(lastActivity.endTime))
-  //     stack.push(a);
-  //   else if (
-  //     timeStringToDate(a.endTime) > timeStringToDate(lastActivity.endTime)
-  //   )
-  //     lastActivity.endTime = a.endTime;
-  // });
-  // if (stack.length) {
-  //   const longestConsecutive = Math.max(
-  //     ...stack.map((a) => activityDuration(a))
-  //   );
+  for (let a of sameDayActivities) {
+    if (
+      timeStringToDate(a.startTime) < timeStringToDate(newActivity.endTime) &&
+      timeStringToDate(a.endTime) > timeStringToDate(newActivity.startTime)
+    )
+      return false;
+  }
 
-  //   console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
+  // Check consecutive hours
 
-  //   if (longestConsecutive > consecutiveHoursRule) return false;
-  // }
+  let stack: Activity[] = [];
+  sameDayActivities.forEach((a) => {
+    let lastActivity = stack[stack.length - 1];
+    if (!a) return;
+    if (!stack.length) {
+      stack.push(a);
+      return;
+    }
+    if (timeStringToDate(a.startTime) > timeStringToDate(lastActivity.endTime))
+      stack.push(a);
+    else if (
+      timeStringToDate(a.endTime) > timeStringToDate(lastActivity.endTime)
+    )
+      lastActivity.endTime = a.endTime;
+  });
+  if (stack.length) {
+    const longestConsecutive = Math.max(
+      ...stack.map((a) => activityDuration(a))
+    );
 
-  // return true;
+    console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
+
+    if (longestConsecutive > consecutiveHoursRule) return false;
+  }
+
+  return true;
 };

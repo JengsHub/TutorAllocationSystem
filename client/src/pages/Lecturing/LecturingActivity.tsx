@@ -52,7 +52,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     setChanged(false);
     const getActivities = async () => {
       try {
-        //console.log(params.unitId);
         const res = await baseApi.get(`/activities`);
         return await res.data;
       } catch (e) {
@@ -182,7 +181,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     setOpenRejected(false);
   };
 
-  const allocationApproved = async (allocation: IAllocation) => {
+  const allocationApproved = async (allocation: IAllocationWithStaff) => {
     const result = await baseApi.patch(
       `/allocations/${allocation.id}/lecturer-approval?value=true`
     );
@@ -195,7 +194,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
-  const allocationRejected = async (allocation: IAllocation) => {
+  const allocationRejected = async (allocation: IAllocationWithStaff) => {
     // TODO: Handle approval
     const result = await baseApi.patch(
       `/allocations/${allocation.id}/approval?value=false`
@@ -249,7 +248,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
-  function ApprovalCell(props: { allocation: IAllocation }) {
+  function ApprovalCell(props: { allocation: IAllocationWithStaff }) {
     const { allocation } = props;
     const approval = allocation.isLecturerApproved;
     const acceptance = allocation.isTaAccepted;
@@ -400,10 +399,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                 const n = activity.allocations.length;
                 return n > 0 ? (
                   activity.allocations.map(
-                    (allocation: IAllocation & { [key: string]: any }, j) => {
+                    (allocation: IAllocationWithStaff, j) => {
                       return (
-                        <>
-                          <TableRow key={j}>
+                        <React.Fragment key={j}>
+                          <TableRow>
                             {j === 0 ? (
                               <>
                                 <TableCell rowSpan={n + 1} align="left">
@@ -500,7 +499,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               </TableCell>
                             </TableRow>
                           ) : null}
-                        </>
+                        </React.Fragment>
                       );
                     }
                   )

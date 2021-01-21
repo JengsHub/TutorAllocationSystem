@@ -38,7 +38,7 @@ class ActivitiesService {
      * - To also load nested relation, i.e relations: ["allocations", "allocations.staff"]
      */
     return this.repo.find({
-      relations: ["allocations", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
+      relations: ["allocations", "allocations.staff", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
     });
   }
 

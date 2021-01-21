@@ -34,9 +34,6 @@ export class Activity extends BaseEntity {
   @Column()
   location!: string;
 
-  @Column()
-  endTime!: string;
-
   // TODO: varchar for sqlite compatibility in test?
   @Column({
     type: "varchar",
@@ -46,8 +43,8 @@ export class Activity extends BaseEntity {
   @Column({ type: "time" })
   startTime!: string; // TODO: Date object or string to store time only?
 
-  @Column({ default: 0 }) // TODO: need default?
-  duration!: number;
+  @Column({ type: "time" })
+  endTime!: string;
 
   @OneToMany(() => Allocation, (allocation) => allocation.activity)
   allocations!: Allocation[];
