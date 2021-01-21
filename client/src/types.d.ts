@@ -66,3 +66,8 @@ interface Allocation {
   activityId: string;
   staffId: string;
 }
+
+interface Swap {
+  fromAllocationId: string;
+  desiredActivityId: string;
+}

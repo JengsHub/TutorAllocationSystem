@@ -64,25 +64,31 @@ class SwapsService {
     allocations.forEach((alc) => myActivities.push(alc.activity));
 
     let alternateActivities = await getRepository(Activity).find({
-      relations: ["allocations"],
+      relations: ["allocations", "unit"],
       where: {
         unitId: unit.id,
       },
     });
 
+    console.log(alternateActivities.length, "Number of alts");
+    console.log(alternateActivities);
+
     alternateActivities = alternateActivities.filter((act) => {
       for (let alc of act.allocations) {
-        if (alc.staffId == me.id) {
+        if (alc.staffId === me.id) {
           return false;
         }
-        return checkSwapAllocation(me, myActivities, alc.activity);
       }
+      const eligable = checkSwapAllocation(me, myActivities, act);
+      console.log(eligable, act);
+      return eligable;
     });
 
-    console.log("Mine", alternateActivities);
-    console.log("Alts", myActivities);
+    console.log(alternateActivities.length, "Number of alts after filter");
+    // console.log("Mine", alternateActivities);
+    // console.log("Alts", myActivities);
 
-    return [alternateActivities, myActivities];
+    return alternateActivities;
   }
 
   @GET
@@ -107,17 +113,17 @@ class SwapsService {
       .andWhere("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
-    console.log(unitSwaps);
+    // console.log(unitSwaps);
 
     let myActivities = await getRepository(Activity)
       .createQueryBuilder("activity")
       .leftJoin("activity.allocations", "allocation")
       .where("allocation.staffId = :staffId", { staffId: me.id })
       .getMany();
-    console.log(myActivities);
+    // console.log(myActivities);
 
     let myUnitActivities = myActivities.filter((act) => act.unitId == unitId);
-    console.log(myUnitActivities);
+    // console.log(myUnitActivities);
 
     let eligableSwaps = unitSwaps.filter((swap) => {
       if (myUnitActivities.includes(swap.desired)) return false;
@@ -125,7 +131,7 @@ class SwapsService {
       return checkSwapAllocation(me, myActivities, swap.from.activity);
       // return true;
     });
-    console.log(eligableSwaps);
+    // console.log(eligableSwaps);
     return eligableSwaps;
   }
 
@@ -149,7 +155,7 @@ class SwapsService {
       .where("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
-    console.log(mySwaps);
+    // console.log(mySwaps);
 
     return mySwaps;
   }
@@ -157,15 +163,15 @@ class SwapsService {
   @POST
   public async createSwap(newRecord: Swap): Promise<void | Swap> {
     let swapFrom = await Allocation.findOneOrFail({
-      where: { fromAllocationId: newRecord.fromAllocationId },
+      where: { id: newRecord.fromAllocationId },
     });
     let desired = await Activity.findOneOrFail({
-      where: { desiredActivityId: newRecord.desiredActivityId },
+      where: { id: newRecord.desiredActivityId },
     });
     let swapInto = null;
     if (newRecord.intoAllocationId) {
       swapInto = await Allocation.findOneOrFail({
-        where: { intoAllocationId: newRecord.intoAllocationId },
+        where: { id: newRecord.intoAllocationId },
       });
     }
     // Require both a swap out and a desired activity to swap into

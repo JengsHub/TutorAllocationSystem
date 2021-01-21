@@ -10,7 +10,8 @@ import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import ClearIcon from "@material-ui/icons/Clear";
 import DoneIcon from "@material-ui/icons/Done";
-import { IconButton, makeStyles } from "@material-ui/core";
+import { Button, IconButton, makeStyles } from "@material-ui/core";
+import SwappingModal from "./SwappingModal";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import DatabaseFinder from "../apis/DatabaseFinder";
@@ -24,6 +25,10 @@ const Swaps = (props: { [key: string]: any }) => {
   const [mySwaps, setMySwaps] = useState<(ISwap & { [key: string]: any })[]>(
     []
   );
+  const [allocatedActivities, setAllocatedActivities] = useState<
+    (IAllocation & { [key: string]: any })[]
+  >([]);
+  const [modalOpen, setModalOpen] = useState<IAllocation | null>(null);
 
   useEffect(() => {
     setChanged(false);
@@ -73,11 +78,41 @@ const Swaps = (props: { [key: string]: any }) => {
       }
     };
 
+    const getAllocatedActivities = async () => {
+      try {
+        let query = Object.keys(params)
+          .filter((key) => params[key] !== undefined)
+          .map((key) => `${key}=${params[key]}`)
+          .join("&");
+
+        const res = await fetch(
+          `http://localhost:8888/allocations/mine?${query}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Credentials": "true",
+            },
+          }
+        );
+        return await res.json();
+      } catch (e) {
+        console.log("Error fetching user activities");
+        return [];
+      }
+    };
+
     getMySwaps().then((res) => {
       setMySwaps(res);
     });
     getOpenSwaps().then((res) => {
       setOpenSwaps(res);
+    });
+
+    getAllocatedActivities().then((res) => {
+      setAllocatedActivities(res);
     });
   }, [props, hasChanged]);
 
@@ -98,66 +133,128 @@ const Swaps = (props: { [key: string]: any }) => {
     }
   };
 
+  const getAvailableSwaps = async (
+    allocation: IAllocation & { [key: string]: any }
+  ) => {
+    setModalOpen(allocation);
+  };
+
   return (
     <Box>
-      <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="activities table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">swap id</TableCell>
-              <TableCell align="left"> from</TableCell>
-              <TableCell align="left">into</TableCell>
-              <TableCell align="left">desired</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {openSwaps.map((swap, i) => (
-              <TableRow key={i}>
-                <TableCell> {swap.id} </TableCell>
-                <TableCell>
-                  {" "}
-                  {swap.from.activity.activityCode}-
-                  {swap.from.activity.activityGroup}{" "}
-                  {dayConverter(swap.from.activity.dayOfWeek)}{" "}
-                </TableCell>
-                <TableCell>
-                  {" "}
-                  {swap.into
-                    ? swap.into.activity.activityCode
-                    : "not swapped yet"}{" "}
-                </TableCell>
-                <TableCell>
-                  {" "}
-                  {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
-                  {dayConverter(swap.desired.dayOfWeek)}{" "}
-                </TableCell>
+      <SwappingModal
+        allocation={modalOpen}
+        closeModal={() => setModalOpen(null)}
+      />
+      {allocatedActivities.length > 0 ? (
+        <div>
+          <h2>My Activities</h2>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Activity Code</TableCell>
+                <TableCell align="left">Activity Group</TableCell>
+                <TableCell align="left">Campus</TableCell>
+                <TableCell align="left">Day of Week</TableCell>
+                <TableCell align="left">Location </TableCell>
+                <TableCell align="left">Start Time</TableCell>
+                <TableCell align="left">Swap</TableCell>
               </TableRow>
-            ))}
-            {mySwaps.map((swap, i) => (
-              <TableRow key={i}>
-                <TableCell> {swap.id} </TableCell>
-                <TableCell>
-                  {" "}
-                  {swap.from.activity.activityCode}-
-                  {swap.from.activity.activityGroup}{" "}
-                  {dayConverter(swap.from.activity.dayOfWeek)}{" "}
-                </TableCell>
-                <TableCell>
-                  {" "}
-                  {swap.into
-                    ? swap.into.activity.activityCode
-                    : "not swapped yet"}{" "}
-                </TableCell>
-                <TableCell>
-                  {" "}
-                  {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
-                  {dayConverter(swap.desired.dayOfWeek)}{" "}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {allocatedActivities.map((allocation, i) => (
+                <TableRow key={i}>
+                  <TableCell align="left">
+                    {allocation.activity.activityCode}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.activityGroup}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.campus}
+                  </TableCell>
+                  <TableCell align="left">
+                    {dayConverter(allocation.activity.dayOfWeek)}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.location}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.startTime}
+                  </TableCell>
+                  <TableCell>
+                    <Button onClick={() => getAvailableSwaps(allocation)}>
+                      Offer Swap
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <h2> Swaps to consider </h2>
+          <Box>
+            <Table className={""} size="small" aria-label="activities table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">Swap id</TableCell>
+                  <TableCell align="left">From</TableCell>
+                  <TableCell align="left">Into</TableCell>
+                  <TableCell align="left">Desired</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {openSwaps.map((swap, i) => (
+                  <TableRow key={i}>
+                    <TableCell> {swap.id} </TableCell>
+                    <TableCell>
+                      {" "}
+                      {swap.from.activity.activityCode}-
+                      {swap.from.activity.activityGroup}{" "}
+                      {dayConverter(swap.from.activity.dayOfWeek)}{" "}
+                    </TableCell>
+                    <TableCell>
+                      {" "}
+                      {swap.into
+                        ? swap.into.activity.activityCode
+                        : "not swapped yet"}{" "}
+                    </TableCell>
+                    <TableCell>
+                      {" "}
+                      {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
+                      {dayConverter(swap.desired.dayOfWeek)}{" "}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {mySwaps.map((swap, i) => (
+                  <TableRow key={i}>
+                    <TableCell> {swap.id} </TableCell>
+                    <TableCell>
+                      {" "}
+                      {swap.from.activity.activityCode}-
+                      {swap.from.activity.activityGroup}{" "}
+                      {dayConverter(swap.from.activity.dayOfWeek)}{" "}
+                    </TableCell>
+                    <TableCell>
+                      {" "}
+                      {swap.into
+                        ? swap.into.activity.activityCode
+                        : "not swapped yet"}{" "}
+                    </TableCell>
+                    <TableCell>
+                      {" "}
+                      {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
+                      {dayConverter(swap.desired.dayOfWeek)}{" "}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </div>
+      ) : (
+        <div>
+          <h2> You currently have no allocated activites for this unit.</h2>
+        </div>
+      )}
     </Box>
   );
 };

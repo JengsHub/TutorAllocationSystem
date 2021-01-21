@@ -62,41 +62,41 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
+    let allocations: Allocation[];
 
-    // let findOptions: { [key: string]: any } = {
-    //   isLecturerApproved,
-    //   activity: {
-    //     unitId
-    //   }
-    // };
+    if (unitId) {
+      /**
+       * Note: have to use query builder instead of TypeORM find() because find()
+       * support for WHERE clause on joined columns is not consistent/doesn't work.
+       * Seems like this feature will be added in future version of TypeORM
+       *
+       * See: https://github.com/typeorm/typeorm/issues/2707
+       */
 
-    // findOptions = removeEmpty(findOptions);
+      console.log(unitId);
 
-    // console.log(findOptions);
-    // let allocations = await this.repo.find({
-    //   where: {
-    //     staffId: me.id,
-    //     ...findOptions,
-    //   },
-    //   relations: ["activity"],
-    // });
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .leftJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("allocation.staff", "staff")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
 
-    /**
-     * Note: have to use query builder instead of TypeORM find() because find()
-     * support for WHERE clause on joined columns is not consistent/doesn't work.
-     * Seems like this feature will be added in future version of TypeORM
-     *
-     * See: https://github.com/typeorm/typeorm/issues/2707
-     */
-
-    const allocations = await Allocation.createQueryBuilder("allocation")
-      .leftJoinAndSelect("allocation.activity", "activity")
-      .where("activity.unitId = :unitId", { unitId })
-      .andWhere("allocation.staffId = :id", { id: me.id })
-      .andWhere("allocation.isLecturerApproved = :approval", {
-        approval: isLecturerApproved,
-      })
-      .getMany();
+      console.log(allocations.length, "Debug");
+    } else {
+      //get all units
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .innerJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("activity.unit", "unit")
+        .where("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    }
 
     // console.log(allocations);
     return allocations;

@@ -87,3 +87,13 @@ interface ISwap {
   into: IAllocation | null;
   desired: IActivity;
 }
+
+interface myAllocations {
+  id: string;
+  isLecturerApproved: boolean;
+  isTaAccepted: boolean;
+  isWorkforceApproved: boolean;
+  activityId: string;
+  staffId: string;
+  activity: IActivity;
+}
