@@ -1,5 +1,4 @@
 import React, { MouseEvent } from "react";
-import { CustomButton, CustomStatus } from "../components";
 
 const Dashboard = () => {
   const handleButtonClick = (event: MouseEvent) => {
