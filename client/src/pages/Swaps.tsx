@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DayOfWeek } from "../../enums/DayOfWeek";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -13,7 +13,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { IconButton, makeStyles } from "@material-ui/core";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import DatabaseFinder from "../../apis/DatabaseFinder";
+import DatabaseFinder from "../apis/DatabaseFinder";
 
 const Swaps = (props: { [key: string]: any }) => {
   const [hasChanged, setChanged] = useState<Boolean>(false);
