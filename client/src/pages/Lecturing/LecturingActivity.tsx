@@ -144,6 +144,38 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     uniqueList = [];
   }
 
+  const getDaysCountDown = (expiryDate: string) => {
+    /*
+    input: Date String
+    output: Time left (number)
+    Desc: find the days or time left between two dates
+    */
+
+    //dates cons
+    const expDateFormat = new Date(expiryDate);
+    const todayDate = new Date();
+    const timeDifference = expDateFormat.getTime() - todayDate.getTime();
+    const daysDifference = timeDifference / (1000 * 3600 * 24);
+
+    //if offer expired.
+    if (timeDifference <= 0){
+      return "Offer has expired";
+    }
+    
+    //deciding to show days or hours/minutes
+    if (daysDifference > 1) {
+      return Math.floor(daysDifference).toString() + " days";
+    } else {
+      const roundedHours = Math.floor(timeDifference / 3600000);
+      if (roundedHours >= 1){ //if greater or equal to an hour: just show the hours
+        return roundedHours.toString() + (roundedHours === 1 ? " hr" : " hrs");
+      }else{ //else, show the minutes instead
+        const roundedMinutes = Math.floor(timeDifference / 60000);
+        return roundedMinutes.toString() + (roundedMinutes === 1 ? " min" : " mins");
+      }
+    }
+  };
+
   // const timeReducer = (time: String) =>
   //   time
   //     .split(":")
@@ -478,7 +510,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                   </div>
                                 ) : null}
                               </TableCell>
-                              <TableCell align="left"> PlaceHolder </TableCell>
+                              <TableCell align="left"> 
+                              {getDaysCountDown(allocation.offerExpiryDate)} 
+                              </TableCell>
                             </TableRow>
                             {j === n - 1 ? (
                               <TableRow>

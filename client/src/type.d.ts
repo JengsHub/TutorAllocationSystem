@@ -48,6 +48,7 @@ interface IAllocation {
   isLecturerApproved: boolean;
   isTaAccepted: boolean;
   isWorkforceApproved: boolean;
+  offerExpiryDate: string;
 }
 
 interface IAllocationWithStaff {
@@ -59,6 +60,7 @@ interface IAllocationWithStaff {
   isLecturerApproved: boolean;
   isTaAccepted: boolean;
   isWorkforceApproved: boolean;
+  offerExpiryDate: string;
 }
 
 interface IAvailability {
