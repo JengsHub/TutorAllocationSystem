@@ -184,14 +184,15 @@ const Activities = () => {
     const expDateFormat = new Date(expiryDate);
     const todayDate = new Date();
     const timeDifference = expDateFormat.getTime() - todayDate.getTime();
-    const daysDifference = timeDifference / (1000 * 3600 * 24); 
+    const daysDifference = timeDifference / (1000 * 3600 * 24);
 
-    if (daysDifference > 1){
-      return Math.floor(daysDifference);
-    }else{
-      return (timeDifference/3600000);
+    if (daysDifference > 1) {
+      return Math.floor(daysDifference).toString() + " days";
+    } else {
+      const rounded = Math.floor(timeDifference / 3600000);
+      return rounded.toString() + (rounded === 1 ? " hr" : " hrs");
     }
-  }
+  };
 
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -455,7 +456,9 @@ const Activities = () => {
                       </div>
                     ) : null}
                   </TableCell>
-                  <TableCell align="left">{getDaysCountDown(allocation.offerExpiryDate)}</TableCell>
+                  <TableCell align="left">
+                    {getDaysCountDown(allocation.offerExpiryDate)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
