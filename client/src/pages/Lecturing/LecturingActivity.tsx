@@ -479,10 +479,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                     {activity.location}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.startTime}
+                                    {activity.startTime.substring(0, 5)}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.endTime}
+                                    {activity.endTime.substring(0, 5)}
                                   </TableCell>
                                 </>
                               ) : null}

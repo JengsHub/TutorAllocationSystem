@@ -418,7 +418,12 @@ const Activities = () => {
       </Grid>
       <Box pt={5}>
         <TableContainer component={Paper}>
-          <Table className={""} size="small" aria-label="activities table">
+          <Table
+            style={{ borderCollapse: "collapse" }}
+            className={""}
+            size="small"
+            aria-label="activities table"
+          >
             <TableHead>
               <TableRow>
                 <StyledTableCell align="left">Unit Code</StyledTableCell>
@@ -428,6 +433,7 @@ const Activities = () => {
                 <StyledTableCell align="left">Day</StyledTableCell>
                 <StyledTableCell align="left">Location </StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
+                <StyledTableCell align="left">End Time</StyledTableCell>
                 <StyledTableCell align="left">Status</StyledTableCell>
                 <StyledTableCell align="left">Action</StyledTableCell>
                 <StyledTableCell align="left">Time Remaining</StyledTableCell>
@@ -456,7 +462,10 @@ const Activities = () => {
                     {allocation.activity.location}
                   </TableCell>
                   <TableCell align="left">
-                    {allocation.activity.startTime}
+                    {allocation.activity.startTime.substring(0, 5)}
+                  </TableCell>
+                  <TableCell align="left">
+                    {allocation.activity.endTime.substring(0, 5)}
                   </TableCell>
                   <TableCell align="center">
                     {approvalStatus(allocation)}
