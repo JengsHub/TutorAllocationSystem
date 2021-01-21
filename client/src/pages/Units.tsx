@@ -112,11 +112,7 @@ const Units = () => {
   return (
     <div id="main">
       <h1>My Units</h1>
-      <Activities
-        {...{
-          isLecturerApproved: true,
-        }}
-      ></Activities>
+      <Activities />
     </div>
   );
 };

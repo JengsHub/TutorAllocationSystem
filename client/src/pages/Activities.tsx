@@ -17,8 +17,7 @@ import { CustomButton, CustomStatus } from "../components";
 import "../index.css";
 import baseApi from "../apis/baseApi";
 
-// TODO: define props type
-const Activities = (props: { [key: string]: any }) => {
+const Activities = () => {
   const [allocations, setAllocations] = useState<
     (myAllocations & { [key: string]: any })[]
   >([]);
@@ -46,18 +45,18 @@ const Activities = (props: { [key: string]: any }) => {
 
   useEffect(() => {
     setChanged(false);
-    let params: { [key: string]: any } = {
-      ...props,
-    };
+    // let params: { [key: string]: any } = {
+    //   ...props,
+    // };
     const getAllocations = async () => {
       try {
-        let query = Object.keys(params)
-          .filter((key) => params[key] !== undefined)
-          .map((key) => `${key}=${params[key]}`)
-          .join("&");
+        // let query = Object.keys(params)
+        //   .filter((key) => params[key] !== undefined)
+        //   .map((key) => `${key}=${params[key]}`)
+        //   .join("&");
 
         const res = await baseApi.get("/allocations/mine", {
-          params: { query },
+          params: { isLecturerApproved: true },
         });
         return await res.data;
       } catch (e) {
@@ -72,7 +71,7 @@ const Activities = (props: { [key: string]: any }) => {
       // eslint-disable-next-line
       setUpAutoComplete(res);
     });
-  }, [props, hasChanged]);
+  }, [hasChanged]);
 
   useEffect(() => {
     if (initialRender.current) {

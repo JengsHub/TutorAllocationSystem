@@ -398,114 +398,116 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
               {activitiesToDisplay.map((activity, i) => {
                 const n = activity.allocations.length;
                 return n > 0 ? (
-                  activity.allocations.map(
-                    (allocation: IAllocationWithStaff, j) => {
-                      return (
-                        <React.Fragment key={j}>
-                          <TableRow>
-                            {j === 0 ? (
-                              <>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {activity.unit.unitCode}
-                                </TableCell>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {activity.unit.campus}
-                                </TableCell>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {activity.activityGroup}
-                                </TableCell>
-                                <TableCell
-                                  rowSpan={n + 1}
-                                  component="th"
-                                  scope="row"
-                                >
-                                  {activity.activityCode}
-                                </TableCell>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {dayConverter(activity.dayOfWeek)}
-                                </TableCell>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {activity.location}
-                                </TableCell>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {activity.startTime}
-                                </TableCell>
-                                <TableCell rowSpan={n + 1} align="left">
-                                  {activity.endTime}
-                                </TableCell>
-                              </>
-                            ) : null}
-                            <TableCell align="left" width="50%">
-                              {" "}
-                              {allocation.staff.givenNames}{" "}
-                              {allocation.staff.lastName}
-                            </TableCell>
-                            <TableCell align="left" width="50%">
-                              <ApprovalCell allocation={allocation} />
-                            </TableCell>
-
-                            <TableCell align="center">
-                              {allocation.isLecturerApproved === null ? (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <CustomButton
-                                    value=""
-                                    type="button"
-                                    isCross
-                                    isRed
-                                    isCompact
-                                    style={{ margin: "0 5px" }}
-                                    onButtonClick={() =>
-                                      allocationRejected(allocation)
-                                    }
-                                  />
-                                  <CustomButton
-                                    value=""
-                                    type="button"
-                                    isCheck
-                                    isGreen
-                                    isCompact
-                                    style={{ margin: "0 5px" }}
-                                    onButtonClick={() =>
-                                      allocationApproved(allocation)
-                                    }
-                                  />
-                                </div>
-                              ) : null}
-                            </TableCell>
-                            <TableCell align="left"> PlaceHolder </TableCell>
-                          </TableRow>
-                          {j === n - 1 ? (
+                  <React.Fragment key={i}>
+                    {activity.allocations.map(
+                      (allocation: IAllocationWithStaff, j) => {
+                        return (
+                          <React.Fragment key={j}>
                             <TableRow>
-                              <TableCell colSpan={4}>
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    padding: 5,
-                                  }}
-                                >
-                                  <Button
-                                    variant="contained"
-                                    onClick={() => setModalOpen(activity.id)}
+                              {j === 0 ? (
+                                <>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {activity.unit.unitCode}
+                                  </TableCell>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {activity.unit.campus}
+                                  </TableCell>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {activity.activityGroup}
+                                  </TableCell>
+                                  <TableCell
+                                    rowSpan={n + 1}
+                                    component="th"
+                                    scope="row"
                                   >
-                                    Manually add allocations
-                                  </Button>
-                                </div>
+                                    {activity.activityCode}
+                                  </TableCell>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {dayConverter(activity.dayOfWeek)}
+                                  </TableCell>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {activity.location}
+                                  </TableCell>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {activity.startTime}
+                                  </TableCell>
+                                  <TableCell rowSpan={n + 1} align="left">
+                                    {activity.endTime}
+                                  </TableCell>
+                                </>
+                              ) : null}
+                              <TableCell align="left" width="50%">
+                                {" "}
+                                {allocation.staff.givenNames}{" "}
+                                {allocation.staff.lastName}
                               </TableCell>
+                              <TableCell align="left" width="50%">
+                                <ApprovalCell allocation={allocation} />
+                              </TableCell>
+
+                              <TableCell align="center">
+                                {allocation.isLecturerApproved === null ? (
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                    }}
+                                  >
+                                    <CustomButton
+                                      value=""
+                                      type="button"
+                                      isCross
+                                      isRed
+                                      isCompact
+                                      style={{ margin: "0 5px" }}
+                                      onButtonClick={() =>
+                                        allocationRejected(allocation)
+                                      }
+                                    />
+                                    <CustomButton
+                                      value=""
+                                      type="button"
+                                      isCheck
+                                      isGreen
+                                      isCompact
+                                      style={{ margin: "0 5px" }}
+                                      onButtonClick={() =>
+                                        allocationApproved(allocation)
+                                      }
+                                    />
+                                  </div>
+                                ) : null}
+                              </TableCell>
+                              <TableCell align="left"> PlaceHolder </TableCell>
                             </TableRow>
-                          ) : null}
-                        </React.Fragment>
-                      );
-                    }
-                  )
+                            {j === n - 1 ? (
+                              <TableRow>
+                                <TableCell colSpan={4}>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      padding: 5,
+                                    }}
+                                  >
+                                    <Button
+                                      variant="contained"
+                                      onClick={() => setModalOpen(activity.id)}
+                                    >
+                                      Manually add allocations
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ) : null}
+                          </React.Fragment>
+                        );
+                      }
+                    )}
+                  </React.Fragment>
                 ) : (
-                  <>
-                    <TableRow key={i}>
+                  <React.Fragment key={i}>
+                    <TableRow>
                       <TableCell rowSpan={2} align="left">
                         {activity.unit.unitCode}
                       </TableCell>
@@ -550,7 +552,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                         </div>
                       </TableCell>
                     </TableRow>
-                  </>
+                  </React.Fragment>
                 );
               })}
             </TableBody>
