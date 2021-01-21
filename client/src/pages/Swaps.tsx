@@ -73,7 +73,8 @@ const Swaps = (props: { [key: string]: any }) => {
         );
         return await res.json();
       } catch (e) {
-        console.log("Error fetching open swaps");
+        console.log("Error fetching my swaps");
+        console.error(e);
         return [];
       }
     };
@@ -139,6 +140,16 @@ const Swaps = (props: { [key: string]: any }) => {
     setModalOpen(allocation);
   };
 
+  const deleteSwap = async (swap: ISwap) => {
+    DatabaseFinder.delete(`/swaps/${swap.id}`);
+    setChanged(true);
+  };
+
+  const acceptSwap = async (swap: ISwap) => {
+    DatabaseFinder.post("/swaps/acceptSwap", swap);
+    setChanged(true);
+  };
+
   return (
     <Box>
       <SwappingModal
@@ -199,6 +210,7 @@ const Swaps = (props: { [key: string]: any }) => {
                   <TableCell align="left">From</TableCell>
                   <TableCell align="left">Into</TableCell>
                   <TableCell align="left">Desired</TableCell>
+                  <TableCell> </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -213,7 +225,7 @@ const Swaps = (props: { [key: string]: any }) => {
                     </TableCell>
                     <TableCell>
                       {" "}
-                      {swap.into
+                      {swap.into?.activity
                         ? swap.into.activity.activityCode
                         : "not swapped yet"}{" "}
                     </TableCell>
@@ -222,8 +234,28 @@ const Swaps = (props: { [key: string]: any }) => {
                       {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
                       {dayConverter(swap.desired.dayOfWeek)}{" "}
                     </TableCell>
+                    <TableCell>
+                      <Button onClick={() => acceptSwap(swap)}>
+                        Accept Swap
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
+              </TableBody>
+            </Table>
+
+            <h2> My open swaps </h2>
+            <Table className={""} size="small" aria-label="activities table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">Swap id</TableCell>
+                  <TableCell align="left">From</TableCell>
+                  <TableCell align="left">Into</TableCell>
+                  <TableCell align="left">Desired</TableCell>
+                  <TableCell> </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
                 {mySwaps.map((swap, i) => (
                   <TableRow key={i}>
                     <TableCell> {swap.id} </TableCell>
@@ -243,6 +275,11 @@ const Swaps = (props: { [key: string]: any }) => {
                       {" "}
                       {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
                       {dayConverter(swap.desired.dayOfWeek)}{" "}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={() => deleteSwap(swap)}>
+                        Retract Swap
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

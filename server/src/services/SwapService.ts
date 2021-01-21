@@ -19,16 +19,24 @@ class SwapsService {
   // factory = new SwapControllerFactory();
   repo = getRepository(Swap);
 
+  /**
+   * Fetch all swap entities
+   */
   @GET
   public getAllSwaps(): Promise<Array<Swap>> {
     return this.repo.find();
   }
 
+  /**
+   * Fetch swap enity by ID
+   * @param id swap entity ID: string
+   */
   @GET
   @Path(":id")
   public getSwap(@PathParam("id") id: string) {
     return this.repo.findOne(id);
   }
+
   /**
    * Get a list of activities a user could potentially swap into provided an activity they want to swap out of
    * @param req
@@ -70,9 +78,6 @@ class SwapsService {
       },
     });
 
-    console.log(alternateActivities.length, "Number of alts");
-    console.log(alternateActivities);
-
     alternateActivities = alternateActivities.filter((act) => {
       for (let alc of act.allocations) {
         if (alc.staffId === me.id) {
@@ -80,17 +85,23 @@ class SwapsService {
         }
       }
       const eligable = checkSwapAllocation(me, myActivities, act);
-      console.log(eligable, act);
       return eligable;
     });
 
-    console.log(alternateActivities.length, "Number of alts after filter");
     // console.log("Mine", alternateActivities);
     // console.log("Alts", myActivities);
 
     return alternateActivities;
   }
 
+  /**
+   * Fetch all swaps that are open and do not belong to the user that requested them
+   * filters by units the user has an allocation in
+   * also filters results via checkConstraints to remove optiosn they can't take
+   * @param req
+   * @param res
+   * @param unitId unity entity id: string
+   */
   @GET
   @Path("/openSwaps/:unitId")
   public async getOpenSwaps(
@@ -106,10 +117,12 @@ class SwapsService {
     let unitSwaps = await this.repo
       .createQueryBuilder("swap")
       .addSelect("swap.desired")
-      .innerJoinAndSelect("swap.from", "allocation")
-      .innerJoinAndSelect("allocation.activity", "activity")
+      .innerJoinAndSelect("swap.from", "from")
+      .leftJoinAndSelect("swap.into", "into")
+      .leftJoinAndSelect("from.activity", "activity")
+      .leftJoinAndSelect("into.activity", "intoActivity")
       .leftJoinAndSelect("swap.desired", "activty")
-      .where("allocation.staffId != :staffId", { staffId: me.id })
+      .where("from.staffId != :staffId", { staffId: me.id })
       .andWhere("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
@@ -135,6 +148,13 @@ class SwapsService {
     return eligableSwaps;
   }
 
+  /**
+   * fetch all open swaps where the user belongs to the 'from' allocation
+   * given a unit
+   * @param req
+   * @param res
+   * @param unitId
+   */
   @GET
   @Path("/mine/:unitId")
   public async getMySwaps(
@@ -148,18 +168,54 @@ class SwapsService {
     let mySwaps = await this.repo
       .createQueryBuilder("swap")
       .addSelect("swap.desired")
-      .innerJoinAndSelect("swap.from", "allocation")
-      .innerJoinAndSelect("allocation.activity", "activity")
+      .innerJoinAndSelect("swap.from", "from")
+      .leftJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.activity", "activity")
+      .leftJoinAndSelect("into.activity", "intoActivity")
       .leftJoinAndSelect("swap.desired", "activty")
-      .where("allocation.staffId = :staffId", { staffId: me.id })
-      .where("activity.unitId = :unitId", { unitId: unitId })
+      .where("from.staffId = :staffId", { staffId: me.id })
+      .andWhere("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
-    // console.log(mySwaps);
+    console.log(mySwaps);
 
     return mySwaps;
   }
 
+  /**
+   * Accept a swap item by finding the appropriate allocation and adding it to the "into" section
+   * @param existingSwap swap entity the user wished to accept: Swap
+   * @param req
+   * @param res
+   */
+  @POST
+  @Path("/acceptSwap")
+  public async acceptSwap(
+    existingSwap: Swap,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ): Promise<void | Swap> {
+    if (!authCheck(req, res)) return;
+    const me = req.user as Staff;
+    const newInto = await getRepository(Allocation).findOne({
+      where: {
+        staff: me,
+        activity: existingSwap.desired,
+      },
+    });
+
+    console.log(newInto);
+
+    if (!newInto) return;
+
+    existingSwap.into = newInto;
+    return await this.repo.save(existingSwap);
+  }
+
+  /**
+   * Create new swap entity
+   * @param newRecord Swap entity deep partial
+   */
   @POST
   public async createSwap(newRecord: Swap): Promise<void | Swap> {
     let swapFrom = await Allocation.findOneOrFail({
@@ -186,15 +242,23 @@ class SwapsService {
     return this.repo.save(newRecord);
   }
 
+  /**
+   * Update a swap entity
+   * @param changedSwap : Swap entity or deep partial to change
+   */
   @PUT
-  public async updateStaff(changedSwap: Swap): Promise<Swap> {
-    let staffToUpdate = await this.repo.findOne({
+  public async updateSwap(changedSwap: Swap): Promise<Swap> {
+    let updateSwap = await this.repo.findOne({
       id: changedSwap.id,
     });
-    staffToUpdate = changedSwap;
+    updateSwap = changedSwap;
     return this.repo.save(changedSwap);
   }
 
+  /**
+   * Delete swap entity by ID
+   * @param id string
+   */
   @DELETE
   @Path(":id")
   public deleteSwap(@PathParam("id") id: string): Promise<DeleteResult> {
