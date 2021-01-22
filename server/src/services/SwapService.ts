@@ -14,6 +14,11 @@ import { Activity, Allocation, Staff, Unit, Swap } from "~/entity";
 import { checkSwapAllocation } from "../helpers/checkConstraints";
 import { authCheck } from "~/helpers/auth";
 
+// TODO: implement swap controller for Lecturer Only and Workforce Only end points
+// Approving and Pending should be Lec only
+// Confirming (todo) and Pending should be WF only
+// Confirming should swap the staff members, then archive the swap (or delete)
+
 @Path("/swaps")
 class SwapsService {
   // factory = new SwapControllerFactory();
@@ -182,6 +187,13 @@ class SwapsService {
     return mySwaps;
   }
 
+  /**
+   * Used to fill out Lecturers unique swap page where they can accept or reject swaps isnide their unit
+   * TODO: purpose this for use by workforce also, may require extension to fetch more data such as staff
+   * @param req
+   * @param res
+   * @param unitId
+   */
   @GET
   @Path("/pending/:unitId")
   public async getPendingSwaps(
@@ -232,6 +244,38 @@ class SwapsService {
 
     existingSwap.into = newInto;
     return await this.repo.save(existingSwap);
+  }
+
+  /**
+   * Lecturer approves a swap two staff members have proposed/accpeted
+   * TODO: purpose this for workforce, setting and enacting the swap
+   */
+  @POST
+  @Path("/approveSwap/")
+  public async approveSwap(
+    toApprove: Swap,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ): Promise<void | Swap> {
+    if (!authCheck(req, res)) return;
+    const me = req.user as Staff;
+    toApprove.lecturerApproved = true;
+
+    // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
+    // let fromStaff = toApprove.from.staff;
+    // let intoStaff = toApprove.into.staff;
+    // let from = toApprove.from;
+    // let into = toApprove.into;
+    // from.staff = intoStaff;
+    // from.staffId = intoStaff.id;
+    // into.staff = fromStaff;
+    // into.staffId = fromStaff.id;
+
+    // let allocationRepo = getRepository(Allocation);
+    // await allocationRepo.save(from);
+    // await allocationRepo.save(into);
+
+    return await this.repo.save(toApprove);
   }
 
   /**
