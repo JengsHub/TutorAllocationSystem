@@ -198,10 +198,19 @@ const Activities = () => {
     //if offer expired.
     if (timeDifference <= 0) {
       return (
+        // <div
+        //   style={{
+        //     margin: 0,
+        //     padding: 5,
+        //     backgroundColor: "#ffe57d",
+        //     fontWeight: "bold",
+        //   }}
+        // >
+        //   Please respond soon or offer may be retracted
+        // </div>
         <CustomStatus
           value="Please respond soon or offer may be retracted"
           isYellow
-          isCompact
           isExclamationDiamond
         />
       );
@@ -418,7 +427,7 @@ const Activities = () => {
         <TableContainer component={Paper}>
           <Table
             style={{ borderCollapse: "collapse" }}
-            className={""}
+            className="grid"
             size="small"
             aria-label="activities table"
           >
@@ -428,8 +437,8 @@ const Activities = () => {
                 <StyledTableCell align="left">Campus</StyledTableCell>
                 <StyledTableCell align="left">Activity Group</StyledTableCell>
                 <StyledTableCell align="left">Activity Code</StyledTableCell>
-                <StyledTableCell align="left">Day</StyledTableCell>
                 <StyledTableCell align="left">Location </StyledTableCell>
+                <StyledTableCell align="left">Day</StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
                 <StyledTableCell align="left">End Time</StyledTableCell>
                 <StyledTableCell align="left">Student Count</StyledTableCell>
@@ -442,7 +451,7 @@ const Activities = () => {
               <EmptyAllocations />
               {sortDayTime(allocationsToDisplay).map((allocation, i) => (
                 <TableRow key={i}>
-                  <TableCell component="th" scope="row">
+                  <TableCell align="left">
                     {allocation.activity.unit.unitCode}
                   </TableCell>
                   <TableCell align="left">
@@ -455,10 +464,10 @@ const Activities = () => {
                     {allocation.activity.activityCode}
                   </TableCell>
                   <TableCell align="left">
-                    {dayConverter(allocation.activity.dayOfWeek)}
+                    {allocation.activity.location}
                   </TableCell>
                   <TableCell align="left">
-                    {allocation.activity.location}
+                    {dayConverter(allocation.activity.dayOfWeek)}
                   </TableCell>
                   <TableCell align="left">
                     {allocation.activity.startTime.substring(0, 5)}
@@ -499,7 +508,7 @@ const Activities = () => {
                       </div>
                     ) : null}
                   </TableCell>
-                  <TableCell align="left">
+                  <TableCell align="left" style={{ padding: 6 }}>
                     {getDaysCountDown(allocation.offerExpiryDate)}
                   </TableCell>
                 </TableRow>

@@ -74,7 +74,9 @@ const CustomStatus: React.FC<Props> = ({
         </Tooltip>
       ) : (
         <>
-          <div className="custom-status__value">{value}</div>
+          <div className="custom-status__value" style={{ paddingRight: 5 }}>
+            {value}
+          </div>
           <img className={iconClasses} alt="" />
         </>
       )}

@@ -16,6 +16,7 @@ import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
+import "../styles/Grid.css";
 
 interface ILecturingActivityProps {
   setModalOpen: (activityId: string) => void;
@@ -167,11 +168,21 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     //if offer expired.
     if (timeDifference <= 0) {
       return (
+        // <div
+        //   style={{
+        //     margin: 0,
+        //     padding: 5,
+        //     backgroundColor: "#ffe57d",
+        //     fontWeight: "bold",
+        //   }}
+        // >
+        //   Tutor has not responded
+        // </div>
+
         <CustomStatus
-          value="Tutor has not responded in time"
+          value="Tutor has not responded"
           isYellow
-          isExclamationDiamond
-          isCompact
+          isExclamationTriangle
         />
       );
     }
@@ -405,42 +416,37 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       </Grid>
       <Box pt={5}>
         <TableContainer component={Paper}>
-          <Table className={""} size="small" aria-label="a dense table">
+          <Table className="grid" size="small">
+            <colgroup>
+              <col width="10%" />
+              <col width="7%" />
+              <col width="7%" />
+              <col width="7%" />
+              <col width="7%" />
+              <col width="12%" />
+              <col width="7%" />
+              <col width="7%" />
+              <col width="11%" />
+              <col width="10%" />
+              <col width="4%" />
+              <col width="11%" />
+            </colgroup>
             <TableHead>
               <TableRow>
-                <StyledTableCell rowSpan={2} align="left">
-                  Unit Code
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  Campus
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  Activity Group
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  Activity Code
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  Day
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  Location{" "}
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  Start Time
-                </StyledTableCell>
-                <StyledTableCell rowSpan={2} align="left">
-                  End Time
-                </StyledTableCell>
-                <StyledTableCell align="center" colSpan={4}>
-                  Allocations
-                </StyledTableCell>
-              </TableRow>
-              <TableRow>
-                <StyledTableCell align="left">Name</StyledTableCell>
+                <StyledTableCell align="left">Unit Code</StyledTableCell>
+                <StyledTableCell align="left">Campus</StyledTableCell>
+                <StyledTableCell align="left">Activity Group</StyledTableCell>
+                <StyledTableCell align="left">Activity Code</StyledTableCell>
+                <StyledTableCell align="left">Day</StyledTableCell>
+                <StyledTableCell align="left">Location</StyledTableCell>
+                <StyledTableCell align="left">Start Time</StyledTableCell>
+                <StyledTableCell align="left">End Time</StyledTableCell>
+                <StyledTableCell align="left">Staff Name</StyledTableCell>
                 <StyledTableCell align="left">Status</StyledTableCell>
                 <StyledTableCell align="left">Action</StyledTableCell>
-                <StyledTableCell align="left">Time Remaining</StyledTableCell>
+                <StyledTableCell align="left" style={{ minWidth: 110 }}>
+                  Time Remaining
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -465,11 +471,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                   <TableCell rowSpan={n + 1} align="left">
                                     {activity.activityGroup}
                                   </TableCell>
-                                  <TableCell
-                                    rowSpan={n + 1}
-                                    component="th"
-                                    scope="row"
-                                  >
+                                  <TableCell rowSpan={n + 1} align="left">
                                     {activity.activityCode}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
@@ -534,21 +536,13 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                             </TableRow>
                             {j === n - 1 ? (
                               <TableRow>
-                                <TableCell colSpan={4}>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "center",
-                                      padding: 5,
-                                    }}
+                                <TableCell align="center">
+                                  <Button
+                                    variant="contained"
+                                    onClick={() => setModalOpen(activity.id)}
                                   >
-                                    <Button
-                                      variant="contained"
-                                      onClick={() => setModalOpen(activity.id)}
-                                    >
-                                      Manually add allocations
-                                    </Button>
-                                  </div>
+                                    Manually add allocations
+                                  </Button>
                                 </TableCell>
                               </TableRow>
                             ) : null}
@@ -569,7 +563,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                       <TableCell rowSpan={2} align="left">
                         {activity.activityGroup}
                       </TableCell>
-                      <TableCell rowSpan={2} component="th" scope="row">
+                      <TableCell rowSpan={2} align="left">
                         {activity.activityCode}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
@@ -587,21 +581,13 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                       <TableCell colSpan={4}>No Allocations yet.</TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell colSpan={4}>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            padding: 5,
-                          }}
+                      <TableCell align="center">
+                        <Button
+                          variant="contained"
+                          onClick={() => setModalOpen(activity.id)}
                         >
-                          <Button
-                            variant="contained"
-                            onClick={() => setModalOpen(activity.id)}
-                          >
-                            Manually add allocations
-                          </Button>
-                        </div>
+                          Manually add allocations
+                        </Button>
                       </TableCell>
                     </TableRow>
                   </React.Fragment>
