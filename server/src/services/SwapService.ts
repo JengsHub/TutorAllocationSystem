@@ -182,6 +182,28 @@ class SwapsService {
     return mySwaps;
   }
 
+  @GET
+  @Path("/pending/:unitId")
+  public async getPendingSwaps(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @PathParam("unitId") unitId: string
+  ): Promise<Array<Swap>> {
+    let pendingSwaps = await this.repo
+      .createQueryBuilder("swap")
+      .addSelect("swap.desired")
+      .innerJoinAndSelect("swap.from", "from")
+      .leftJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.activity", "activity")
+      .leftJoinAndSelect("into.activity", "intoActivity")
+      .leftJoinAndSelect("swap.desired", "activty")
+      .where("activity.unitId = :unitId", { unitId: unitId })
+      .andWhere("swap.into IS NOT NULL")
+      .getMany();
+
+    return pendingSwaps;
+  }
+
   /**
    * Accept a swap item by finding the appropriate allocation and adding it to the "into" section
    * @param existingSwap swap entity the user wished to accept: Swap

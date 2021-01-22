@@ -34,4 +34,10 @@ export class Swap extends BaseEntity {
 
   @Column({ nullable: true })
   intoAllocationId!: String;
+
+  @Column({ default: false })
+  lecturerApproved!: boolean;
+
+  @Column({ default: false })
+  workforceApproved!: boolean;
 }
