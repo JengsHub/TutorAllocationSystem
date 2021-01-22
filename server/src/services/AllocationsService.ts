@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getManager, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -57,7 +57,7 @@ class AllocationsService {
   public async getMyAllocation(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
-    @QueryParam("unitId") unitId: string,
+    // @QueryParam("unitId") unitId: string,
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
@@ -92,15 +92,14 @@ class AllocationsService {
      * See: https://github.com/typeorm/typeorm/issues/2707
      */
 
-    const allocations = await Allocation.createQueryBuilder("allocation")
-      .leftJoinAndSelect("allocation.activity", "activity")
-      .where("activity.unitId = :unitId", { unitId })
-      .andWhere("allocation.staffId = :id", { id: me.id })
+    let allocations = await Allocation.createQueryBuilder("allocation")
+      .innerJoinAndSelect("allocation.activity", "activity")
+      .innerJoinAndSelect("activity.unit", "unit")
+      .where("allocation.staffId = :id", { id: me.id })
       .andWhere("allocation.isLecturerApproved = :approval", {
         approval: isLecturerApproved,
       })
       .getMany();
-
     // console.log(allocations);
     return allocations;
   }
@@ -149,6 +148,7 @@ class AllocationsService {
     }
 
     const me = req.user as Staff;
+
     const controller = this.factory.getController(
       await me.getRoleTitle(activity.unitId)
     );

@@ -9,12 +9,16 @@ import {
   PUT,
   QueryParam,
   Security,
+  IgnoreNextMiddlewares,
+  ContextRequest,
+  ContextResponse,
 } from "typescript-rest";
-import { Allocation, StaffPreference, Unit } from "~/entity";
+import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
 import { checkAllocation } from "../helpers/checkConstraints";
+import { Request, Response } from "express";
 
 @Path("/activities")
 class ActivitiesService {
@@ -34,10 +38,35 @@ class ActivitiesService {
      * - To also load nested relation, i.e relations: ["allocations", "allocations.staff"]
      */
     return this.repo.find({
-      relations: ["allocations", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
+      relations: ["allocations", "allocations.staff", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
     });
   }
 
+  /**
+   * Returns a list of activities
+   * @return Array<Activity> activities list
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/all-my-lecturing")
+  public async getAllLecturingActivities(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    const user = req.user as Staff;
+    let activities = await Activity.createQueryBuilder("activity")
+      .leftJoinAndSelect("activity.allocations", "allocations")
+      .leftJoinAndSelect("allocations.staff", "staff")
+      .innerJoinAndSelect("activity.unit", "unit")
+      .innerJoin(Role, "role", "role.unitId = unit.id")
+      .where("role.staffId = :id", { id: user.id })
+      .andWhere("role.title = :role", { role: "Lecturer" })
+      .orderBy("unit.unitCode", "ASC")
+      .getMany();
+
+    console.log(activities);
+    return activities;
+  }
   /**
    * Returns an allocation based on the activity id given
    * @param id acitivity id

@@ -57,7 +57,7 @@ const Routes = () => {
         />
         <PrivateRoute
           isAuthenticated={isAuth}
-          path="/lecturing"
+          path="/offering"
           component={Lecturing}
         />
         {/* <PrivateRoute

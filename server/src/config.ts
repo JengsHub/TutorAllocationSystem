@@ -28,8 +28,8 @@ const dev = {
   DB_NAME: "postgres",
   DB_USERNAME: "postgres",
   DB_PASSWORD: "postgres",
-  DB_SYNC: true,
-  DB_LOGS: true,
+  DB_SYNC: false,
+  DB_LOGS: false,
   GOOGLE_CLIENT_ID:
     "57204204592-d9209pd5seer582qkhplc1lo8bpnkl42.apps.googleusercontent.com",
   GOOGLE_CLIENT_SECRET: "C5IISdZB193a2HbcOIEXbOw1",
@@ -44,4 +44,8 @@ const dev = {
 };
 
 console.log(process.env.NODE_ENV);
-export const config: any = process.env.NODE_ENV === "development" ? dev : prod;
+
+export const config: any =
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined
+    ? dev
+    : prod;
