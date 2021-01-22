@@ -49,7 +49,14 @@ const Swapping = () => {
     return (
       <React.Fragment>
         <Box margin={1}>
-          <h1> {row.unit.unitCode} </h1>
+          <h1>
+            {" "}
+            {row.unit.unitCode +
+              "-" +
+              row.unit.offeringPeriod +
+              "-" +
+              row.unit.year}{" "}
+          </h1>
           <Swaps
             {...{
               unitId: row.unitId,
