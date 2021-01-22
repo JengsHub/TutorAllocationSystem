@@ -1,0 +1,290 @@
+import React, { useEffect, useRef, useState } from "react";
+import { Autocomplete } from "@material-ui/lab";
+import { Grid, TextField } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import TableCell from "@material-ui/core/TableCell";
+import { withStyles } from "@material-ui/core/styles";
+import { Table, TableRow } from "@material-ui/core";
+import Paper from "@material-ui/core/Paper";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableBody from "@material-ui/core/TableBody";
+import Button from "@material-ui/core/Button";
+import DatabaseFinder from "../../apis/DatabaseFinder";
+
+const SwappingLecturer = () => {
+  const [swaps, setSwaps] = useState<ISwap[]>([]);
+  const [swapsToDisplay, setSwapsToDisplay] = useState<ISwap[]>([]);
+  const [yearOption, setYearOption] = useState<string[]>([]);
+  const [offeringPeriodOption, setOfferingPeriodOption] = useState<string[]>(
+    []
+  );
+  const [unitCodeOption, setUnitCodeOption] = useState<string[]>([]);
+  const [campusOption, setCampusOption] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<any>("All");
+  const [selectedOfferingPeriod, setSelectedOfferingPeriod] = useState<any>(
+    "All"
+  );
+  const [selectedUnitCode, setSelectedUnitCode] = useState<any>("All");
+  const [selectedCampus, setSelectedCampus] = useState<any>("All");
+  const initialRender = useRef(true);
+
+  useEffect(() => {
+    const getSwaps = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8888/swaps/pending-lecturer`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Credentials": "true",
+            },
+          }
+        );
+        return await res.json();
+      } catch (e) {
+        console.log("Error fetching swaps");
+      }
+    };
+
+    getSwaps().then((res) => {
+      setSwaps(res);
+      setSwapsToDisplay(res);
+      // eslint-disable-next-line
+      setUpAutoComplete(res);
+      console.log(res);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      // Handle autocomplete changes
+      let tempArray: ISwap[] = swaps;
+      if (selectedYear !== "All") {
+        tempArray = tempArray.filter(function (swap) {
+          return swap.from.activity.unit.year.toString() === selectedYear;
+        });
+      }
+      if (selectedOfferingPeriod !== "All") {
+        tempArray = tempArray.filter(function (swap) {
+          return (
+            swap.from.activity.unit.offeringPeriod === selectedOfferingPeriod
+          );
+        });
+      }
+      if (selectedCampus !== "All") {
+        tempArray = tempArray.filter(function (swap) {
+          return swap.from.activity.unit.campus === selectedCampus;
+        });
+      }
+      if (selectedUnitCode !== "All") {
+        tempArray = tempArray.filter(function (swap) {
+          return swap.from.activity.unit.unitCode === selectedUnitCode;
+        });
+      }
+
+      setSwapsToDisplay(tempArray);
+    }
+  }, [
+    selectedYear,
+    selectedCampus,
+    selectedOfferingPeriod,
+    selectedUnitCode,
+    swaps,
+  ]);
+
+  function setUpAutoComplete(res: ISwap[]) {
+    let uniqueList: string[] = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].from.activity.unit.unitCode)) {
+        uniqueList.push(res[i].from.activity.unit.unitCode);
+      }
+    }
+    uniqueList.push("All");
+    setUnitCodeOption(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].from.activity.unit.offeringPeriod)) {
+        uniqueList.push(res[i].from.activity.unit.offeringPeriod);
+      }
+    }
+    uniqueList.push("All");
+    setOfferingPeriodOption(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].from.activity.unit.year.toString())) {
+        uniqueList.push(res[i].from.activity.unit.year.toString());
+      }
+    }
+    uniqueList.push("All");
+    setYearOption(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].from.activity.unit.campus)) {
+        uniqueList.push(res[i].from.activity.unit.campus);
+      }
+    }
+    uniqueList.push("All");
+    setCampusOption(uniqueList);
+    uniqueList = [];
+  }
+
+  const handleLecturerAccept = async (swap: ISwap) => {
+    //TODO: pass in swap object for approval
+    let result = await DatabaseFinder.patch(
+      `http://localhost:8888/swaps/approveSwap/${swap.id}`
+    );
+    console.log(result);
+  };
+
+  const StyledTableCell = withStyles(() => ({
+    head: {
+      backgroundColor: "#c0c0c0",
+    },
+  }))(TableCell);
+
+  return (
+    <div id="main">
+      <h1> Swaps made by Teaching Associates</h1>
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={yearOption}
+            getOptionLabel={(option) => option.toString()}
+            renderInput={(params) => (
+              <TextField {...params} label="Year" variant="outlined" />
+            )}
+            value={selectedYear}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedYear(newValue);
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={offeringPeriodOption}
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Offering Period"
+                variant="outlined"
+              />
+            )}
+            value={selectedOfferingPeriod}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedOfferingPeriod(newValue);
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={campusOption}
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
+              <TextField {...params} label="Campus" variant="outlined" />
+            )}
+            value={selectedCampus}
+            onChange={(event, newValue) => {
+              // @ts-ignore
+              setSelectedCampus(newValue);
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Autocomplete
+            options={unitCodeOption}
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
+              <TextField {...params} label="Unit Code" variant="outlined" />
+            )}
+            value={selectedUnitCode}
+            onChange={(event, newValue) => {
+              setSelectedUnitCode(newValue);
+            }}
+          />
+        </Grid>
+      </Grid>
+      <Box pt={5}>
+        {swaps.length > 0 ? (
+          <TableContainer component={Paper}>
+            <Table className="grid">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell align="left">Unit Details</StyledTableCell>
+                  <StyledTableCell align="left">Swap Details</StyledTableCell>
+                  <StyledTableCell align="center">Action</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {swapsToDisplay.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3}>No swaps found.</TableCell>
+                  </TableRow>
+                ) : null}
+                {swapsToDisplay.map((swaps, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      {" "}
+                      {swaps.from.activity.unit.unitCode +
+                        "-" +
+                        swaps.from.activity.unit.offeringPeriod +
+                        "-" +
+                        swaps.from.activity.unit.year +
+                        "-" +
+                        swaps.from.activity.unit.campus}{" "}
+                    </TableCell>
+                    <TableCell>
+                      {swaps.into?.staff.givenNames +
+                        " " +
+                        swaps.into?.staff.lastName +
+                        " has agreed to swap from " +
+                        swaps.into?.activity.activityCode +
+                        "-" +
+                        swaps.into?.activity.activityGroup +
+                        " to " +
+                        swaps.from.activity.activityCode +
+                        "-" +
+                        swaps.from.activity.activityGroup +
+                        " with " +
+                        swaps.from.staff.givenNames +
+                        " " +
+                        swaps.from.staff.lastName}{" "}
+                    </TableCell>
+                    <TableCell>
+                      {" "}
+                      <Button> No </Button>{" "}
+                      <Button
+                        onClick={() => {
+                          handleLecturerAccept(swaps);
+                        }}
+                      >
+                        {" "}
+                        Yes{" "}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <div>No swaps have been made for all units you manage.</div>
+        )}
+      </Box>
+    </div>
+  );
+};
+
+export default SwappingLecturer;

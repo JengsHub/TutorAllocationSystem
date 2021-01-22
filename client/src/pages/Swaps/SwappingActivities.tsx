@@ -8,8 +8,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import DatabaseFinder from "../apis/DatabaseFinder";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import DatabaseFinder from "../../apis/DatabaseFinder";
+import { DayOfWeek } from "../../enums/DayOfWeek";
 
 interface ICandidateProps {
   allocation: IAllocation;

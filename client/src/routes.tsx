@@ -10,10 +10,11 @@ import NotFound from "./pages/NotFound";
 // import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
 import Units from "./pages/Units";
-import Swapping from "./pages/Swapping";
+import Swapping from "./pages/Swaps/Swapping";
 import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
+import SwappingLecturer from "./pages/Swaps/SwappingLecturer";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
@@ -74,11 +75,11 @@ const Routes = () => {
           path="/lecturing"
           component={Lecturing}
         />
-        {/* <PrivateRoute
+        <PrivateRoute
           isAuthenticated={isAuth}
-          path="/staff"
-          component={Staff}
-        /> */}
+          path="/swappingLecture"
+          component={SwappingLecturer}
+        />
         {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/preferences"

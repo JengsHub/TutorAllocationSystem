@@ -7,10 +7,12 @@ import {
   GET,
   Path,
   PathParam,
+  IgnoreNextMiddlewares,
   POST,
   PUT,
+  PATCH,
 } from "typescript-rest";
-import { Activity, Allocation, Staff, Unit, Swap } from "~/entity";
+import { Activity, Allocation, Staff, Unit, Swap, Role } from "~/entity";
 import { checkSwapAllocation } from "../helpers/checkConstraints";
 import { authCheck } from "~/helpers/auth";
 
@@ -33,22 +35,13 @@ class SwapsService {
   }
 
   /**
-   * Fetch swap enity by ID
-   * @param id swap entity ID: string
-   */
-  @GET
-  @Path(":id")
-  public getSwap(@PathParam("id") id: string) {
-    return this.repo.findOne(id);
-  }
-
-  /**
    * Get a list of activities a user could potentially swap into provided an activity they want to swap out of
    * @param req
    * @param res
    * @param activityId ID of activty they want to swap out of
    */
   @GET
+  @IgnoreNextMiddlewares
   @Path("/swappable/:activityId")
   public async getSwappableActivites(
     @ContextRequest req: Request,
@@ -108,6 +101,7 @@ class SwapsService {
    * @param unitId unity entity id: string
    */
   @GET
+  @IgnoreNextMiddlewares
   @Path("/openSwaps/:unitId")
   public async getOpenSwaps(
     @ContextRequest req: Request,
@@ -161,6 +155,7 @@ class SwapsService {
    * @param unitId
    */
   @GET
+  @IgnoreNextMiddlewares
   @Path("/mine/:unitId")
   public async getMySwaps(
     @ContextRequest req: Request,
@@ -195,6 +190,7 @@ class SwapsService {
    * @param unitId
    */
   @GET
+  @IgnoreNextMiddlewares
   @Path("/pending/:unitId")
   public async getPendingSwaps(
     @ContextRequest req: Request,
@@ -216,6 +212,34 @@ class SwapsService {
     return pendingSwaps;
   }
 
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/pending-lecturer")
+  public async getAllPendingSwaps() {
+    // console.log("test")
+    // const user = req.user as Staff;
+
+    let pendingSwaps = await this.repo
+      .createQueryBuilder("swap")
+      .innerJoinAndSelect("swap.from", "from")
+      .innerJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.activity", "activity")
+      .innerJoinAndSelect("into.activity", "intoActivity")
+      .innerJoinAndSelect("from.staff", "staff")
+      .innerJoinAndSelect("into.staff", "intoStaff")
+      .innerJoinAndSelect("activity.unit", "unit")
+      .innerJoin(Role, "role", "role.unitId = activity.unitId")
+      .where("activity.unitId = role.unitId")
+      .andWhere("role.staffId = :id", {
+        id: "5f8537ae-7a2a-4b97-9836-ebd3747fef1a",
+      })
+      .andWhere("role.title = :role", { role: "Lecturer" })
+      .andWhere("swap.into IS NOT NULL")
+      .getMany();
+
+    return pendingSwaps;
+  }
+
   /**
    * Accept a swap item by finding the appropriate allocation and adding it to the "into" section
    * @param existingSwap swap entity the user wished to accept: Swap
@@ -223,6 +247,7 @@ class SwapsService {
    * @param res
    */
   @POST
+  @IgnoreNextMiddlewares
   @Path("/acceptSwap")
   public async acceptSwap(
     existingSwap: Swap,
@@ -250,16 +275,17 @@ class SwapsService {
    * Lecturer approves a swap two staff members have proposed/accpeted
    * TODO: purpose this for workforce, setting and enacting the swap
    */
-  @POST
-  @Path("/approveSwap/")
+  @PATCH
+  @IgnoreNextMiddlewares
+  @Path("/approveSwap/:id")
   public async approveSwap(
-    toApprove: Swap,
+    @PathParam("id") id: string,
     @ContextRequest req: Request,
     @ContextResponse res: Response
-  ): Promise<void | Swap> {
+  ) {
     if (!authCheck(req, res)) return;
     const me = req.user as Staff;
-    toApprove.lecturerApproved = true;
+    return Swap.update({ id }, { lecturerApproved: true });
 
     // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
     // let fromStaff = toApprove.from.staff;
@@ -275,7 +301,7 @@ class SwapsService {
     // await allocationRepo.save(from);
     // await allocationRepo.save(into);
 
-    return await this.repo.save(toApprove);
+    // return await this.repo.save(toApprove);
   }
 
   /**
@@ -331,5 +357,15 @@ class SwapsService {
     return this.repo.delete({
       id: id,
     });
+  }
+
+  /**
+   * Fetch swap enity by ID
+   * @param id swap entity ID: string
+   */
+  @GET
+  @Path(":id")
+  public getSwap(@PathParam("id") id: string) {
+    return this.repo.findOne(id);
   }
 }

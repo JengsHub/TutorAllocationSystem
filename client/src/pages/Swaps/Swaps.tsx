@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DayOfWeek } from "../enums/DayOfWeek";
+import { DayOfWeek } from "../../enums/DayOfWeek";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -8,7 +8,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Box from "@material-ui/core/Box";
 import { Button } from "@material-ui/core";
 import SwappingModal from "./SwappingModal";
-import DatabaseFinder from "../apis/DatabaseFinder";
+import DatabaseFinder from "../../apis/DatabaseFinder";
 
 const Swaps = (props: { [key: string]: any }) => {
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -162,7 +162,7 @@ const Swaps = (props: { [key: string]: any }) => {
                 <TableCell align="left">Day of Week</TableCell>
                 <TableCell align="left">Location </TableCell>
                 <TableCell align="left">Start Time</TableCell>
-                <TableCell align="left">Swap</TableCell>
+                <TableCell align="center">Swap</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -186,8 +186,12 @@ const Swaps = (props: { [key: string]: any }) => {
                   <TableCell align="left">
                     {allocation.activity.startTime}
                   </TableCell>
-                  <TableCell>
-                    <Button onClick={() => getAvailableSwaps(allocation)}>
+                  <TableCell align="center">
+                    <Button
+                      onClick={() => getAvailableSwaps(allocation)}
+                      variant="contained"
+                      color="primary"
+                    >
                       Offer Swap
                     </Button>
                   </TableCell>
@@ -204,6 +208,7 @@ const Swaps = (props: { [key: string]: any }) => {
                   <TableCell align="left">From</TableCell>
                   <TableCell align="left">Into</TableCell>
                   <TableCell align="left">Desired</TableCell>
+                  <TableCell align="center">Action</TableCell>
                   <TableCell> </TableCell>
                 </TableRow>
               </TableHead>
@@ -221,15 +226,19 @@ const Swaps = (props: { [key: string]: any }) => {
                       {" "}
                       {swap.into?.activity
                         ? swap.into.activity.activityCode
-                        : "not swapped yet"}{" "}
+                        : "Not swapped yet"}{" "}
                     </TableCell>
                     <TableCell>
                       {" "}
                       {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
                       {dayConverter(swap.desired.dayOfWeek)}{" "}
                     </TableCell>
-                    <TableCell>
-                      <Button onClick={() => acceptSwap(swap)}>
+                    <TableCell align="center">
+                      <Button
+                        onClick={() => acceptSwap(swap)}
+                        variant="contained"
+                        color="primary"
+                      >
                         Accept Swap
                       </Button>
                     </TableCell>
@@ -246,7 +255,7 @@ const Swaps = (props: { [key: string]: any }) => {
                   <TableCell align="left">From</TableCell>
                   <TableCell align="left">Into</TableCell>
                   <TableCell align="left">Desired</TableCell>
-                  <TableCell> </TableCell>
+                  <TableCell align="center">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -263,15 +272,19 @@ const Swaps = (props: { [key: string]: any }) => {
                       {" "}
                       {swap.into
                         ? swap.into.activity.activityCode
-                        : "not swapped yet"}{" "}
+                        : "Not swapped yet"}{" "}
                     </TableCell>
                     <TableCell>
                       {" "}
                       {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
                       {dayConverter(swap.desired.dayOfWeek)}{" "}
                     </TableCell>
-                    <TableCell>
-                      <Button onClick={() => deleteSwap(swap)}>
+                    <TableCell align="center">
+                      <Button
+                        onClick={() => deleteSwap(swap)}
+                        variant="contained"
+                        color="secondary"
+                      >
                         Retract Swap
                       </Button>
                     </TableCell>

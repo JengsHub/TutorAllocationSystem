@@ -11,10 +11,10 @@ const SidebarItems = [
     name: "Swapping",
     route: "/swapping",
   },
-  // {
-  //   name: "Preferences",
-  //   route: "/preferences",
-  // },
+  {
+    name: "Manage Swaps",
+    route: "/swappingLecture",
+  },
   // {
   //   name: "Activities",
   //   route: "/activities",
