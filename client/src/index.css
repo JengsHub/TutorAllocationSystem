@@ -31,3 +31,8 @@ html {
 h1 {
   font-family: "Raleway", sans-serif;
 }
+
+.staffTableRow:hover {
+  color: blue;
+  cursor: pointer;
+}

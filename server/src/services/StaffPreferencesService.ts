@@ -11,10 +11,12 @@ import {
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
 import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
 import { authCheck } from "~/helpers/auth";
+import { hasAdminAccess } from "~/helpers/controlAccess";
 import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
@@ -34,11 +36,26 @@ class StaffPreferencesService {
    */
   @GET
   public async getAllStaffPreferences(
-    @ContextRequest req: Request
+    @QueryParam("staffId") staffId: string,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
   ): Promise<Array<StaffPreference>> {
-    const me = req.user as Staff;
-    const controller = this.factory.getController(await me.getRoleTitle());
-    return controller.getAllStaffPreferences();
+    //TODO: move this to controller
+    hasAdminAccess(req, res);
+    let params: { [key: string]: any } = {
+      staffId,
+    };
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
+    return StaffPreference.find({
+      where: params,
+      relations: ["unit"],
+    });
+
+    // const me = req.user as Staff;
+    // const controller = this.factory.getController(await me.getRoleTitle());
+    // return controller.getAllStaffPreferences();
   }
 
   /**

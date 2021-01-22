@@ -1,7 +1,8 @@
 import { DeleteResult, getRepository } from "typeorm";
-import { Request } from "express";
+import { Request, Response } from "express";
 import {
   ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
   PATCH,
@@ -9,10 +10,12 @@ import {
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
 import { AvailabilityControllerFactory } from "~/controller";
 import { Staff } from "~/entity";
 import { Availability } from "../entity/Availability";
+import { hasAdminAccess } from "~/helpers/controlAccess";
 
 @Path("/availabilities")
 class AvailabilitiesService {
@@ -31,11 +34,23 @@ class AvailabilitiesService {
    */
   @GET
   public async getAllAvailabilities(
-    @ContextRequest req: Request
+    @QueryParam("staffId") staffId: string,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
   ): Promise<Array<Availability>> {
-    const me = req.user as Staff;
-    const controller = this.factory.getController(await me.getRoleTitle());
-    return await controller.getAllAvailabilities();
+    //TODO: move this to controller
+    hasAdminAccess(req, res);
+    let params: { [key: string]: any } = {
+      staffId,
+    };
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
+    return Availability.find(params);
+
+    // const me = req.user as Staff;
+    // const controller = this.factory.getController(await me.getRoleTitle());
+    // return await controller.getAllAvailabilities();
   }
 
   /**

@@ -15,7 +15,7 @@ import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
-import Staff from "./pages/Staff";
+import Staff from "./pages/Staff/Staff";
 import Rules from "./pages/Rules";
 
 const Routes = () => {
