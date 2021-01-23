@@ -33,19 +33,19 @@ class SwapsService {
   @GET
   public async getAllSwaps(): Promise<Array<Swap>> {
     let swaps = await this.repo
-    .createQueryBuilder("swap")
-    .innerJoinAndSelect("swap.from", "from")
-    .innerJoinAndSelect("swap.into", "into")
-    .innerJoinAndSelect("from.activity", "activity")
-    .innerJoinAndSelect("into.activity", "intoActivity")
-    .innerJoinAndSelect("from.staff", "staff")
-    .innerJoinAndSelect("into.staff", "intoStaff")
-    .innerJoinAndSelect("activity.unit", "unit")
-    .orderBy("unit.year", "ASC")
-    .orderBy("unit.offeringPeriod", "ASC")
-    .orderBy("unit.campus", "ASC")
-    .orderBy("unit.unitCode", "ASC")
-    .getMany();
+      .createQueryBuilder("swap")
+      .innerJoinAndSelect("swap.from", "from")
+      .innerJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.activity", "activity")
+      .innerJoinAndSelect("into.activity", "intoActivity")
+      .innerJoinAndSelect("from.staff", "staff")
+      .innerJoinAndSelect("into.staff", "intoStaff")
+      .innerJoinAndSelect("activity.unit", "unit")
+      .orderBy("unit.year", "ASC")
+      .orderBy("unit.offeringPeriod", "ASC")
+      .orderBy("unit.campus", "ASC")
+      .orderBy("unit.unitCode", "ASC")
+      .getMany();
 
     return swaps;
   }
@@ -230,8 +230,8 @@ class SwapsService {
 
   /**
    * Get all the pending swaps for units that user is a lecturer for
-   * @param req 
-   * @param res 
+   * @param req
+   * @param res
    */
   @GET
   @IgnoreNextMiddlewares
@@ -335,7 +335,7 @@ class SwapsService {
     // return await this.repo.save(toApprove);
   }
 
-    /**
+  /**
    * Workforce approves a swap two staff members have proposed/accpeted
    * @param id uuid string of swap to approve
    * @param req
