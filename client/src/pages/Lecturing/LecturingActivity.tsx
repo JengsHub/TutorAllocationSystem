@@ -463,12 +463,16 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               {j === 0 ? (
                                 <>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    <TableRow>{activity.unit.unitCode}</TableRow>
+                                    <TableRow>
+                                      {activity.unit.unitCode}
+                                    </TableRow>
                                     <Button
                                       size="small"
                                       href="#text-buttons"
                                       color="primary"
-                                      onClick={() => setStatusLogModalOpen(activity.id)}
+                                      onClick={() =>
+                                        setStatusLogModalOpen(activity.id)
+                                      }
                                     >
                                       Status Log
                                     </Button>
