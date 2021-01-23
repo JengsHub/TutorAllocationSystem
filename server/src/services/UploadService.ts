@@ -9,12 +9,23 @@ import ProcessFileService, {
   mapRawTpsFile,
 } from "../helpers/processInputFiles";
 import { DayOfWeek } from "../enums/DayOfWeek";
+import { UploadControllerFactory } from "~/controller/UploadController";
 
 @Path("/upload")
 class UploadService {
+  factory = new UploadControllerFactory();
+
+  /**
+   * Uploads the TAS csv file to be used by the rest of the system
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   */
   @POST
   @Path("/tas")
-  public uploadTas(@ContextRequest req: Request) {
+  public async uploadTas(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
     const path = (files.tas as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
@@ -52,9 +63,17 @@ class UploadService {
       });
   }
 
+  /**
+   * Uploads the TPS csv file to be used by the rest of the system
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   */
   @POST
   @Path("/tps")
-  public uploadTps(@ContextRequest req: Request) {
+  public async uploadTps(@ContextRequest req: Request) {
     const files = (req.files as unknown) as FileArray;
     const path = (files.tps as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
@@ -92,6 +111,14 @@ class UploadService {
       });
   }
 
+  /**
+   * Uploads the Allocate+ csv file to be used by the rest of the system
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   */
   @POST
   @Path("/allocate")
   public async uploadAllocate(@ContextRequest req: Request) {

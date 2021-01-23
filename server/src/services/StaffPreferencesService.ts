@@ -11,10 +11,12 @@ import {
   PathParam,
   POST,
   PUT,
+  QueryParam,
 } from "typescript-rest";
 import { StaffPreferenceControllerFactory } from "~/controller";
 import { Staff, Unit } from "~/entity";
 import { authCheck } from "~/helpers/auth";
+import { hasAdminAccess } from "~/helpers/controlAccess";
 import { StaffPreference } from "../entity/StaffPreference";
 
 @Path("/staffpreferences")
@@ -24,11 +26,36 @@ class StaffPreferencesService {
 
   /**
    * Returns a list of staffPreferences
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @return Array<StaffPreference> staffPreferences list
    */
   @GET
-  public getAllStaffPreferences(): Promise<Array<StaffPreference>> {
-    return this.repo.find({ relations: ["staff", "unit"] });
+  public async getAllStaffPreferences(
+    @QueryParam("staffId") staffId: string,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ): Promise<Array<StaffPreference>> {
+    //TODO: move this to controller
+    hasAdminAccess(req, res);
+    let params: { [key: string]: any } = {
+      staffId,
+    };
+    Object.keys(params).forEach(
+      (key) => params[key] === undefined && delete params[key]
+    );
+    return StaffPreference.find({
+      where: params,
+      relations: ["unit"],
+    });
+
+    // const me = req.user as Staff;
+    // const controller = this.factory.getController(await me.getRoleTitle());
+    // return controller.getAllStaffPreferences();
   }
 
   /**
@@ -60,24 +87,42 @@ class StaffPreferencesService {
 
   /**
    * Returns a staffPreference
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
    * @param id id for the staffPreference
    * @return StaffPreference single staffPreference
    */
   // TODO: assert return value as Promise<StaffPreference> here
   @GET
   @Path("/:id")
-  public getStaffPreference(@PathParam("id") id: string) {
-    return this.repo.findOne({ id }, { relations: ["staff", "unit"] });
+  public async getStaffPreference(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request
+  ) {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.getStaffPreference(id);
   }
 
   /**
    * Creates a staffPreference
+   *
+   * Role authorisation:
+   *  - TA: can only create preferences for themselves
+   *  - Lecturer: can only create preferences for themselves
+   *  - Admin: can create any staff preference
+   *
    * @param newRecord staffPreference data
    * @return StaffPreference new staffPreference
    */
   @POST
   public async createStaffPreference(
-    newRecord: StaffPreference
+    newRecord: StaffPreference,
+    @ContextRequest req: Request
   ): Promise<StaffPreference> {
     // TODO: optimisation
     let staff = await getRepository(Staff).findOneOrFail({
@@ -86,49 +131,51 @@ class StaffPreferencesService {
     let unit = await getRepository(Unit).findOneOrFail({
       id: newRecord.unitId,
     });
-    let staffPreferenceToUpdate = await StaffPreference.findOne({
-      staff: staff,
-      unit: unit,
-    });
-    if (staffPreferenceToUpdate) {
-      StaffPreference.update({ id: staffPreferenceToUpdate.id }, newRecord);
-      newRecord.staff = staff;
-      newRecord.unit = unit;
-      return newRecord;
-    }
-
-    newRecord.staff = staff;
-    newRecord.unit = unit;
-
-    return this.repo.save(this.repo.create(newRecord));
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.createStaffPreference(newRecord, staff, unit, me);
   }
 
   /**
    * Updates a staffPreference
+   *
+   * Role authorisation:
+   *  - TA: can only update preferences for themselves
+   *  - Lecturer: can only update preferences for themselves
+   *  - Admin: can update any staff preference
+   *
    * @param changedStaffPreference new staffPreference object to change existing staffPreference to
    * @return StaffPreference changed staffPreference
    */
   @PUT
   public async updateStaffPreference(
-    changedStaffPreference: StaffPreference
+    changedStaffPreference: StaffPreference,
+    @ContextRequest req: Request
   ): Promise<StaffPreference> {
-    let staffPreferenceToUpdate = await this.repo.findOne({
-      id: changedStaffPreference.id,
-    });
-    staffPreferenceToUpdate = changedStaffPreference;
-    return this.repo.save(staffPreferenceToUpdate);
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.updateStaffPreference(changedStaffPreference, me);
   }
 
   /**
    * Deletes an staffPreference
+   *
+   * Role authorisation:
+   *  - TA: can only delete preferences for themselves
+   *  - Lecturer: can only delete preferences for themselves
+   *  - Admin: can delete any staff preference
+   *
    * @param id id for the staffPreference
    * @return DeleteResult result of delete request
    */
   @DELETE
   @Path(":id")
-  public deleteStaffPreference(
-    @PathParam("id") id: string
+  public async deleteStaffPreference(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request
   ): Promise<DeleteResult> {
-    return this.repo.delete({ id });
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.deleteStaffPreference(id, me);
   }
 }
