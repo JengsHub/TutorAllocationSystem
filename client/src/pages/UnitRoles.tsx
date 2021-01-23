@@ -84,7 +84,7 @@ const CustomTableCell = ({ row, name, onChange }: any) => {
   );
 };
 
-const Admin = () => {
+const UnitRoles = () => {
   // const { adminAccess } = React.useContext(AuthContext);
   const [selectedPeriod, setSelectedPeriod] = useState<any>(null);
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
@@ -182,7 +182,7 @@ const Admin = () => {
 
   return (
     <div id="main">
-      <h1> Admin </h1>
+      <h1> Unit Roles </h1>
       {/* <div>Admin access: {adminAccess.toString()}</div> */}
       <Grid container spacing={3}>
         <Grid item xs={3}>
@@ -288,4 +288,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default UnitRoles;
