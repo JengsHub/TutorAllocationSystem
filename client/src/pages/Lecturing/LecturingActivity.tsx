@@ -258,7 +258,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const allocationRejected = async (allocation: IAllocationWithStaff) => {
     // TODO: Handle approval
     const result = await baseApi.patch(
-      `/allocations/${allocation.id}/approval?value=false`
+      `/allocations/${allocation.id}/lecturer-approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -463,7 +463,15 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               {j === 0 ? (
                                 <>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.unit.unitCode}
+                                    <TableRow>{activity.unit.unitCode}</TableRow>
+                                    <Button
+                                      size="small"
+                                      href="#text-buttons"
+                                      color="primary"
+                                      onClick={() => setStatusLogModalOpen(activity.id)}
+                                    >
+                                      Status Log
+                                    </Button>
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
                                     {activity.unit.campus}
