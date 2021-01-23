@@ -6,9 +6,11 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Box from "@material-ui/core/Box";
-import { Button } from "@material-ui/core";
+import { Button, TableContainer } from "@material-ui/core";
 import SwappingModal from "./SwappingModal";
 import DatabaseFinder from "../../apis/DatabaseFinder";
+import { withStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
 
 const Swaps = (props: { [key: string]: any }) => {
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -144,6 +146,12 @@ const Swaps = (props: { [key: string]: any }) => {
     setChanged(true);
   };
 
+  const StyledTableCell = withStyles(() => ({
+    head: {
+      backgroundColor: "#c0c0c0",
+    },
+  }))(TableCell);
+
   return (
     <div>
       <Box>
@@ -154,154 +162,161 @@ const Swaps = (props: { [key: string]: any }) => {
         {allocatedActivities.length > 0 ? (
           <>
             <h2>My Activities</h2>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">Activity Code</TableCell>
-                  <TableCell align="left">Activity Group</TableCell>
-                  <TableCell align="left">Campus</TableCell>
-                  <TableCell align="left">Day of Week</TableCell>
-                  <TableCell align="left">Location </TableCell>
-                  <TableCell align="left">Start Time</TableCell>
-                  <TableCell align="center">Swap</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {allocatedActivities.map((allocation, i) => (
-                  <TableRow key={i}>
-                    <TableCell align="left">
-                      {allocation.activity.activityCode}
-                    </TableCell>
-                    <TableCell align="left">
-                      {allocation.activity.activityGroup}
-                    </TableCell>
-                    <TableCell align="left">
-                      {allocation.activity.campus}
-                    </TableCell>
-                    <TableCell align="left">
-                      {dayConverter(allocation.activity.dayOfWeek)}
-                    </TableCell>
-                    <TableCell align="left">
-                      {allocation.activity.location}
-                    </TableCell>
-                    <TableCell align="left">
-                      {allocation.activity.startTime}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        onClick={() => getAvailableSwaps(allocation)}
-                        variant="contained"
-                        color="primary"
-                      >
-                        Offer Swap
-                      </Button>
-                    </TableCell>
+            <TableContainer component={Paper}>
+              <Table className="grid">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="left">
+                      Activity Code
+                    </StyledTableCell>
+                    <StyledTableCell align="left">
+                      Activity Group
+                    </StyledTableCell>
+                    <StyledTableCell align="left">Campus</StyledTableCell>
+                    <StyledTableCell align="left">Day of Week</StyledTableCell>
+                    <StyledTableCell align="left">Location </StyledTableCell>
+                    <StyledTableCell align="left">Start Time</StyledTableCell>
+                    <StyledTableCell align="center">Swap</StyledTableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {allocatedActivities.map((allocation, i) => (
+                    <TableRow key={i}>
+                      <TableCell align="left">
+                        {allocation.activity.activityCode}
+                      </TableCell>
+                      <TableCell align="left">
+                        {allocation.activity.activityGroup}
+                      </TableCell>
+                      <TableCell align="left">
+                        {allocation.activity.campus}
+                      </TableCell>
+                      <TableCell align="left">
+                        {dayConverter(allocation.activity.dayOfWeek)}
+                      </TableCell>
+                      <TableCell align="left">
+                        {allocation.activity.location}
+                      </TableCell>
+                      <TableCell align="left">
+                        {allocation.activity.startTime}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          onClick={() => getAvailableSwaps(allocation)}
+                          variant="contained"
+                          color="primary"
+                        >
+                          Offer Swap
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
             <h2> Swaps to consider </h2>
-            <Table className={""} size="small" aria-label="activities table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">Swap id</TableCell>
-                  <TableCell align="left">From</TableCell>
-                  <TableCell align="left">Into</TableCell>
-                  <TableCell align="left">Desired</TableCell>
-                  <TableCell align="center">Action</TableCell>
-                  <TableCell> </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {openSwaps.map((swap, i) => (
-                  <TableRow key={i}>
-                    <TableCell> {swap.id} </TableCell>
-                    <TableCell>
-                      {" "}
-                      {swap.from.activity.activityCode}-
-                      {swap.from.activity.activityGroup}{" "}
-                      {dayConverter(swap.from.activity.dayOfWeek)}{" "}
-                    </TableCell>
-                    <TableCell>
-                      {" "}
-                      {swap.into?.activity
-                        ? swap.into.activity.activityCode
-                        : "Not swapped yet"}{" "}
-                    </TableCell>
-                    <TableCell>
-                      {" "}
-                      {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
-                      {dayConverter(swap.desired.dayOfWeek)}{" "}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        onClick={() => acceptSwap(swap)}
-                        variant="contained"
-                        color="primary"
-                      >
-                        Accept Swap
-                      </Button>
-                    </TableCell>
+            <TableContainer component={Paper}>
+              <Table className="grid">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="left">From</StyledTableCell>
+                    <StyledTableCell align="left">Into</StyledTableCell>
+                    <StyledTableCell align="left">Desired</StyledTableCell>
+                    <StyledTableCell align="center">Action</StyledTableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {openSwaps.map((swap, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        {" "}
+                        {swap.from.activity.activityCode}-
+                        {swap.from.activity.activityGroup}{" "}
+                        {dayConverter(swap.from.activity.dayOfWeek)}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {" "}
+                        {swap.into?.activity
+                          ? swap.into.activity.activityCode
+                          : "Not swapped yet"}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {" "}
+                        {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
+                        {dayConverter(swap.desired.dayOfWeek)}{" "}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          onClick={() => acceptSwap(swap)}
+                          variant="contained"
+                          color="primary"
+                        >
+                          Accept Swap
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </>
         ) : (
           <>
             <div>
-              <h2> No units you can offer a swap for.</h2>
+              <Box pt={1} pb={1}>
+                <h2> No activities you can offer a swap for.</h2>
+              </Box>
             </div>
           </>
         )}
         {mySwaps.length > 0 ? (
           <>
             <h2> My open swaps </h2>
-            <Table className={""} size="small" aria-label="activities table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">Swap id</TableCell>
-                  <TableCell align="left">From</TableCell>
-                  <TableCell align="left">Into</TableCell>
-                  <TableCell align="left">Desired</TableCell>
-                  <TableCell align="center">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {mySwaps.map((swap, i) => (
-                  <TableRow key={i}>
-                    <TableCell> {swap.id} </TableCell>
-                    <TableCell>
-                      {" "}
-                      {swap.from.activity.activityCode}-
-                      {swap.from.activity.activityGroup}{" "}
-                      {dayConverter(swap.from.activity.dayOfWeek)}{" "}
-                    </TableCell>
-                    <TableCell>
-                      {" "}
-                      {swap.into
-                        ? swap.into.activity.activityCode
-                        : "Not swapped yet"}{" "}
-                    </TableCell>
-                    <TableCell>
-                      {" "}
-                      {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
-                      {dayConverter(swap.desired.dayOfWeek)}{" "}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        onClick={() => deleteSwap(swap)}
-                        variant="contained"
-                        color="secondary"
-                      >
-                        Retract Swap
-                      </Button>
-                    </TableCell>
+            <TableContainer component={Paper}>
+              <Table className="grid">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell align="left">From</StyledTableCell>
+                    <StyledTableCell align="left">Into</StyledTableCell>
+                    <StyledTableCell align="left">Desired</StyledTableCell>
+                    <StyledTableCell align="center">Action</StyledTableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>{" "}
+                </TableHead>
+                <TableBody>
+                  {mySwaps.map((swap, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        {" "}
+                        {swap.from.activity.activityCode}-
+                        {swap.from.activity.activityGroup}{" "}
+                        {dayConverter(swap.from.activity.dayOfWeek)}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {" "}
+                        {swap.into
+                          ? swap.into.activity.activityCode
+                          : "Not swapped yet"}{" "}
+                      </TableCell>
+                      <TableCell>
+                        {" "}
+                        {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
+                        {dayConverter(swap.desired.dayOfWeek)}{" "}
+                      </TableCell>
+                      <TableCell align="center">
+                        <Button
+                          onClick={() => deleteSwap(swap)}
+                          variant="contained"
+                          color="secondary"
+                        >
+                          Retract Swap
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>{" "}
+            </TableContainer>
           </>
         ) : (
           <>

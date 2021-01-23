@@ -12,7 +12,7 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 import DatabaseFinder from "../../apis/DatabaseFinder";
 
-const SwappingLecturer = () => {
+const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
   const [swapsToDisplay, setSwapsToDisplay] = useState<ISwap[]>([]);
   const [yearOption, setYearOption] = useState<string[]>([]);
@@ -34,18 +34,15 @@ const SwappingLecturer = () => {
     setChanged(false);
     const getSwaps = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:8888/swaps/pending-lecturer`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
+        const res = await fetch(`http://localhost:8888/swaps`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
+          },
+        });
         return await res.json();
       } catch (e) {
         console.log("Error fetching swaps");
@@ -140,15 +137,15 @@ const SwappingLecturer = () => {
     uniqueList = [];
   }
 
-  const handleLecturerAccept = async (swap: ISwap) => {
+  const handleWorkforceAccept = async (swap: ISwap) => {
     let result = await DatabaseFinder.patch(
-      `http://localhost:8888/swaps/approveSwapLecturer/${swap.id}`
+      `http://localhost:8888/swaps/approveSwapWorkforce/${swap.id}`
     );
     setChanged(true);
     console.log(result);
   };
 
-  const handleLecturerReject = async (swap: ISwap) => {
+  const handleWorkforceReject = async (swap: ISwap) => {
     await fetch(`http://localhost:8888/swaps/rejectSwap/${swap.id}`, {
       method: "DELETE",
       credentials: "include",
@@ -278,11 +275,11 @@ const SwappingLecturer = () => {
                         swaps.from.staff.lastName}{" "}
                     </TableCell>
                     <TableCell>
-                      {!swaps.lecturerApproved ? (
+                      {!swaps.workforceApproved ? (
                         <>
                           <Button
                             onClick={() => {
-                              handleLecturerReject(swaps);
+                              handleWorkforceReject(swaps);
                             }}
                           >
                             {" "}
@@ -290,7 +287,7 @@ const SwappingLecturer = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              handleLecturerAccept(swaps);
+                              handleWorkforceAccept(swaps);
                             }}
                           >
                             {" "}
@@ -314,4 +311,4 @@ const SwappingLecturer = () => {
   );
 };
 
-export default SwappingLecturer;
+export default SwappingWorkforce;

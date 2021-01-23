@@ -12,13 +12,13 @@ const SidebarItems = [
     route: "/swapping",
   },
   {
-    name: "Manage Swaps",
+    name: "Manage Swaps (Lect)",
     route: "/swappingLecture",
   },
-  // {
-  //   name: "Activities",
-  //   route: "/activities",
-  // },
+  {
+    name: "Manage Swaps (WF)",
+    route: "/swappingWorkforce",
+  },
   {
     name: "Lecturing",
     route: "/lecturing",

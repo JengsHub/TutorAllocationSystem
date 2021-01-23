@@ -31,8 +31,23 @@ class SwapsService {
    * Fetch all swap entities
    */
   @GET
-  public getAllSwaps(): Promise<Array<Swap>> {
-    return this.repo.find();
+  public async getAllSwaps(): Promise<Array<Swap>> {
+    let swaps = await this.repo
+    .createQueryBuilder("swap")
+    .innerJoinAndSelect("swap.from", "from")
+    .innerJoinAndSelect("swap.into", "into")
+    .innerJoinAndSelect("from.activity", "activity")
+    .innerJoinAndSelect("into.activity", "intoActivity")
+    .innerJoinAndSelect("from.staff", "staff")
+    .innerJoinAndSelect("into.staff", "intoStaff")
+    .innerJoinAndSelect("activity.unit", "unit")
+    .orderBy("unit.year", "ASC")
+    .orderBy("unit.offeringPeriod", "ASC")
+    .orderBy("unit.campus", "ASC")
+    .orderBy("unit.unitCode", "ASC")
+    .getMany();
+
+    return swaps;
   }
 
   /**
@@ -213,6 +228,11 @@ class SwapsService {
     return pendingSwaps;
   }
 
+  /**
+   * Get all the pending swaps for units that user is a lecturer for
+   * @param req 
+   * @param res 
+   */
   @GET
   @IgnoreNextMiddlewares
   @Path("/pending-lecturer")
@@ -239,6 +259,10 @@ class SwapsService {
       })
       .andWhere("role.title = :role", { role: "Lecturer" })
       .andWhere("swap.into IS NOT NULL")
+      .orderBy("unit.year", "ASC")
+      .orderBy("unit.offeringPeriod", "ASC")
+      .orderBy("unit.campus", "ASC")
+      .orderBy("unit.unitCode", "ASC")
       .getMany();
 
     return pendingSwaps;
@@ -284,8 +308,8 @@ class SwapsService {
    */
   @PATCH
   @IgnoreNextMiddlewares
-  @Path("/approveSwap/:id")
-  public async approveSwap(
+  @Path("/approveSwapLecturer/:id")
+  public async approveSwapLecturer(
     @PathParam("id") id: string,
     @ContextRequest req: Request,
     @ContextResponse res: Response
@@ -293,6 +317,41 @@ class SwapsService {
     if (!authCheck(req, res)) return;
     const me = req.user as Staff;
     return await Swap.update({ id }, { lecturerApproved: true });
+
+    // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
+    // let fromStaff = toApprove.from.staff;
+    // let intoStaff = toApprove.into.staff;
+    // let from = toApprove.from;
+    // let into = toApprove.into;
+    // from.staff = intoStaff;
+    // from.staffId = intoStaff.id;
+    // into.staff = fromStaff;
+    // into.staffId = fromStaff.id;
+
+    // let allocationRepo = getRepository(Allocation);
+    // await allocationRepo.save(from);
+    // await allocationRepo.save(into);
+
+    // return await this.repo.save(toApprove);
+  }
+
+    /**
+   * Workforce approves a swap two staff members have proposed/accpeted
+   * @param id uuid string of swap to approve
+   * @param req
+   * @param res
+   */
+  @PATCH
+  @IgnoreNextMiddlewares
+  @Path("/approveSwapWorkforce/:id")
+  public async approveSwapWorkforce(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    if (!authCheck(req, res)) return;
+    const me = req.user as Staff;
+    return await Swap.update({ id }, { workforceApproved: true });
 
     // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
     // let fromStaff = toApprove.from.staff;

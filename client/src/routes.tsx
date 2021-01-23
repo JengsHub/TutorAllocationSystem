@@ -15,6 +15,7 @@ import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
 import SwappingLecturer from "./pages/Swaps/SwappingLecturer";
+import SwappingWorkforce from "./pages/Swaps/SwappingWorkforce";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
@@ -80,11 +81,11 @@ const Routes = () => {
           path="/swappingLecture"
           component={SwappingLecturer}
         />
-        {/* <PrivateRoute
+        <PrivateRoute
           isAuthenticated={isAuth}
-          path="/preferences"
-          component={Preferences}
-        /> */}
+          path="/swappingWorkforce"
+          component={SwappingWorkforce}
+        />
         {/* <PrivateRoute
           isAuthenticated={isAuth}
           path="/activities"
