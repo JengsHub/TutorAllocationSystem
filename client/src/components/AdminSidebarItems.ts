@@ -4,6 +4,10 @@ const AdminSidebarItems = [
     route: "/",
   },
   {
+    name: "Unit Activities",
+    route: "/activities",
+  },
+  {
     name: "Staff",
     route: "/staff",
   },
@@ -16,8 +20,8 @@ const AdminSidebarItems = [
     route: "/rules",
   },
   {
-    name: "Admin",
-    route: "/admin",
+    name: "Unit Roles",
+    route: "/unitroles",
   },
   {
     name: "Profile",

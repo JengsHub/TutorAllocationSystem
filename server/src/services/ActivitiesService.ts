@@ -1,6 +1,5 @@
 import { exception } from "console";
 import { DeleteResult, getRepository } from "typeorm";
-import { Request } from "express";
 import {
   ContextRequest,
   DELETE,
@@ -12,7 +11,6 @@ import {
   QueryParam,
   Security,
   IgnoreNextMiddlewares,
-  ContextRequest,
   ContextResponse,
 } from "typescript-rest";
 import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";

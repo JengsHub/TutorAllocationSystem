@@ -4,7 +4,6 @@ import baseApi from "./apis/baseApi";
 import Sidebar from "./components/Sidebar";
 import AdminSidebar from "./components/AdminSidebar";
 // import Activities from "./pages/Activities";
-import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
 import Lecturing from "./pages/Lecturing/Lecturing";
@@ -17,6 +16,8 @@ import PrivateRoute from "./PrivateRoute";
 import { AuthContext } from "./session";
 import Staff from "./pages/Staff/Staff";
 import Rules from "./pages/Rules";
+import AdminLecturing from "./pages/AdminActivities/AdminLecturing";
+import UnitRoles from "./pages/UnitRoles";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
@@ -55,6 +56,11 @@ const Routes = () => {
           />
           <PrivateRoute
             isAuthenticated={isAuth}
+            path="/activities"
+            component={AdminLecturing}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
             path="/staff"
             component={Staff}
           />
@@ -70,8 +76,8 @@ const Routes = () => {
           />
           <PrivateRoute
             isAuthenticated={isAuth}
-            path="/admin"
-            component={Admin}
+            path="/unitroles"
+            component={UnitRoles}
           />
 
           <Route path="/profile" component={Profile} />
@@ -100,7 +106,7 @@ const Routes = () => {
           />
           <PrivateRoute
             isAuthenticated={isAuth}
-            path="/lecturing"
+            path="/offering"
             component={Lecturing}
           />
           {/* <PrivateRoute
