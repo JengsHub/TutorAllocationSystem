@@ -15,6 +15,7 @@ import {
 import { Activity, Allocation, Staff, Unit, Swap, Role } from "~/entity";
 import { checkSwapAllocation } from "../helpers/checkConstraints";
 import { authCheck } from "~/helpers/auth";
+import { emailHelperInstance } from "..";
 
 // TODO: implement swap controller for Lecturer Only and Workforce Only end points
 // Approving and Pending should be Lec only
@@ -215,9 +216,12 @@ class SwapsService {
   @GET
   @IgnoreNextMiddlewares
   @Path("/pending-lecturer")
-  public async getAllPendingSwaps() {
-    // console.log("test")
-    // const user = req.user as Staff;
+  public async getAllPendingSwaps(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    if (!authCheck(req, res)) return Array<Swap>();
+    const me = req.user as Staff;
 
     let pendingSwaps = await this.repo
       .createQueryBuilder("swap")
@@ -231,7 +235,7 @@ class SwapsService {
       .innerJoin(Role, "role", "role.unitId = activity.unitId")
       .where("activity.unitId = role.unitId")
       .andWhere("role.staffId = :id", {
-        id: "5f8537ae-7a2a-4b97-9836-ebd3747fef1a",
+        id: me.id,
       })
       .andWhere("role.title = :role", { role: "Lecturer" })
       .andWhere("swap.into IS NOT NULL")
@@ -273,6 +277,9 @@ class SwapsService {
 
   /**
    * Lecturer approves a swap two staff members have proposed/accpeted
+   * @param id uuid string of swap to approve
+   * @param req
+   * @param res
    * TODO: purpose this for workforce, setting and enacting the swap
    */
   @PATCH
@@ -285,7 +292,7 @@ class SwapsService {
   ) {
     if (!authCheck(req, res)) return;
     const me = req.user as Staff;
-    return Swap.update({ id }, { lecturerApproved: true });
+    return await Swap.update({ id }, { lecturerApproved: true });
 
     // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
     // let fromStaff = toApprove.from.staff;
@@ -302,6 +309,64 @@ class SwapsService {
     // await allocationRepo.save(into);
 
     // return await this.repo.save(toApprove);
+  }
+
+  /**
+   * Reject a swap proposal and notify the members of the swap via email
+   * @param id uuid string of swap to reject
+   * @param req
+   * @param res
+   */
+  @DELETE
+  @IgnoreNextMiddlewares
+  @Path("/rejectSwap/:id")
+  public async rejectSwap(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    // TODO : add check called by lec
+    let rejected = await this.repo
+      .createQueryBuilder("swap")
+      .innerJoinAndSelect("swap.from", "from")
+      .innerJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.staff", "fromStaff")
+      .innerJoinAndSelect("into.staff", "intoStaff")
+      .innerJoinAndSelect("from.activity", "activity")
+      .innerJoinAndSelect("into.activity", "intoActivity")
+      .innerJoinAndSelect("activity.unit", "unit")
+      .where("swap.id = :id", { id: id })
+      .getOne();
+
+    if (!rejected) return;
+
+    let fromStaff = rejected.from.staff;
+    let intoStaff = rejected.into.staff;
+    let unit = rejected.from.activity.unit;
+    let from = rejected.from.activity;
+    let into = rejected.into.activity;
+
+    emailHelperInstance.swapRejection({
+      recipient: fromStaff.email,
+      content: {
+        name: `${fromStaff.givenNames}`,
+        unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+        from: `${from.activityCode} - ${from.activityGroup}`,
+        into: `${into.activityCode} - ${into.activityGroup}`,
+      },
+    });
+
+    emailHelperInstance.swapRejection({
+      recipient: intoStaff.email,
+      content: {
+        name: `${intoStaff.givenNames}`,
+        unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+        from: `${into.activityCode} - ${into.activityGroup}`,
+        into: `${from.activityCode} - ${from.activityGroup}`,
+      },
+    });
+
+    return this.repo.delete(rejected);
   }
 
   /**
@@ -353,7 +418,28 @@ class SwapsService {
    */
   @DELETE
   @Path(":id")
-  public deleteSwap(@PathParam("id") id: string): Promise<DeleteResult> {
+  public async deleteSwap(@PathParam("id") id: string): Promise<DeleteResult> {
+    let rejected = await this.repo.findOneOrFail(id);
+
+    // Delete is called by person who created a swap, notifies other party if someone had accepted.
+    if (rejected.into) {
+      let fromStaff = rejected.from.staff;
+      let intoStaff = rejected.into.staff;
+      let unit = rejected.from.activity.unit;
+      let from = rejected.from.activity;
+      let into = rejected.into.activity;
+
+      emailHelperInstance.swapRejection({
+        recipient: intoStaff.email,
+        content: {
+          name: `${intoStaff.givenNames}`,
+          unit: `${unit.unitCode} - ${unit.offeringPeriod} ${unit.year}`,
+          from: `${into.activityCode} - ${into.activityGroup}`,
+          into: `${from.activityCode} - ${from.activityGroup}`,
+        },
+      });
+    }
+
     return this.repo.delete({
       id: id,
     });

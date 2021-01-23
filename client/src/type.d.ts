@@ -79,6 +79,8 @@ interface IRule {
 }
 
 interface ISwap {
+  lecturerApproved: boolean;
+  workforceApproved: boolean;
   id: string;
   fromAllocationId: string;
   intoAllocationId: string | null;

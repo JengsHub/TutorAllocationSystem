@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Autocomplete } from "@material-ui/lab";
 import { Grid, TextField } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
@@ -139,11 +139,22 @@ const SwappingLecturer = () => {
   }
 
   const handleLecturerAccept = async (swap: ISwap) => {
-    //TODO: pass in swap object for approval
     let result = await DatabaseFinder.patch(
       `http://localhost:8888/swaps/approveSwap/${swap.id}`
     );
     console.log(result);
+  };
+
+  const handleLecturerReject = async (swap: ISwap) => {
+    await fetch(`http://localhost:8888/swaps/rejectSwap/${swap.id}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Credentials": "true",
+      },
+    });
   };
 
   const StyledTableCell = withStyles(() => ({
@@ -263,16 +274,28 @@ const SwappingLecturer = () => {
                         swaps.from.staff.lastName}{" "}
                     </TableCell>
                     <TableCell>
-                      {" "}
-                      <Button> No </Button>{" "}
-                      <Button
-                        onClick={() => {
-                          handleLecturerAccept(swaps);
-                        }}
-                      >
-                        {" "}
-                        Yes{" "}
-                      </Button>
+                      {!swaps.lecturerApproved ? (
+                        <>
+                          <Button
+                            onClick={() => {
+                              handleLecturerReject(swaps);
+                            }}
+                          >
+                            {" "}
+                            No{" "}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              handleLecturerAccept(swaps);
+                            }}
+                          >
+                            {" "}
+                            Yes{" "}
+                          </Button>
+                        </>
+                      ) : (
+                        "approved"
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
