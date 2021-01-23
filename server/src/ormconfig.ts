@@ -6,6 +6,7 @@ import { config } from "./config";
 // const result = dotenv.config();
 
 const isCompiled = path.extname(__filename).includes("js");
+
 export = {
   type: "postgres",
   host: config.DB_HOST || "localhost",
