@@ -14,7 +14,7 @@ import {
   PUT,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Staff, Allocation, Role } from "~/entity";
+import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
 import { authCheck } from "~/helpers/auth";
 import { emailHelperInstance } from "..";
@@ -99,6 +99,65 @@ class AllocationsService {
     }
 
     // console.log(allocations);
+    return allocations;
+  }
+
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/unswapped")
+  public async getUnswappedAllocations(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @QueryParam("unitId") unitId: string,
+    @QueryParam("isLecturerApproved") isLecturerApproved: boolean
+  ) {
+    if (!authCheck(req, res)) return;
+
+    const me = req.user as Staff;
+    let allocations: Allocation[];
+    let mySwaps: Swap[];
+
+    if (unitId) {
+      mySwaps = await Swap.createQueryBuilder("swap")
+        .innerJoinAndSelect("swap.from", "from")
+        .innerJoinAndSelect("from.activity", "activity")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("from.staffId = :id", { id: me.id })
+        .getMany();
+
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .leftJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("allocation.staff", "staff")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    } else {
+      mySwaps = await Swap.createQueryBuilder("swap")
+        .innerJoinAndSelect("swap.from", "from")
+        .andWhere("from.staffId = :id", { id: me.id })
+        .getMany();
+
+      //get all units
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .innerJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("activity.unit", "unit")
+        .where("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    }
+
+    for (let swap of mySwaps) {
+      console.log(swap.from);
+      allocations = allocations.filter(
+        (alc: Allocation) => alc.id != swap.from.id
+      );
+    }
+
     return allocations;
   }
 

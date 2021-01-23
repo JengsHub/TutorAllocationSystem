@@ -81,7 +81,7 @@ const Swaps = (props: { [key: string]: any }) => {
           .join("&");
 
         const res = await fetch(
-          `http://localhost:8888/allocations/mine?${query}`,
+          `http://localhost:8888/allocations/unswapped?${query}`,
           {
             method: "GET",
             credentials: "include",
@@ -92,7 +92,14 @@ const Swaps = (props: { [key: string]: any }) => {
             },
           }
         );
-        return await res.json();
+        let allAllocations = await res.json();
+        let mySwapAllocations = mySwaps.map((swap) => swap.from.id);
+        for (let id of mySwapAllocations) {
+          allAllocations = allAllocations.filter(
+            (alc: IAllocation) => alc.id === id
+          );
+        }
+        return allAllocations;
       } catch (e) {
         console.log("Error fetching user activities");
         return [];
@@ -145,62 +152,63 @@ const Swaps = (props: { [key: string]: any }) => {
   };
 
   return (
-    <Box>
-      <SwappingModal
-        allocation={modalOpen}
-        closeModal={() => setModalOpen(null)}
-      />
-      {allocatedActivities.length > 0 ? (
-        <div>
-          <h2>My Activities</h2>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Activity Code</TableCell>
-                <TableCell align="left">Activity Group</TableCell>
-                <TableCell align="left">Campus</TableCell>
-                <TableCell align="left">Day of Week</TableCell>
-                <TableCell align="left">Location </TableCell>
-                <TableCell align="left">Start Time</TableCell>
-                <TableCell align="center">Swap</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {allocatedActivities.map((allocation, i) => (
-                <TableRow key={i}>
-                  <TableCell align="left">
-                    {allocation.activity.activityCode}
-                  </TableCell>
-                  <TableCell align="left">
-                    {allocation.activity.activityGroup}
-                  </TableCell>
-                  <TableCell align="left">
-                    {allocation.activity.campus}
-                  </TableCell>
-                  <TableCell align="left">
-                    {dayConverter(allocation.activity.dayOfWeek)}
-                  </TableCell>
-                  <TableCell align="left">
-                    {allocation.activity.location}
-                  </TableCell>
-                  <TableCell align="left">
-                    {allocation.activity.startTime}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      onClick={() => getAvailableSwaps(allocation)}
-                      variant="contained"
-                      color="primary"
-                    >
-                      Offer Swap
-                    </Button>
-                  </TableCell>
+    <div>
+      <Box>
+        <SwappingModal
+          allocation={modalOpen}
+          closeModal={() => setModalOpen(null)}
+        />
+        {allocatedActivities.length > 0 ? (
+          <>
+            <h2>My Activities</h2>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left">Activity Code</TableCell>
+                  <TableCell align="left">Activity Group</TableCell>
+                  <TableCell align="left">Campus</TableCell>
+                  <TableCell align="left">Day of Week</TableCell>
+                  <TableCell align="left">Location </TableCell>
+                  <TableCell align="left">Start Time</TableCell>
+                  <TableCell align="center">Swap</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <h2> Swaps to consider </h2>
-          <Box>
+              </TableHead>
+              <TableBody>
+                {allocatedActivities.map((allocation, i) => (
+                  <TableRow key={i}>
+                    <TableCell align="left">
+                      {allocation.activity.activityCode}
+                    </TableCell>
+                    <TableCell align="left">
+                      {allocation.activity.activityGroup}
+                    </TableCell>
+                    <TableCell align="left">
+                      {allocation.activity.campus}
+                    </TableCell>
+                    <TableCell align="left">
+                      {dayConverter(allocation.activity.dayOfWeek)}
+                    </TableCell>
+                    <TableCell align="left">
+                      {allocation.activity.location}
+                    </TableCell>
+                    <TableCell align="left">
+                      {allocation.activity.startTime}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        onClick={() => getAvailableSwaps(allocation)}
+                        variant="contained"
+                        color="primary"
+                      >
+                        Offer Swap
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <h2> Swaps to consider </h2>
             <Table className={""} size="small" aria-label="activities table">
               <TableHead>
                 <TableRow>
@@ -246,7 +254,16 @@ const Swaps = (props: { [key: string]: any }) => {
                 ))}
               </TableBody>
             </Table>
-
+          </>
+        ) : (
+          <>
+            <div>
+              <h2> No units you can offer a swap for.</h2>
+            </div>
+          </>
+        )}
+        {mySwaps.length > 0 ? (
+          <>
             <h2> My open swaps </h2>
             <Table className={""} size="small" aria-label="activities table">
               <TableHead>
@@ -291,15 +308,17 @@ const Swaps = (props: { [key: string]: any }) => {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
-          </Box>
-        </div>
-      ) : (
-        <div>
-          <h2> You currently have no allocated activites for this unit.</h2>
-        </div>
-      )}
-    </Box>
+            </Table>{" "}
+          </>
+        ) : (
+          <>
+            <div>
+              <h2> You have no open swaps for this unit.</h2>
+            </div>
+          </>
+        )}
+      </Box>
+    </div>
   );
 };
 
