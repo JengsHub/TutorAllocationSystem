@@ -329,7 +329,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     if (acceptance === null) {
       return <CustomStatus value="Waiting for TA response" isBlue isClock />;
     } else if (acceptance === false) {
-      <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
+      return (
+        <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
+      );
     }
 
     if (workforce === true) {
@@ -349,6 +351,29 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     },
   }))(TableCell);
 
+  function isAllocationsMoreThanMax(activity: IActivity) {
+    let allocationsNoRejection: IAllocation[] = [];
+    let allocationsWithRejection: IAllocation[] = [];
+
+    let numOfAllocations = activity.allocations.length;
+    let allocationsMaxNum = activity.allocationsMaxNum;
+
+    for (let i = 0; i < numOfAllocations; i++) {
+      let allocation = activity.allocations[i];
+
+      if (allocation.isLecturerApproved != false) {
+        if (allocation.isTaAccepted != false) {
+          if (allocation.isWorkforceApproved != false) {
+            allocationsNoRejection.push(allocation);
+          }
+        }
+      }
+    }
+    console.log(allocationsNoRejection.length);
+    console.log(allocationsMaxNum);
+
+    return allocationsNoRejection.length < allocationsMaxNum;
+  }
   /*
   NOTE
   For the approval tablecell, we could prob display the status e.g. APPROVED/REJECTED is it has been dealt with. 
@@ -548,14 +573,20 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                             </TableRow>
                             {j === n - 1 ? (
                               <TableRow>
-                                <TableCell align="center">
-                                  <Button
-                                    variant="contained"
-                                    onClick={() => setModalOpen(activity.id)}
-                                  >
-                                    Manually add allocations
-                                  </Button>
-                                </TableCell>
+                                {isAllocationsMoreThanMax(activity) ? (
+                                  <TableCell align="center">
+                                    <Button
+                                      variant="contained"
+                                      onClick={() => setModalOpen(activity.id)}
+                                    >
+                                      Manually add allocations
+                                    </Button>
+                                  </TableCell>
+                                ) : (
+                                  <TableCell colSpan={4}>
+                                    <b>Fully Allocated.</b>
+                                  </TableCell>
+                                )}
                               </TableRow>
                             ) : null}
                           </React.Fragment>

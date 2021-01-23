@@ -19,6 +19,7 @@ interface IActivity {
   studentCount: number;
   unit: IUnit;
   unitId: string;
+  allocationsMaxNum: number;
 }
 
 interface IStaff {

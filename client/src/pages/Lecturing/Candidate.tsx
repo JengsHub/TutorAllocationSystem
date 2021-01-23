@@ -11,6 +11,8 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 interface ICandidateProps {
   activityId: string;
@@ -22,7 +24,7 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
-
+  const [open, setOpen] = useState<boolean>(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -50,6 +52,10 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     setSelected([]);
   };
 
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
   const handleClick = (event: React.MouseEvent<unknown>, i: number) => {
     const selectedIndex = selecteds.indexOf(i);
     let newSelected: number[] = [];
@@ -71,6 +77,14 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
 
   const makeOffers = () => {
     //console.log(selecteds);
+    // is selected more than maxnumberallocation
+    if (activity && selecteds.length > activity.allocationsMaxNum) {
+      setOpen(true);
+      console.log("got actwivity");
+
+      return;
+    }
+    setOpen(false);
     selecteds.forEach(async (i) => {
       //console.log(candidatesPreference[i]);
       var allocation: Allocation = {
@@ -164,6 +178,14 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         {" "}
         Request Offer
       </Button>
+      {activity ? (
+        <Snackbar open={open} autoHideDuration={6000}>
+          <Alert severity="error">
+            You have selected too many offers. Max is{" "}
+            {activity.allocationsMaxNum}
+          </Alert>
+        </Snackbar>
+      ) : null}
     </div>
   );
 };
