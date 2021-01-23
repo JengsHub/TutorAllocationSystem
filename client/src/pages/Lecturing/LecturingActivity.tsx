@@ -353,7 +353,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   function isAllocationsMoreThanMax(activity: IActivity) {
     let allocationsNoRejection: IAllocation[] = [];
-    let allocationsWithRejection: IAllocation[] = [];
 
     let numOfAllocations = activity.allocations.length;
     let allocationsMaxNum = activity.allocationsMaxNum;
@@ -361,9 +360,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     for (let i = 0; i < numOfAllocations; i++) {
       let allocation = activity.allocations[i];
 
-      if (allocation.isLecturerApproved != false) {
-        if (allocation.isTaAccepted != false) {
-          if (allocation.isWorkforceApproved != false) {
+      if (allocation.isLecturerApproved !== false) {
+        if (allocation.isTaAccepted !== false) {
+          if (allocation.isWorkforceApproved !== false) {
             allocationsNoRejection.push(allocation);
           }
         }
