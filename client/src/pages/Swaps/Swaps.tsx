@@ -92,14 +92,7 @@ const Swaps = (props: { [key: string]: any }) => {
             },
           }
         );
-        let allAllocations = await res.json();
-        let mySwapAllocations = mySwaps.map((swap) => swap.from.id);
-        for (let id of mySwapAllocations) {
-          allAllocations = allAllocations.filter(
-            (alc: IAllocation) => alc.id === id
-          );
-        }
-        return allAllocations;
+        return await res.json();
       } catch (e) {
         console.log("Error fetching user activities");
         return [];
