@@ -92,6 +92,15 @@ interface IRule {
   value: number;
 }
 
+interface IStatusLogWithStaff {
+  id: string;
+  allocation_id: string;
+  action: string;
+  staff: IStaff;
+  staffId: string;
+  time: string;
+}
+
 interface myAllocations {
   id: string;
   isLecturerApproved: boolean;
