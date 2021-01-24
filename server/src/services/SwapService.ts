@@ -27,6 +27,31 @@ class SwapsService {
   // factory = new SwapControllerFactory();
   repo = getRepository(Swap);
 
+  private async fetchAndSwap(id: string) {
+    let toApprove = await this.repo
+      .createQueryBuilder("swap")
+      .innerJoinAndSelect("swap.from", "from")
+      .innerJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.staff", "staff")
+      .innerJoinAndSelect("into.staff", "intoStaff")
+      .where("swap.id = :id", { id: id })
+      .getOneOrFail();
+
+    let fromStaff = toApprove.from.staff;
+    let intoStaff = toApprove.into.staff;
+    let from = toApprove.from;
+    let into = toApprove.into;
+    from.staff = intoStaff;
+    from.staffId = intoStaff.id;
+    into.staff = fromStaff;
+    into.staffId = fromStaff.id;
+
+    let allocationRepo = getRepository(Allocation);
+    await allocationRepo.save(from);
+    await allocationRepo.save(into);
+    return toApprove;
+  }
+
   /**
    * Fetch all swap entities
    */
@@ -314,9 +339,10 @@ class SwapsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
-    if (!authCheck(req, res)) return;
-    const me = req.user as Staff;
-    return await Swap.update({ id }, { lecturerApproved: true });
+    // TODO check user is Lecturer
+    let toApprove = await this.fetchAndSwap(id);
+    toApprove.lecturerApproved = true;
+    return await this.repo.save(toApprove);
   }
 
   /**
@@ -334,29 +360,7 @@ class SwapsService {
     @ContextResponse res: Response
   ) {
     // TODO check user is WorkForce
-
-    let toApprove = await this.repo
-      .createQueryBuilder("swap")
-      .innerJoinAndSelect("swap.from", "from")
-      .innerJoinAndSelect("swap.into", "into")
-      .innerJoinAndSelect("from.staff", "staff")
-      .innerJoinAndSelect("into.staff", "intoStaff")
-      .where("swap.id = :id", { id: id })
-      .getOneOrFail();
-
-    let fromStaff = toApprove.from.staff;
-    let intoStaff = toApprove.into.staff;
-    let from = toApprove.from;
-    let into = toApprove.into;
-    from.staff = intoStaff;
-    from.staffId = intoStaff.id;
-    into.staff = fromStaff;
-    into.staffId = fromStaff.id;
-
-    let allocationRepo = getRepository(Allocation);
-    await allocationRepo.save(from);
-    await allocationRepo.save(into);
-
+    let toApprove = await this.fetchAndSwap(id);
     toApprove.workforceApproved = true;
     return await this.repo.save(toApprove);
   }
