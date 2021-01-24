@@ -11,6 +11,8 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 interface ICandidateProps {
   activityId: string;
@@ -22,6 +24,8 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   const history = useHistory();
 
@@ -69,6 +73,18 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     setSelected(newSelected);
   };
 
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+  };
+
   const makeOffers = () => {
     //console.log(selecteds);
     selecteds.forEach(async (i) => {
@@ -78,8 +94,14 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         staffId: candidatesPreference[i].staffId,
       };
       try {
-        await baseApi.post("/allocations", allocation);
+        let result = await baseApi.post("/allocations", allocation);
         setSelected([]);
+        if (result.statusText === "OK") {
+          setOpenApproval(true);
+        } else {
+          setOpenError(true);
+          console.error("error adding staff");
+        }
 
         getCandidatePreference(activityId).then((res) => {
           // console.log(res);
@@ -164,6 +186,20 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         {" "}
         Request Offer
       </Button>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have added a staff.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
