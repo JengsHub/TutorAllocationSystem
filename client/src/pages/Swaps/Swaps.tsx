@@ -111,7 +111,7 @@ const Swaps = (props: { [key: string]: any }) => {
     getAllocatedActivities().then((res) => {
       setAllocatedActivities(res);
     });
-  }, [props, hasChanged]);
+  }, [props, hasChanged, modalOpen]);
 
   const dayConverter = (day: DayOfWeek) => {
     switch (day) {
@@ -226,6 +226,15 @@ const Swaps = (props: { [key: string]: any }) => {
                     <StyledTableCell align="center">Action</StyledTableCell>
                   </TableRow>
                 </TableHead>
+                {openSwaps.length < 1 ? (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={4}>None Available.</TableCell>
+                    </TableRow>
+                  </TableBody>
+                ): (
+                  null
+                )}
                 <TableBody>
                   {openSwaps.map((swap, i) => (
                     <TableRow key={i}>

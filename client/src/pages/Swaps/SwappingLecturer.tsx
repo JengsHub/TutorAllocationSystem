@@ -9,8 +9,10 @@ import Paper from "@material-ui/core/Paper";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
-import Button from "@material-ui/core/Button";
 import baseApi from "../../apis/baseApi";
+import { CustomButton, CustomStatus } from "../../components";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 const SwappingLecturer = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
@@ -28,6 +30,9 @@ const SwappingLecturer = () => {
   const [selectedUnitCode, setSelectedUnitCode] = useState<any>("All");
   const [selectedCampus, setSelectedCampus] = useState<any>("All");
   const [hasChanged, setChanged] = useState<Boolean>(false);
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openRejected, setOpenRejected] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
   const initialRender = useRef(true);
 
   useEffect(() => {
@@ -133,13 +138,24 @@ const SwappingLecturer = () => {
     let result = await baseApi.patch(
       `/swaps/approveSwapLecturer/${swap.id}`
     );
-    setChanged(true);
-    console.log(result);
+    if (result.statusText === "OK") {
+        setChanged(true);
+        setOpenApproval(true);
+      } else {
+        setOpenError(true);
+        console.error("error with api call ");
+      }
   };
 
   const handleLecturerReject = async (swap: ISwap) => {
-    await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
-    setChanged(true);
+    let result = await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
+    if (result.statusText === "OK") {
+        setChanged(true);
+        setOpenRejected(true);
+      } else {
+        setOpenError(true);
+        console.error("error with api call ");
+      }
   };
 
   const StyledTableCell = withStyles(() => ({
@@ -147,6 +163,19 @@ const SwappingLecturer = () => {
       backgroundColor: "#c0c0c0",
     },
   }))(TableCell);
+
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+    setOpenRejected(false);
+  };
 
   return (
     <div id="main">
@@ -260,26 +289,28 @@ const SwappingLecturer = () => {
                     </TableCell>
                     <TableCell>
                       {!swaps.lecturerApproved ? (
-                        <>
-                          <Button
-                            onClick={() => {
-                              handleLecturerReject(swaps);
-                            }}
-                          >
-                            {" "}
-                            No{" "}
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleLecturerAccept(swaps);
-                            }}
-                          >
-                            {" "}
-                            Yes{" "}
-                          </Button>
-                        </>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                          <CustomButton
+                          value=""
+                          type="button"
+                          isCross
+                          isRed
+                          isCompact
+                          style={{ margin: "0 5px" }}
+                          onButtonClick={() => handleLecturerReject(swaps)}
+                        />
+                        <CustomButton
+                          value=""
+                          type="button"
+                          isCheck
+                          isGreen
+                          isCompact
+                          style={{ margin: "0 5px" }}
+                          onButtonClick={() => handleLecturerAccept(swaps)}
+                        />
+                        </div>
                       ) : (
-                        "Approved"
+                        <CustomStatus value="You have approved" isGreen isCheck></CustomStatus>
                       )}
                     </TableCell>
                   </TableRow>
@@ -290,6 +321,33 @@ const SwappingLecturer = () => {
         ) : (
           <div>No swaps have been made for all units you manage.</div>
         )}
+        <Snackbar
+          open={openApproval}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
+          <Alert onClose={handleClose} severity="success">
+            You have approved a swap.
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={openRejected}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
+          <Alert onClose={handleClose} severity="success">
+            You have rejected a swap.
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={openError}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
+          <Alert onClose={handleClose} severity="error">
+            Something went wrong. Please try again.
+          </Alert>
+        </Snackbar>
       </Box>
     </div>
   );
