@@ -75,7 +75,6 @@ export const checkAllocation = async (
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
-
   // Checking the numbers against the constraints/rules.
   activities.forEach((activity) => {
     if (activity && newActivity) {

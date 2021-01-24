@@ -82,11 +82,7 @@ const Swapping = () => {
 
   return (
     <div id="main">
-      {units.length < 1 ? (
-        <h1>No activities found for any unit.</h1>
-      ) : (
-        null
-      )}
+      {units.length < 1 ? <h1>No activities found for any unit.</h1> : null}
       {units.map((row) => (
         <Row key={row.id} row={row} />
       ))}

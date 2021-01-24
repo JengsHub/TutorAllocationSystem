@@ -68,9 +68,9 @@ const Routes = () => {
             component={Staff}
           />
           <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/swappingWorkforce"
-          component={SwappingWorkforce}
+            isAuthenticated={isAuth}
+            path="/swappingWorkforce"
+            component={SwappingWorkforce}
           />
           <PrivateRoute
             isAuthenticated={isAuth}
@@ -118,15 +118,15 @@ const Routes = () => {
             component={Lecturing}
           />
           <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/swapping"
-          component={Swapping}
+            isAuthenticated={isAuth}
+            path="/swapping"
+            component={Swapping}
           />
           <PrivateRoute
-          isAuthenticated={isAuth}
-          path="/swappingLecture"
-          component={SwappingLecturer}
-         />
+            isAuthenticated={isAuth}
+            path="/swappingLecture"
+            component={SwappingLecturer}
+          />
           {/* <PrivateRoute
             isAuthenticated={isAuth}
             path="/staff"

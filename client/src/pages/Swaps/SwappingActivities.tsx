@@ -10,6 +10,9 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import { withStyles } from "@material-ui/core/styles";
 
 interface ICandidateProps {
   allocation: IAllocation;
@@ -18,6 +21,8 @@ interface ICandidateProps {
 const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
   const [swappableActivities, setSwappableActivity] = useState<IActivity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<IActivity>();
+  const [openRequest, setOpenRequest] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   const history = useHistory();
 
@@ -25,7 +30,8 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     const getSwappableActivities = async () => {
       try {
         const res = await baseApi.get(
-          `/swaps/swappable/${allocation.activity.id}`);
+          `/swaps/swappable/${allocation.activity.id}`
+        );
         return await res.data;
       } catch (e) {
         console.log("Error fetching open swaps");
@@ -36,21 +42,12 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     if (allocation) {
       getSwappableActivities().then((res) => {
         setSwappableActivity(res);
-        console.log(res);
+        // console.log(res);
       });
     } else {
       history.push("/404");
     }
   }, [allocation, history]);
-
-  //   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     if (event.target.checked) {
-  //       const newSelecteds = candidatesPreference.map((_, i) => i);
-  //       setSelected(newSelecteds);
-  //       return;
-  //     }
-  //     setSelected([]);
-  //   };
 
   const handleClick = (activity: IActivity) => {
     setSelectedActivity(activity);
@@ -63,8 +60,13 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
         desiredActivityId: selectedActivity.id,
       };
       try {
-        await baseApi.post("/swaps", swap);
-      } catch (e) {}
+        let result = await baseApi.post("/swaps", swap);
+        if (result.statusText === "OK") {
+          setOpenRequest(true);
+        }
+      } catch (e) {
+        setOpenError(true);
+      }
     }
   };
 
@@ -85,6 +87,24 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     }
   };
 
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenRequest(false);
+    setOpenError(false);
+  };
+
+  const StyledTableCell = withStyles(() => ({
+    head: {
+      backgroundColor: "#c0c0c0",
+    },
+  }))(TableCell);
+
   return (
     <div>
       <h1>
@@ -94,16 +114,16 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
           allocation.activity.activityGroup}{" "}
       </h1>
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="a dense table">
+        <Table className="grid">
           <TableHead>
             <TableRow>
-              <TableCell> </TableCell>
-              <TableCell align="left">Activity Code</TableCell>
-              <TableCell align="left">Activity Group</TableCell>
-              <TableCell align="left">Campus</TableCell>
-              <TableCell align="left">Day of Week</TableCell>
-              <TableCell align="left">Location </TableCell>
-              <TableCell align="left">Start Time</TableCell>
+              <StyledTableCell> </StyledTableCell>
+              <StyledTableCell align="left">Activity Code</StyledTableCell>
+              <StyledTableCell align="left">Activity Group</StyledTableCell>
+              <StyledTableCell align="left">Campus</StyledTableCell>
+              <StyledTableCell align="left">Day of Week</StyledTableCell>
+              <StyledTableCell align="left">Location </StyledTableCell>
+              <StyledTableCell align="left">Start Time</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -176,12 +196,12 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="left">Activity Code</TableCell>
-              <TableCell align="left">Activity Group</TableCell>
-              <TableCell align="left">Campus</TableCell>
-              <TableCell align="left">Day of Week</TableCell>
-              <TableCell align="left">Location </TableCell>
-              <TableCell align="left">Start Time</TableCell>
+              <StyledTableCell align="left">Activity Code</StyledTableCell>
+              <StyledTableCell align="left">Activity Group</StyledTableCell>
+              <StyledTableCell align="left">Campus</StyledTableCell>
+              <StyledTableCell align="left">Day of Week</StyledTableCell>
+              <StyledTableCell align="left">Location </StyledTableCell>
+              <StyledTableCell align="left">Start Time</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -210,6 +230,20 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
         {" "}
         Request Swap{" "}
       </Button>
+      <Snackbar
+        open={openRequest}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have requested a swap.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Request may have been made. If you do not think so, please try again.
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
