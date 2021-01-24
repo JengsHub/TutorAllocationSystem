@@ -55,7 +55,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     setChanged(false);
     const getActivities = async () => {
       try {
-        const res = await baseApi.get(`/activities`);
+        const res = await baseApi.get(`/activities/all-my-lecturing`);
         return await res.data;
       } catch (e) {
         console.log("Error fetching user activities");
