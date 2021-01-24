@@ -25,9 +25,9 @@ const dev = {
   PORT: 8888,
   DB_HOST: "localhost",
   DB_PORT: "5432",
-  DB_NAME: "postgres",
+  DB_NAME: "monash_tas_db",
   DB_USERNAME: "postgres",
-  DB_PASSWORD: "postgres",
+  DB_PASSWORD: "development",
   DB_SYNC: false,
   DB_LOGS: false,
   GOOGLE_CLIENT_ID:

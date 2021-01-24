@@ -8,20 +8,16 @@ const SidebarItems = [
     route: "/unit",
   },
   {
+    name: "Offering",
+    route: "/offering",
+  },
+  {
     name: "Swapping",
     route: "/swapping",
   },
   {
-    name: "Manage Swaps (Lect)",
+    name: "Manage Swaps",
     route: "/swappingLecture",
-  },
-  {
-    name: "Manage Swaps (WF)",
-    route: "/swappingWorkforce",
-  },
-  {
-    name: "Offering",
-    route: "/offering",
   },
   {
     name: "Profile",

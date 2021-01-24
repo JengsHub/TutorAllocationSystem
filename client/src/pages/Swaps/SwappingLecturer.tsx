@@ -10,7 +10,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
-import DatabaseFinder from "../../apis/DatabaseFinder";
+import baseApi from "../../apis/baseApi";
 
 const SwappingLecturer = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
@@ -34,19 +34,8 @@ const SwappingLecturer = () => {
     setChanged(false);
     const getSwaps = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:8888/swaps/pending-lecturer`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
-        return await res.json();
+        const res = await baseApi.get(`/swaps/pending-lecturer`)
+        return await res.data;
       } catch (e) {
         console.log("Error fetching swaps");
       }
@@ -141,23 +130,15 @@ const SwappingLecturer = () => {
   }
 
   const handleLecturerAccept = async (swap: ISwap) => {
-    let result = await DatabaseFinder.patch(
-      `http://localhost:8888/swaps/approveSwapLecturer/${swap.id}`
+    let result = await baseApi.patch(
+      `/swaps/approveSwapLecturer/${swap.id}`
     );
     setChanged(true);
     console.log(result);
   };
 
   const handleLecturerReject = async (swap: ISwap) => {
-    await fetch(`http://localhost:8888/swaps/rejectSwap/${swap.id}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Credentials": "true",
-      },
-    });
+    await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
     setChanged(true);
   };
 

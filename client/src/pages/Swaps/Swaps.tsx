@@ -8,9 +8,9 @@ import TableRow from "@material-ui/core/TableRow";
 import Box from "@material-ui/core/Box";
 import { Button, TableContainer } from "@material-ui/core";
 import SwappingModal from "./SwappingModal";
-import DatabaseFinder from "../../apis/DatabaseFinder";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import baseApi from "../../apis/baseApi";
 
 const Swaps = (props: { [key: string]: any }) => {
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -137,12 +137,12 @@ const Swaps = (props: { [key: string]: any }) => {
   };
 
   const deleteSwap = async (swap: ISwap) => {
-    DatabaseFinder.delete(`/swaps/${swap.id}`);
+    await baseApi.delete(`/swaps/${swap.id}`);
     setChanged(true);
   };
 
   const acceptSwap = async (swap: ISwap) => {
-    DatabaseFinder.post("/swaps/acceptSwap", swap);
+    await baseApi.post("/swaps/acceptSwap", swap);
     setChanged(true);
   };
 

@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import DatabaseFinder from "../../apis/DatabaseFinder";
+import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 
 interface ICandidateProps {
@@ -24,19 +24,9 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
   useEffect(() => {
     const getSwappableActivities = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:8888/swaps/swappable/${allocation.activity.id}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "Access-Control-Allow-Credentials": "true",
-            },
-          }
-        );
-        return await res.json();
+        const res = await baseApi.get(
+          `/swaps/swappable/${allocation.activity.id}`);
+        return await res.data;
       } catch (e) {
         console.log("Error fetching open swaps");
         return [];
@@ -73,7 +63,7 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
         desiredActivityId: selectedActivity.id,
       };
       try {
-        await DatabaseFinder.post("/swaps", swap);
+        await baseApi.post("/swaps", swap);
       } catch (e) {}
     }
   };

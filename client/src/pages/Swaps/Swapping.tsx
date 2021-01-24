@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Box from "@material-ui/core/Box";
 import Swaps from "./Swaps";
+import baseApi from "../../apis/baseApi";
 
 const Swapping = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
@@ -9,16 +10,8 @@ const Swapping = () => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
       try {
-        const res = await fetch(`http://localhost:8888/staffpreferences/mine`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Credentials": "true",
-          },
-        });
-        return await res.json();
+        const res = await baseApi.get(`/staffpreferences/mine`);
+        return await res.data;
       } catch (err) {
         console.log("No preferences found");
         return [];
@@ -89,6 +82,11 @@ const Swapping = () => {
 
   return (
     <div id="main">
+      {units.length < 1 ? (
+        <h1>No activities found for any unit.</h1>
+      ) : (
+        null
+      )}
       {units.map((row) => (
         <Row key={row.id} row={row} />
       ))}
