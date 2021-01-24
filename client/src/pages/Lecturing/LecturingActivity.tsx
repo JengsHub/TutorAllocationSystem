@@ -21,11 +21,13 @@ import "../styles/Grid.css";
 interface ILecturingActivityProps {
   setModalOpen: (activityId: string) => void;
   setStatusLogModalOpen: (activityId: string) => void;
+  setAllocationNoReject: (allocationNoReject: number) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   setModalOpen,
   setStatusLogModalOpen,
+  setAllocationNoReject,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [activitiesToDisplay, setActivitiesToDisplay] = useState<IActivity[]>(
@@ -351,7 +353,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     },
   }))(TableCell);
 
-  function isAllocationsMoreThanMax(activity: IActivity) {
+  function isAllocationsLessThanMax(activity: IActivity) {
     let allocationsNoRejection: IAllocation[] = [];
 
     let numOfAllocations = activity.allocations.length;
@@ -368,9 +370,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
         }
       }
     }
-    console.log(allocationsNoRejection.length);
-    console.log(allocationsMaxNum);
-
+    // console.log(allocationsNoRejection.length);
+    // console.log(allocationsMaxNum);
+    setAllocationNoReject(allocationsNoRejection.length);
     return allocationsNoRejection.length < allocationsMaxNum;
   }
   /*
@@ -572,7 +574,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                             </TableRow>
                             {j === n - 1 ? (
                               <TableRow>
-                                {isAllocationsMoreThanMax(activity) ? (
+                                {isAllocationsLessThanMax(activity) ? (
                                   <TableCell align="center">
                                     <Button
                                       variant="contained"

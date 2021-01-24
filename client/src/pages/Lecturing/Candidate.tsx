@@ -16,9 +16,13 @@ import Snackbar from "@material-ui/core/Snackbar";
 
 interface ICandidateProps {
   activityId: string;
+  allocationNoReject: number;
 }
 
-const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
+const Candidate: React.FC<ICandidateProps> = ({
+  activityId,
+  allocationNoReject,
+}) => {
   const [candidatesPreference, setCandidatePreference] = useState<
     IPreferences[]
   >([]);
@@ -78,9 +82,12 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const makeOffers = () => {
     //console.log(selecteds);
     // is selected more than maxnumberallocation
-    if (activity && selecteds.length > activity.allocationsMaxNum) {
+    if (
+      activity &&
+      selecteds.length > activity.allocationsMaxNum - allocationNoReject
+    ) {
       setOpen(true);
-      console.log("got actwivity");
+      console.log("got activity");
 
       return;
     }
@@ -182,7 +189,8 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         <Snackbar open={open} autoHideDuration={6000}>
           <Alert severity="error">
             You have selected too many offers. Max is{" "}
-            {activity.allocationsMaxNum}
+            {activity.allocationsMaxNum}. Left{" "}
+            {activity.allocationsMaxNum - allocationNoReject}.
           </Alert>
         </Snackbar>
       ) : null}

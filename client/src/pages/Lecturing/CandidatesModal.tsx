@@ -8,11 +8,13 @@ import Candidate from "./Candidate";
 interface ICandidatesModal {
   activityId: string | null;
   closeModal: () => void;
+  allocationNoReject: number;
 }
 
 const CandidatesModal: React.FC<ICandidatesModal> = ({
   activityId,
   closeModal,
+  allocationNoReject,
 }) => {
   return (
     <Modal
@@ -33,7 +35,10 @@ const CandidatesModal: React.FC<ICandidatesModal> = ({
         <Fade in={activityId !== null}>
           <div style={{ outline: "none" }}>
             <Paper style={{ padding: 20 }}>
-              <Candidate activityId={activityId} />
+              <Candidate
+                activityId={activityId}
+                allocationNoReject={allocationNoReject}
+              />
             </Paper>
           </div>
         </Fade>
