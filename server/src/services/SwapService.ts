@@ -16,6 +16,7 @@ import { Activity, Allocation, Staff, Unit, Swap, Role } from "~/entity";
 import { checkSwapAllocation } from "../helpers/checkConstraints";
 import { authCheck } from "~/helpers/auth";
 import { emailHelperInstance } from "..";
+import { toNamespacedPath } from "path";
 
 // TODO: implement swap controller for Lecturer Only and Workforce Only end points
 // Approving and Pending should be Lec only
@@ -27,7 +28,7 @@ class SwapsService {
   // factory = new SwapControllerFactory();
   repo = getRepository(Swap);
 
-  private async fetchAndSwap(id: string) {
+  private async allocationSwap(id: string): Promise<void> {
     let toApprove = await this.repo
       .createQueryBuilder("swap")
       .innerJoinAndSelect("swap.from", "from")
@@ -49,7 +50,6 @@ class SwapsService {
     let allocationRepo = getRepository(Allocation);
     await allocationRepo.save(from);
     await allocationRepo.save(into);
-    return toApprove;
   }
 
   /**
@@ -334,14 +334,13 @@ class SwapsService {
   @PATCH
   @IgnoreNextMiddlewares
   @Path("/approveSwapLecturer/:id")
-  public async approveSwapLecturer(
-    @PathParam("id") id: string,
-    @ContextRequest req: Request,
-    @ContextResponse res: Response
-  ) {
+  public async approveSwapLecturer(@PathParam("id") id: string) {
     // TODO check user is Lecturer
-    let toApprove = await this.fetchAndSwap(id);
+    let toApprove = await this.repo.findOneOrFail(id);
     toApprove.lecturerApproved = true;
+    if (toApprove.workforceApproved && toApprove.lecturerApproved) {
+      await this.allocationSwap(id);
+    }
     return await this.repo.save(toApprove);
   }
 
@@ -354,14 +353,13 @@ class SwapsService {
   @PATCH
   @IgnoreNextMiddlewares
   @Path("/approveSwapWorkforce/:id")
-  public async approveSwapWorkforce(
-    @PathParam("id") id: string,
-    @ContextRequest req: Request,
-    @ContextResponse res: Response
-  ) {
+  public async approveSwapWorkforce(@PathParam("id") id: string) {
     // TODO check user is WorkForce
-    let toApprove = await this.fetchAndSwap(id);
+    let toApprove = await this.repo.findOneOrFail(id);
     toApprove.workforceApproved = true;
+    if (toApprove.workforceApproved && toApprove.lecturerApproved) {
+      await this.allocationSwap(id);
+    }
     return await this.repo.save(toApprove);
   }
 
