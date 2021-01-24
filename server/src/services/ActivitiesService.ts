@@ -110,12 +110,17 @@ class ActivitiesService {
   // TODO: changed activityCode to activityId since activityCode is not unique/primary key
   @GET
   @Path(":activityId")
+  @IgnoreNextMiddlewares
   public async getActivity(
     @PathParam("activityId") id: string,
     @ContextRequest req: Request
   ) {
     const me = req.user as Staff;
-    const controller = this.factory.getController(await me.getRoleTitle());
+    let activity = await Activity.createQueryBuilder("activity")
+    .where("activity.id = :id", {id})
+    .getOne()
+
+    const controller = this.factory.getController(await me.getRoleTitle(activity?.unitId));
     return controller.getActivity(id);
   }
 
@@ -202,7 +207,11 @@ class ActivitiesService {
     let activity: Activity;
     try {
       const me = req.user as Staff;
-      const controller = this.factory.getController(await me.getRoleTitle());
+      let act = await Activity.createQueryBuilder("activity")
+      .where("activity.id = :id", {id})
+      .getOne()
+  
+      const controller = this.factory.getController(await me.getRoleTitle(act?.unitId));
       activity = await controller.getActivityForSortedCandidates(
         id,
         sortingCriteria
