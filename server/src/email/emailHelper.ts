@@ -30,6 +30,16 @@ export interface emailHelper {
       unit: string;
     };
   }): any;
+  swapRejection(data: {
+    recipient: string;
+    content: {
+      name: string;
+      from: string;
+      into: string;
+      unit: string;
+      rejectedBy: string;
+    };
+  }): any;
 }
 
 /**
@@ -46,6 +56,17 @@ export class SibEmailHelper implements emailHelper {
   };
   constructor(apiKey: string) {
     this.apiKey = apiKey;
+  }
+  swapRejection(data: {
+    recipient: string;
+    content: {
+      name: string;
+      from: string;
+      into: string;
+      unit: string;
+    };
+  }) {
+    throw new Error("Method not implemented.");
   }
   replyToLecturer(data: {
     recipient: string;
@@ -125,6 +146,35 @@ export class NodemailerEmailHelper implements emailHelper {
     };
 
     this.transporter.use("compile", hbs(options));
+  }
+  async swapRejection(data: {
+    recipient: string;
+    content: {
+      name: string;
+      from: string;
+      into: string;
+      unit: string;
+    };
+  }) {
+    const { recipient, content } = data;
+    const mailOptions = {
+      from: process.env.FROM_EMAIL,
+      to: data.recipient,
+      subject: "Swap Rejection - Monash Tutor Allocation System",
+      template: "swapRejection",
+      context: {
+        name: content.name,
+        from: content.from,
+        into: content.into,
+        unit: content.unit,
+      },
+    };
+    try {
+      const data = await this.transporter.sendMail(mailOptions);
+      console.log("Email sent: ", data);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   // send email to TA once lecturer approve the offer

@@ -14,14 +14,14 @@ import {
   PUT,
   QueryParam,
 } from "typescript-rest";
+import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
-import { Activity, Allocation, Staff, Role } from "~/entity";
 import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
-import { checkAllocation } from "../helpers/checkConstraints";
+import { checkNewAllocation } from "../helpers/checkConstraints";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -57,7 +57,7 @@ class AllocationsService {
   public async getMyAllocation(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
-    // @QueryParam("unitId") unitId: string,
+    @QueryParam("unitId") unitId: string,
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean
     // @QueryParam("offeringPeriod") offeringPeriod: string,
     // @QueryParam("year") year: number
@@ -65,42 +65,102 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
+    let allocations: Allocation[];
 
-    // let findOptions: { [key: string]: any } = {
-    //   isLecturerApproved,
-    //   activity: {
-    //     unitId
-    //   }
-    // };
+    if (unitId) {
+      /**
+       * Note: have to use query builder instead of TypeORM find() because find()
+       * support for WHERE clause on joined columns is not consistent/doesn't work.
+       * Seems like this feature will be added in future version of TypeORM
+       *
+       * See: https://github.com/typeorm/typeorm/issues/2707
+       */
 
-    // findOptions = removeEmpty(findOptions);
+      console.log(unitId);
 
-    // console.log(findOptions);
-    // let allocations = await this.repo.find({
-    //   where: {
-    //     staffId: me.id,
-    //     ...findOptions,
-    //   },
-    //   relations: ["activity"],
-    // });
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .leftJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("allocation.staff", "staff")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
 
-    /**
-     * Note: have to use query builder instead of TypeORM find() because find()
-     * support for WHERE clause on joined columns is not consistent/doesn't work.
-     * Seems like this feature will be added in future version of TypeORM
-     *
-     * See: https://github.com/typeorm/typeorm/issues/2707
-     */
+      console.log(allocations.length, "Debug");
+    } else {
+      //get all units
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .innerJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("activity.unit", "unit")
+        .where("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    }
 
-    let allocations = await Allocation.createQueryBuilder("allocation")
-      .innerJoinAndSelect("allocation.activity", "activity")
-      .innerJoinAndSelect("activity.unit", "unit")
-      .where("allocation.staffId = :id", { id: me.id })
-      .andWhere("allocation.isLecturerApproved = :approval", {
-        approval: isLecturerApproved,
-      })
-      .getMany();
     // console.log(allocations);
+    return allocations;
+  }
+
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/unswapped")
+  public async getUnswappedAllocations(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @QueryParam("unitId") unitId: string,
+    @QueryParam("isLecturerApproved") isLecturerApproved: boolean
+  ) {
+    if (!authCheck(req, res)) return;
+
+    const me = req.user as Staff;
+    let allocations: Allocation[];
+    let mySwaps: Swap[];
+
+    if (unitId) {
+      mySwaps = await Swap.createQueryBuilder("swap")
+        .innerJoinAndSelect("swap.from", "from")
+        .innerJoinAndSelect("from.activity", "activity")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("from.staffId = :id", { id: me.id })
+        .getMany();
+
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .leftJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("allocation.staff", "staff")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    } else {
+      mySwaps = await Swap.createQueryBuilder("swap")
+        .innerJoinAndSelect("swap.from", "from")
+        .andWhere("from.staffId = :id", { id: me.id })
+        .getMany();
+
+      //get all units
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .innerJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("activity.unit", "unit")
+        .where("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    }
+
+    for (let swap of mySwaps) {
+      console.log(swap.from);
+      allocations = allocations.filter(
+        (alc: Allocation) => alc.id != swap.from.id
+      );
+    }
+
     return allocations;
   }
 
@@ -141,7 +201,7 @@ class AllocationsService {
       id: newRecord.activityId,
     });
 
-    if (!(await checkAllocation(staff, activity))) {
+    if (!(await checkNewAllocation(staff, activity))) {
       throw new ConstraintError(
         "Allocation not made because constraints not met"
       );
@@ -379,7 +439,7 @@ class AllocationsService {
     }
 
     if (
-      !(await checkAllocation(
+      !(await checkNewAllocation(
         changedAllocation.staff || allocationToUpdate.staff,
         changedAllocation.activity || allocationToUpdate.activity
       ))

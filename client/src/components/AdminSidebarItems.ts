@@ -24,6 +24,10 @@ const AdminSidebarItems = [
     route: "/unitroles",
   },
   {
+    name: "Manage Swaps",
+    route: "/swappingWorkforce",
+  },
+  {
     name: "Profile",
     route: "/profile",
   },

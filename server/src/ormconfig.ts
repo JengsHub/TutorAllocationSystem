@@ -15,7 +15,7 @@ export = {
   password: config.DB_PASSWORD || "password",
   database: config.DB_NAME || "postgres",
   synchronize: config.DB_SYNC || false,
-  logging: config.DB_LOGS || true,
+  logging: config.DB_LOGS || false,
   autoReconnect: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,

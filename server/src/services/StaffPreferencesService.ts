@@ -72,16 +72,28 @@ class StaffPreferencesService {
   ) {
     if (!authCheck(req, res)) return;
     const me = req.user as Staff;
-    const preferences = await this.repo
-      .find({
-        where: {
-          staff: me,
-        },
-        relations: ["unit"],
-      })
-      .then((result) => {
-        return result;
-      });
+    const preferences = await StaffPreference.createQueryBuilder(
+      "staffPreference"
+    )
+      .innerJoinAndSelect("staffPreference.unit", "unit")
+      .innerJoin("staffPreference.staff", "staff")
+      .where("staff.id = :id", { id: me.id })
+      .orderBy("unit.year", "ASC")
+      .orderBy("unit.offeringPeriod", "ASC")
+      .orderBy("unit.campus", "ASC")
+      .orderBy("unit.unitCode", "ASC")
+      .getMany();
+    // console.log(preferences)
+    // const preferences = await this.repo
+    //   .find({
+    //     where: {
+    //       staff: me,
+    //     },
+    //     relations: ["unit"],
+    //   })
+    //   .then((result) => {
+    //     return result;
+    //   });
     return preferences;
   }
 

@@ -11,9 +11,12 @@ import NotFound from "./pages/NotFound";
 // import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
 import Units from "./pages/Units";
+import Swapping from "./pages/Swaps/Swapping";
 import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
+import SwappingLecturer from "./pages/Swaps/SwappingLecturer";
+import SwappingWorkforce from "./pages/Swaps/SwappingWorkforce";
 import Staff from "./pages/Staff/Staff";
 import Rules from "./pages/Rules";
 import AdminLecturing from "./pages/AdminActivities/AdminLecturing";
@@ -66,6 +69,11 @@ const Routes = () => {
           />
           <PrivateRoute
             isAuthenticated={isAuth}
+            path="/swappingWorkforce"
+            component={SwappingWorkforce}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
             path="/dataimport"
             component={DataImport}
           />
@@ -108,6 +116,16 @@ const Routes = () => {
             isAuthenticated={isAuth}
             path="/offering"
             component={Lecturing}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/swapping"
+            component={Swapping}
+          />
+          <PrivateRoute
+            isAuthenticated={isAuth}
+            path="/swappingLecture"
+            component={SwappingLecturer}
           />
           {/* <PrivateRoute
             isAuthenticated={isAuth}
