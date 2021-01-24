@@ -117,10 +117,12 @@ class ActivitiesService {
   ) {
     const me = req.user as Staff;
     let activity = await Activity.createQueryBuilder("activity")
-    .where("activity.id = :id", {id})
-    .getOne()
+      .where("activity.id = :id", { id })
+      .getOne();
 
-    const controller = this.factory.getController(await me.getRoleTitle(activity?.unitId));
+    const controller = this.factory.getController(
+      await me.getRoleTitle(activity?.unitId)
+    );
     return controller.getActivity(id);
   }
 
@@ -208,10 +210,12 @@ class ActivitiesService {
     try {
       const me = req.user as Staff;
       let act = await Activity.createQueryBuilder("activity")
-      .where("activity.id = :id", {id})
-      .getOne()
-  
-      const controller = this.factory.getController(await me.getRoleTitle(act?.unitId));
+        .where("activity.id = :id", { id })
+        .getOne();
+
+      const controller = this.factory.getController(
+        await me.getRoleTitle(act?.unitId)
+      );
       activity = await controller.getActivityForSortedCandidates(
         id,
         sortingCriteria
