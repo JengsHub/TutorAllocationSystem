@@ -317,22 +317,6 @@ class SwapsService {
     if (!authCheck(req, res)) return;
     const me = req.user as Staff;
     return await Swap.update({ id }, { lecturerApproved: true });
-
-    // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
-    // let fromStaff = toApprove.from.staff;
-    // let intoStaff = toApprove.into.staff;
-    // let from = toApprove.from;
-    // let into = toApprove.into;
-    // from.staff = intoStaff;
-    // from.staffId = intoStaff.id;
-    // into.staff = fromStaff;
-    // into.staffId = fromStaff.id;
-
-    // let allocationRepo = getRepository(Allocation);
-    // await allocationRepo.save(from);
-    // await allocationRepo.save(into);
-
-    // return await this.repo.save(toApprove);
   }
 
   /**
@@ -349,25 +333,32 @@ class SwapsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
-    if (!authCheck(req, res)) return;
-    const me = req.user as Staff;
-    return await Swap.update({ id }, { workforceApproved: true });
+    // TODO check user is WorkForce
 
-    // TODO : Draft of swapping staff members, to be moved to WorkForce at later date?
-    // let fromStaff = toApprove.from.staff;
-    // let intoStaff = toApprove.into.staff;
-    // let from = toApprove.from;
-    // let into = toApprove.into;
-    // from.staff = intoStaff;
-    // from.staffId = intoStaff.id;
-    // into.staff = fromStaff;
-    // into.staffId = fromStaff.id;
+    let toApprove = await this.repo
+      .createQueryBuilder("swap")
+      .innerJoinAndSelect("swap.from", "from")
+      .innerJoinAndSelect("swap.into", "into")
+      .innerJoinAndSelect("from.staff", "staff")
+      .innerJoinAndSelect("into.staff", "intoStaff")
+      .where("swap.id = :id", { id: id })
+      .getOneOrFail();
 
-    // let allocationRepo = getRepository(Allocation);
-    // await allocationRepo.save(from);
-    // await allocationRepo.save(into);
+    let fromStaff = toApprove.from.staff;
+    let intoStaff = toApprove.into.staff;
+    let from = toApprove.from;
+    let into = toApprove.into;
+    from.staff = intoStaff;
+    from.staffId = intoStaff.id;
+    into.staff = fromStaff;
+    into.staffId = fromStaff.id;
 
-    // return await this.repo.save(toApprove);
+    let allocationRepo = getRepository(Allocation);
+    await allocationRepo.save(from);
+    await allocationRepo.save(into);
+
+    toApprove.workforceApproved = true;
+    return await this.repo.save(toApprove);
   }
 
   /**
