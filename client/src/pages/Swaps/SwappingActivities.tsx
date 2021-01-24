@@ -30,7 +30,8 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     const getSwappableActivities = async () => {
       try {
         const res = await baseApi.get(
-          `/swaps/swappable/${allocation.activity.id}`);
+          `/swaps/swappable/${allocation.activity.id}`
+        );
         return await res.data;
       } catch (e) {
         console.log("Error fetching open swaps");
@@ -230,23 +231,19 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
         Request Swap{" "}
       </Button>
       <Snackbar
-          open={openRequest}
-          autoHideDuration={6000}
-          onClose={handleClose}
-        >
-          <Alert onClose={handleClose} severity="success">
-            You have requested a swap.
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          open={openError}
-          autoHideDuration={6000}
-          onClose={handleClose}
-        >
-          <Alert onClose={handleClose} severity="error">
-            Request may have been made. If you do not think so, please try again.
-          </Alert>
-        </Snackbar>
+        open={openRequest}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have requested a swap.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Request may have been made. If you do not think so, please try again.
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -232,9 +232,7 @@ const Swaps = (props: { [key: string]: any }) => {
                       <TableCell colSpan={4}>None Available.</TableCell>
                     </TableRow>
                   </TableBody>
-                ): (
-                  null
-                )}
+                ) : null}
                 <TableBody>
                   {openSwaps.map((swap, i) => (
                     <TableRow key={i}>

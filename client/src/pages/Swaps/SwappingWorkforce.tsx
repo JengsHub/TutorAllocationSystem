@@ -135,9 +135,7 @@ const SwappingWorkforce = () => {
   }
 
   const handleWorkforceAccept = async (swap: ISwap) => {
-    let result = await baseApi.patch(
-      `/swaps/approveSwapWorkforce/${swap.id}`
-    );
+    let result = await baseApi.patch(`/swaps/approveSwapWorkforce/${swap.id}`);
     if (result.statusText === "OK") {
       setChanged(true);
       setOpenApproval(true);
@@ -289,28 +287,34 @@ const SwappingWorkforce = () => {
                     </TableCell>
                     <TableCell>
                       {!swaps.workforceApproved ? (
-                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <div
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
                           <CustomButton
-                          value=""
-                          type="button"
-                          isCross
-                          isRed
-                          isCompact
-                          style={{ margin: "0 5px" }}
-                          onButtonClick={() => handleWorkforceReject(swaps)}
-                        />
-                        <CustomButton
-                          value=""
-                          type="button"
-                          isCheck
-                          isGreen
-                          isCompact
-                          style={{ margin: "0 5px" }}
-                          onButtonClick={() => handleWorkforceAccept(swaps)}
-                        />
+                            value=""
+                            type="button"
+                            isCross
+                            isRed
+                            isCompact
+                            style={{ margin: "0 5px" }}
+                            onButtonClick={() => handleWorkforceReject(swaps)}
+                          />
+                          <CustomButton
+                            value=""
+                            type="button"
+                            isCheck
+                            isGreen
+                            isCompact
+                            style={{ margin: "0 5px" }}
+                            onButtonClick={() => handleWorkforceAccept(swaps)}
+                          />
                         </div>
                       ) : (
-                        <CustomStatus value="Workforce have approved" isGreen isCheck></CustomStatus>
+                        <CustomStatus
+                          value="Workforce have approved"
+                          isGreen
+                          isCheck
+                        ></CustomStatus>
                       )}
                     </TableCell>
                   </TableRow>

@@ -39,7 +39,7 @@ const SwappingLecturer = () => {
     setChanged(false);
     const getSwaps = async () => {
       try {
-        const res = await baseApi.get(`/swaps/pending-lecturer`)
+        const res = await baseApi.get(`/swaps/pending-lecturer`);
         return await res.data;
       } catch (e) {
         console.log("Error fetching swaps");
@@ -135,27 +135,25 @@ const SwappingLecturer = () => {
   }
 
   const handleLecturerAccept = async (swap: ISwap) => {
-    let result = await baseApi.patch(
-      `/swaps/approveSwapLecturer/${swap.id}`
-    );
+    let result = await baseApi.patch(`/swaps/approveSwapLecturer/${swap.id}`);
     if (result.statusText === "OK") {
-        setChanged(true);
-        setOpenApproval(true);
-      } else {
-        setOpenError(true);
-        console.error("error with api call ");
-      }
+      setChanged(true);
+      setOpenApproval(true);
+    } else {
+      setOpenError(true);
+      console.error("error with api call ");
+    }
   };
 
   const handleLecturerReject = async (swap: ISwap) => {
     let result = await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
     if (result.statusText === "OK") {
-        setChanged(true);
-        setOpenRejected(true);
-      } else {
-        setOpenError(true);
-        console.error("error with api call ");
-      }
+      setChanged(true);
+      setOpenRejected(true);
+    } else {
+      setOpenError(true);
+      console.error("error with api call ");
+    }
   };
 
   const StyledTableCell = withStyles(() => ({
@@ -289,28 +287,34 @@ const SwappingLecturer = () => {
                     </TableCell>
                     <TableCell>
                       {!swaps.lecturerApproved ? (
-                        <div style={{ display: "flex", justifyContent: "center" }}>
+                        <div
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
                           <CustomButton
-                          value=""
-                          type="button"
-                          isCross
-                          isRed
-                          isCompact
-                          style={{ margin: "0 5px" }}
-                          onButtonClick={() => handleLecturerReject(swaps)}
-                        />
-                        <CustomButton
-                          value=""
-                          type="button"
-                          isCheck
-                          isGreen
-                          isCompact
-                          style={{ margin: "0 5px" }}
-                          onButtonClick={() => handleLecturerAccept(swaps)}
-                        />
+                            value=""
+                            type="button"
+                            isCross
+                            isRed
+                            isCompact
+                            style={{ margin: "0 5px" }}
+                            onButtonClick={() => handleLecturerReject(swaps)}
+                          />
+                          <CustomButton
+                            value=""
+                            type="button"
+                            isCheck
+                            isGreen
+                            isCompact
+                            style={{ margin: "0 5px" }}
+                            onButtonClick={() => handleLecturerAccept(swaps)}
+                          />
                         </div>
                       ) : (
-                        <CustomStatus value="You have approved" isGreen isCheck></CustomStatus>
+                        <CustomStatus
+                          value="You have approved"
+                          isGreen
+                          isCheck
+                        ></CustomStatus>
                       )}
                     </TableCell>
                   </TableRow>
