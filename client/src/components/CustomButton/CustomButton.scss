@@ -1,0 +1,64 @@
+@import "../styles/shared/index";
+
+.custom-btn {
+  @include buttonDefault;
+
+  &--blue {
+    background-color: $blue;
+    &:hover {
+      background-color: $blue-hover;
+    }
+  }
+  &--green {
+    background-color: $green;
+    &:hover {
+      background-color: $green-hover;
+    }
+  }
+  &--red {
+    background-color: $red;
+    &:hover {
+      background-color: $red-hover;
+    }
+  }
+  &--yellow {
+    background-color: $yellow;
+    &:hover {
+      background-color: $yellow-hover;
+    }
+  }
+
+  &--grey {
+    background-color: $grey;
+    &:hover {
+      background-color: $grey-hover;
+    }
+  }
+
+  &--small {
+    width: $elementHeight * 2;
+  }
+
+  &--compact {
+    width: $elementHeight;
+  }
+
+  &__icon {
+    pointer-events: none;
+    &--check-icon {
+      @include large-check-icon;
+    }
+
+    &--cross-icon {
+      @include large-cross-icon;
+    }
+
+    &--trash-icon {
+      @include trash-icon;
+    }
+  }
+
+  + .custom-btn {
+    margin-right: 10px;
+  }
+}

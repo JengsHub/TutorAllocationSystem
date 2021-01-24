@@ -13,3 +13,4 @@ import "./UploadService";
 import "./SwapService";
 import "../helpers/dataSanitizer";
 import "../helpers/processInputFiles";
+import "./StatusLogService";

@@ -9,13 +9,14 @@ enum DayOfWeek {
 interface IActivity {
   activityCode: string;
   activityGroup: string;
-  allocations: IAllocation[];
+  allocations: IAllocationWithStaff[];
   campus: string;
   dayOfWeek: DayOfWeek;
-  endTime: string;
   id: string;
   location: string;
   startTime: string;
+  endTime: string;
+  studentCount: number;
   unit: IUnit;
   unitId: string;
 }
@@ -49,6 +50,20 @@ interface IAllocation {
   approval: ApprovalEnum;
   isLecturerApproved: boolean;
   isTaAccepted: boolean;
+  isWorkforceApproved: boolean;
+  offerExpiryDate: string;
+}
+
+interface IAllocationWithStaff {
+  id: string;
+  activityId: string;
+  staffId: string;
+  staff: IStaff;
+  approval: ApprovalEnum;
+  isLecturerApproved: boolean;
+  isTaAccepted: boolean;
+  isWorkforceApproved: boolean;
+  offerExpiryDate: string;
 }
 
 interface IAvailability {

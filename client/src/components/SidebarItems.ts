@@ -20,20 +20,12 @@ const SidebarItems = [
     route: "/swappingWorkforce",
   },
   {
-    name: "Lecturing",
-    route: "/lecturing",
-  },
-  {
-    name: "Data Import",
-    route: "/dataimport",
+    name: "Offering",
+    route: "/offering",
   },
   {
     name: "Profile",
     route: "/profile",
-  },
-  {
-    name: "Admin",
-    route: "/admin",
   },
 ];
 

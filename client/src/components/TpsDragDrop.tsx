@@ -1,9 +1,9 @@
 import { Button, Grid } from "@material-ui/core";
-import Axios from "axios";
 import React, { Component } from "react";
+import baseApi from "../apis/baseApi";
+import ReadFileFormat from "../services/ReadFileFormat";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-import ReadFileFormat from "../services/ReadFileFormat";
 
 // npm install -g browserify
 // yarn add csv-parser
@@ -75,7 +75,7 @@ class TpsDragDrop extends Component<Props, State> {
       const formData = new FormData();
       formData.append("tps", this.csvFile);
       console.log(this.csvFile);
-      await Axios.post("http://localhost:8888/upload/tps", formData);
+      await baseApi.post("/upload/tps", formData);
     } catch (err) {
       throw err;
     }

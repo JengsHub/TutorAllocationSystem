@@ -58,8 +58,8 @@ interface Activity {
   location: string;
   dayOfWeek: DayOfWeek;
   startTime: string;
-  unitId: string;
   endTime: string;
+  unitId: string;
 }
 
 interface Allocation {

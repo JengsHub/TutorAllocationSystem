@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { AppRoleEnum } from "~/enums/RoleEnum";
-import { Unit } from ".";
 import { Allocation } from "./Allocation";
 import { Availability } from "./Availability";
 import { Role } from "./Role";
 import { StaffPreference } from "./StaffPreference";
+import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Staff extends BaseEntity {
@@ -44,6 +44,9 @@ export class Staff extends BaseEntity {
   @OneToMany(() => Availability, (availability) => availability.staff)
   availability!: Availability[];
 
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.staff)
+  offereeStatusLog!: StatusLog[];
+
   @Column({ nullable: true })
   googleId?: string;
 
@@ -68,5 +71,18 @@ export class Staff extends BaseEntity {
 
   isAdmin() {
     return this.appRole === AppRoleEnum.ADMIN;
+  }
+
+  static async createOrUpdateStaff(newRecord: Staff) {
+    let staffToUpdate = await Staff.findOne({
+      email: newRecord.email,
+    });
+    if (staffToUpdate) {
+      Staff.update({ id: staffToUpdate.id }, newRecord);
+      newRecord.id = staffToUpdate.id;
+      return newRecord;
+    }
+
+    return Staff.save(Staff.create(newRecord));
   }
 }

@@ -2,18 +2,20 @@ import path from "path";
 import { ConnectionOptions } from "typeorm";
 // Configure .env file
 import dotenv from "dotenv";
-const result = dotenv.config();
+import { config } from "./config";
+// const result = dotenv.config();
 
 const isCompiled = path.extname(__filename).includes("js");
+
 export = {
   type: "postgres",
-  host: process.env.DB_HOST || "localhost",
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-  username: process.env.DB_USERNAME || "postgres",
-  password: process.env.DB_PASSWORD || "password",
-  database: process.env.DB_NAME || "postgres",
-  synchronize: process.env.DB_SYNC || false,
-  logging: process.env.DB_LOGS || true,
+  host: config.DB_HOST || "localhost",
+  port: config.DB_PORT ? parseInt(config.DB_PORT) : 5432,
+  username: config.DB_USERNAME || "postgres",
+  password: config.DB_PASSWORD || "password",
+  database: config.DB_NAME || "postgres",
+  synchronize: config.DB_SYNC || false,
+  logging: config.DB_LOGS || true,
   autoReconnect: true,
   reconnectTries: Number.MAX_VALUE,
   reconnectInterval: 2000,

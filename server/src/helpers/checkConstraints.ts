@@ -1,5 +1,13 @@
-import { Activity, Staff, Rule, Availability, Allocation } from "~/entity";
-import { getRepository, Repository } from "typeorm";
+import {
+  Activity,
+  Staff,
+  Rule,
+  Availability,
+  Allocation,
+  Unit,
+} from "~/entity";
+import { getRepository, Repository, In } from "typeorm";
+import { RuleEnum } from "../enums/RuleEnum";
 
 /**
  * Calculate the time duration of the activity
@@ -67,9 +75,8 @@ export const checkAllocation = async (
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
-  // Checking the numbers against the constraints/rules.
-  // TODO: Unfortunately, there's a lot of connascence here with the rule names. Is there a better way to do this?
 
+  // Checking the numbers against the constraints/rules.
   activities.forEach((activity) => {
     if (activity && newActivity) {
       // Total hours in day
@@ -85,25 +92,32 @@ export const checkAllocation = async (
   });
 
   const rules: Repository<Rule> = await getRepository(Rule);
-
   const maxHoursPerDayRule = (
-    await rules.findOneOrFail({ ruleName: "maxHoursPerDay" })
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_DAY_HRS })
   ).value;
   const maxHoursPerWeekRule = Math.min(
-    (await rules.findOneOrFail({ ruleName: "maxHoursPerWeek" })).value,
+    (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_WEEK_HRS })).value,
     availability.maxHours
   );
   const maxActivitiesPerUnitRule = (
-    await rules.findOneOrFail({ ruleName: "maxActivitiesPerUnit" })
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_UNIT_ACTIVITIES })
   ).value;
   const maxTotalActivitiesRule = Math.min(
-    (await rules.findOneOrFail({ ruleName: "maxTotalActivities" })).value,
+    (await rules.findOneOrFail({ ruleName: RuleEnum.MAX_TOTAL_ACTIVITIES }))
+      .value,
     availability.maxNumberActivities
   );
   const consecutiveHoursRule = (
-    await rules.findOneOrFail({ ruleName: "consecutiveHours" })
+    await rules.findOneOrFail({ ruleName: RuleEnum.MAX_CONSEC_HRS })
   ).value;
 
+  // console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
+  // console.log(
+  //   maxHoursPerDayRule,
+  //   maxHoursPerWeekRule,
+  //   maxActivitiesPerUnitRule,
+  //   maxTotalActivitiesRule
+  // );
   // TODO: Specific error message for each constraint violated
   if (
     dayHours > maxHoursPerDayRule ||

@@ -1,6 +1,6 @@
 // Configure .env file
 import dotenv from "dotenv";
-const result = dotenv.config();
+// const result = dotenv.config();
 
 import express, { Request, Response } from "express";
 import cors from "cors";
@@ -19,13 +19,15 @@ import { Session } from "./entity/Session";
 import { TypeormStore } from "typeorm-store";
 import { NodemailerEmailHelper, SibEmailHelper } from "./email/emailHelper";
 import fileUpload from "express-fileupload";
+import { config } from "./config";
+import { shouldSendSameSiteNone } from "should-send-same-site-none";
 
 const initServer = async () => {
   const app: express.Application = express();
 
-  if (result.error) {
-    throw result.error;
-  }
+  // if (result.error) {
+  //   throw result.error;
+  // }
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {
@@ -36,29 +38,40 @@ const initServer = async () => {
   });
 
   await DBConnect();
-  app.use(
-    session({
-      store: new TypeormStore({
-        repository: getConnection().getRepository(Session),
-      }),
-      name: "sid",
-      secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
-      cookie: {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
-      },
-      rolling: true, // automatically set new expiration when user makes request
-      resave: true,
-      saveUninitialized: false, // do no set cookie if user is not authenticated
-    })
-  );
+
+  app.use(shouldSendSameSiteNone);
+  app.set("trust proxy", 1); // trust first proxy
+  let cookieOptions: session.SessionOptions = {
+    store: new TypeormStore({
+      repository: getConnection().getRepository(Session),
+    }),
+    name: "sid",
+    proxy: true,
+    secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
+    cookie: {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+    },
+    rolling: true, // automatically set new expiration when user makes request
+    resave: true,
+    saveUninitialized: false, // do no set cookie if user is not authenticated
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    cookieOptions.cookie = {
+      ...cookieOptions.cookie,
+      secure: true,
+      sameSite: "none",
+    };
+  }
+  app.use(session(cookieOptions));
 
   // parse cookies
   app.use(cookieParser());
   app.use(
     cors({
-      origin: "http://localhost:3000", // allow to server to accept request from different origin
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      origin: [config.CLIENT_URL, "http://localhost:3000"], // allow to server to accept request from different origin
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
       credentials: true, // allow session cookie from browser to pass through
     })
   );
@@ -88,9 +101,12 @@ const initServer = async () => {
   // app.use("/activities", authCheckMiddleware);
 
   Server.buildServices(app);
+  app.get("/health", (req, res) => {
+    res.status(200).send("Server is running");
+  });
 
   // Just checking if given PORT variable is an integer or not
-  let port = parseInt(process.env.PORT || "");
+  let port = parseInt(config.PORT || "");
   if (isNaN(port) || port === 0) {
     port = 8888;
   }
@@ -99,5 +115,6 @@ const initServer = async () => {
     console.log(`Server Started at PORT: ${port}`);
   });
 };
+
 export const emailHelperInstance = new NodemailerEmailHelper();
 initServer();
