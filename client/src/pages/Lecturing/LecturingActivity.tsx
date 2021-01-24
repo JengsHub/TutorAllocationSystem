@@ -16,15 +16,14 @@ import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
+import CandidatesModal from "./CandidatesModal";
 import "../styles/Grid.css";
 
 interface ILecturingActivityProps {
-  setModalOpen: (activityId: string) => void;
   setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
-  setModalOpen,
   setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -47,6 +46,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   );
   const [selectedUnitCode, setSelectedUnitCode] = useState<any>("All");
   const [selectedCampus, setSelectedCampus] = useState<any>("All");
+  const [modalOpen, setModalOpen] = useState<string | null>(null);
   const initialRender = useRef(true);
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
@@ -356,6 +356,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
    */
   return (
     <div>
+      <CandidatesModal
+        activityId={modalOpen}
+        closeModal={() => setModalOpen(null)}
+      />
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <Autocomplete

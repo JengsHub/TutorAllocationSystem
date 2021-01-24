@@ -13,12 +13,10 @@
 import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import StatusLogModal from "../StatusLogModal";
-import CandidatesModal from "./CandidatesModal";
 import LecturingActivity from "./LecturingActivity";
 
 const Lecturing = () => {
   // const [units, setUnits] = useState<IUnit[]>([]);
-  const [modalOpen, setModalOpen] = useState<string | null>(null);
   const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
     null
   );
@@ -93,10 +91,6 @@ const Lecturing = () => {
 
   return (
     <div id="main">
-      <CandidatesModal
-        activityId={modalOpen}
-        closeModal={() => setModalOpen(null)}
-      />
       <StatusLogModal
         activityId={statusLogModalOpen}
         closeModal={() => setStatusLogModalOpen(null)}
@@ -104,7 +98,6 @@ const Lecturing = () => {
       <h1>Offering</h1>
       <LecturingActivity
         {...{
-          setModalOpen,
           setStatusLogModalOpen,
         }}
       ></LecturingActivity>

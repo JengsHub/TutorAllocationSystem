@@ -17,14 +17,13 @@ import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 import "../styles/Grid.css";
+import CandidatesModal from "./CandidatesModal";
 
 interface ILecturingActivityProps {
-  setModalOpen: (activityId: string) => void;
   setStatusLogModalOpen: (activityId: string) => void;
 }
 
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
-  setModalOpen,
   setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -50,6 +49,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const initialRender = useRef(true);
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [modalOpen, setModalOpen] = useState<string | null>(null);
 
   useEffect(() => {
     setChanged(false);
@@ -69,7 +69,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       // eslint-disable-next-line
       setUpAutoComplete(res);
     });
-  }, [hasChanged]);
+  }, [hasChanged, modalOpen]);
 
   useEffect(() => {
     setInterval(() => {
@@ -356,6 +356,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
    */
   return (
     <div>
+      <CandidatesModal
+        activityId={modalOpen}
+        closeModal={() => setModalOpen(null)}
+      />
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <Autocomplete
