@@ -8,6 +8,8 @@ import ProcessFileService, {
   mapRawTpsFile,
 } from "~/helpers/processInputFiles";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
+import stripBom from "strip-bom-stream";
+import { DayOfWeek } from "~/enums/DayOfWeek";
 
 export class UploadControllerFactory {
   getController(role: RoleEnum | AppRoleEnum): IUploadController {
@@ -25,35 +27,35 @@ export class UploadControllerFactory {
 }
 
 export interface IUploadController {
-  uploadTas(files: FileArray): any;
-  uploadTps(files: FileArray): any;
-  uploadAllocate(files: FileArray): any;
+  uploadTas(path: string): any;
+  uploadTps(path: string): any;
+  uploadAllocate(path: string): any;
 }
 
 class TaUploadController implements IUploadController {
-  uploadTas(files: FileArray) {
+  uploadTas(path: string) {
     return new UnauthorisedAccessedError("TAs cannot upload TAS files");
   }
 
-  uploadTps(files: FileArray) {
+  uploadTps(path: string) {
     return new UnauthorisedAccessedError("TAs cannot upload TPS files");
   }
 
-  uploadAllocate(files: FileArray) {
+  uploadAllocate(path: string) {
     return new UnauthorisedAccessedError("TAs cannot upload Allocate+ files");
   }
 }
 
 class LecturerUploadController implements IUploadController {
-  uploadTas(files: FileArray) {
+  uploadTas(path: string) {
     return new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
   }
 
-  uploadTps(files: FileArray) {
+  uploadTps(path: string) {
     return new UnauthorisedAccessedError("Lecturers cannot upload TPS files");
   }
 
-  uploadAllocate(files: FileArray) {
+  uploadAllocate(path: string) {
     return new UnauthorisedAccessedError(
       "Lecturers cannot upload Allocate+ files"
     );
@@ -61,47 +63,113 @@ class LecturerUploadController implements IUploadController {
 }
 
 class AdminUploadController implements IUploadController {
-  uploadTas(files: FileArray) {
-    const path = (files.tas as UploadedFile).tempFilePath;
+  csvParseOptions:csv.Options  = {
+    mapHeaders: ({header, index}) => {return header.trim()}
+  }
+
+  uploadTas(path: string) {
     var processFileService: ProcessFileService = new ProcessFileService();
+    let allRows: {
+      givenNames: string;
+      lastNames: string;
+      preferenceScore: string;
+      lecturerScore: string;
+      isHeadTutorCandidate: number;
+      aqf: string;
+      email: string;
+      unitCode: string;
+      offeringPeriod: string;
+      activityCode: string;
+      activityGroup: string;
+      campus: string;
+      dayOfWeek: string;
+      startTime: string;
+      duration: number;
+      location: string;
+    }[] = [];
     fs.createReadStream(path)
-      .pipe(csv())
+      .pipe(stripBom())
+      .pipe(csv(this.csvParseOptions))
       .on("data", (row) => {
         // map the raw row into a an tas object that matches the system's convention
         const tasRow = mapRawTasFile(row);
-        processFileService.processTasObject(tasRow);
+        if (tasRow !== null) allRows.push(tasRow);
       })
-      .on("end", () => {
+      .on("end", async () => {
+        console.log("TAS CSV file successfully read");
+        for (let row of allRows) {
+          await processFileService.processTasObject(row);
+        }
         console.log("TAS CSV file successfully processed");
       });
   }
 
-  uploadTps(files: FileArray) {
-    const path = (files.tps as UploadedFile).tempFilePath;
+  uploadTps(path: string) {
     var processFileService: ProcessFileService = new ProcessFileService();
+    let allRows: {
+      aqfTarget: string;
+      unitCode: string;
+      offeringPeriod: string;
+      campus: string;
+      givenNames: string;
+      lastNames: string;
+      studyAqf: string;
+      aqf: string;
+      email: string;
+      headCandidiate: number;
+      preferenceScore: string;
+      lecturerScore: string;
+      availabilities: { day: DayOfWeek; start: any; end: any }[];
+      maxHours: string;
+      maxNumberActivities: string;
+    }[] = [];
     fs.createReadStream(path)
-      .pipe(csv())
+      .pipe(stripBom())
+      .pipe(csv(this.csvParseOptions))
       .on("data", (row) => {
         // map the raw row into an tps object
-        const tpsRow = mapRawTpsFile(row);
-        processFileService.processTpsObject(tpsRow);
+        let tpsRow = mapRawTpsFile(row);
+        if (tpsRow !== null) allRows.push(tpsRow);
+        // processFileService.processTpsObject(tpsRow);
       })
-      .on("end", () => {
+      .on("end", async () => {
+        console.log("TPS CSV file successfully read");
+        for (let row of allRows) {
+          await processFileService.processTpsObject(row);
+        }
         console.log("TPS CSV file successfully processed");
       });
   }
 
-  uploadAllocate(files: FileArray) {
-    const path = (files.allocate as UploadedFile).tempFilePath;
+  uploadAllocate(path: string) {
     var processFileService: ProcessFileService = new ProcessFileService();
+    let allRows: {
+      unitCode: string;
+      offeringPeriod: string;
+      campus: string;
+      activityCode: string;
+      activityGroup: string;
+      dayOfWeek: string;
+      startTime: string;
+      duration: string;
+      location: string;
+      studentCount: number;
+      staff_in_charge: string;
+    }[] = [];
     fs.createReadStream(path)
-      .pipe(csv())
+      .pipe(stripBom())
+      .pipe(csv(this.csvParseOptions))
       .on("data", (row) => {
         let allocateRow = mapRawAllocateFile(row);
-        processFileService.processAllocateObject(allocateRow);
+        if (allocateRow !== null) allRows.push(allocateRow);
       })
-      .on("end", () => {
-        console.log("Allocate CSV file successfully processed");
+      .on("end", async () => {
+        console.log("Allocate CSV file successfully read");
+        console.log(allRows);
+        for (let row of allRows) {
+          await processFileService.processAllocateObject(row);
+        }
+        console.log("Allocate CSV file Successfully processed");
       });
   }
 }
