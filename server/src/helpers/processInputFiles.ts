@@ -117,6 +117,10 @@ export class ProcessFileService {
       staffId: staff_object.id,
     });
     // console.log(allocation);
+
+    // Initial allocations are by default workforce approved
+    allocation.isWorkforceApproved = true;
+
     try {
       let allocateRepo = Allocation.getRepository();
       await allocateRepo.save(allocation);

@@ -258,7 +258,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const allocationRejected = async (allocation: IAllocationWithStaff) => {
     // TODO: Handle approval
     const result = await baseApi.patch(
-      `/allocations/${allocation.id}/approval?value=false`
+      `/allocations/${allocation.id}/lecturer-approval?value=false`
     );
     if (result.statusText === "OK") {
       setChanged(true);
@@ -314,33 +314,67 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     const approval = allocation.isLecturerApproved;
     const acceptance = allocation.isTaAccepted;
     const workforce = allocation.isWorkforceApproved;
-    if (approval === null) {
+
+    // Case when WF has approved but Lect hasnt approved
+    if (workforce === true && approval === null && acceptance === null) {
       return (
         <CustomStatus
-          value="Waiting for Lecturer"
+          value="Waiting for your response"
           isBlue
           isExclamationDiamond
         />
       );
-    } else if (approval === false) {
-      return <CustomStatus value="Lecturer has rejected" isRed isCross />;
-    }
-
-    if (acceptance === null) {
+    } // Case when lect and WF has approved but TA hasnt respond
+    else if (workforce === true && approval === true && acceptance === null) {
       return <CustomStatus value="Waiting for TA response" isBlue isClock />;
-    } else if (acceptance === false) {
-      <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
-    }
-
-    if (workforce === true) {
-      return <CustomStatus value="Workforce has approved" isGreen isCheck />;
-    } else if (workforce === false) {
+    } // Case when lect and WF approved but TA rejected
+    else if (workforce === true && approval === true && acceptance === false) {
+      return (
+        <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
+      );
+    } // Case When WF approved but Lect rejected
+    else if (workforce === true && approval === false && acceptance === null) {
+      return <CustomStatus value="You have rejected" isRed isCross />;
+    } // Case when WF, Lect and TA approved
+    else if (workforce === true && approval === true && acceptance === true) {
+      return <CustomStatus value="TA has approved" isGreen isCheck />;
+    } // Case when Lect approved but WF has yet to approve
+    else if (workforce === null && approval === true && acceptance === null) {
+      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />;
+    } // Case when Lect approve but workforce rejected
+    else if (workforce === false && approval === true && acceptance === null) {
       return <CustomStatus value="Workforce has rejected" isRed isCross />;
     }
 
-    return (
-      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
-    );
+    return <CustomStatus value="Error" isRed isCross></CustomStatus>;
+
+    // if (approval === null) {
+    //   return (
+    //     <CustomStatus
+    //       value="Waiting for Lecturer"
+    //       isBlue
+    //       isExclamationDiamond
+    //     />
+    //   );
+    // } else if (approval === false) {
+    //   return <CustomStatus value="Lecturer has rejected" isRed isCross />;
+    // }
+
+    // if (acceptance === null) {
+    //   return <CustomStatus value="Waiting for TA response" isBlue isClock />;
+    // } else if (acceptance === false) {
+    //   <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
+    // }
+
+    // if (workforce === true) {
+    //   return <CustomStatus value="Workforce has approved" isGreen isCheck />;
+    // } else if (workforce === false) {
+    //   return <CustomStatus value="Workforce has rejected" isRed isCross />;
+    // }
+
+    // return (
+    //   <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
+    // );
   }
 
   const StyledTableCell = withStyles(() => ({
@@ -545,7 +579,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                     variant="contained"
                                     onClick={() => setModalOpen(activity.id)}
                                   >
-                                    Manually add allocations
+                                    Assign staff
                                   </Button>
                                 </TableCell>
                               </TableRow>
@@ -590,7 +624,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                           variant="contained"
                           onClick={() => setModalOpen(activity.id)}
                         >
-                          Manually add allocations
+                          Assign staff
                         </Button>
                       </TableCell>
                     </TableRow>

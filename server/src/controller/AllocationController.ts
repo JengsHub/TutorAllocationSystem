@@ -82,6 +82,7 @@ class LecturerAllocationController implements IAllocationController {
     );
   }
   createAllocation(user: Staff, newRecord: Allocation) {
+    newRecord.isLecturerApproved = true;
     return Allocation.save(newRecord);
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
@@ -121,6 +122,7 @@ class AdminAllocationController implements IAllocationController {
     return Allocation.delete({ id: recordToDelete.id });
   }
   createAllocation(user: Staff, newRecord: Allocation) {
+    newRecord.isWorkforceApproved = true;
     return Allocation.save(newRecord);
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {

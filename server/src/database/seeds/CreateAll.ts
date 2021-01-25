@@ -165,6 +165,7 @@ export default class CreateAll implements Seeder {
         activity: activityOne,
         staff: staffOne,
       });
+      allocationOne.isWorkforceApproved = true;
       await manager.save(allocationOne);
 
       for (const r of defaultRules) {
