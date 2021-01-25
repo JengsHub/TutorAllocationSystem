@@ -50,7 +50,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const initialRender = useRef(true);
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  const [allocationsMaxNum, setAllocationsMaxNum] = useState<number>();
 
   useEffect(() => {
     setChanged(false);
