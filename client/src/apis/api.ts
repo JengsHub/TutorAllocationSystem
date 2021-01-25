@@ -17,7 +17,9 @@ export const getStaffPreference = async (staffId: string) => {
   return res.data;
 };
 
-export const getAvailability = async (staffId: string) => {
-  const res = await baseApi.get(`/availabilities/?staffId=${staffId}`);
+export const getAvailability = async (staffId: string, year: string) => {
+  const res = await baseApi.get(
+    `/availabilities/monToFriAvai/${year}/?staffId=${staffId}`
+  );
   return res.data;
 };

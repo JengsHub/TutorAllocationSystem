@@ -68,8 +68,9 @@ const StaffDetails: React.FC<IStaffDetailsProps> = ({ staffName, staffId }) => {
       getStaffPreference(staffId).then((res) => {
         setStaffPreferences(res);
       });
-      getAvailability(staffId).then((res) => {
+      getAvailability(staffId, "2020").then((res) => {
         setAvailabilities(res);
+        console.log(res);
       });
     }
   }, [staffId]);
