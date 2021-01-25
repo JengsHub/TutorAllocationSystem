@@ -13,7 +13,6 @@ import TableRow from "@material-ui/core/TableRow";
 import { Autocomplete } from "@material-ui/lab";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useRef, useState } from "react";
-import { getActivity } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
@@ -317,8 +316,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
    */
   function MaxAllocationNumCell(props: { activity: IActivity; iter: number }) {
     let { activity, iter } = props;
-    // let allocationMaxNum = activity.allocationsMaxNum;
-    setAllocationsMaxNum(activity.allocationsMaxNum);
     return (
       <div>
         <TextField
