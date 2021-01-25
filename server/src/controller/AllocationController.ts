@@ -1,6 +1,6 @@
 import { Allocation, Staff } from "~/entity";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
-import { UnauthorisedAccessedError } from "~/helpers";
+import { removeKeys, UnauthorisedAccessedError } from "~/helpers";
 
 export class AllocationControllerFactory {
   getController(role: RoleEnum | AppRoleEnum): IAllocationController {
@@ -68,6 +68,11 @@ class TaAllocationController implements IAllocationController {
 }
 
 class LecturerAllocationController implements IAllocationController {
+  restrictedWriteKeys: Array<keyof Allocation> = [
+    "isWorkforceApproved",
+    "isTaAccepted"
+  ];
+
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
     return new UnauthorisedAccessedError(
       "Lecturer cannot Workforce approve an Allocation"
@@ -83,6 +88,7 @@ class LecturerAllocationController implements IAllocationController {
   }
   createAllocation(user: Staff, newRecord: Allocation) {
     newRecord.isLecturerApproved = true;
+    newRecord = removeKeys(newRecord, this.restrictedWriteKeys);
     return Allocation.save(newRecord);
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {

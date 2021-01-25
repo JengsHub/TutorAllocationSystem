@@ -122,7 +122,7 @@ class AllocationsService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: can create allocation for unit they're lecturing
+   *  - Lecturer: can create allocation for unit they're lecturing but not isWorkforceApproved attribute
    *  - Admin: can create allocation in any unit
    *
    * @param newRecord allocation data
