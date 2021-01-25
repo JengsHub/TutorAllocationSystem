@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Allocation } from "./Allocation";
+import { Swap } from "./Swap";
 import { Unit } from "./Unit";
 
 @Entity()
@@ -48,6 +49,9 @@ export class Activity extends BaseEntity {
 
   @OneToMany(() => Allocation, (allocation) => allocation.activity)
   allocations!: Allocation[];
+
+  @OneToMany(() => Swap, (swap) => swap.desired)
+  swaps!: Swap[];
 
   // @RelationId((activity: Activity) => activity.allocations)
   // allocationIds!: string[];

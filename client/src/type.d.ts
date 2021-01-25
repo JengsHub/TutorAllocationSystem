@@ -45,7 +45,9 @@ interface IPreferences {
 interface IAllocation {
   id: string;
   activityId: string;
+  activity: IActivity;
   staffId: string;
+  staff: IStaff;
   approval: ApprovalEnum;
   isLecturerApproved: boolean;
   isTaAccepted: boolean;
@@ -99,6 +101,18 @@ interface IStatusLogWithStaff {
   staff: IStaff;
   staffId: string;
   time: string;
+}
+
+interface ISwap {
+  lecturerApproved: boolean;
+  workforceApproved: boolean;
+  id: string;
+  fromAllocationId: string;
+  intoAllocationId: string | null;
+  desiredActivityId: string;
+  from: IAllocation;
+  into: IAllocation | null;
+  desired: IActivity;
 }
 
 interface myAllocations {

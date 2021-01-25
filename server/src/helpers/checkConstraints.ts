@@ -29,76 +29,53 @@ const timeStringToDate = (time: string) => {
   return new Date("1970-1-1 " + time);
 };
 
+export const checkSwapAllocation = async (
+  staff: Staff,
+  activities: Activity[],
+  swap: Activity
+): Promise<boolean> => {
+  return checkAllocation(staff, activities, swap);
+};
+
+export const checkNewAllocation = async (
+  staff: Staff,
+  newActivity: Activity
+): Promise<boolean> => {
+  const allocationsRepo = getRepository(Allocation);
+  const currentAllocations = await allocationsRepo.find({
+    relations: ["staff", "activity"],
+    where: { staff: { id: staff.id } },
+  });
+
+  const activities = currentAllocations.map((a) => a.activity);
+
+  return checkAllocation(staff, activities, newActivity);
+};
+
 /**
  * Checks if an allocation fits the constraints (global rules as well as individual staff preferences)
- * @param newRecord the new allocation
+ * @param newActivity the new allocation
  * @param staff the staff member taking the allocation
  */
 export const checkAllocation = async (
   staff: Staff,
+  activities: Activity[],
   newActivity: Activity
 ): Promise<boolean> => {
   // TODO: can be optimised. Add a new table/new columns with triggers that automatically count hours for each day when new allocations are made?
 
-  const activityUnit = await getRepository(Unit).findOne({
-    id: newActivity.unitId,
+  const availability = await getRepository(Availability).findOne({
+    relations: ["staff"],
+    where: { staff: { id: staff.id }, day: newActivity.dayOfWeek },
   });
-  if (!activityUnit) return false;
-
-  console.log(activityUnit);
-
-  //const allocationsRepo = getRepository(Allocation);
-  // const currentAllocations = await allocationsRepo.find({
-  //   relations: ["staff", "activity", "activity.unit"],
-  //   where: {
-  //     staff: { id: staff.id },
-  //     // activity: {
-  //     //   unit: {
-  //     //     year: activityUnit.year,
-  //     //     //offeringPeriod: In([activityUnit.offeringPeriod, "Full Year"]),
-  //     //   },
-  //     // },
-  //   },
-  // });
-
-  const currentAllocations = await Allocation.createQueryBuilder("allocation")
-    .innerJoinAndSelect("allocation.activity", "activity")
-    .innerJoinAndSelect("activity.unit", "unit")
-    .where("unit.year = :year", { year: activityUnit.year })
-    .andWhere("unit.offeringPeriod IN (:...offeringPeriod)", {
-      offeringPeriod: [activityUnit.offeringPeriod, "Full Year"],
-    })
-    .andWhere("allocation.staffId = :id", { id: staff.id })
-    .getMany();
+  if (!availability) return false;
 
   let dayHours = activityDuration(newActivity);
   let weekHours = activityDuration(newActivity);
   let activitiesInUnit = 1;
   let totalActivities = 1;
 
-  //console.log(currentAllocations);
-
-  const activities = currentAllocations.map((a) => a.activity);
-  // .filter(
-  //   (a) =>
-  //     a.unit.year === activityUnit.year &&
-  //     (a.unit.offeringPeriod === activityUnit.offeringPeriod ||
-  //       a.unit.offeringPeriod === "Full Year")
-  // );
-
-  console.log(activities);
   // Checking the numbers against the constraints/rules.
-  const rules: Repository<Rule> = await getRepository(Rule);
-  const availability = await getRepository(Availability).findOne({
-    relations: ["staff"],
-    where: {
-      staff: { id: staff.id },
-      day: newActivity.dayOfWeek,
-      year: activityUnit.year,
-    },
-  });
-  if (!availability) return false;
-
   activities.forEach((activity) => {
     if (activity && newActivity) {
       // Total hours in day
@@ -113,6 +90,7 @@ export const checkAllocation = async (
     }
   });
 
+  const rules: Repository<Rule> = await getRepository(Rule);
   const maxHoursPerDayRule = (
     await rules.findOneOrFail({ ruleName: RuleEnum.MAX_DAY_HRS })
   ).value;
@@ -153,14 +131,6 @@ export const checkAllocation = async (
     availability.startTime <= newActivity.startTime &&
     availability.endTime >= newActivity.endTime;
 
-  console.log(
-    availability.startTime,
-    newActivity.startTime,
-    availability.endTime,
-    newActivity.endTime
-  );
-  console.log(isWithinAvailableHours);
-
   if (!isWithinAvailableHours) return false;
 
   // Check for clashes
@@ -168,8 +138,6 @@ export const checkAllocation = async (
   const sameDayActivities = activities
     .filter((a) => a?.dayOfWeek === newActivity.dayOfWeek)
     .slice();
-
-  console.log(sameDayActivities);
 
   for (let a of sameDayActivities) {
     if (
@@ -200,8 +168,6 @@ export const checkAllocation = async (
     const longestConsecutive = Math.max(
       ...stack.map((a) => activityDuration(a))
     );
-
-    console.log(longestConsecutive, longestConsecutive > consecutiveHoursRule);
 
     if (longestConsecutive > consecutiveHoursRule) return false;
   }

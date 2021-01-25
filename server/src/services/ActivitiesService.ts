@@ -1,5 +1,6 @@
+import { Request, Response } from "express";
 import { exception } from "console";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, Not } from "typeorm";
 import {
   ContextRequest,
   DELETE,
@@ -14,12 +15,11 @@ import {
   ContextResponse,
   PATCH,
 } from "typescript-rest";
-import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
-import { checkAllocation } from "../helpers/checkConstraints";
-import { Request, Response } from "express";
+import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
+import { checkNewAllocation } from "../helpers/checkConstraints";
 
 @Path("/activities")
 class ActivitiesService {
@@ -174,7 +174,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -249,7 +249,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
