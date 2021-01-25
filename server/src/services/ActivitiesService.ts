@@ -312,6 +312,14 @@ class ActivitiesService {
     return candidates;
   }
 
+  @PUT
+  @Path(":activityId/allocationsMaxNum")
+  public async updateMaxNumberOfAllocations(@PathParam("activityId") id: string, newMaxNumberOfAllocation: number){
+    let activity: any = await Activity.findOneOrFail(id);
+    activity.allocationsMaxNum = newMaxNumberOfAllocation; 
+    return activity.updateActivity(activity);
+  }
+
   /**
    * Creates an activity
    *
