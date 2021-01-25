@@ -563,7 +563,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                   <TableCell rowSpan={n + 1} align="left">
                                     <MaxAllocationNumCell
                                       activity={activity}
-                                      iter={j}
+                                      iter={i}
                                     />
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
