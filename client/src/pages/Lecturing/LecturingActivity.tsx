@@ -354,7 +354,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   // this function will check whether curernt allocation of an activity exceed the activity's allocationMaxNum
   function isAllocationsLessThanMax(activity: IActivity) {
-    let allocationsNoRejection: IAllocation[] = [];
+    let allocationsNoRejection: IAllocationWithStaff[] = [];
 
     let numOfAllocations = activity.allocations.length;
     let allocationsMaxNum = activity.allocationsMaxNum;

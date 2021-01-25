@@ -84,7 +84,7 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     // is selected more than maxnumberallocation
     if (activity) {
       console.log("got activity");
-      let allocationsNoRejection: IAllocation[] = [];
+      let allocationsNoRejection: IAllocationWithStaff[] = [];
 
       let numOfAllocations = activity.allocations.length;
 
