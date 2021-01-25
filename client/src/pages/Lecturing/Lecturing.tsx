@@ -22,7 +22,6 @@ const Lecturing = () => {
   const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
     null
   );
-  const [allocationNoReject, setAllocationNoReject] = useState<number>(0);
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -97,7 +96,6 @@ const Lecturing = () => {
       <CandidatesModal
         activityId={modalOpen}
         closeModal={() => setModalOpen(null)}
-        allocationNoReject={allocationNoReject}
       />
       <StatusLogModal
         activityId={statusLogModalOpen}
@@ -108,7 +106,6 @@ const Lecturing = () => {
         {...{
           setModalOpen,
           setStatusLogModalOpen,
-          setAllocationNoReject,
         }}
       ></LecturingActivity>
     </div>

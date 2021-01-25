@@ -309,6 +309,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
+  // this will determine what to be shown in the status cell of the table.
   function ApprovalCell(props: { allocation: IAllocationWithStaff }) {
     const { allocation } = props;
     const approval = allocation.isLecturerApproved;
@@ -329,7 +330,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     if (acceptance === null) {
       return <CustomStatus value="Waiting for TA response" isBlue isClock />;
     } else if (acceptance === false) {
-      <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
+      return (
+        <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
+      );
     }
 
     if (workforce === true) {
@@ -348,6 +351,28 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       backgroundColor: "#c0c0c0",
     },
   }))(TableCell);
+
+  // this function will check whether curernt allocation of an activity exceed the activity's allocationMaxNum
+  function isAllocationsLessThanMax(activity: IActivity) {
+    let allocationsNoRejection: IAllocation[] = [];
+
+    let numOfAllocations = activity.allocations.length;
+    let allocationsMaxNum = activity.allocationsMaxNum;
+
+    for (let i = 0; i < numOfAllocations; i++) {
+      let allocation = activity.allocations[i];
+
+      if (allocation.isLecturerApproved !== false) {
+        if (allocation.isTaAccepted !== false) {
+          if (allocation.isWorkforceApproved !== false) {
+            allocationsNoRejection.push(allocation);
+          }
+        }
+      }
+    }
+
+    return allocationsNoRejection.length < allocationsMaxNum;
+  }
 
   /*
   NOTE
@@ -419,14 +444,14 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
           <Table className="grid" size="small">
             <colgroup>
               <col width="10%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
+              <col width="5%" />
+              <col width="13%" />
+              <col width="13%" />
+              <col width="6%" />
               <col width="12%" />
               <col width="7%" />
               <col width="7%" />
-              <col width="11%" />
+              <col width="9%" />
               <col width="10%" />
               <col width="4%" />
               <col width="11%" />
@@ -435,8 +460,12 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
               <TableRow>
                 <StyledTableCell align="left">Unit Code</StyledTableCell>
                 <StyledTableCell align="left">Campus</StyledTableCell>
-                <StyledTableCell align="left">Activity Group</StyledTableCell>
-                <StyledTableCell align="left">Activity Code</StyledTableCell>
+                <StyledTableCell align="left">
+                  Activity Group Code
+                </StyledTableCell>
+                <StyledTableCell align="left">
+                  Max. Allocate No.
+                </StyledTableCell>
                 <StyledTableCell align="left">Day</StyledTableCell>
                 <StyledTableCell align="left">Location</StyledTableCell>
                 <StyledTableCell align="left">Start Time</StyledTableCell>
@@ -463,16 +492,30 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               {j === 0 ? (
                                 <>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.unit.unitCode}
+                                    <TableRow>
+                                      {activity.unit.unitCode}
+                                    </TableRow>
+                                    <Button
+                                      size="small"
+                                      href="#text-buttons"
+                                      color="primary"
+                                      onClick={() =>
+                                        setStatusLogModalOpen(activity.id)
+                                      }
+                                    >
+                                      Status Log
+                                    </Button>
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
                                     {activity.unit.campus}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.activityGroup}
+                                    {activity.activityGroup +
+                                      " " +
+                                      activity.activityCode}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.activityCode}
+                                    {activity.allocationsMaxNum}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
                                     {dayConverter(activity.dayOfWeek)}
@@ -498,7 +541,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               </TableCell>
 
                               <TableCell align="center">
-                                {allocation.isWorkforceApproved === null ? (
+                                {allocation.isLecturerApproved === null ? (
                                   <div
                                     style={{
                                       display: "flex",
@@ -536,14 +579,27 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                             </TableRow>
                             {j === n - 1 ? (
                               <TableRow>
-                                <TableCell align="center">
-                                  <Button
-                                    variant="contained"
-                                    onClick={() => setModalOpen(activity.id)}
+                                {isAllocationsLessThanMax(activity) ? (
+                                  <TableCell align="center">
+                                    <Button
+                                      variant="contained"
+                                      onClick={() => setModalOpen(activity.id)}
+                                    >
+                                      Allocate
+                                    </Button>
+                                  </TableCell>
+                                ) : (
+                                  <TableCell
+                                    colSpan={4}
+                                    align="center"
+                                    style={{
+                                      padding: "0.5rem 0",
+                                      fontSize: "18px",
+                                    }}
                                   >
-                                    Manually add allocations
-                                  </Button>
-                                </TableCell>
+                                    <b>Fully Allocated.</b>
+                                  </TableCell>
+                                )}
                               </TableRow>
                             ) : null}
                           </React.Fragment>
@@ -561,10 +617,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                         {activity.unit.campus}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
-                        {activity.activityGroup}
+                        {activity.activityGroup + " " + activity.activityCode}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
-                        {activity.activityCode}
+                        {activity.allocationsMaxNum}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
                         {dayConverter(activity.dayOfWeek)}
@@ -578,7 +634,13 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                       <TableCell rowSpan={2} align="left">
                         {activity.endTime.substring(0, 5)}
                       </TableCell>
-                      <TableCell colSpan={4}>No Allocations yet.</TableCell>
+                      <TableCell
+                        colSpan={4}
+                        align="center"
+                        style={{ padding: "0.5rem 0", fontSize: "18px" }}
+                      >
+                        <b>No Allocations yet.</b>
+                      </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell align="center">
@@ -586,7 +648,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                           variant="contained"
                           onClick={() => setModalOpen(activity.id)}
                         >
-                          Manually add allocations
+                          Allocate
                         </Button>
                       </TableCell>
                     </TableRow>

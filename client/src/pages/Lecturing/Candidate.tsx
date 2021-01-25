@@ -16,19 +16,16 @@ import Snackbar from "@material-ui/core/Snackbar";
 
 interface ICandidateProps {
   activityId: string;
-  allocationNoReject: number;
 }
 
-const Candidate: React.FC<ICandidateProps> = ({
-  activityId,
-  allocationNoReject,
-}) => {
+const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const [candidatesPreference, setCandidatePreference] = useState<
     IPreferences[]
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [allocationLeft, setAllocationLeft] = useState<number>();
   const history = useHistory();
 
   useEffect(() => {
@@ -60,6 +57,7 @@ const Candidate: React.FC<ICandidateProps> = ({
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
 
+  // this handleClick function will save the row in the table which is being selected
   const handleClick = (event: React.MouseEvent<unknown>, i: number) => {
     const selectedIndex = selecteds.indexOf(i);
     let newSelected: number[] = [];
@@ -79,17 +77,39 @@ const Candidate: React.FC<ICandidateProps> = ({
     setSelected(newSelected);
   };
 
+  // this function will be call when the button 'Request Offer' is clicked
+  // this function will look for candidate that meet the constraint rules from database
   const makeOffers = () => {
     //console.log(selecteds);
     // is selected more than maxnumberallocation
-    if (
-      activity &&
-      selecteds.length > activity.allocationsMaxNum - allocationNoReject
-    ) {
-      setOpen(true);
+    if (activity) {
       console.log("got activity");
+      let allocationsNoRejection: IAllocation[] = [];
 
-      return;
+      let numOfAllocations = activity.allocations.length;
+
+      for (let i = 0; i < numOfAllocations; i++) {
+        let allocation = activity.allocations[i];
+
+        if (allocation.isLecturerApproved !== false) {
+          if (allocation.isTaAccepted !== false) {
+            if (allocation.isWorkforceApproved !== false) {
+              allocationsNoRejection.push(allocation);
+            }
+          }
+        }
+      }
+
+      setAllocationLeft(
+        activity.allocationsMaxNum - allocationsNoRejection.length
+      );
+      if (
+        selecteds.length >
+        activity.allocationsMaxNum - allocationsNoRejection.length
+      ) {
+        setOpen(true);
+        return;
+      }
     }
     setOpen(false);
     selecteds.forEach(async (i) => {
@@ -189,8 +209,7 @@ const Candidate: React.FC<ICandidateProps> = ({
         <Snackbar open={open} autoHideDuration={6000}>
           <Alert severity="error">
             You have selected too many offers. Max is{" "}
-            {activity.allocationsMaxNum}. Left{" "}
-            {activity.allocationsMaxNum - allocationNoReject}.
+            {activity.allocationsMaxNum}. Left {allocationLeft}.
           </Alert>
         </Snackbar>
       ) : null}
