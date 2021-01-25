@@ -70,7 +70,7 @@ class TaAllocationController implements IAllocationController {
 class LecturerAllocationController implements IAllocationController {
   restrictedWriteKeys: Array<keyof Allocation> = [
     "isWorkforceApproved",
-    "isTaAccepted"
+    "isTaAccepted",
   ];
 
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
