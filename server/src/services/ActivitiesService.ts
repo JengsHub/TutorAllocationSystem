@@ -13,6 +13,7 @@ import {
   Security,
   IgnoreNextMiddlewares,
   ContextResponse,
+  PATCH,
 } from "typescript-rest";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
@@ -110,12 +111,19 @@ class ActivitiesService {
   // TODO: changed activityCode to activityId since activityCode is not unique/primary key
   @GET
   @Path(":activityId")
+  @IgnoreNextMiddlewares
   public async getActivity(
     @PathParam("activityId") id: string,
     @ContextRequest req: Request
   ) {
     const me = req.user as Staff;
-    const controller = this.factory.getController(await me.getRoleTitle());
+    let activity = await Activity.createQueryBuilder("activity")
+      .where("activity.id = :id", { id })
+      .getOne();
+
+    const controller = this.factory.getController(
+      await me.getRoleTitle(activity?.unitId)
+    );
     return controller.getActivity(id);
   }
 
@@ -202,7 +210,13 @@ class ActivitiesService {
     let activity: Activity;
     try {
       const me = req.user as Staff;
-      const controller = this.factory.getController(await me.getRoleTitle());
+      let act = await Activity.createQueryBuilder("activity")
+        .where("activity.id = :id", { id })
+        .getOne();
+
+      const controller = this.factory.getController(
+        await me.getRoleTitle(act?.unitId)
+      );
       activity = await controller.getActivityForSortedCandidates(
         id,
         sortingCriteria
@@ -297,6 +311,23 @@ class ActivitiesService {
     }
 
     return candidates;
+  }
+
+  /**
+   * Updates the max number of allocation for a particular activity
+   * @param id : id of the activity
+   * @param newMaxNumberOfAllocation  : the new max number of allocation
+   */
+  @PATCH
+  @Path(":id/allocationsMaxNum")
+  public async updateMaxNumberOfAllocations(
+    @PathParam("id") id: string,
+    @QueryParam("value") newMaxNumberOfAllocation: number,
+    @ContextRequest req: Request
+  ) {
+    let activity: any = await Activity.findOneOrFail(id);
+    activity.allocationsMaxNum = newMaxNumberOfAllocation;
+    return activity.save(activity);
   }
 
   /**

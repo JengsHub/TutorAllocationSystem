@@ -64,6 +64,7 @@ export class Activity extends BaseEntity {
   unitId!: string;
 
   static async createOrUpdateActivity(newRecord: Activity) {
+    // TODO: this update method is no working.
     let unit = await Unit.findOneOrFail({
       id: newRecord.unitId,
     });
@@ -83,4 +84,7 @@ export class Activity extends BaseEntity {
   }
   @Column({ default: 0 })
   studentCount!: number;
+
+  @Column({ default: 1 })
+  allocationsMaxNum!: number;
 }
