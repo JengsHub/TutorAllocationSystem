@@ -12,6 +12,7 @@ import {
   Security,
   IgnoreNextMiddlewares,
   ContextResponse,
+  PATCH,
 } from "typescript-rest";
 import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
 import { resError } from "~/helpers";
@@ -317,15 +318,16 @@ class ActivitiesService {
    * @param id : id of the activity
    * @param newMaxNumberOfAllocation  : the new max number of allocation
    */
-  @PUT
-  @Path(":activityId/allocationsMaxNum")
+  @PATCH
+  @Path(":id/allocationsMaxNum")
   public async updateMaxNumberOfAllocations(
-    @PathParam("activityId") id: string,
-    newMaxNumberOfAllocation: number
+    @PathParam("id") id: string,
+    @QueryParam("value") newMaxNumberOfAllocation: number,
+    @ContextRequest req: Request
   ) {
     let activity: any = await Activity.findOneOrFail(id);
     activity.allocationsMaxNum = newMaxNumberOfAllocation;
-    return activity.updateActivity(activity);
+    return activity.save(activity);
   }
 
   /**

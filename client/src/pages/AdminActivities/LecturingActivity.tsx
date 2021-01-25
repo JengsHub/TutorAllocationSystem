@@ -50,6 +50,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const initialRender = useRef(true);
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [allocationsMaxNum, setAllocationsMaxNum] = useState<number>();
 
   useEffect(() => {
     setChanged(false);
@@ -309,6 +310,49 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
+  function MaxAllocationNumCell(props: { activity: IActivity }) {
+    let { activity } = props;
+    // let allocationMaxNum = activity.allocationsMaxNum;
+    setAllocationsMaxNum(activity.allocationsMaxNum);
+    return (
+      <div>
+        <TextField
+          id="allocationMaxNum-textfield"
+          label=""
+          type="number"
+          style={{ width: 60 }}
+          defaultValue={allocationsMaxNum}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            let newValue = parseInt(e.target.value);
+            if (!isNaN(newValue)) {
+              // allocationMaxNum = newValue;
+              setAllocationsMaxNum(newValue);
+            }
+          }}
+        />
+        <Button
+          size="small"
+          href="#text-buttons"
+          color="primary"
+          onClick={async () => {
+            let res;
+            try {
+              res = await baseApi.patch(
+                `/activities/${activity.id}/allocationsMaxNum?value=${allocationsMaxNum}`
+              );
+            } catch (err) {
+              throw err;
+            }
+            activity = res.data;
+            setAllocationsMaxNum(activity.allocationsMaxNum);
+          }}
+        >
+          Change
+        </Button>
+      </div>
+    );
+  }
+
   // this will determine what to be shown in the status cell of the table.
   function ApprovalCell(props: { allocation: IAllocationWithStaff }) {
     const { allocation } = props;
@@ -515,7 +559,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                       activity.activityCode}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    {activity.allocationsMaxNum}
+                                    <MaxAllocationNumCell activity={activity} />
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
                                     {dayConverter(activity.dayOfWeek)}
@@ -620,7 +664,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                         {activity.activityGroup + " " + activity.activityCode}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
-                        {activity.allocationsMaxNum}
+                        <MaxAllocationNumCell activity={activity} />
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
                         {dayConverter(activity.dayOfWeek)}
