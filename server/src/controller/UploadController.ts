@@ -3,9 +3,12 @@ import { FileArray, UploadedFile } from "express-fileupload";
 import fs from "fs";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 import ProcessFileService, {
+  AllocateObject,
   mapRawAllocateFile,
   mapRawTasFile,
   mapRawTpsFile,
+  TasObject,
+  TpsObject,
 } from "~/helpers/processInputFiles";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
 import stripBom from "strip-bom-stream";
@@ -63,30 +66,15 @@ class LecturerUploadController implements IUploadController {
 }
 
 class AdminUploadController implements IUploadController {
-  csvParseOptions:csv.Options  = {
-    mapHeaders: ({header, index}) => {return header.trim()}
-  }
+  csvParseOptions: csv.Options = {
+    mapHeaders: ({ header, index }) => {
+      return header.trim();
+    },
+  };
 
   uploadTas(path: string) {
     var processFileService: ProcessFileService = new ProcessFileService();
-    let allRows: {
-      givenNames: string;
-      lastNames: string;
-      preferenceScore: string;
-      lecturerScore: string;
-      isHeadTutorCandidate: number;
-      aqf: string;
-      email: string;
-      unitCode: string;
-      offeringPeriod: string;
-      activityCode: string;
-      activityGroup: string;
-      campus: string;
-      dayOfWeek: string;
-      startTime: string;
-      duration: number;
-      location: string;
-    }[] = [];
+    let allRows: TasObject[] = [];
     fs.createReadStream(path)
       .pipe(stripBom())
       .pipe(csv(this.csvParseOptions))
@@ -97,6 +85,7 @@ class AdminUploadController implements IUploadController {
       })
       .on("end", async () => {
         console.log("TAS CSV file successfully read");
+        // FIXME: process and save all rows to db at once to reduce number of calls to db
         for (let row of allRows) {
           await processFileService.processTasObject(row);
         }
@@ -106,23 +95,7 @@ class AdminUploadController implements IUploadController {
 
   uploadTps(path: string) {
     var processFileService: ProcessFileService = new ProcessFileService();
-    let allRows: {
-      aqfTarget: string;
-      unitCode: string;
-      offeringPeriod: string;
-      campus: string;
-      givenNames: string;
-      lastNames: string;
-      studyAqf: string;
-      aqf: string;
-      email: string;
-      headCandidiate: number;
-      preferenceScore: string;
-      lecturerScore: string;
-      availabilities: { day: DayOfWeek; start: any; end: any }[];
-      maxHours: string;
-      maxNumberActivities: string;
-    }[] = [];
+    let allRows: TpsObject[] = [];
     fs.createReadStream(path)
       .pipe(stripBom())
       .pipe(csv(this.csvParseOptions))
@@ -134,6 +107,7 @@ class AdminUploadController implements IUploadController {
       })
       .on("end", async () => {
         console.log("TPS CSV file successfully read");
+        // FIXME: process and save all rows to db at once to reduce number of calls to db
         for (let row of allRows) {
           await processFileService.processTpsObject(row);
         }
@@ -143,19 +117,7 @@ class AdminUploadController implements IUploadController {
 
   uploadAllocate(path: string) {
     var processFileService: ProcessFileService = new ProcessFileService();
-    let allRows: {
-      unitCode: string;
-      offeringPeriod: string;
-      campus: string;
-      activityCode: string;
-      activityGroup: string;
-      dayOfWeek: string;
-      startTime: string;
-      duration: string;
-      location: string;
-      studentCount: number;
-      staff_in_charge: string;
-    }[] = [];
+    let allRows: AllocateObject[] = [];
     fs.createReadStream(path)
       .pipe(stripBom())
       .pipe(csv(this.csvParseOptions))
@@ -166,6 +128,7 @@ class AdminUploadController implements IUploadController {
       .on("end", async () => {
         console.log("Allocate CSV file successfully read");
         console.log(allRows);
+        // FIXME: process and save all rows to db at once to reduce number of calls to db
         for (let row of allRows) {
           await processFileService.processAllocateObject(row);
         }

@@ -332,7 +332,7 @@ type RawAllocateObject = {
   student_count: number;
 };
 
-type TasObject = {
+export type TasObject = {
   givenNames: string;
   lastNames: string;
   preferenceScore: string;
@@ -351,7 +351,7 @@ type TasObject = {
   location: string;
 };
 
-type TpsObject = {
+export type TpsObject = {
   aqfTarget: string;
   unitCode: string;
   offeringPeriod: string;
@@ -369,7 +369,7 @@ type TpsObject = {
   maxNumberActivities: string;
 };
 
-type AllocateObject = {
+export type AllocateObject = {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
