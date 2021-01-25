@@ -13,6 +13,7 @@ import TableRow from "@material-ui/core/TableRow";
 import { Autocomplete } from "@material-ui/lab";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useRef, useState } from "react";
+import { getActivity } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
@@ -310,41 +311,42 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
-  function MaxAllocationNumCell(props: { activity: IActivity }) {
-    let { activity } = props;
+  /**
+   * Component of max. allocation no cell column
+   * @param props activity and iteration of the particular activity within the mapping function
+   */
+  function MaxAllocationNumCell(props: { activity: IActivity; iter: number }) {
+    let { activity, iter } = props;
     // let allocationMaxNum = activity.allocationsMaxNum;
     setAllocationsMaxNum(activity.allocationsMaxNum);
     return (
       <div>
         <TextField
-          id="allocationMaxNum-textfield"
           label=""
           type="number"
           style={{ width: 60 }}
-          defaultValue={allocationsMaxNum}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            let newValue = parseInt(e.target.value);
-            if (!isNaN(newValue)) {
-              // allocationMaxNum = newValue;
-              setAllocationsMaxNum(newValue);
-            }
-          }}
+          value={activity.allocationsMaxNum}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setActivities((activities) => {
+              let activity = activities.slice();
+              let newValue = parseInt(e.target.value);
+              if (!isNaN(newValue)) activity[iter].allocationsMaxNum = newValue;
+              return activity;
+            })
+          }
         />
         <Button
           size="small"
           href="#text-buttons"
           color="primary"
           onClick={async () => {
-            let res;
             try {
-              res = await baseApi.patch(
-                `/activities/${activity.id}/allocationsMaxNum?value=${allocationsMaxNum}`
-              );
+              await baseApi.put("/activities", activities).then((res) => {
+                setActivities(res.data);
+              });
             } catch (err) {
               throw err;
             }
-            activity = res.data;
-            setAllocationsMaxNum(activity.allocationsMaxNum);
           }}
         >
           Change
@@ -559,7 +561,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                       activity.activityCode}
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    <MaxAllocationNumCell activity={activity} />
+                                    <MaxAllocationNumCell
+                                      activity={activity}
+                                      iter={j}
+                                    />
                                   </TableCell>
                                   <TableCell rowSpan={n + 1} align="left">
                                     {dayConverter(activity.dayOfWeek)}
@@ -664,7 +669,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                         {activity.activityGroup + " " + activity.activityCode}
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
-                        <MaxAllocationNumCell activity={activity} />
+                        <MaxAllocationNumCell activity={activity} iter={i} />
                       </TableCell>
                       <TableCell rowSpan={2} align="left">
                         {dayConverter(activity.dayOfWeek)}
