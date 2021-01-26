@@ -7,5 +7,5 @@ export enum ActionEnums {
   TA_REJECT = "TA rejects offer.",
   WORKFORCE_REJECT = "Workforce team rejects allocation to",
   LECTURER_PROPOSE = "Lecturer proposes an allocation to",
-  WORKFORCE_PROPOSE = "Workforce proposes an allocation to"
+  WORKFORCE_PROPOSE = "Workforce proposes an allocation to",
 }
