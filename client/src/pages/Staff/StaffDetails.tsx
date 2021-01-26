@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
+import StaffPreferences from "./StaffPreferences";
+import Availabilities from "./Availabilities";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import { getStaffPreference, getAvailability } from "../../apis/api";
 
 interface IStaffDetailsProps {
   staffName: string;
@@ -50,30 +44,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
-  table: {
-    width: "100%",
-    // minWidth: 650,
-    // minHeight: 500,
-  },
 }));
 
 const StaffDetails: React.FC<IStaffDetailsProps> = ({ staffName, staffId }) => {
-  const [staffPreferences, setStaffPreferences] = useState<IPreferences[]>([]);
-  const [availabilities, setAvailabilities] = useState<IAvailability[]>([]);
   const classes = useStyles();
-  const [value, setValue] = React.useState(0);
-
-  useEffect(() => {
-    if (staffId) {
-      getStaffPreference(staffId).then((res) => {
-        setStaffPreferences(res);
-      });
-      getAvailability(staffId, "2020").then((res) => {
-        setAvailabilities(res);
-        console.log(res);
-      });
-    }
-  }, [staffId]);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -94,80 +69,10 @@ const StaffDetails: React.FC<IStaffDetailsProps> = ({ staffName, staffId }) => {
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
-          <TableContainer component={Paper} className={classes.table}>
-            <Table className={""} size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">Unit Code</TableCell>
-                  <TableCell align="right">Offering period</TableCell>
-                  <TableCell align="right">Year</TableCell>
-                  <TableCell align="right">Campus</TableCell>
-                  <TableCell align="right">Preference Score</TableCell>
-                  <TableCell align="right">Lecturer Score</TableCell>
-                  <TableCell align="right">Head Tutor Candidate</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {staffPreferences.map((staffPreference) => (
-                  <TableRow>
-                    <TableCell align="left">
-                      {staffPreference.unit.unitCode}
-                    </TableCell>
-                    <TableCell align="right">
-                      {staffPreference.unit.offeringPeriod}
-                    </TableCell>
-                    <TableCell align="right">
-                      {staffPreference.unit.year}
-                    </TableCell>
-                    <TableCell align="right">
-                      {staffPreference.unit.campus}
-                    </TableCell>
-                    <TableCell align="right">
-                      {staffPreference.preferenceScore}
-                    </TableCell>
-                    <TableCell align="right">
-                      {staffPreference.lecturerScore}
-                    </TableCell>
-                    <TableCell align="right">
-                      {staffPreference.isHeadTutorCandidate ? "YES" : "NO"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <StaffPreferences staffId={staffId} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          {availabilities.length > 0 ? (
-            <h4>
-              Max hours:{availabilities[0].maxHours} Max activities:
-              {availabilities[0].maxNumberActivities}
-            </h4>
-          ) : (
-            <h4>Max hours: Max activities: </h4>
-          )}
-          <TableContainer component={Paper} className={classes.table}>
-            <Table className={""} size="small" aria-label="a dense table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">Day</TableCell>
-                  <TableCell align="left">Start time</TableCell>
-                  <TableCell align="right">End time</TableCell>
-                  <TableCell align="right">Year</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {availabilities.map((availability) => (
-                  <TableRow>
-                    <TableCell align="left">{availability.day}</TableCell>
-                    <TableCell align="left">{availability.startTime}</TableCell>
-                    <TableCell align="right">{availability.endTime}</TableCell>
-                    <TableCell align="right">{availability.year}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Availabilities staffId={staffId} />
         </TabPanel>
       </div>
     </div>

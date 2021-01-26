@@ -205,9 +205,17 @@ class AdminAvailabilityController implements IAvailabilityController {
         .andWhere("availability.day = :day", { day: days[i] })
         .andWhere("availability.staffId = :staff", { staff: staffId })
         .getMany();
+
       activities.push(to_return);
     }
 
-    return activities;
+    let retVal = {
+      M: activities[0],
+      T: activities[1],
+      W: activities[2],
+      Th: activities[3],
+      F: activities[4],
+    };
+    return retVal;
   }
 }
