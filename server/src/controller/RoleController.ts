@@ -26,6 +26,9 @@ export interface IRoleController {
   updateRole(user: Staff, unitId: string, changedRecord: Role): any;
 }
 
+/* TA role authorisation - NO ACCESS
+ */
+
 class TaRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
     return new UnauthorisedAccessedError("TA cannot delete role");
@@ -40,6 +43,10 @@ class TaRoleController implements IRoleController {
     return new UnauthorisedAccessedError("TA cannot get roles by unit");
   }
 }
+
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - updateRole (for units they are lecturing)
+ */
 
 class LecturerRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
@@ -59,6 +66,13 @@ class LecturerRoleController implements IRoleController {
     return Role.find({ unitId });
   }
 }
+
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getRolesByUnit
+ * - createRole
+ * - deleteRole
+ * - updateRole
+ */
 
 class AdminRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {

@@ -30,6 +30,8 @@ export interface IUploadController {
   uploadAllocate(files: FileArray): any;
 }
 
+/* TA role authorisation - NO ACCESS
+ */
 class TaUploadController implements IUploadController {
   uploadTas(files: FileArray) {
     return new UnauthorisedAccessedError("TAs cannot upload TAS files");
@@ -44,6 +46,8 @@ class TaUploadController implements IUploadController {
   }
 }
 
+/* Lecturer role authorisation - NO ACCESS
+ */
 class LecturerUploadController implements IUploadController {
   uploadTas(files: FileArray) {
     return new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
@@ -59,6 +63,12 @@ class LecturerUploadController implements IUploadController {
     );
   }
 }
+
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - uploadTas
+ * - uploadTps
+ * - uploadAllocate
+ */
 
 class AdminUploadController implements IUploadController {
   uploadTas(files: FileArray) {

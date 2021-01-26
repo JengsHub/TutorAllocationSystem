@@ -25,6 +25,9 @@ export interface IRuleController {
   updateRules(changedRules: Rule[]): any;
 }
 
+/* TA role authorisation - NO ACCESS
+ */
+
 class TaRuleController implements IRuleController {
   getAllRules() {
     return new UnauthorisedAccessedError("TAs cannot get all rules");
@@ -38,6 +41,9 @@ class TaRuleController implements IRuleController {
     return new UnauthorisedAccessedError("TAs cannot update rules");
   }
 }
+
+/* Lecturer role authorisation - NO ACCESS
+ */
 
 class LecturerRuleController implements IRuleController {
   getAllRules() {
@@ -53,6 +59,11 @@ class LecturerRuleController implements IRuleController {
   }
 }
 
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getAllRules
+ * - getRule
+ * - updateRules
+ */
 class AdminRuleController implements IRuleController {
   getAllRules() {
     return Rule.find();

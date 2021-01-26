@@ -34,6 +34,13 @@ export interface IStaffPreferenceController {
   deleteStaffPreference(id: string, me: Staff): any;
 }
 
+/* TA role authorisation - RESTRICTED ACCESS
+ * - getStaffPreference
+ * - createStaffPreference (only for themselves)
+ * - updateStaffPreference (only for themselves)
+ * - deleteStaffPreference (only for themselves)
+ */
+
 class TaStaffPreferenceController implements IStaffPreferenceController {
   getAllStaffPreferences() {
     return new UnauthorisedAccessedError("TA cannot get all staff preferences");
@@ -104,6 +111,12 @@ class TaStaffPreferenceController implements IStaffPreferenceController {
   }
 }
 
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - getStaffPreference
+ * - createStaffPreference (only for themselves)
+ * - updateStaffPreference (only for themselves)
+ * - deleteStaffPreference (only for themselves)
+ */
 class LecturerStaffPreferenceController implements IStaffPreferenceController {
   getAllStaffPreferences() {
     return new UnauthorisedAccessedError(
@@ -176,6 +189,13 @@ class LecturerStaffPreferenceController implements IStaffPreferenceController {
   }
 }
 
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getAllStaffPreferences
+ * - getStaffPreference
+ * - createStaffPreference
+ * - updateStaffPreference
+ * - deleteStaffPreference
+ */
 class AdminStaffPreferenceController implements IStaffPreferenceController {
   getAllStaffPreferences() {
     return StaffPreference.find({ relations: ["staff", "unit"] });

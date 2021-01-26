@@ -26,6 +26,11 @@ export interface IAllocationController {
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean): any;
 }
 
+/* TA role authorisation - RESTRICTED ACCESS
+ * - deleteAllocation (only for their own allocations)
+ * - updateTaAcceptance (only for their own allocations)
+ */
+
 class TaAllocationController implements IAllocationController {
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
     return new UnauthorisedAccessedError(
@@ -66,6 +71,13 @@ class TaAllocationController implements IAllocationController {
     return new UnauthorisedAccessedError("TA cannot update allocation");
   }
 }
+
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - updateAllocation
+ * - deleteAllocation (only unaccepted allocations)
+ * - updateLecturerApproval
+ * - updateTaAcceptance (only for allocations they're responsible for)
+ */
 
 class LecturerAllocationController implements IAllocationController {
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
@@ -112,6 +124,15 @@ class LecturerAllocationController implements IAllocationController {
     Allocation.save(changedRecord);
   }
 }
+
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - updateAllocation
+ * - createAllocation
+ * - deleteAllocation
+ * - updateLecturerApproval
+ * - updateTaAcceptance
+ * - updateWorkforceApproval
+ */
 
 class AdminAllocationController implements IAllocationController {
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
