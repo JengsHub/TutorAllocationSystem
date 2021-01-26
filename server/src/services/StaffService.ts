@@ -1,7 +1,10 @@
 import { DeleteResult, getRepository } from "typeorm";
+import { Request } from "express";
 import {
+  ContextRequest,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
   PATCH,
   Path,
   PathParam,
@@ -20,14 +23,26 @@ class StaffService {
   repo = getRepository(Staff);
   factory = new StaffControllerFactory();
 
-  // /**
-  //  * Returns a list of staff
-  //  * @return Array<Staff> staff list
-  //  */
-  // @GET
-  // public getAllStaff(): Promise<Array<Staff>> {
-  //   return this.repo.find();
-  // }
+  /**
+   * Returns a list of staff
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
+   * @return Array<Staff> staff list
+   */
+  @GET
+  @Path("/all")
+  @IgnoreNextMiddlewares
+  public async getAllStaff(
+    @ContextRequest req: Request
+  ): Promise<Array<Staff>> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.getAllStaff();
+  }
 
   /**
    * Note:
@@ -42,7 +57,8 @@ class StaffService {
   public async getStaffByUnit(
     @QueryParam("unitCode") unitCode: string,
     @QueryParam("offeringPeriod") offeringPeriod: string,
-    @QueryParam("year") year: number
+    @QueryParam("year") year: number,
+    @ContextRequest req: Request
   ): Promise<any> {
     // TODO: refactor to handle other Role
     let params: { [key: string]: any } = {
@@ -98,61 +114,88 @@ class StaffService {
 
   /**
    * Returns a staff member
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
    * @param id id for the staff member
    * @return Staff single staff member
    */
   // TODO: assert return value as Promise<Staff> here
   @GET
   @Path(":id")
-  public getStaff(@PathParam("id") id: string) {
-    return this.repo.findOne({
-      id,
-    });
+  public async getStaff(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request
+  ) {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.getStaff(id);
   }
 
   /**
    * Creates a staff member
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param newRecord staff data
    * @return Staff new staff member
    */
   @POST
-  public async createStaff(newRecord: Staff): Promise<Staff> {
-    let staffToUpdate = await Staff.findOne({
-      email: newRecord.email,
-    });
-    if (staffToUpdate) {
-      Staff.update({ id: staffToUpdate.id }, newRecord);
-      newRecord.id = staffToUpdate.id;
-      return newRecord;
-    }
-
-    return this.repo.save(this.repo.create(newRecord));
+  public async createStaff(
+    newRecord: Staff,
+    @ContextRequest req: Request
+  ): Promise<Staff> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.createStaff(newRecord);
   }
 
   /**
    * Updates a staff member
+   *
+   * Role authorisation:
+   *  - TA: can only update themselves (as staff members)
+   *  - Lecturer: can only update themselves (as staff members)
+   *  - Admin: can update any staff member
+   *
    * @param changedStaff new staff object to change existing staff to
    * @return Staff changed staff member
    */
   @PUT
-  public async updateStaff(changedStaff: Staff): Promise<Staff> {
-    let staffToUpdate = await this.repo.findOne({
-      id: changedStaff.id,
-    });
-    staffToUpdate = changedStaff;
-    return this.repo.save(staffToUpdate);
+  public async updateStaff(
+    changedStaff: Staff,
+    @ContextRequest req: Request
+  ): Promise<Staff> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.updateStaff(changedStaff, me);
   }
 
   /**
    * Deletes a staff member
+   *
+   * Role authorisation:
+   *  - TA: can only delete themselves (as staff members)
+   *  - Lecturer: can only delete themselves (as staff members)
+   *  - Admin: can delete any staff member
+   *
    * @param id id for the staff member
    * @return DeleteResult result of delete request
    */
   @DELETE
   @Path(":id")
-  public deleteStaff(@PathParam("id") id: string): Promise<DeleteResult> {
-    return this.repo.delete({
-      id: id,
-    });
+  public async deleteStaff(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request
+  ): Promise<DeleteResult> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.deleteStaff(id, me);
   }
 }

@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { Allocation } from "./Allocation";
+import { Swap } from "./Swap";
 import { Unit } from "./Unit";
 
 @Entity()
@@ -34,9 +35,6 @@ export class Activity extends BaseEntity {
   @Column()
   location!: string;
 
-  @Column()
-  endTime!: string;
-
   // TODO: varchar for sqlite compatibility in test?
   @Column({
     type: "varchar",
@@ -46,11 +44,14 @@ export class Activity extends BaseEntity {
   @Column({ type: "time" })
   startTime!: string; // TODO: Date object or string to store time only?
 
-  @Column({ default: 0 }) // TODO: need default?
-  duration!: number;
+  @Column({ type: "time" })
+  endTime!: string;
 
   @OneToMany(() => Allocation, (allocation) => allocation.activity)
   allocations!: Allocation[];
+
+  @OneToMany(() => Swap, (swap) => swap.desired)
+  swaps!: Swap[];
 
   // @RelationId((activity: Activity) => activity.allocations)
   // allocationIds!: string[];
@@ -62,6 +63,28 @@ export class Activity extends BaseEntity {
   @Column()
   unitId!: string;
 
+  static async createOrUpdateActivity(newRecord: Activity) {
+    // TODO: this update method is no working.
+    let unit = await Unit.findOneOrFail({
+      id: newRecord.unitId,
+    });
+
+    // newRecord.unit = unit;
+    let activityToUpdate = await Activity.findOne({
+      activityCode: newRecord.activityCode,
+      unit: unit,
+    });
+
+    if (activityToUpdate) {
+      Activity.update({ id: activityToUpdate.id }, newRecord);
+      newRecord.id = activityToUpdate.id;
+      return newRecord;
+    }
+    return Activity.save(Activity.create(newRecord));
+  }
   @Column({ default: 0 })
   studentCount!: number;
+
+  @Column({ default: 1 })
+  allocationsMaxNum!: number;
 }

@@ -1,6 +1,8 @@
+import { Request, Response } from "express";
 import { exception } from "console";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, Not } from "typeorm";
 import {
+  ContextRequest,
   DELETE,
   GET,
   Path,
@@ -9,24 +11,37 @@ import {
   PUT,
   QueryParam,
   Security,
+  IgnoreNextMiddlewares,
+  ContextResponse,
+  PATCH,
 } from "typescript-rest";
-import { Allocation, StaffPreference, Unit } from "~/entity";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
-import { checkAllocation } from "../helpers/checkConstraints";
+import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
+import { checkNewAllocation } from "../helpers/checkConstraints";
 
 @Path("/activities")
 class ActivitiesService {
   factory = new ActivityControllerFactory();
   repo = getRepository(Activity);
 
+  // TODO:
+
   /**
    * Returns a list of activities
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: can get all activities always
+   *
    * @return Array<Activity> activities list
    */
   @GET
-  public getAllActivities(): Promise<Array<Activity>> {
+  public async getAllActivities(
+    @ContextRequest req: Request
+  ): Promise<Array<Activity>> {
     /**
      * Note on relations option in find
      * - Currently the relations are not eager or lazy relations (those can be more convenient but come with their own drawbacks)
@@ -34,10 +49,35 @@ class ActivitiesService {
      * - To also load nested relation, i.e relations: ["allocations", "allocations.staff"]
      */
     return this.repo.find({
-      relations: ["allocations", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
+      relations: ["allocations", "allocations.staff", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
     });
   }
 
+  /**
+   * Returns a list of activities
+   * @return Array<Activity> activities list
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/all-my-lecturing")
+  public async getAllLecturingActivities(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ) {
+    const user = req.user as Staff;
+    let activities = await Activity.createQueryBuilder("activity")
+      .leftJoinAndSelect("activity.allocations", "allocations")
+      .leftJoinAndSelect("allocations.staff", "staff")
+      .innerJoinAndSelect("activity.unit", "unit")
+      .innerJoin(Role, "role", "role.unitId = unit.id")
+      .where("role.staffId = :id", { id: user.id })
+      .andWhere("role.title = :role", { role: "Lecturer" })
+      .orderBy("unit.unitCode", "ASC")
+      .getMany();
+
+    console.log(activities);
+    return activities;
+  }
   /**
    * Returns an allocation based on the activity id given
    * @param id acitivity id
@@ -58,6 +98,12 @@ class ActivitiesService {
 
   /**
    * Returns an activity
+   *
+   * Role authorisation:
+   *  - TA: can get activities if they have the unit id
+   *  - Lecturer: can get activities if they have the unit id
+   *  - Admin: can get all activities always
+   *
    * @param activityCode activity code
    * @return Activity single activity
    */
@@ -65,44 +111,54 @@ class ActivitiesService {
   // TODO: changed activityCode to activityId since activityCode is not unique/primary key
   @GET
   @Path(":activityId")
-  public async getActivity(@PathParam("activityId") id: string) {
-    let activity = await this.repo.findOne(
-      { id },
-      { relations: ["allocations", "unit"] }
+  @IgnoreNextMiddlewares
+  public async getActivity(
+    @PathParam("activityId") id: string,
+    @ContextRequest req: Request
+  ) {
+    const me = req.user as Staff;
+    let activity = await Activity.createQueryBuilder("activity")
+      .where("activity.id = :id", { id })
+      .getOne();
+
+    const controller = this.factory.getController(
+      await me.getRoleTitle(activity?.unitId)
     );
-    return activity;
+    return controller.getActivity(id);
   }
 
   /**
    * Returns the unsorted candidate pool for an activity
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: can get candidates in units they are lecturing
+   *  - Admin: can get candidates always
+   *
    * @param activityCode activity code
    * @return StaffPreference[] list of staff preferences that are potential candidates for an activity
    */
   // TODO: assert return value as Promise<StaffPreference[]> here
   @GET
   @Path(":activityId/candidates")
-  public async getCandidates(@PathParam("activityId") id: string) {
+  public async getCandidates(
+    @PathParam("activityId") id: string,
+    @ContextRequest req: Request
+  ) {
     // Get the activity given by the activityId, else return errors
     // Activity is joined with unit, staffpreferences and staff here
     let activity: Activity;
     try {
-      activity = await this.repo.findOneOrFail(
-        { id },
-        {
-          relations: [
-            "allocations",
-            "unit",
-            "unit.staffPreference",
-            "unit.staffPreference.staff",
-          ],
-        }
-      );
+      const me = req.user as Staff;
+      const controller = this.factory.getController(await me.getRoleTitle());
+      activity = await controller.getActivityForCandidates(id);
+
       if (!activity) {
         return resError("Activity not found");
       }
     } catch (e) {
       return resError(
-        "Query to find activity failed - this is probably because the uuid syntax is wrong"
+        "Query to find activity failed - this is probably because the uuid syntax is wrong or you are not authorised"
       );
     }
 
@@ -118,7 +174,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -131,6 +187,12 @@ class ActivitiesService {
 
   /**
    * Returns the sorted candidate pool for an activity
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: can get sorted candidates in units they are lecturing
+   *  - Admin: can get sorted candidates always
+   *
    * @param activityCode activity code
    * @param sortingCriteria the criteria to sort the candidate pool by ("staff" or "lecturer")
    * @return StaffPreference[] sorted list of staff preferences that are potential candidates for an activity
@@ -140,32 +202,32 @@ class ActivitiesService {
   @Path(":activityId/candidates/:sortingCriteria")
   public async getSortedCandidates(
     @PathParam("activityId") id: string,
-    @PathParam("sortingCriteria") sortingCriteria: string
+    @PathParam("sortingCriteria") sortingCriteria: string,
+    @ContextRequest req: Request
   ) {
     // Get the activity given by the activityId, else return errors
     // Activity is joined with unit, staffpreferences, staff and availability here
     let activity: Activity;
     try {
-      activity = await this.repo.findOneOrFail(
-        { id },
-        {
-          relations: [
-            "allocations",
-            "unit",
-            "unit.staffPreference",
-            "unit.staffPreference.staff",
-            "unit.staffPreference.staff.availability",
-            "unit.staffPreference.staff.allocations",
-            "unit.staffPreference.staff.allocations.activity",
-          ],
-        }
+      const me = req.user as Staff;
+      let act = await Activity.createQueryBuilder("activity")
+        .where("activity.id = :id", { id })
+        .getOne();
+
+      const controller = this.factory.getController(
+        await me.getRoleTitle(act?.unitId)
       );
+      activity = await controller.getActivityForSortedCandidates(
+        id,
+        sortingCriteria
+      );
+
       if (!activity) {
         return resError("Activity not found");
       }
     } catch (e) {
       return resError(
-        "Query to find activity failed - this is probably because the uuid syntax is wrong"
+        "Query to find activity failed - this is probably because the uuid syntax is wrong or you are not authorised"
       );
     }
 
@@ -187,7 +249,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -252,40 +314,66 @@ class ActivitiesService {
   }
 
   /**
+   * Updates the max number of allocation for a particular activity
+   * @param id : id of the activity
+   * @param newMaxNumberOfAllocation  : the new max number of allocation
+   */
+  @PATCH
+  @Path(":id/allocationsMaxNum")
+  public async updateMaxNumberOfAllocations(
+    @PathParam("id") id: string,
+    @QueryParam("value") newMaxNumberOfAllocation: number,
+    @ContextRequest req: Request
+  ) {
+    let activity: any = await Activity.findOneOrFail(id);
+    activity.allocationsMaxNum = newMaxNumberOfAllocation;
+    return activity.save(activity);
+  }
+
+  /**
    * Creates an activity
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: can create activities in units they are lecturing
+   *  - Admin: can create activity
+   *
    * @param newRecord activity data
    * @return Activity new activity
    */
   @POST
-  public async createActivity(newRecord: Activity): Promise<Activity> {
+  public async createActivity(
+    newRecord: Activity,
+    @ContextRequest req: Request
+  ): Promise<Activity> {
     // TODO: better optimisation since it's wasteful to fetch unit when we don't use it
     // potential solution: https://github.com/typeorm/typeorm/issues/447
     let unit = await getRepository(Unit).findOneOrFail({
       id: newRecord.unitId,
     });
-    newRecord.unit = unit;
-    let activityToUpdate = await Activity.findOne({
-      activityCode: newRecord.activityCode,
-      unit: newRecord.unit,
-    });
 
-    if (activityToUpdate) {
-      Activity.update({ id: activityToUpdate.id }, newRecord);
-      newRecord.id = activityToUpdate.id;
-      return newRecord;
-    }
-    return this.repo.save(this.repo.create(newRecord));
+    const me = req.user as Staff;
+    const controller = this.factory.getController(
+      await me.getRoleTitle(newRecord.unitId)
+    );
+    return await controller.createActivity(newRecord, unit);
   }
 
   /**
    * Updates an activity
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed to update activities where they are lecturer
+   *  - Admin: can update any activity
    * @param changedActivity new activity object to change existing activity to
    * @return Activity changed activity
    */
   @PUT
-  public async updateActivity(changedActivity: Activity): Promise<Activity> {
-    let activityToUpdate = await this.repo.findOneOrFail(changedActivity.id);
-
+  public async updateActivity(
+    changedActivity: Activity,
+    @ContextRequest req: Request
+  ): Promise<Activity> {
     // TODO: optimisation
     if (changedActivity.unitId) {
       let unit = await getRepository(Unit).findOneOrFail({
@@ -293,20 +381,37 @@ class ActivitiesService {
       });
       changedActivity.unit = unit;
     }
-    activityToUpdate = changedActivity;
-    return this.repo.save(activityToUpdate);
+
+    const me = req.user as Staff;
+    const controller = this.factory.getController(
+      await me.getRoleTitle(changedActivity.unitId)
+    );
+    return controller.updateActivity(changedActivity);
   }
 
   /**
    * Deletes an activity
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: can delete activities in units they are lecturing
+   *  - Admin: can delete any activity
+   *
    * @param activityCode activity code
    * @return DeleteResult result of delete request
    */
   @DELETE
   @Path(":activityId")
-  public deleteActivity(
-    @PathParam("activityId") id: string
+  public async deleteActivity(
+    @PathParam("activityId") id: string,
+    @ContextRequest req: Request
   ): Promise<DeleteResult> {
-    return this.repo.delete({ id });
+    let activity = await Activity.findOneOrFail(id);
+
+    const me = req.user as Staff;
+    const controller = this.factory.getController(
+      await me.getRoleTitle(activity.unitId)
+    );
+    return controller.deleteActivity(id);
   }
 }

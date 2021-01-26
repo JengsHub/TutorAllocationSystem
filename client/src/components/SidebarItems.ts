@@ -7,33 +7,21 @@ const SidebarItems = [
     name: "My Units",
     route: "/unit",
   },
-  // {
-  //   name: "Staff",
-  //   route: "/staff",
-  // },
-  // {
-  //   name: "Preferences",
-  //   route: "/preferences",
-  // },
-  // {
-  //   name: "Activities",
-  //   route: "/activities",
-  // },
   {
-    name: "Lecturing",
-    route: "/lecturing",
+    name: "Offering",
+    route: "/offering",
   },
   {
-    name: "Data Import",
-    route: "/dataimport",
+    name: "Swapping",
+    route: "/swapping",
+  },
+  {
+    name: "Manage Swaps",
+    route: "/swappingLecture",
   },
   {
     name: "Profile",
     route: "/profile",
-  },
-  {
-    name: "Admin",
-    route: "/admin",
   },
 ];
 

@@ -72,4 +72,17 @@ export class Staff extends BaseEntity {
   isAdmin() {
     return this.appRole === AppRoleEnum.ADMIN;
   }
+
+  static async createOrUpdateStaff(newRecord: Staff) {
+    let staffToUpdate = await Staff.findOne({
+      email: newRecord.email,
+    });
+    if (staffToUpdate) {
+      Staff.update({ id: staffToUpdate.id }, newRecord);
+      newRecord.id = staffToUpdate.id;
+      return newRecord;
+    }
+
+    return Staff.save(Staff.create(newRecord));
+  }
 }
