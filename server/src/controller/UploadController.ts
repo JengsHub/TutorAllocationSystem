@@ -62,18 +62,19 @@ class LecturerUploadController implements IUploadController {
 
 class AdminUploadController implements IUploadController {
   uploadTas(files: FileArray) {
-    const path = (files.tas as UploadedFile).tempFilePath;
-    var processFileService: ProcessFileService = new ProcessFileService();
-    fs.createReadStream(path)
-      .pipe(csv())
-      .on("data", (row) => {
-        // map the raw row into a an tas object that matches the system's convention
-        const tasRow = mapRawTasFile(row);
-        processFileService.processTasObject(tasRow);
-      })
-      .on("end", () => {
-        console.log("TAS CSV file successfully processed");
-      });
+    // Should be out of commission as Data Import page is only viewable to Admins
+    // const path = (files.tas as UploadedFile).tempFilePath;
+    // var processFileService: ProcessFileService = new ProcessFileService();
+    // fs.createReadStream(path)
+    //   .pipe(csv())
+    //   .on("data", (row) => {
+    //     // map the raw row into a an tas object that matches the system's convention
+    //     const tasRow = mapRawTasFile(row);
+    //     processFileService.processTasObject(tasRow, );
+    //   })
+    //   .on("end", () => {
+    //     console.log("TAS CSV file successfully processed");
+    //   });
   }
 
   uploadTps(files: FileArray) {

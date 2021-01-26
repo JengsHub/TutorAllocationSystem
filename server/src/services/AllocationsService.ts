@@ -16,12 +16,12 @@ import {
 } from "typescript-rest";
 import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
-import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
 import { checkNewAllocation } from "../helpers/checkConstraints";
+import { RoleEnum } from "~/enums/RoleEnum";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -215,12 +215,12 @@ class AllocationsService {
 
     let allocation = await controller.createAllocation(me, newRecord);
     console.log(allocation);
-    createAndSaveStatusLog(
-      allocation["id"],
-      ActionEnums.MAKE_OFFER,
-      me.id,
-      newRecord.staffId
-    );
+    // createAndSaveStatusLog(
+    //   allocation["id"],
+    //   ActionEnums.LECTURER_PROPOSE,
+    //   me.id,
+    //   newRecord.staffId
+    // );
 
     return allocation;
   }
@@ -303,7 +303,8 @@ class AllocationsService {
     const me = req.user as Staff;
     const { staff, activity } = allocation;
     const { unit } = activity;
-    const role = await me.getRoleTitle(unit.id);
+    // const role = await me.getRoleTitle(unit.id);
+    let role = RoleEnum.TA;
     const controller = this.factory.getController(role);
 
     // get the person who with lecturer role

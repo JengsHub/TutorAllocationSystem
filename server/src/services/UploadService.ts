@@ -10,6 +10,7 @@ import ProcessFileService, {
 } from "../helpers/processInputFiles";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import { UploadControllerFactory } from "~/controller/UploadController";
+import { Staff } from "~/entity/Staff";
 
 @Path("/upload")
 class UploadService {
@@ -26,6 +27,7 @@ class UploadService {
   @POST
   @Path("/tas")
   public async uploadTas(@ContextRequest req: Request) {
+    const me = req.user as Staff;
     const files = (req.files as unknown) as FileArray;
     const path = (files.tas as UploadedFile).tempFilePath;
     var processFileService: ProcessFileService = new ProcessFileService();
@@ -57,7 +59,7 @@ class UploadService {
       .on("end", async () => {
         console.log("TAS CSV file successfully read");
         for (let row of allRows) {
-          await processFileService.processTasObject(row);
+          await processFileService.processTasObject(row, me);
         }
         console.log("TAS CSV file successfully processed");
       });

@@ -8,6 +8,9 @@ import {
 } from "~/entity";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import cleanInputData from "./dataSanitizer";
+import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
+import { ActionEnums } from "../enums/ActionEnum";
+import { StatusLog } from "../entity/StatusLog";
 
 export class ProcessFileService {
   allocateList: any[] = [[]];
@@ -25,7 +28,7 @@ export class ProcessFileService {
     console.log("obtain result: " + this.allocateList.toString());
   };
 
-  processTasObject = async (row: TasObject) => {
+  processTasObject = async (row: TasObject, user: Staff) => {
     let unit_object: Unit;
     let staff_object: Staff;
     let activity_object: Activity;
@@ -122,8 +125,16 @@ export class ProcessFileService {
     allocation.isWorkforceApproved = true;
 
     try {
-      let allocateRepo = Allocation.getRepository();
-      await allocateRepo.save(allocation);
+      let new_allocation = await Allocation.createOrUpdateAllocation(
+        allocation
+      );
+      if (new_allocation.id) {
+        await StatusLog.createOrIgnoreStatusLog(
+          new_allocation,
+          staff_object.id,
+          user
+        );
+      }
     } catch (err) {
       throw err;
     }

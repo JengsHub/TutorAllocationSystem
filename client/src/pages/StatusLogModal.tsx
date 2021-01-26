@@ -49,6 +49,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
 
     getStatusLogs(activityId).then((res) => {
       setStatusLog(res || []);
+      console.log(res);
     });
   }, [activityId, hasChanged]);
 
@@ -111,7 +112,6 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
       label: "Action",
       minWidth: 100,
     },
-    { id: "target", label: "Target User", minWidth: 170 },
     { id: "time", label: "Time", minWidth: 170 },
   ];
 
