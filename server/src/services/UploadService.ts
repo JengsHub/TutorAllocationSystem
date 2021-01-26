@@ -146,7 +146,6 @@ class UploadService {
       })
       .on("end", async () => {
         console.log("Allocate CSV file successfully read");
-        console.log(allRows);
         for (let row of allRows) {
           await processFileService.processAllocateObject(row);
         }
