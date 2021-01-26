@@ -622,7 +622,7 @@ const AdminUnitActivity: React.FC<ILecturingActivityProps> = ({
                               </TableCell>
 
                               <TableCell align="center">
-                                {allocation.isLecturerApproved === null ? (
+                                {allocation.isWorkforceApproved === null ? (
                                   <div
                                     style={{
                                       display: "flex",
