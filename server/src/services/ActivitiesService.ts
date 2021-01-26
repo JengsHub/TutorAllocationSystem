@@ -1,5 +1,6 @@
+import { Request, Response } from "express";
 import { exception } from "console";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getRepository, Not } from "typeorm";
 import {
   ContextRequest,
   DELETE,
@@ -12,13 +13,13 @@ import {
   Security,
   IgnoreNextMiddlewares,
   ContextResponse,
+  PATCH,
 } from "typescript-rest";
-import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
 import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
 import { Activity } from "../entity/Activity";
-import { checkAllocation } from "../helpers/checkConstraints";
-import { Request, Response } from "express";
+import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
+import { checkNewAllocation } from "../helpers/checkConstraints";
 
 @Path("/activities")
 class ActivitiesService {
@@ -110,12 +111,19 @@ class ActivitiesService {
   // TODO: changed activityCode to activityId since activityCode is not unique/primary key
   @GET
   @Path(":activityId")
+  @IgnoreNextMiddlewares
   public async getActivity(
     @PathParam("activityId") id: string,
     @ContextRequest req: Request
   ) {
     const me = req.user as Staff;
-    const controller = this.factory.getController(await me.getRoleTitle());
+    let activity = await Activity.createQueryBuilder("activity")
+      .where("activity.id = :id", { id })
+      .getOne();
+
+    const controller = this.factory.getController(
+      await me.getRoleTitle(activity?.unitId)
+    );
     return controller.getActivity(id);
   }
 
@@ -166,7 +174,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -202,7 +210,13 @@ class ActivitiesService {
     let activity: Activity;
     try {
       const me = req.user as Staff;
-      const controller = this.factory.getController(await me.getRoleTitle());
+      let act = await Activity.createQueryBuilder("activity")
+        .where("activity.id = :id", { id })
+        .getOne();
+
+      const controller = this.factory.getController(
+        await me.getRoleTitle(act?.unitId)
+      );
       activity = await controller.getActivityForSortedCandidates(
         id,
         sortingCriteria
@@ -235,7 +249,7 @@ class ActivitiesService {
             return e.staffId === preference.staffId;
           }).length == 0
         ) {
-          if (await checkAllocation(preference.staff, activity)) {
+          if (await checkNewAllocation(preference.staff, activity)) {
             // If they're available, push them to the candidate pool
             candidates.push(preference);
           }
@@ -297,6 +311,23 @@ class ActivitiesService {
     }
 
     return candidates;
+  }
+
+  /**
+   * Updates the max number of allocation for a particular activity
+   * @param id : id of the activity
+   * @param newMaxNumberOfAllocation  : the new max number of allocation
+   */
+  @PATCH
+  @Path(":id/allocationsMaxNum")
+  public async updateMaxNumberOfAllocations(
+    @PathParam("id") id: string,
+    @QueryParam("value") newMaxNumberOfAllocation: number,
+    @ContextRequest req: Request
+  ) {
+    let activity: any = await Activity.findOneOrFail(id);
+    activity.allocationsMaxNum = newMaxNumberOfAllocation;
+    return activity.save(activity);
   }
 
   /**
