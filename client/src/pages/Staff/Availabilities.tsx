@@ -48,16 +48,40 @@ const Availabilities: React.FC<IAvailabilitiesProps> = ({ staffId }) => {
 
     return retVal;
   }
+
+  function getMaxActivityAndHours(avalabilities: IAvailabilities) {
+    let maxHours;
+    let maxActivities;
+    if (availabilities.M.length > 0) {
+      maxHours = availabilities.M[0].maxHours;
+      maxActivities = availabilities.M[0].maxNumberActivities;
+    } else if (availabilities.T.length > 0) {
+      maxHours = availabilities.T[0].maxHours;
+      maxActivities = availabilities.T[0].maxNumberActivities;
+    } else if (availabilities.W.length > 0) {
+      maxHours = availabilities.W[0].maxHours;
+      maxActivities = availabilities.W[0].maxNumberActivities;
+    } else if (availabilities.Th.length > 0) {
+      maxHours = availabilities.Th[0].maxHours;
+      maxActivities = availabilities.Th[0].maxNumberActivities;
+    } else if (availabilities.F.length > 0) {
+      maxHours = availabilities.F[0].maxHours;
+      maxActivities = availabilities.F[0].maxNumberActivities;
+    } else {
+      maxHours = "N/A";
+      maxActivities = "N/A";
+    }
+    return (
+      <h4>
+        Maximum Hours: {maxHours}
+        <br></br>Maximum Activities: {maxActivities}
+      </h4>
+    );
+  }
+
   return (
     <div>
-      {/* {availabilities.length > 0 ? (
-        <h4>
-          Max hours:{availabilities[0].maxHours} Max activities:
-          {availabilities[0].maxNumberActivities}
-        </h4>
-      ) : (
-        <h4>Max hours: Max activities: </h4>
-      )} */}
+      {getMaxActivityAndHours(availabilities)}
       <TableContainer component={Paper}>
         <Table className={""} size="small" aria-label="a dense table">
           <TableHead>
