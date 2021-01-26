@@ -27,9 +27,15 @@ export class StatusLog extends BaseEntity {
   @Column()
   staffId!: string;
 
+  @ManyToOne(() => Staff, (staff) => staff.targetStatusLog, { primary: true })
+  targetStaff!: Staff;
+
+  @Column({nullable: true})
+  targetStaffId?: string;
+
   @Column()
   action!: string;
 
-  @Column() // Format: [DD/MM/YYYY]
+  @Column() // Format: [DD/MM/YYYY hh:mm:ss]
   time!: string;
 }

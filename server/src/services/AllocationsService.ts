@@ -218,7 +218,8 @@ class AllocationsService {
     createAndSaveStatusLog(
       allocation["id"],
       ActionEnums.MAKE_OFFER,
-      newRecord.staffId
+      newRecord.staffId,
+      me.id,
     );
 
     return allocation;
@@ -266,11 +267,11 @@ class AllocationsService {
       });
 
       // Log the status approval here
-      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id);
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id, staff.id);
     }
     // If approval status is false, create status log
     else {
-      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id);
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id, staff.id);
     }
 
     return controller.updateLecturerApproval(me, allocation, value);
@@ -334,10 +335,10 @@ class AllocationsService {
 
     if (value) {
       // if value is true, which means the TA accept, log the acceptance in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id, undefined);
     } else {
       // if value is false, which means the TA reject, log the rejection in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id, undefined);
     }
     return controller.updateTaAcceptance(me, allocation, value);
   }
@@ -367,7 +368,7 @@ class AllocationsService {
     });
 
     const me = req.user as Staff;
-    const { activity } = allocation;
+    const { activity, staff } = allocation;
     const { unit } = activity;
     const role = await me.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
@@ -378,14 +379,16 @@ class AllocationsService {
       createAndSaveStatusLog(
         allocation.id,
         ActionEnums.WORKFORCE_APPROVE,
-        me.id
+        me.id,
+        staff.id,
       );
     } else {
       // if value is false, which means the Workforce reject, log the rejection in status log
       createAndSaveStatusLog(
         allocation.id,
         ActionEnums.WORKFORCE_REJECT,
-        me.id
+        me.id,
+        staff.id,
       );
     }
     return controller.updateWorkforceApproval(me, allocation, value);

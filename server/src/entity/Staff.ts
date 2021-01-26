@@ -47,6 +47,9 @@ export class Staff extends BaseEntity {
   @OneToMany(() => StatusLog, (statusLog) => statusLog.staff)
   offereeStatusLog!: StatusLog[];
 
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.targetStaff)
+  targetStatusLog!: StatusLog[];
+
   @Column({ nullable: true })
   googleId?: string;
 
