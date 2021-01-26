@@ -30,23 +30,22 @@ export default function StickyHeadTable(input: any) {
   for (let i = 0; i < input.rows.length; i++) {
     let row = input.rows[i];
     let statusLogObject;
-    if (row.targetStaff == null){
+    if (row.targetStaff == null) {
       statusLogObject = {
         user: row.staff.givenNames + " " + row.staff.lastName,
         action: row.action,
         target: " ",
         time: row.time,
       };
-    }
-    else{
-        statusLogObject = {
+    } else {
+      statusLogObject = {
         user: row.staff.givenNames + " " + row.staff.lastName,
         action: row.action,
         target: row.targetStaff.givenNames + " " + row.targetStaff.lastName,
         time: row.time,
       };
     }
-    
+
     rows.push(statusLogObject);
   }
 

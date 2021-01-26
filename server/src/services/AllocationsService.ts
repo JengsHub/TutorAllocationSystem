@@ -219,7 +219,7 @@ class AllocationsService {
       allocation["id"],
       ActionEnums.MAKE_OFFER,
       me.id,
-      newRecord.staffId,      
+      newRecord.staffId
     );
 
     return allocation;
@@ -380,7 +380,7 @@ class AllocationsService {
         allocation.id,
         ActionEnums.WORKFORCE_APPROVE,
         me.id,
-        staff.id,
+        staff.id
       );
     } else {
       // if value is false, which means the Workforce reject, log the rejection in status log
@@ -388,7 +388,7 @@ class AllocationsService {
         allocation.id,
         ActionEnums.WORKFORCE_REJECT,
         me.id,
-        staff.id,
+        staff.id
       );
     }
     return controller.updateWorkforceApproval(me, allocation, value);

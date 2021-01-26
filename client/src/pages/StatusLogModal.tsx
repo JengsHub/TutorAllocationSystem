@@ -52,7 +52,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
     });
   }, [activityId, hasChanged]);
 
-  function sortStatusLogsByDate(statusLogs: Array<IStatusLogWithStaff>){
+  function sortStatusLogsByDate(statusLogs: Array<IStatusLogWithStaff>) {
     statusLogs = statusLogs.sort(function (
       a: IStatusLogWithStaff,
       b: IStatusLogWithStaff
@@ -111,7 +111,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
       label: "Action",
       minWidth: 100,
     },
-    { id: "target", label: "Target User", minWidth: 170},
+    { id: "target", label: "Target User", minWidth: 170 },
     { id: "time", label: "Time", minWidth: 170 },
   ];
 

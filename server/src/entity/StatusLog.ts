@@ -30,7 +30,7 @@ export class StatusLog extends BaseEntity {
   @ManyToOne(() => Staff, (staff) => staff.targetStatusLog, { primary: true })
   targetStaff!: Staff;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   targetStaffId!: string | null;
 
   @Column()
