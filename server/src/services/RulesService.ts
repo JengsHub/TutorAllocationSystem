@@ -1,18 +1,9 @@
-import { DeleteResult, getRepository } from "typeorm";
-import {
-  ContextRequest,
-  DELETE,
-  GET,
-  PATCH,
-  Path,
-  PathParam,
-  POST,
-  PUT,
-} from "typescript-rest";
-import { RuleControllerFactory } from "~/controller/RuleController";
-import { Rule } from "../entity/Rule";
 import { Request } from "express";
+import { getRepository } from "typeorm";
+import { ContextRequest, GET, Path, PathParam, PUT } from "typescript-rest";
+import { RuleControllerFactory } from "~/controller/RuleController";
 import { Staff } from "~/entity/Staff";
+import { Rule } from "../entity/Rule";
 
 @Path("/rules")
 class RulesService {

@@ -1,12 +1,5 @@
-import {
-  Activity,
-  Staff,
-  Rule,
-  Availability,
-  Allocation,
-  Unit,
-} from "~/entity";
-import { getRepository, Repository, In } from "typeorm";
+import { getRepository, Repository } from "typeorm";
+import { Activity, Allocation, Availability, Rule, Staff } from "~/entity";
 import { RuleEnum } from "../enums/RuleEnum";
 
 /**

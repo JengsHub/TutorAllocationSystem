@@ -1,24 +1,23 @@
-import { Request, Response } from "express";
 import { exception } from "console";
-import { DeleteResult, getRepository, Not } from "typeorm";
+import { Request, Response } from "express";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
+  ContextResponse,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
+  PATCH,
   Path,
   PathParam,
   POST,
   PUT,
   QueryParam,
-  Security,
-  IgnoreNextMiddlewares,
-  ContextResponse,
-  PATCH,
 } from "typescript-rest";
-import { resError } from "~/helpers";
 import { ActivityControllerFactory } from "~/controller";
+import { Allocation, Role, Staff, StaffPreference, Unit } from "~/entity";
+import { resError } from "~/helpers";
 import { Activity } from "../entity/Activity";
-import { StaffPreference, Unit, Staff, Role, Allocation } from "~/entity";
 import { checkNewAllocation } from "../helpers/checkConstraints";
 
 @Path("/activities")

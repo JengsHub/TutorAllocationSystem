@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import AppBar from "@material-ui/core/AppBar";
+import Box from "@material-ui/core/Box";
+import Paper from "@material-ui/core/Paper";
 import { makeStyles, Theme } from "@material-ui/core/styles";
+import Tab from "@material-ui/core/Tab";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import { getStaffPreference, getAvailability } from "../../apis/api";
+import React, { useEffect, useState } from "react";
+import { getAvailability, getStaffPreference } from "../../apis/api";
 
 interface IStaffDetailsProps {
   staffName: string;

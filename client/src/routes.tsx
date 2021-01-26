@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch, useParams } from "react-router-dom";
 import baseApi from "./apis/baseApi";
-import Sidebar from "./components/Sidebar";
 import AdminSidebar from "./components/AdminSidebar";
+import Sidebar from "./components/Sidebar";
+import AdminLecturing from "./pages/AdminActivities/AdminLecturing";
 // import Activities from "./pages/Activities";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
@@ -10,17 +11,16 @@ import Lecturing from "./pages/Lecturing/Lecturing";
 import NotFound from "./pages/NotFound";
 // import Preferences from "./pages/Preferences";
 import Profile from "./pages/Profile";
-import Units from "./pages/Units";
+import Rules from "./pages/Rules";
+import Staff from "./pages/Staff/Staff";
 import Swapping from "./pages/Swaps/Swapping";
+import SwappingLecturer from "./pages/Swaps/SwappingLecturer";
+import SwappingWorkforce from "./pages/Swaps/SwappingWorkforce";
+import UnitRoles from "./pages/UnitRoles";
+import Units from "./pages/Units";
 import PrivateRoute from "./PrivateRoute";
 // import Candidate from "./pages/Candidate";
 import { AuthContext } from "./session";
-import SwappingLecturer from "./pages/Swaps/SwappingLecturer";
-import SwappingWorkforce from "./pages/Swaps/SwappingWorkforce";
-import Staff from "./pages/Staff/Staff";
-import Rules from "./pages/Rules";
-import AdminLecturing from "./pages/AdminActivities/AdminLecturing";
-import UnitRoles from "./pages/UnitRoles";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);

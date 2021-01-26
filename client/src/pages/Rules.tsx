@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import {
+  Button,
   Paper,
   Table,
   TableBody,
@@ -8,8 +8,8 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Button,
 } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 
 const Rules = () => {

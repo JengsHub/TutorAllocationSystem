@@ -1,10 +1,9 @@
+import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import { Strategy } from "passport-google-oauth20";
 import { getRepository } from "typeorm";
-import { Staff } from "~/entity";
-import { Request, Response, NextFunction } from "express";
-import { emailHelperInstance } from "..";
 import { config } from "~/config";
+import { Staff } from "~/entity";
 
 console.log("----Setting up Passport and Strategy----");
 

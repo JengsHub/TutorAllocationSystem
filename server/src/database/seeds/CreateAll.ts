@@ -1,13 +1,13 @@
-import { Staff } from "~/entity";
 import { Connection, getManager } from "typeorm";
 import { Factory, Seeder } from "typeorm-seeding";
 import {
   Activity,
   Allocation,
   Availability,
-  StaffPreference,
-  Rule,
   Role,
+  Rule,
+  Staff,
+  StaffPreference,
 } from "~/entity";
 import { DayOfWeek } from "~/enums/DayOfWeek";
 import { RoleEnum } from "~/enums/RoleEnum";

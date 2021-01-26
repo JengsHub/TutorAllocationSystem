@@ -1,18 +1,18 @@
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
 
 interface ICandidateProps {
   activityId: string;

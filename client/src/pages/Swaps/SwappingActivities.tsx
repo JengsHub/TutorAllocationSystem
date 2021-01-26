@@ -1,18 +1,18 @@
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import { withStyles } from "@material-ui/core/styles";
 
 interface ICandidateProps {
   allocation: IAllocation;

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
 import Box from "@material-ui/core/Box";
-import Swaps from "./Swaps";
+import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
+import Swaps from "./Swaps";
 
 const Swapping = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);

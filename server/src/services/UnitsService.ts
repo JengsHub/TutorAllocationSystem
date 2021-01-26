@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository, IsNull } from "typeorm";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -15,7 +15,6 @@ import { UnitControllerFactory } from "~/controller/index";
 import { Staff } from "~/entity";
 import { Role } from "~/entity/Role";
 import { RoleEnum } from "~/enums/RoleEnum";
-import { AppRoleEnum } from "~/enums/RoleEnum";
 import { Unit } from "../entity/Unit";
 
 @Path("/units")

@@ -5,7 +5,6 @@ import {
   ContextResponse,
   DELETE,
   GET,
-  PATCH,
   Path,
   PathParam,
   POST,

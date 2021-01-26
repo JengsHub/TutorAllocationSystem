@@ -1,15 +1,15 @@
+import csv from "csv-parser";
 import { Request } from "express";
 import { FileArray, UploadedFile } from "express-fileupload";
-import { ContextRequest, Path, POST } from "typescript-rest";
 import fs from "fs";
-import csv from "csv-parser";
+import { ContextRequest, Path, POST } from "typescript-rest";
+import { UploadControllerFactory } from "~/controller/UploadController";
+import { DayOfWeek } from "../enums/DayOfWeek";
 import ProcessFileService, {
   mapRawAllocateFile,
   mapRawTasFile,
   mapRawTpsFile,
 } from "../helpers/processInputFiles";
-import { DayOfWeek } from "../enums/DayOfWeek";
-import { UploadControllerFactory } from "~/controller/UploadController";
 
 @Path("/upload")
 class UploadService {

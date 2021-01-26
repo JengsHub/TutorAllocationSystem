@@ -1,11 +1,11 @@
 import {
+  AfterLoad,
   BaseEntity,
+  Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  Column,
   OneToMany,
-  AfterLoad,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { addDays } from "~/helpers";
 import { Activity } from "./Activity";

@@ -5,18 +5,17 @@ import {
   ContextResponse,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
+  PATCH,
   Path,
   PathParam,
-  IgnoreNextMiddlewares,
   POST,
   PUT,
-  PATCH,
 } from "typescript-rest";
-import { Activity, Allocation, Staff, Unit, Swap, Role } from "~/entity";
-import { checkSwapAllocation } from "../helpers/checkConstraints";
+import { Activity, Allocation, Role, Staff, Swap, Unit } from "~/entity";
 import { authCheck } from "~/helpers/auth";
 import { emailHelperInstance } from "..";
-import { toNamespacedPath } from "path";
+import { checkSwapAllocation } from "../helpers/checkConstraints";
 
 // TODO: implement swap controller for Lecturer Only and Workforce Only end points
 // Approving and Pending should be Lec only

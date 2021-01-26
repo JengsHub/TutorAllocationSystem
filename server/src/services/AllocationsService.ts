@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getManager, getRepository } from "typeorm";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -14,9 +14,8 @@ import {
   PUT,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
-import { StatusLog } from "~/entity/StatusLog";
+import { Activity, Allocation, Role, Staff, Swap } from "~/entity";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";

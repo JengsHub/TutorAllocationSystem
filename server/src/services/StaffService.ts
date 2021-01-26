@@ -1,11 +1,10 @@
-import { DeleteResult, getRepository } from "typeorm";
 import { Request } from "express";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   DELETE,
   GET,
   IgnoreNextMiddlewares,
-  PATCH,
   Path,
   PathParam,
   POST,

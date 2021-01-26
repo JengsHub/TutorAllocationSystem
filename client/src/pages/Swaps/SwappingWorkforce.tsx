@@ -1,18 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete } from "@material-ui/lab";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, Table, TableRow, TextField } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import TableCell from "@material-ui/core/TableCell";
-import { withStyles } from "@material-ui/core/styles";
-import { Table, TableRow } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
-import Snackbar from "@material-ui/core/Snackbar";
+import { Autocomplete } from "@material-ui/lab";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);

@@ -1,11 +1,10 @@
-import { DeleteResult, getRepository } from "typeorm";
 import { Request, Response } from "express";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
   DELETE,
   GET,
-  PATCH,
   Path,
   PathParam,
   POST,
@@ -14,8 +13,8 @@ import {
 } from "typescript-rest";
 import { AvailabilityControllerFactory } from "~/controller";
 import { Staff } from "~/entity";
-import { Availability } from "../entity/Availability";
 import { hasAdminAccess } from "~/helpers/controlAccess";
+import { Availability } from "../entity/Availability";
 
 @Path("/availabilities")
 class AvailabilitiesService {

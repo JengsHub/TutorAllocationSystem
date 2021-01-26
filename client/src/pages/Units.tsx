@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import baseApi from "../apis/baseApi";
 // import Table from "@material-ui/core/Table";
 // import TableBody from "@material-ui/core/TableBody";
 // import TableCell from "@material-ui/core/TableCell";
@@ -12,7 +13,6 @@ import React, { useEffect } from "react";
 // import Box from "@material-ui/core/Box";
 // import { makeStyles } from "@material-ui/core";
 import Activities from "./Activities";
-import baseApi from "../apis/baseApi";
 
 const Units = () => {
   // const [units, setUnits] = useState<IPreferences[]>([]);
