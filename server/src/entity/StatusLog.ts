@@ -31,7 +31,7 @@ export class StatusLog extends BaseEntity {
   targetStaff!: Staff;
 
   @Column({nullable: true})
-  targetStaffId?: string;
+  targetStaffId!: string | null;
 
   @Column()
   action!: string;

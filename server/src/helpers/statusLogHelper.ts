@@ -6,7 +6,7 @@ export function createAndSaveStatusLog(
   allocationId: string,
   action: ActionEnums,
   staffId: string,
-  targetStaffId: string | undefined,
+  targetStaffId: string | null,
 ) {
   let statusLogObj = StatusLog.create({
     allocationId: allocationId,

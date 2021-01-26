@@ -218,8 +218,8 @@ class AllocationsService {
     createAndSaveStatusLog(
       allocation["id"],
       ActionEnums.MAKE_OFFER,
-      newRecord.staffId,
       me.id,
+      newRecord.staffId,      
     );
 
     return allocation;
@@ -335,10 +335,10 @@ class AllocationsService {
 
     if (value) {
       // if value is true, which means the TA accept, log the acceptance in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id, undefined);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id, null);
     } else {
       // if value is false, which means the TA reject, log the rejection in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id, undefined);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id, null);
     }
     return controller.updateTaAcceptance(me, allocation, value);
   }
