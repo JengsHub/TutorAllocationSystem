@@ -5,6 +5,7 @@ import {
   ContextResponse,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
   PATCH,
   Path,
   PathParam,
@@ -33,6 +34,7 @@ class AvailabilitiesService {
    * @return Array<Availability> availabilities list
    */
   @GET
+  @IgnoreNextMiddlewares
   public async getAllAvailabilities(
     @QueryParam("staffId") staffId: string,
     @ContextRequest req: Request,
@@ -51,6 +53,32 @@ class AvailabilitiesService {
     // const me = req.user as Staff;
     // const controller = this.factory.getController(await me.getRoleTitle());
     // return await controller.getAllAvailabilities();
+  }
+
+  /**
+   * Returns a list of availabilities lists, of staff in order of Monday to Friday
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: can get all availabilities for all staff
+   *
+   * @return Array<Availability> availabilities list
+   */
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("monToFriAvai/:year")
+  public async getYearAvailabilities(
+    @QueryParam("staffId") staffId: string,
+    @PathParam("year") year: string,
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
+  ): Promise<Array<Array<Availability>>> {
+    const me = req.user as Staff;
+    // None as getRoleTitle should trigger an admin here, else no access should be granted
+    const role = await me.getRoleTitle("none");
+    const controller = this.factory.getController(role);
+    return controller.getMonToFridayAvailabilityByYear(me, year, staffId);
   }
 
   /**

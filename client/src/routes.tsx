@@ -19,7 +19,7 @@ import SwappingLecturer from "./pages/Swaps/SwappingLecturer";
 import SwappingWorkforce from "./pages/Swaps/SwappingWorkforce";
 import Staff from "./pages/Staff/Staff";
 import Rules from "./pages/Rules";
-import AdminLecturing from "./pages/AdminActivities/AdminLecturing";
+import AdminUnit from "./pages/AdminActivities/AdminUnit";
 import UnitRoles from "./pages/UnitRoles";
 
 const Routes = () => {
@@ -60,7 +60,7 @@ const Routes = () => {
           <PrivateRoute
             isAuthenticated={isAuth}
             path="/activities"
-            component={AdminLecturing}
+            component={AdminUnit}
           />
           <PrivateRoute
             isAuthenticated={isAuth}

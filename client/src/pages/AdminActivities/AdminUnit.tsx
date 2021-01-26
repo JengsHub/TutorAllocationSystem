@@ -11,35 +11,18 @@
 // import TableRow from "@material-ui/core/TableRow";
 // import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
-import baseApi from "../../apis/baseApi";
 import StatusLogModal from "../StatusLogModal";
-import CandidatesModal from "./CandidatesModal";
-import LecturingActivity from "./LecturingActivity";
+import AdminUnitActivity from "./AdminUnitActivity";
 
-const Lecturing = () => {
+const AdminUnit = () => {
   // const [units, setUnits] = useState<IUnit[]>([]);
-  const [modalOpen, setModalOpen] = useState<string | null>(null);
   const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
     null
   );
 
   useEffect(() => {
     // let user: IStaff | undefined;
-    const getUnits = async () => {
-      try {
-        const res = await baseApi.get("/units/all");
-        return await res.data;
-      } catch (err) {
-        // console.log("No units found with lecturer roll");
-        console.error(err);
-        return [];
-      }
-    };
-
-    getUnits().then((res) => {
-      // setUnits(res || []);
-    });
-  }, []);
+  });
 
   // const [openRows, setOpenRows] = useState<boolean[]>(
   //   Array(units.length).fill(false)
@@ -93,23 +76,18 @@ const Lecturing = () => {
 
   return (
     <div id="main">
-      <CandidatesModal
-        activityId={modalOpen}
-        closeModal={() => setModalOpen(null)}
-      />
       <StatusLogModal
         activityId={statusLogModalOpen}
         closeModal={() => setStatusLogModalOpen(null)}
       />
       <h1>Offering</h1>
-      <LecturingActivity
+      <AdminUnitActivity
         {...{
-          setModalOpen,
           setStatusLogModalOpen,
         }}
-      ></LecturingActivity>
+      ></AdminUnitActivity>
     </div>
   );
 };
 
-export default Lecturing;
+export default AdminUnit;
