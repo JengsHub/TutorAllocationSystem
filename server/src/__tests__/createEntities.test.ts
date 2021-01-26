@@ -42,7 +42,6 @@ describe("Create Entity Tests", () => {
       connection: "sqlite",
     };
     connection = await useRefreshDatabase(option);
-    // console.log(connection);
     await useSeeding(option);
     done();
   });
@@ -55,7 +54,6 @@ describe("Create Entity Tests", () => {
 
   test("Can build new Staff", async () => {
     staff = await factory(Staff)().make();
-    // console.log(staff);
   });
 
   test("Can build new Unit", async () => {

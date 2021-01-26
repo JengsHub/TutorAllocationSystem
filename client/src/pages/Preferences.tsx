@@ -18,7 +18,6 @@ const Preferences = () => {
 
   useEffect(() => {
     getStaffPreferences().then((res) => {
-      // console.log(res);
       setStaffPreferences(res);
     });
   }, []);

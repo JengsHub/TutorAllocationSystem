@@ -46,12 +46,10 @@ class LecturerRoleController implements IRoleController {
     return Role.delete({ id: roleId });
   }
   async updateRole(user: Staff, unitId: string, changedRecord: Role) {
-    console.log(changedRecord);
     let roleToUpdate = await Role.findOneOrFail({
       staffId: changedRecord.staffId,
       unitId: unitId,
     });
-    console.log(roleToUpdate);
     return Role.update({ id: roleToUpdate.id }, changedRecord);
   }
   createRole(user: Staff, unitId: string, newRecord: Role) {
@@ -67,12 +65,10 @@ class AdminRoleController implements IRoleController {
     return Role.delete({ id: roleId });
   }
   async updateRole(user: Staff, unitId: string, changedRecord: Role) {
-    console.log(changedRecord);
     let roleToUpdate = await Role.findOneOrFail({
       staffId: changedRecord.staffId,
       unitId: unitId,
     });
-    console.log(roleToUpdate);
     return Role.update({ id: roleToUpdate.id }, changedRecord);
   }
   createRole(user: Staff, unitId: string, newRecord: Role) {

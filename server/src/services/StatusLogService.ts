@@ -31,9 +31,7 @@ class StatusLogService {
   @GET
   @Path(":allocationId")
   public async getStatusLogs(@PathParam("allocationId") id: string) {
-    console.log(id);
     let statusLog = await this.repo.find({ allocationId: id });
-    console.log(statusLog);
     return statusLog;
   }
 }

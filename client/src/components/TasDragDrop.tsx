@@ -63,7 +63,6 @@ class TasDragDrop extends Component<Props, State> {
 
   obtainResult = (results: any) => {
     this.allocateList = results.data;
-    console.log("obtain result: " + this.allocateList.toString());
   };
 
   getEndTime = (start: Date, minutes: string) => {
@@ -75,7 +74,6 @@ class TasDragDrop extends Component<Props, State> {
     try {
       const formData = new FormData();
       formData.append("tas", this.csvFile);
-      console.log(this.csvFile);
       baseApi.post("/upload/tas", formData);
     } catch (err) {
       throw err;

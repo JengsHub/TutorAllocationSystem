@@ -6,8 +6,6 @@ import { Request, Response, NextFunction } from "express";
 import { emailHelperInstance } from "..";
 import { config } from "~/config";
 
-console.log(process.env.NODE_ENV);
-console.log(config);
 console.log("----Setting up Passport and Strategy----");
 
 // @ts-ignore

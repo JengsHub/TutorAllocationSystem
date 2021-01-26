@@ -1,10 +1,6 @@
 import React from "react";
 
 const Dashboard = () => {
-  // const handleButtonClick = (event: MouseEvent) => {
-  //   console.log(event);
-  // };
-
   return (
     <div id="main">
       <h1>Dashboard</h1>

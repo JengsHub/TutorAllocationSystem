@@ -31,12 +31,9 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   useEffect(() => {
     if (activityId) {
       getActivity(activityId).then((res) => {
-        // console.log(res);
         setActivity(res);
       });
-      console.log(activityId);
       getCandidatePreference(activityId).then((res) => {
-        // console.log(res);
         setCandidatePreference(res);
       });
     } else {
@@ -80,10 +77,8 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   // this function will be call when the button 'Request Offer' is clicked
   // this function will look for candidate that meet the constraint rules from database
   const makeOffers = () => {
-    //console.log(selecteds);
     // is selected more than maxnumberallocation
     if (activity) {
-      console.log("got activity");
       let allocationsNoRejection: IAllocationWithStaff[] = [];
 
       let numOfAllocations = activity.allocations.length;
@@ -113,7 +108,6 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     }
     setOpen(false);
     selecteds.forEach(async (i) => {
-      //console.log(candidatesPreference[i]);
       var allocation: Allocation = {
         activityId: activityId,
         staffId: candidatesPreference[i].staffId,
@@ -123,7 +117,6 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         setSelected([]);
 
         getCandidatePreference(activityId).then((res) => {
-          // console.log(res);
           setCandidatePreference(res);
         });
       } catch (err) {

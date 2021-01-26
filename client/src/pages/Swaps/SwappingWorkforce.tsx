@@ -51,7 +51,6 @@ const SwappingWorkforce = () => {
       setSwapsToDisplay(res);
       // eslint-disable-next-line
       setUpAutoComplete(res);
-      console.log(res);
     });
   }, [hasChanged]);
 

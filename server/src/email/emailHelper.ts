@@ -213,7 +213,6 @@ export class NodemailerEmailHelper implements emailHelper {
     };
   }) {
     const { recipient, content } = data;
-    console.log(recipient);
     const mailOptions = {
       from: process.env.FROM_EMAIL,
       to: recipient,

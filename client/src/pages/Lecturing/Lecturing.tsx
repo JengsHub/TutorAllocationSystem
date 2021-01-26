@@ -30,7 +30,6 @@ const Lecturing = () => {
         const res = await baseApi.get("/units/byRole/Lecturer");
         return await res.data;
       } catch (err) {
-        // console.log("No units found with lecturer roll");
         console.error(err);
         return [];
       }

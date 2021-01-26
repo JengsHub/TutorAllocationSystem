@@ -42,7 +42,6 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     if (allocation) {
       getSwappableActivities().then((res) => {
         setSwappableActivity(res);
-        // console.log(res);
       });
     } else {
       history.push("/404");

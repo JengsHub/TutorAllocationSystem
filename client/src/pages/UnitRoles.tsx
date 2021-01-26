@@ -172,7 +172,6 @@ const UnitRoles = () => {
       ...e,
       id: index,
     }));
-    // console.log(resJson);
     setRows(resJson);
   };
 

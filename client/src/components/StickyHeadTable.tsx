@@ -43,10 +43,6 @@ export default function StickyHeadTable(input: any) {
     setPage(0);
   };
 
-  console.log("inside table");
-  console.log(rows);
-  console.log(columns);
-
   return (
     <Paper className={classes.root}>
       <TableContainer className={classes.container}>

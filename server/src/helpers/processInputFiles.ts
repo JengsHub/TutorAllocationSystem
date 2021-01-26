@@ -22,7 +22,6 @@ export class ProcessFileService {
 
   obtainResult = (results: any) => {
     this.allocateList = results.data;
-    console.log("obtain result: " + this.allocateList.toString());
   };
 
   processTasObject = async (row: TasObject) => {
@@ -81,8 +80,6 @@ export class ProcessFileService {
       isHeadTutorCandidate: headCandidiate,
     });
 
-    // console.log(staffPreference);
-
     try {
       // let staffPrefRepo = StaffPreference.getRepository();
       // await staffPrefRepo.save(staffPreference);
@@ -107,7 +104,6 @@ export class ProcessFileService {
     try {
       // let activityRepo = Activity.getRepository();
       // activity_object = await activityRepo.save(activity);
-      // console.log(activity_object)
       activity_object = await Activity.createOrUpdateActivity(activity);
     } catch (err) {
       throw err;
@@ -116,7 +112,6 @@ export class ProcessFileService {
       activityId: activity_object.id,
       staffId: staff_object.id,
     });
-    // console.log(allocation);
     try {
       let allocateRepo = Allocation.getRepository();
       await allocateRepo.save(allocation);
@@ -141,7 +136,6 @@ export class ProcessFileService {
     try {
       // let unitRepo = Unit.getRepository();
       // unit_object = await unitRepo.save(unit);
-      // console.log(unit_object);
       unit_object = await Unit.createOrUpdateUnit(unit);
     } catch (err) {
       throw err;
@@ -161,7 +155,6 @@ export class ProcessFileService {
     try {
       // let staffRepo = Staff.getRepository();
       staff_object = await Staff.createOrUpdateStaff(staffDetail);
-      // console.log(staff_object);
     } catch (err) {
       throw err;
     }
@@ -175,10 +168,10 @@ export class ProcessFileService {
       staffId: staff_object["id"],
       unitId: unit_object["id"],
     });
-    // console.log(staffPreference);
+
     try {
       // let staffPrefRepo = StaffPreference.getRepository();
-      await StaffPreference.createOrUpdateStaffPreference(staffPreference); // console.log(response)
+      await StaffPreference.createOrUpdateStaffPreference(staffPreference);
     } catch (err) {
       throw err;
     }
@@ -213,7 +206,6 @@ export class ProcessFileService {
       maxNumberActivities: Number(row["maxNumberActivities"]),
       staffId: staff_object["id"],
     });
-    // console.log(availability);
     try {
       let availabilityRepo = Availability.getRepository();
       availabilityRepo.save(availability);
@@ -236,9 +228,8 @@ export class ProcessFileService {
     unit = cleanInputData(unit);
     try {
       // let unitRepo = Unit.getRepository();
-      // unit_object = await unitRepo.save(unit); // console.log(unit_object)
+      // unit_object = await unitRepo.save(unit);
       unit_object = await Unit.createOrUpdateUnit(unit);
-      // console.log(unit_object);
     } catch (err) {
       throw err;
     }
@@ -260,7 +251,6 @@ export class ProcessFileService {
       // let activityRepo = Activity.getRepository();
       // let activity_object = await activityRepo.save(activity);
       await Activity.createOrUpdateActivity(activity);
-      // console.log(activity_object);
     } catch (err) {
       throw err;
     }

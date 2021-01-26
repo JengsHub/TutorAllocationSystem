@@ -68,8 +68,6 @@ class AllocateDragDrop extends Component<Props, State> {
   obtainResult = (results: any) => {
     //move the data od the file to allocateList
     this.allocateList = results.data;
-    //for debugging:
-    console.log(this.allocateList);
   };
 
   getEndTime = (start: Date, minutes: string) => {
@@ -85,7 +83,6 @@ class AllocateDragDrop extends Component<Props, State> {
     try {
       const formData = new FormData();
       formData.append("allocate", this.inputCsvFile);
-      console.log(this.inputCsvFile);
       await baseApi.post("/upload/allocate", formData);
     } catch (error) {
       throw error;

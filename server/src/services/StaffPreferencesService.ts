@@ -83,7 +83,6 @@ class StaffPreferencesService {
       .orderBy("unit.campus", "ASC")
       .orderBy("unit.unitCode", "ASC")
       .getMany();
-    // console.log(preferences)
     // const preferences = await this.repo
     //   .find({
     //     where: {

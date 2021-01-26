@@ -19,7 +19,6 @@ const Swapping = () => {
     };
 
     getUnits().then((res) => {
-      // console.log(res);
       sortPreferenceScore(res, "desc");
       setUnits(res || []);
     });
@@ -62,7 +61,6 @@ const Swapping = () => {
   }
 
   const sortPreferenceScore = (list: IPreferences[], way: String) => {
-    console.log(list);
     list.sort((a, b) => {
       if (way === "desc") {
         return b.preferenceScore > a.preferenceScore

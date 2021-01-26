@@ -32,7 +32,6 @@ const Rules = () => {
 
   useEffect(() => {
     getRules().then((res) => {
-      // console.log(res);
       setRules(res);
     });
   }, []);

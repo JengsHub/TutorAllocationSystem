@@ -66,7 +66,6 @@ class TpsDragDrop extends Component<Props, State> {
 
   obtainResult = (results: any) => {
     this.allocateList = results.data;
-    console.log(this.allocateList);
   };
 
   uploadData = async () => {
@@ -74,7 +73,6 @@ class TpsDragDrop extends Component<Props, State> {
     try {
       const formData = new FormData();
       formData.append("tps", this.csvFile);
-      console.log(this.csvFile);
       await baseApi.post("/upload/tps", formData);
     } catch (err) {
       throw err;

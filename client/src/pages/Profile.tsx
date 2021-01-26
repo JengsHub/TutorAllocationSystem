@@ -19,7 +19,6 @@ const Profile = () => {
     }
 
     const resBody = await authRes.data;
-    // console.log(resBody);
     try {
       setUser(resBody.user);
     } catch {

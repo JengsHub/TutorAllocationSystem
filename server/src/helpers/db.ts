@@ -13,7 +13,6 @@ export const DBConnect = async () => {
         await connection.connect();
       }
     } else {
-      // console.log(ORMConfig);
       await createConnection(ORMConfig);
     }
     console.log("Database connection was successful!");

@@ -76,8 +76,6 @@ class AllocationsService {
        * See: https://github.com/typeorm/typeorm/issues/2707
        */
 
-      console.log(unitId);
-
       allocations = await Allocation.createQueryBuilder("allocation")
         .leftJoinAndSelect("allocation.activity", "activity")
         .innerJoinAndSelect("allocation.staff", "staff")
@@ -87,8 +85,6 @@ class AllocationsService {
           approval: isLecturerApproved,
         })
         .getMany();
-
-      console.log(allocations.length, "Debug");
     } else {
       //get all units
       allocations = await Allocation.createQueryBuilder("allocation")
@@ -101,7 +97,6 @@ class AllocationsService {
         .getMany();
     }
 
-    // console.log(allocations);
     return allocations;
   }
 
@@ -155,7 +150,6 @@ class AllocationsService {
     }
 
     for (let swap of mySwaps) {
-      console.log(swap.from);
       allocations = allocations.filter(
         (alc: Allocation) => alc.id != swap.from.id
       );
@@ -214,7 +208,6 @@ class AllocationsService {
     );
 
     let allocation = await controller.createAllocation(me, newRecord);
-    console.log(allocation);
     createAndSaveStatusLog(
       allocation["id"],
       ActionEnums.MAKE_OFFER,

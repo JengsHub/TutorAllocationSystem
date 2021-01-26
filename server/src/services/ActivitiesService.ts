@@ -75,7 +75,6 @@ class ActivitiesService {
       .orderBy("unit.unitCode", "ASC")
       .getMany();
 
-    console.log(activities);
     return activities;
   }
   /**
@@ -181,7 +180,6 @@ class ActivitiesService {
         }
       }
     }
-    console.log(candidates);
     return candidates;
   }
 
@@ -238,12 +236,9 @@ class ActivitiesService {
     if (staffPreferences) {
       for (const preference of staffPreferences) {
         // If the staff member isn't already allocated to the activity, check to see if they are available to be allocated to the activity
-        console.log(
-          activity.allocations.filter(function (e) {
-            console.log(e.staffId);
-            return e.staffId === preference.staffId;
-          })
-        );
+        activity.allocations.filter(function (e) {
+          return e.staffId === preference.staffId;
+        });
         if (
           activity.allocations.filter(function (e) {
             return e.staffId === preference.staffId;
