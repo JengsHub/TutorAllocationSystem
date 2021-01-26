@@ -13,9 +13,9 @@
 import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import StatusLogModal from "../StatusLogModal";
-import LecturingActivity from "./LecturingActivity";
+import AdminUnitActivity from "./AdminUnitActivity";
 
-const Lecturing = () => {
+const AdminUnit = () => {
   // const [units, setUnits] = useState<IUnit[]>([]);
   const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(
     null
@@ -96,13 +96,13 @@ const Lecturing = () => {
         closeModal={() => setStatusLogModalOpen(null)}
       />
       <h1>Offering</h1>
-      <LecturingActivity
+      <AdminUnitActivity
         {...{
           setStatusLogModalOpen,
         }}
-      ></LecturingActivity>
+      ></AdminUnitActivity>
     </div>
   );
 };
 
-export default Lecturing;
+export default AdminUnit;

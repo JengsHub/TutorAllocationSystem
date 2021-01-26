@@ -17,13 +17,13 @@ import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 import "../styles/Grid.css";
-import CandidatesModal from "./CandidatesModal";
+import CandidatesModal from "../Lecturing/CandidatesModal";
 
 interface ILecturingActivityProps {
   setStatusLogModalOpen: (activityId: string) => void;
 }
 
-const LecturingActivity: React.FC<ILecturingActivityProps> = ({
+const AdminUnitActivity: React.FC<ILecturingActivityProps> = ({
   setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -666,4 +666,4 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   );
 };
 
-export default LecturingActivity;
+export default AdminUnitActivity;

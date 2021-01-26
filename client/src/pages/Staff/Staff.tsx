@@ -82,7 +82,7 @@ const Staff = () => {
           <TableHead>
             <TableRow>
               <TableCell align="left">Name</TableCell>
-              <TableCell align="right">Email</TableCell>
+              <TableCell align="left">Email</TableCell>
               <TableCell align="right">AQF</TableCell>
               <TableCell align="right">Studying AQF</TableCell>
             </TableRow>
@@ -102,7 +102,7 @@ const Staff = () => {
                     {staff.givenNames} {staff.lastName}
                   </u>
                 </TableCell>
-                <TableCell align="right">{staff.email}</TableCell>
+                <TableCell align="left">{staff.email}</TableCell>
                 <TableCell align="right">{staff.aqf}</TableCell>
                 <TableCell align="right">{staff.studyingAqf}</TableCell>
               </TableRow>

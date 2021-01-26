@@ -35,7 +35,7 @@ const StaffModal: React.FC<IStaffModal> = ({
       {staffId ? (
         <Fade in={staffId !== null}>
           <div style={{ outline: "none" }}>
-            <Paper style={{ padding: 20, width: "80vw", height: "80vh" }}>
+            <Paper style={{ padding: 20, width: "80vw", height: "60vh" }}>
               <StaffDetails staffName={staffName} staffId={staffId} />
             </Paper>
           </div>
