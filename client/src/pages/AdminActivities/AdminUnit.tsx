@@ -11,7 +11,6 @@
 // import TableRow from "@material-ui/core/TableRow";
 // import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
-import baseApi from "../../apis/baseApi";
 import StatusLogModal from "../StatusLogModal";
 import AdminUnitActivity from "./AdminUnitActivity";
 
@@ -23,21 +22,7 @@ const AdminUnit = () => {
 
   useEffect(() => {
     // let user: IStaff | undefined;
-    const getUnits = async () => {
-      try {
-        const res = await baseApi.get("/units/all");
-        return await res.data;
-      } catch (err) {
-        // console.log("No units found with lecturer roll");
-        console.error(err);
-        return [];
-      }
-    };
-
-    getUnits().then((res) => {
-      // setUnits(res || []);
-    });
-  }, []);
+  });
 
   // const [openRows, setOpenRows] = useState<boolean[]>(
   //   Array(units.length).fill(false)

@@ -7,6 +7,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import { withStyles } from "@material-ui/core/styles";
 
 interface IAvailabilitiesProps {
   staffId: string;
@@ -79,15 +80,21 @@ const Availabilities: React.FC<IAvailabilitiesProps> = ({ staffId }) => {
     );
   }
 
+  const StyledTableCell = withStyles(() => ({
+    head: {
+      backgroundColor: "#c0c0c0",
+    },
+  }))(TableCell);
+
   return (
     <div>
       {getMaxActivityAndHours(availabilities)}
       <TableContainer component={Paper}>
-        <Table className={""} size="small" aria-label="a dense table">
+        <Table className="grid" size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell align="left">Day</TableCell>
-              <TableCell align="left">Availabilities</TableCell>
+              <StyledTableCell align="left">Day</StyledTableCell>
+              <StyledTableCell align="left">Availabilities</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>

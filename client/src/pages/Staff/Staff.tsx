@@ -88,8 +88,8 @@ const Staff = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {staffs.map((staff) => (
-              <TableRow>
+            {staffs.map((staff, i) => (
+              <TableRow key={i}>
                 <TableCell align="left">
                   <u
                     className={"staffTableRow"}

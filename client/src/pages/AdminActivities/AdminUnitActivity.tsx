@@ -570,9 +570,7 @@ const AdminUnitActivity: React.FC<ILecturingActivityProps> = ({
                               {j === 0 ? (
                                 <>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    <TableRow>
-                                      {activity.unit.unitCode}
-                                    </TableRow>
+                                    {activity.unit.unitCode}
                                     <Button
                                       size="small"
                                       href="#text-buttons"
