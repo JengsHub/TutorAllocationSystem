@@ -1,51 +1,56 @@
-// TODO: better way to manage credentials and secrets, especially when we start setting up continuous deployment
-const prod = {
-  PORT: 80,
-  DB_HOST: "monash-tas-database.ccf41e2z44op.ap-southeast-2.rds.amazonaws.com",
-  DB_PORT: "5432",
-  DB_NAME: "postgres",
-  DB_USERNAME: "postgres",
-  DB_PASSWORD: "uCjvpUu89R897gxBUAai",
-  DB_SYNC: false,
-  DB_LOGS: false,
-  GOOGLE_CLIENT_ID:
-    "306753062234-bucmhcg6hh2t3safc9ikrovahlaahih0.apps.googleusercontent.com",
-  GOOGLE_CLIENT_SECRET: "pjPflZO-BeONRocioHqBlOgZ",
-  SIB_EMAIL_KEY:
-    "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",
-  SMTP_SERVICE: "gmail",
-  SMTP_USER: "fit3170tas@gmail.com",
-  SMTP_PASSWORD: "}zT#JC3]8ke#G`*:",
-  FROM_EMAIL: "fit3170tas@gmail.com",
-  CLIENT_URL: "https://monash-tas.herokuapp.com",
-  CLIENT_DOMAIN: "monash-tas.herokuapp.com",
-};
+import dotenv from "dotenv";
+import path from "path";
+const env = process.env;
+switch (env.NODE_ENV) {
+  case "development":
+  case "dev":
+    dotenv.config({ path: path.resolve(__dirname, "../.dev.env") });
+    break;
+  case "production":
+  case "prod":
+    dotenv.config({ path: path.resolve(__dirname, "../.prod.env") });
+    break;
+  default:
+    dotenv.config({ path: path.resolve(__dirname, "../.dev.env") });
+}
 
-const dev = {
-  PORT: 8888,
-  DB_HOST: "localhost",
-  DB_PORT: "5432",
-  DB_NAME: "postgres",
-  DB_USERNAME: "postgres",
-  DB_PASSWORD: "postgres",
-  DB_SYNC: false,
-  DB_LOGS: false,
-  GOOGLE_CLIENT_ID:
-    "57204204592-d9209pd5seer582qkhplc1lo8bpnkl42.apps.googleusercontent.com",
-  GOOGLE_CLIENT_SECRET: "C5IISdZB193a2HbcOIEXbOw1",
-  SIB_EMAIL_KEY:
-    "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",
-  SMTP_SERVICE: "gmail",
-  SMTP_USER: "fit3170tas@gmail.com",
-  SMTP_PASSWORD: "}zT#JC3]8ke#G`*:",
-  FROM_EMAIL: "fit3170tas@gmail.com",
-  CLIENT_URL: "http://localhost:3000",
-  CLIENT_DOMAIN: "localhost",
+export type Config = {
+  PORT: string;
+  DB_HOST: string;
+  DB_PORT: number;
+  DB_NAME: string;
+  DB_USERNAME: string;
+  DB_PASSWORD: string;
+  DB_SYNC: boolean;
+  DB_LOGS: boolean;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
+  SIB_EMAIL_KEY: string;
+  SMTP_SERVICE: string;
+  SMTP_USER: string;
+  SMTP_PASSWORD: string;
+  FROM_EMAIL: string;
+  CLIENT_URL: string;
+  CLIENT_DOMAIN: string;
 };
-
+export const config: Config = {
+  PORT: env.PORT || "localhost",
+  DB_HOST: env.DB_HOST || "localhost",
+  DB_PORT: env.DB_PORT ? parseInt(env.DB_PORT) : 5432,
+  DB_NAME: env.DB_NAME || "postgres",
+  DB_USERNAME: env.DB_USERNAME || "postgres",
+  DB_PASSWORD: env.DB_PASSWORD || "password",
+  DB_SYNC: env.DB_SYNC === "true" ? true : false,
+  DB_LOGS: env.DB_LOGS === "true" ? true : false,
+  GOOGLE_CLIENT_ID: env.GOOGLE_CLIENT_ID || "",
+  GOOGLE_CLIENT_SECRET: env.GOOGLE_CLIENT_SECRET || "",
+  SIB_EMAIL_KEY: env.SIB_EMAIL_KEY || "",
+  SMTP_SERVICE: env.SMTP_SERVICE || "",
+  SMTP_USER: env.SMTP_USER || "",
+  SMTP_PASSWORD: env.SMTP_PASSWORD || "",
+  FROM_EMAIL: env.FROM_EMAIL || "",
+  CLIENT_URL: env.CLIENT_URL || "localhost:3000",
+  CLIENT_DOMAIN: env.CLIENT_DOMAIN || "localhost",
+};
 console.log(process.env.NODE_ENV);
-
-export const config: any =
-  process.env.NODE_ENV === "development" || process.env.NODE_ENV === undefined
-    ? dev
-    : prod;
+console.log(config);
