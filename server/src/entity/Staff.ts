@@ -47,6 +47,9 @@ export class Staff extends BaseEntity {
   @OneToMany(() => StatusLog, (statusLog) => statusLog.staff)
   offereeStatusLog!: StatusLog[];
 
+  @OneToMany(() => StatusLog, (statusLog) => statusLog.targetStaff)
+  targetStatusLog!: StatusLog[];
+
   @Column({ nullable: true })
   googleId?: string;
 
@@ -71,5 +74,18 @@ export class Staff extends BaseEntity {
 
   isAdmin() {
     return this.appRole === AppRoleEnum.ADMIN;
+  }
+
+  static async createOrUpdateStaff(newRecord: Staff) {
+    let staffToUpdate = await Staff.findOne({
+      email: newRecord.email,
+    });
+    if (staffToUpdate) {
+      Staff.update({ id: staffToUpdate.id }, newRecord);
+      newRecord.id = staffToUpdate.id;
+      return newRecord;
+    }
+
+    return Staff.save(Staff.create(newRecord));
   }
 }

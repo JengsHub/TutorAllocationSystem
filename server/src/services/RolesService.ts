@@ -34,23 +34,19 @@ class RolesService {
 
   @GET
   public async getRoles(
-    @QueryParam("unitId") unitId: string,
-    @QueryParam("staffId") staffId: string,
-    @QueryParam("title") title: RoleEnum,
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
     // Only admin can have access to roles in all units
     hasAdminAccess(req, res);
-    let params: { [key: string]: any } = {
-      unitId,
-      staffId,
-      title,
-    };
-    Object.keys(params).forEach(
-      (key) => params[key] === undefined && delete params[key]
-    );
-    return Role.find(params);
+
+    let roles = await this.repo
+      .createQueryBuilder("role")
+      .innerJoinAndSelect("role.unit", "unit")
+      .innerJoinAndSelect("role.staff", "staff")
+      .getMany();
+
+    return roles;
   }
 
   /**
@@ -78,6 +74,17 @@ class RolesService {
     return role;
   }
 
+  /**
+   * Gets a unit's roles
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
+   *  - Admin: allowed
+   *
+   * @param unitId id of the unit to get roles for
+   * @returns Roles list of roles
+   */
   @GET
   @Path("unit/:unitId")
   public async getRolesByUnit(
@@ -102,6 +109,12 @@ class RolesService {
 
   /**
    * Creates a role record for the unit
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
+   *  - Admin: allowed
+   *
    * @param newRecord role data
    * @returns Role new role record
    */
@@ -122,6 +135,12 @@ class RolesService {
 
   /**
    * Updates a role
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
+   *  - Admin: allowed
+   *
    * @param changedRole new role object to change the existing role to
    * @returns Role changed role
    */
@@ -143,6 +162,12 @@ class RolesService {
 
   /**
    * Deletes a role
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed for units they are lecturing in
+   *  - Admin: allowed
+   *
    * @param id id of the role
    * @returns DeleteReults reult of the delete request
    */

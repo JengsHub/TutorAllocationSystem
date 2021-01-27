@@ -5,6 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 import StickyHeadTable from "../components/StickyHeadTable";
+import { IStatusLogWithStaff } from "../type";
 
 interface IStatusLogModal {
   activityId: string | null;
@@ -25,7 +26,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
      * @param activityId id of the activity
      */
     const getStatusLogs = async (activityId: string | null) => {
-      let statusLogs: Array<Object> = [];
+      let statusLogs: Array<IStatusLogWithStaff> = [];
       // get all the allocations associated with the activity id
       let allocationsResponse = await baseApi(
         `/activities/${activityId}/allocation`
@@ -37,16 +38,72 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
         let statusLogsResponse = await baseApi(
           `statuslog/${allocationId}/staffs`
         );
-        let statusLogJson: Object[] = await statusLogsResponse.data;
+        let statusLogJson: IStatusLogWithStaff[] = await statusLogsResponse.data;
         statusLogs = statusLogs.concat(statusLogJson);
+      }
+      //Sort the status logs by date from newest to oldest
+      if (statusLogs.length > 0) {
+        sortStatusLogsByDate(statusLogs);
       }
       return statusLogs;
     };
 
     getStatusLogs(activityId).then((res) => {
       setStatusLog(res || []);
+      console.log(res);
     });
   }, [activityId, hasChanged]);
+
+  function sortStatusLogsByDate(statusLogs: Array<IStatusLogWithStaff>) {
+    statusLogs = statusLogs.sort(function (
+      a: IStatusLogWithStaff,
+      b: IStatusLogWithStaff
+    ) {
+      let a_year = a.time.slice(6, 10);
+      let b_year = b.time.slice(6, 10);
+      let a_month = a.time.slice(3, 5);
+      let b_month = b.time.slice(3, 5);
+      let a_day = a.time.slice(0, 2);
+      let b_day = b.time.slice(0, 2);
+      let a_hour = a.time.slice(11, 13);
+      let b_hour = b.time.slice(11, 13);
+      let a_minute = a.time.slice(14, 16);
+      let b_minute = b.time.slice(14, 16);
+      let a_second = a.time.slice(17, 19);
+      let b_second = b.time.slice(17, 19);
+      if (a_year < b_year) {
+        return 1;
+      } else if (a_year > b_year) {
+        return -1;
+      }
+      if (a_month < b_month) {
+        return 1;
+      } else if (a_month > b_month) {
+        return -1;
+      }
+      if (a_day < b_day) {
+        return 1;
+      } else if (a_day > b_day) {
+        return -1;
+      }
+      if (a_hour < b_hour) {
+        return 1;
+      } else if (a_hour > b_hour) {
+        return -1;
+      }
+      if (a_minute < b_minute) {
+        return 1;
+      } else if (a_minute > b_minute) {
+        return -1;
+      }
+      if (a_second < b_second) {
+        return 1;
+      } else if (a_second > b_second) {
+        return -1;
+      }
+      return 0;
+    });
+  }
 
   // Columns of the status log modal
   const modalColumns = [

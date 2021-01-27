@@ -14,6 +14,13 @@ import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Allocation extends BaseEntity {
+  // getDefaultDate(daysToAdd: number = 0) {
+  //   let d = new Date();
+  //   let newDate = new Date(d.setTime(d.getTime() + daysToAdd * 86400000));
+  //   newDate.setTime(newDate.getTime() + 12 * 1000 * 60 * 60);
+  //   return newDate;
+  // }
+
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
@@ -41,7 +48,7 @@ export class Allocation extends BaseEntity {
   @Column({ nullable: true, default: null })
   isLecturerApproved?: boolean;
 
-  @Column({ nullable: true, default: false })
+  @Column({ nullable: true, default: null })
   isTaAccepted?: boolean;
 
   @Column({ nullable: true, default: null })
@@ -58,6 +65,21 @@ export class Allocation extends BaseEntity {
     //check if isExpired
     if (todayDate >= this.offerExpiryDate) {
       this.isExpired = true; //isExprid = true
+    }
+  }
+
+  static async createOrUpdateAllocation(newRecord: Allocation) {
+    let found = await Allocation.createQueryBuilder("allocation")
+      .where("allocation.staffId = :id", { id: newRecord.staffId })
+      .andWhere("allocation.activityId = :activityId", {
+        activityId: newRecord.activityId,
+      })
+      .getOne();
+
+    if (found) {
+      return newRecord;
+    } else {
+      return Allocation.save(newRecord);
     }
   }
 }

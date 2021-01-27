@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository } from "typeorm";
+import { DeleteResult, getManager, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -14,14 +14,14 @@ import {
   PUT,
   QueryParam,
 } from "typescript-rest";
+import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
-import { Activity, Allocation, Staff, Role } from "~/entity";
-import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
-import { checkAllocation } from "../helpers/checkConstraints";
+import { checkNewAllocation } from "../helpers/checkConstraints";
+import { RoleEnum } from "~/enums/RoleEnum";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -65,43 +65,109 @@ class AllocationsService {
     if (!authCheck(req, res)) return;
 
     const me = req.user as Staff;
+    let allocations: Allocation[];
 
-    // let findOptions: { [key: string]: any } = {
-    //   isLecturerApproved,
-    //   activity: {
-    //     unitId
-    //   }
-    // };
+    if (unitId) {
+      /**
+       * Note: have to use query builder instead of TypeORM find() because find()
+       * support for WHERE clause on joined columns is not consistent/doesn't work.
+       * Seems like this feature will be added in future version of TypeORM
+       *
+       * See: https://github.com/typeorm/typeorm/issues/2707
+       */
 
-    // findOptions = removeEmpty(findOptions);
+      console.log(unitId);
 
-    // console.log(findOptions);
-    // let allocations = await this.repo.find({
-    //   where: {
-    //     staffId: me.id,
-    //     ...findOptions,
-    //   },
-    //   relations: ["activity"],
-    // });
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .leftJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("allocation.staff", "staff")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
 
-    /**
-     * Note: have to use query builder instead of TypeORM find() because find()
-     * support for WHERE clause on joined columns is not consistent/doesn't work.
-     * Seems like this feature will be added in future version of TypeORM
-     *
-     * See: https://github.com/typeorm/typeorm/issues/2707
-     */
-
-    const allocations = await Allocation.createQueryBuilder("allocation")
-      .leftJoinAndSelect("allocation.activity", "activity")
-      .where("activity.unitId = :unitId", { unitId })
-      .andWhere("allocation.staffId = :id", { id: me.id })
-      .andWhere("allocation.isLecturerApproved = :approval", {
-        approval: isLecturerApproved,
-      })
-      .getMany();
+      console.log(allocations.length, "Debug");
+    } else {
+      //get all units
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .innerJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("activity.unit", "unit")
+        .where("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .getMany();
+    }
 
     // console.log(allocations);
+    return allocations;
+  }
+
+  @GET
+  @IgnoreNextMiddlewares
+  @Path("/unswapped")
+  public async getUnswappedAllocations(
+    @ContextRequest req: Request,
+    @ContextResponse res: Response,
+    @QueryParam("unitId") unitId: string,
+    @QueryParam("isLecturerApproved") isLecturerApproved: boolean,
+    @QueryParam("isWorkforceApproved") isWorkforceApproved: boolean
+  ) {
+    if (!authCheck(req, res)) return;
+
+    const me = req.user as Staff;
+    let allocations: Allocation[];
+    let mySwaps: Swap[];
+
+    if (unitId) {
+      mySwaps = await Swap.createQueryBuilder("swap")
+        .innerJoinAndSelect("swap.from", "from")
+        .innerJoinAndSelect("from.activity", "activity")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("from.staffId = :id", { id: me.id })
+        .getMany();
+
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .leftJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("allocation.staff", "staff")
+        .where("activity.unitId = :unitId", { unitId })
+        .andWhere("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .andWhere("allocation.isWorkforceApproved = :approval", {
+          approval: isWorkforceApproved,
+        })
+        .getMany();
+    } else {
+      mySwaps = await Swap.createQueryBuilder("swap")
+        .innerJoinAndSelect("swap.from", "from")
+        .andWhere("from.staffId = :id", { id: me.id })
+        .getMany();
+
+      //get all units
+      allocations = await Allocation.createQueryBuilder("allocation")
+        .innerJoinAndSelect("allocation.activity", "activity")
+        .innerJoinAndSelect("activity.unit", "unit")
+        .where("allocation.staffId = :id", { id: me.id })
+        .andWhere("allocation.isLecturerApproved = :approval", {
+          approval: isLecturerApproved,
+        })
+        .andWhere("allocation.isWorkforceApproved = :approval", {
+          approval: isWorkforceApproved,
+        })
+        .getMany();
+    }
+
+    for (let swap of mySwaps) {
+      console.log(swap.from);
+      allocations = allocations.filter(
+        (alc: Allocation) => alc.id != swap.from.id
+      );
+    }
+
     return allocations;
   }
 
@@ -123,7 +189,7 @@ class AllocationsService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: can create allocation for unit they're lecturing
+   *  - Lecturer: can create allocation for unit they're lecturing but not isWorkforceApproved attribute
    *  - Admin: can create allocation in any unit
    *
    * @param newRecord allocation data
@@ -142,24 +208,26 @@ class AllocationsService {
       id: newRecord.activityId,
     });
 
-    if (!(await checkAllocation(staff, activity))) {
+    if (!(await checkNewAllocation(staff, activity))) {
       throw new ConstraintError(
         "Allocation not made because constraints not met"
       );
     }
 
     const me = req.user as Staff;
+
     const controller = this.factory.getController(
       await me.getRoleTitle(activity.unitId)
     );
 
     let allocation = await controller.createAllocation(me, newRecord);
     console.log(allocation);
-    createAndSaveStatusLog(
-      allocation["id"],
-      ActionEnums.MAKE_OFFER,
-      newRecord.staffId
-    );
+    // createAndSaveStatusLog(
+    //   allocation["id"],
+    //   ActionEnums.LECTURER_PROPOSE,
+    //   me.id,
+    //   newRecord.staffId
+    // );
 
     return allocation;
   }
@@ -206,11 +274,11 @@ class AllocationsService {
       });
 
       // Log the status approval here
-      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id);
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id, staff.id);
     }
     // If approval status is false, create status log
     else {
-      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id);
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id, staff.id);
     }
 
     return controller.updateLecturerApproval(me, allocation, value);
@@ -242,7 +310,8 @@ class AllocationsService {
     const me = req.user as Staff;
     const { staff, activity } = allocation;
     const { unit } = activity;
-    const role = await me.getRoleTitle(unit.id);
+    // const role = await me.getRoleTitle(unit.id);
+    let role = RoleEnum.TA;
     const controller = this.factory.getController(role);
 
     // get the person who with lecturer role
@@ -274,10 +343,10 @@ class AllocationsService {
 
     if (value) {
       // if value is true, which means the TA accept, log the acceptance in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id, null);
     } else {
       // if value is false, which means the TA reject, log the rejection in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id, null);
     }
     return controller.updateTaAcceptance(me, allocation, value);
   }
@@ -307,7 +376,7 @@ class AllocationsService {
     });
 
     const me = req.user as Staff;
-    const { activity } = allocation;
+    const { activity, staff } = allocation;
     const { unit } = activity;
     const role = await me.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
@@ -318,14 +387,16 @@ class AllocationsService {
       createAndSaveStatusLog(
         allocation.id,
         ActionEnums.WORKFORCE_APPROVE,
-        me.id
+        me.id,
+        staff.id
       );
     } else {
       // if value is false, which means the Workforce reject, log the rejection in status log
       createAndSaveStatusLog(
         allocation.id,
         ActionEnums.WORKFORCE_REJECT,
-        me.id
+        me.id,
+        staff.id
       );
     }
     return controller.updateWorkforceApproval(me, allocation, value);
@@ -333,6 +404,12 @@ class AllocationsService {
 
   /**
    * Updates an allocation
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: can update allocation in any unit, regardless of the acceptance status
+   *
    * @param changedAllocation new allocation object to change existing allocation to
    * @return Allocation changed allocation
    */
@@ -373,7 +450,7 @@ class AllocationsService {
     }
 
     if (
-      !(await checkAllocation(
+      !(await checkNewAllocation(
         changedAllocation.staff || allocationToUpdate.staff,
         changedAllocation.activity || allocationToUpdate.activity
       ))

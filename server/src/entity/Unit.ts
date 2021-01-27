@@ -45,4 +45,28 @@ export class Unit extends BaseEntity {
 
   @OneToMany(() => Role, (role) => role.unit)
   roles!: Role[];
+
+  static async createOrUpdateUnit(newRecord: Unit) {
+    try {
+      let unitToUpdate = await Unit.findOne({
+        where: {
+          unitCode: newRecord.unitCode,
+          offeringPeriod: newRecord.offeringPeriod,
+          year: newRecord.year,
+        },
+      });
+      if (unitToUpdate) {
+        await Unit.update({ id: unitToUpdate.id }, newRecord);
+        newRecord.id = unitToUpdate.id;
+        return newRecord;
+      }
+      return await Unit.save(newRecord);
+    } catch (e) {
+      console.error(
+        `error creating/updating unit ${newRecord.unitCode} ${newRecord.offeringPeriod} ${newRecord.year}`
+      );
+      console.error(e);
+      throw e;
+    }
+  }
 }

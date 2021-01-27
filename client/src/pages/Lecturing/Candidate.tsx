@@ -11,6 +11,9 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
+import { IPreferences, IActivity, IAllocationWithStaff } from "../../type";
 
 interface ICandidateProps {
   activityId: string;
@@ -22,7 +25,11 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
+  const [open, setOpen] = useState<boolean>(false);
+  const [allocationLeft, setAllocationLeft] = useState<number>();
   const history = useHistory();
 
   useEffect(() => {
@@ -50,6 +57,11 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     setSelected([]);
   };
 
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
+  // this handleClick function will save the row in the table which is being selected
   const handleClick = (event: React.MouseEvent<unknown>, i: number) => {
     const selectedIndex = selecteds.indexOf(i);
     let newSelected: number[] = [];
@@ -69,8 +81,49 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     setSelected(newSelected);
   };
 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+  };
+
+  // this function will be call when the button 'Request Offer' is clicked
+  // this function will look for candidate that meet the constraint rules from database
   const makeOffers = () => {
     //console.log(selecteds);
+    // is selected more than maxnumberallocation
+    if (activity) {
+      console.log("got activity");
+      let allocationsNoRejection: IAllocationWithStaff[] = [];
+
+      let numOfAllocations = activity.allocations.length;
+
+      for (let i = 0; i < numOfAllocations; i++) {
+        let allocation = activity.allocations[i];
+
+        if (allocation.isLecturerApproved !== false) {
+          if (allocation.isTaAccepted !== false) {
+            if (allocation.isWorkforceApproved !== false) {
+              allocationsNoRejection.push(allocation);
+            }
+          }
+        }
+      }
+
+      setAllocationLeft(
+        activity.allocationsMaxNum - allocationsNoRejection.length
+      );
+      if (
+        selecteds.length >
+        activity.allocationsMaxNum - allocationsNoRejection.length
+      ) {
+        setOpen(true);
+        return;
+      }
+    }
+    setOpen(false);
     selecteds.forEach(async (i) => {
       //console.log(candidatesPreference[i]);
       var allocation: Allocation = {
@@ -78,8 +131,14 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         staffId: candidatesPreference[i].staffId,
       };
       try {
-        await baseApi.post("/allocations", allocation);
+        let result = await baseApi.post("/allocations", allocation);
         setSelected([]);
+        if (result.statusText === "OK") {
+          setOpenApproval(true);
+        } else {
+          setOpenError(true);
+          console.error("error adding staff");
+        }
 
         getCandidatePreference(activityId).then((res) => {
           // console.log(res);
@@ -164,6 +223,28 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         {" "}
         Request Offer
       </Button>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have added a staff.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
+      {activity ? (
+        <Snackbar open={open} autoHideDuration={6000}>
+          <Alert severity="error">
+            You have selected too many offers. Max is{" "}
+            {activity.allocationsMaxNum}. Left {allocationLeft}.
+          </Alert>
+        </Snackbar>
+      ) : null}
     </div>
   );
 };

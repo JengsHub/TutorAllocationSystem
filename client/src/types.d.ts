@@ -58,11 +58,16 @@ interface Activity {
   location: string;
   dayOfWeek: DayOfWeek;
   startTime: string;
-  unitId: string;
   endTime: string;
+  unitId: string;
 }
 
 interface Allocation {
   activityId: string;
   staffId: string;
+}
+
+interface Swap {
+  fromAllocationId: string;
+  desiredActivityId: string;
 }

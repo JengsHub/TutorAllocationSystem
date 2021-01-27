@@ -36,6 +36,17 @@ class UnitsService {
    *         schema:
    *           type: object
    *           $ref: '#/definitions/Unit'
+   * Returns units matching certain criteria (unit code, in the offering period and year specified)
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
+   * @param unitCode unit code for the unit
+   * @param offeringPeriod offering period to select from
+   * @param year year the unit takes place
+   * @return Units list of units
    */
   @GET
   public async getUnits(
@@ -57,9 +68,21 @@ class UnitsService {
     return Unit.find(params);
   }
 
+  /**
+   * Returns the calling user's units depending on the role specified
+   * (e.g. if lecturer, return the user's units where they are a lecturer)
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
+   * @param title title of role (e.g. Lecturer, TA)
+   * @return Units list of units
+   */
   @GET
   @Path("/byRole/:title")
-  public async getUnitsByRoll(
+  public async getMyUnitsByRole(
     @ContextRequest req: Request,
     @ContextResponse res: Response,
     @PathParam("title") title: RoleEnum
@@ -85,6 +108,12 @@ class UnitsService {
 
   /**
    * Returns a unit
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
    * @param id id for the unit
    * @return Unit single unit
    */
@@ -97,65 +126,92 @@ class UnitsService {
 
   /**
    * Creates a unit
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param newRecord unit data
    * @return Unit new unit
    */
   @POST
-  public async createUnit(newRecord: Unit): Promise<Unit> {
-    let unitToUpdate = await Unit.findOne({
-      unitCode: newRecord.unitCode,
-      offeringPeriod: newRecord.offeringPeriod,
-      year: newRecord.year,
-    });
-    if (unitToUpdate) {
-      Unit.update({ id: unitToUpdate.id }, newRecord);
-      newRecord.id = unitToUpdate.id;
-      return newRecord;
-    }
-    return this.repo.save(newRecord);
+  public async createUnit(
+    newRecord: Unit,
+    @ContextRequest req: Request
+  ): Promise<Unit> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle());
+    return controller.createUnit(newRecord);
   }
 
   /**
    * Updates a unit
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
    * @param changedUnit new unit object to change existing unit to
    * @return Unit changed unit
    */
   @PATCH
-  public async updateUnit(changedUnit: Unit): Promise<Unit> {
-    let unitToUpdate = await this.repo.findOne({
-      id: changedUnit.id,
-    });
-    unitToUpdate = changedUnit;
-    return this.repo.save(unitToUpdate);
+  public async updateUnit(
+    changedUnit: Unit,
+    @ContextRequest req: Request
+  ): Promise<Unit> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(
+      await me.getRoleTitle(changedUnit.id)
+    );
+    return controller.updateUnit(changedUnit);
   }
 
   /**
    * Deletes a unit
+   *
+   * Role authorisation:
+   *  - TA: not allowed
+   *  - Lecturer: not allowed
+   *  - Admin: allowed
+   *
    * @param id id for the unit
    * @return DeleteResult result of delete request
    */
   @DELETE
   @Path(":id")
-  public deleteUnit(@PathParam("id") id: string): Promise<DeleteResult> {
-    return this.repo.delete({
-      id: id,
-    });
+  public async deleteUnit(
+    @PathParam("id") id: string,
+    @ContextRequest req: Request
+  ): Promise<DeleteResult> {
+    const me = req.user as Staff;
+    const controller = this.factory.getController(await me.getRoleTitle(id));
+    return controller.deleteUnit(id);
   }
 
+  /**
+   * Get the activities of a unit
+   *
+   * Role authorisation:
+   *  - TA: allowed
+   *  - Lecturer: allowed
+   *  - Admin: allowed
+   *
+   * @param id id of the unit
+   * @return Activities list of activities
+   */
   @GET
   @Path(":id/activities")
   public async getUnitActivities(
     @ContextRequest req: Request,
-    @ContextResponse res: Response,
     @PathParam("id") id: string
   ) {
     const user = req.user as Staff;
     const unit = await Unit.findOneOrFail({ id });
+    const role = await user.getRoleTitle(unit.id);
 
-    const role = user.isAdmin()
-      ? AppRoleEnum.ADMIN
-      : await user.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
-    return controller.getActivities(unit, user);
+    return controller.getUnitActivities(unit);
   }
 }
