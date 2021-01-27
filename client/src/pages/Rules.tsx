@@ -11,6 +11,7 @@ import {
   Button,
 } from "@material-ui/core";
 import baseApi from "../apis/baseApi";
+import { IRule } from "../type";
 
 const Rules = () => {
   const [rules, setRules] = useState<IRule[]>([]);

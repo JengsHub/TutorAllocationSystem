@@ -11,6 +11,7 @@ import SwappingModal from "./SwappingModal";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import baseApi from "../../apis/baseApi";
+import { ISwap, IAllocation } from "../../type";
 
 const Swaps = (props: { [key: string]: any }) => {
   const [hasChanged, setChanged] = useState<Boolean>(false);

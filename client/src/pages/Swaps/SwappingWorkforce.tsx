@@ -13,6 +13,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import { ISwap } from "../../type";
 
 const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
@@ -43,6 +44,7 @@ const SwappingWorkforce = () => {
         return await res.data;
       } catch (e) {
         console.log("Error fetching swaps");
+        return [];
       }
     };
 

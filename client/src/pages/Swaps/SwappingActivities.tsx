@@ -13,6 +13,7 @@ import { DayOfWeek } from "../../enums/DayOfWeek";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { withStyles } from "@material-ui/core/styles";
+import { IAllocation, IActivity } from "../../type";
 
 interface ICandidateProps {
   allocation: IAllocation;

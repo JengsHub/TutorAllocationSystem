@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import baseApi from "../../apis/baseApi";
 import StaffModal from "./StaffModal";
+import { IStaff } from "../../type";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

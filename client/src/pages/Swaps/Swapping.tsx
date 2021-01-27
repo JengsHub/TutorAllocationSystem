@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Box from "@material-ui/core/Box";
 import Swaps from "./Swaps";
 import baseApi from "../../apis/baseApi";
+import { IPreferences } from "../../type";
 
 const Swapping = () => {
   const [units, setUnits] = useState<IPreferences[]>([]);
@@ -54,6 +55,7 @@ const Swapping = () => {
             {...{
               unitId: row.unitId,
               isLecturerApproved: true,
+              isWorkforceApproved: true,
             }}
           ></Swaps>
         </Box>
