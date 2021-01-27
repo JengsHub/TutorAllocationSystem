@@ -16,9 +16,11 @@ import {
 import TextField from "@material-ui/core/TextField";
 import { Clear, Done, Edit } from "@material-ui/icons";
 import { Autocomplete } from "@material-ui/lab";
-import React, { useState } from "react";
-import baseApi from "../apis/baseApi";
+import React, { useState, useEffect } from "react";
 import { RoleEnum } from "../enums/RoleEnum";
+import baseApi from "../apis/baseApi";
+import { IRole } from "../type";
+import { useRef } from "react";
 
 /***
  * TODO:
@@ -86,11 +88,59 @@ const CustomTableCell = ({ row, name, onChange }: any) => {
 
 const UnitRoles = () => {
   // const { adminAccess } = React.useContext(AuthContext);
-  const [selectedPeriod, setSelectedPeriod] = useState<any>(null);
-  const [selectedUnit, setSelectedUnit] = useState<any>(null);
+  const [userRoles, setUserRoles] = useState<IRole[]>([]);
+  const [rolesToDisplay, setRolesToDisplay] = useState<IRole[]>([]);
   const [rows, setRows] = useState<IRow[]>([]);
   const [previous, setPrevious] = React.useState<any>({});
   const classes = useStyles();
+
+  const [unitCodeOption, setUnitCodeOption] = useState<string[]>([]);
+  const [yearOption, setYearOption] = useState<string[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<any>();
+  const [selectedUnit, setSelectedUnit] = useState<any>();
+
+  const [hasChanged, setChanged] = useState<Boolean>(false);
+  const initialRender = useRef(true);
+
+  useEffect(() => {
+    setChanged(false);
+    const getUserRoles = async () => {
+      try {
+        const res = await baseApi.get("/roles");
+        return await res.data;
+      } catch (e) {
+        console.log("Error fetching roles", e);
+        return [];
+      }
+    };
+
+    getUserRoles().then((res) => {
+      setUserRoles(res);
+      setRolesToDisplay(res);
+      setUpAutoComplete(res);
+      fetchStaff();
+    });
+  }, [hasChanged]);
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      let tempArray: (IRole & { [key: string]: any })[] = userRoles;
+      if (selectedPeriod !== "All") {
+        tempArray = tempArray.filter(function (role) {
+          return role.unit.year.toString() === selectedPeriod;
+        });
+      }
+      if (selectedUnit !== "All") {
+        tempArray = tempArray.filter(function (role) {
+          return role.unit.unitCode === selectedUnit;
+        });
+      }
+
+      setRolesToDisplay(tempArray);
+    }
+  }, [selectedPeriod, selectedUnit]);
 
   const onToggleEditMode = (id: number) => {
     setRows((state) => {
@@ -156,29 +206,39 @@ const UnitRoles = () => {
   };
 
   const fetchStaff = async () => {
-    let params: { [key: string]: any } = {
-      unitCode: selectedUnit ? selectedUnit.unitCode : null,
-      year: selectedPeriod ? selectedPeriod.year : null,
-    };
-
-    Object.keys(params).forEach(
-      (key) => params[key] === undefined && delete params[key]
-    );
-
-    const res = await baseApi.get("staff", { params: { params } });
-
     // TODO: better way for row id?
-    const resJson = (await res.data).map((e: any, index: number) => ({
+    const resJson = rolesToDisplay.map((e: any, index: number) => ({
       ...e,
       id: index,
     }));
-    // console.log(resJson);
     setRows(resJson);
   };
 
+  function setUpAutoComplete(res: IRole & { [key: string]: any }[]) {
+    let uniqueList: string[] = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].unit.unitCode)) {
+        uniqueList.push(res[i].unit.unitCode);
+      }
+    }
+    uniqueList.push("All");
+    setUnitCodeOption(uniqueList);
+    uniqueList = [];
+
+    for (let i = 0; i < res.length; i++) {
+      if (!uniqueList.includes(res[i].unit.year.toString())) {
+        uniqueList.push(res[i].unit.year.toString());
+      }
+    }
+    uniqueList.push("All");
+    setYearOption(uniqueList);
+    uniqueList = [];
+  }
+
   // TODO: fetch data from backend
-  const teachingPeriods = [{ year: 2020 }, { year: 2019 }];
-  const units = [{ unitCode: "FIT3170" }, { unitCode: "FIT2100" }];
+  // const teachingPeriods = [{ year: 2020 }, { year: 2019 }];
+  // const units = [{ unitCode: "FIT3170" }, { unitCode: "FIT2100" }];
 
   return (
     <div id="main">
@@ -187,8 +247,8 @@ const UnitRoles = () => {
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <Autocomplete
-            options={teachingPeriods}
-            getOptionLabel={(option) => option.year.toString()}
+            options={yearOption}
+            getOptionLabel={(option) => option.toString()}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -206,8 +266,8 @@ const UnitRoles = () => {
 
         <Grid item xs={3}>
           <Autocomplete
-            options={units}
-            getOptionLabel={(option) => option.unitCode}
+            options={unitCodeOption}
+            getOptionLabel={(option) => option}
             renderInput={(params) => (
               <TextField {...params} label="Unit" variant="outlined" />
             )}
