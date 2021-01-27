@@ -1,3 +1,5 @@
+import { RoleEnum } from "./enums/RoleEnum";
+
 enum DayOfWeek {
   MONDAY = "M",
   TUESDAY = "T",
@@ -29,6 +31,15 @@ interface IStaff {
   id: string;
   lastName: string;
   studyingAqf: number;
+}
+
+interface IRole {
+  id: string;
+  title: RoleEnum;
+  unit: IUnit;
+  unitId: string;
+  staff: Staff;
+  staffId: string;
 }
 
 interface IPreferences {

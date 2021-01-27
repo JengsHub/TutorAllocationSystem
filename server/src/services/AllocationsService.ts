@@ -112,7 +112,8 @@ class AllocationsService {
     @ContextRequest req: Request,
     @ContextResponse res: Response,
     @QueryParam("unitId") unitId: string,
-    @QueryParam("isLecturerApproved") isLecturerApproved: boolean
+    @QueryParam("isLecturerApproved") isLecturerApproved: boolean,
+    @QueryParam("isWorkforceApproved") isWorkforceApproved: boolean
   ) {
     if (!authCheck(req, res)) return;
 
@@ -136,6 +137,9 @@ class AllocationsService {
         .andWhere("allocation.isLecturerApproved = :approval", {
           approval: isLecturerApproved,
         })
+        .andWhere("allocation.isWorkforceApproved = :approval", {
+          approval: isWorkforceApproved,
+        })
         .getMany();
     } else {
       mySwaps = await Swap.createQueryBuilder("swap")
@@ -150,6 +154,9 @@ class AllocationsService {
         .where("allocation.staffId = :id", { id: me.id })
         .andWhere("allocation.isLecturerApproved = :approval", {
           approval: isLecturerApproved,
+        })
+        .andWhere("allocation.isWorkforceApproved = :approval", {
+          approval: isWorkforceApproved,
         })
         .getMany();
     }

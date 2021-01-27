@@ -8,6 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
+import { IAvailability } from "../../type";
 
 interface IAvailabilitiesProps {
   staffId: string;
@@ -32,6 +33,7 @@ const Availabilities: React.FC<IAvailabilitiesProps> = ({ staffId }) => {
 
   useEffect(() => {
     if (staffId) {
+      // TODO remove hardcoded year
       getAvailability(staffId, "2020").then((res) => {
         setAvailabilities(res);
       });

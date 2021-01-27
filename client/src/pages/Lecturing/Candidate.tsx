@@ -13,6 +13,7 @@ import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+import { IPreferences, IActivity, IAllocationWithStaff } from "../../type";
 
 interface ICandidateProps {
   activityId: string;

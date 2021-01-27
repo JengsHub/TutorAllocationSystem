@@ -34,23 +34,19 @@ class RolesService {
 
   @GET
   public async getRoles(
-    @QueryParam("unitId") unitId: string,
-    @QueryParam("staffId") staffId: string,
-    @QueryParam("title") title: RoleEnum,
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ) {
     // Only admin can have access to roles in all units
     hasAdminAccess(req, res);
-    let params: { [key: string]: any } = {
-      unitId,
-      staffId,
-      title,
-    };
-    Object.keys(params).forEach(
-      (key) => params[key] === undefined && delete params[key]
-    );
-    return Role.find(params);
+
+    let roles = await this.repo
+      .createQueryBuilder("role")
+      .innerJoinAndSelect("role.unit", "unit")
+      .innerJoinAndSelect("role.staff", "staff")
+      .getMany();
+
+    return roles;
   }
 
   /**
