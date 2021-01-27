@@ -342,7 +342,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       return <CustomStatus value="TA has approved" isGreen isCheck />;
     } // Case when Lect approved but WF has yet to approve
     else if (workforce === null && approval === true && acceptance === null) {
-      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />;
+      return <CustomStatus value="Waiting for Workforce approval" isBlue isExclamationTriangle  />;
     } // Case when Lect approve but workforce rejected
     else if (workforce === false && approval === true && acceptance === null) {
       return <CustomStatus value="Workforce has rejected" isRed isCross />;
