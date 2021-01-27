@@ -107,7 +107,9 @@ class LecturerStaffController implements IStaffController {
 
 class AdminStaffController implements IStaffController {
   getAllStaff() {
-    return Staff.find();
+    return Staff.find({
+      where: { appRole: "User" },
+    });
   }
 
   getStaff(id: string) {

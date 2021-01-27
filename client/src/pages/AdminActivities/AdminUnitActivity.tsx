@@ -17,14 +17,13 @@ import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 import "../styles/Grid.css";
+import CandidatesModal from "../Lecturing/CandidatesModal";
 
 interface ILecturingActivityProps {
-  setModalOpen: (activityId: string) => void;
   setStatusLogModalOpen: (activityId: string) => void;
 }
 
-const LecturingActivity: React.FC<ILecturingActivityProps> = ({
-  setModalOpen,
+const AdminUnitActivity: React.FC<ILecturingActivityProps> = ({
   setStatusLogModalOpen,
 }) => {
   const [activities, setActivities] = useState<IActivity[]>([]);
@@ -50,6 +49,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   const initialRender = useRef(true);
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [modalOpen, setModalOpen] = useState<string | null>(null);
 
   useEffect(() => {
     setChanged(false);
@@ -69,7 +69,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       // eslint-disable-next-line
       setUpAutoComplete(res);
     });
-  }, [hasChanged]);
+  }, [hasChanged, modalOpen]);
 
   useEffect(() => {
     setInterval(() => {
@@ -357,7 +357,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     const approval = allocation.isLecturerApproved;
     const acceptance = allocation.isTaAccepted;
     const workforce = allocation.isWorkforceApproved;
-    if (approval === null) {
+
+    // Case when WF has approved but Lect hasnt approved
+    if (workforce === true && approval === null && acceptance === null) {
       return (
         <CustomStatus
           value="Waiting for Lecturer"
@@ -365,27 +367,57 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
           isExclamationDiamond
         />
       );
-    } else if (approval === false) {
-      return <CustomStatus value="Lecturer has rejected" isRed isCross />;
-    }
-
-    if (acceptance === null) {
+    } // Case when lect and WF has approved but TA hasnt respond
+    else if (workforce === true && approval === true && acceptance === null) {
       return <CustomStatus value="Waiting for TA response" isBlue isClock />;
-    } else if (acceptance === false) {
+    } // Case when lect and WF approved but TA rejected
+    else if (workforce === true && approval === true && acceptance === false) {
       return (
         <CustomStatus value="TA has rejected" isRed isExclamationTriangle />
       );
-    }
-
-    if (workforce === true) {
-      return <CustomStatus value="Workforce has approved" isGreen isCheck />;
-    } else if (workforce === false) {
+    } // Case When WF approved but Lect rejected
+    else if (workforce === true && approval === false && acceptance === null) {
+      return <CustomStatus value="Lecturer has rejected" isRed isCross />;
+    } // Case when WF, Lect and TA approved
+    else if (workforce === true && approval === true && acceptance === true) {
+      return <CustomStatus value="TA has approved" isGreen isCheck />;
+    } // Case when Lect approved but WF has yet to approve
+    else if (workforce === null && approval === true && acceptance === null) {
+      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />;
+    } // Case when Lect approve but workforce rejected
+    else if (workforce === false && approval === true && acceptance === null) {
       return <CustomStatus value="Workforce has rejected" isRed isCross />;
     }
 
-    return (
-      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
-    );
+    return <CustomStatus value="Error" isRed isCross></CustomStatus>;
+
+    // if (approval === null) {
+    //   return (
+    //     <CustomStatus
+    //       value="Waiting for Lecturer"
+    //       isBlue
+    //       isExclamationDiamond
+    //     />
+    //   );
+    // } else if (approval === false) {
+    //   return <CustomStatus value="Lecturer has rejected" isRed isCross />;
+    // }
+
+    // if (acceptance === null) {
+    //   return <CustomStatus value="Waiting for TA response" isBlue isClock />;
+    // } else if (acceptance === false) {
+    //   <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
+    // }
+
+    // if (workforce === true) {
+    //   return <CustomStatus value="Workforce has approved" isGreen isCheck />;
+    // } else if (workforce === false) {
+    //   return <CustomStatus value="Workforce has rejected" isRed isCross />;
+    // }
+
+    // return (
+    //   <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
+    // );
   }
 
   const StyledTableCell = withStyles(() => ({
@@ -423,6 +455,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
    */
   return (
     <div>
+      <CandidatesModal
+        activityId={modalOpen}
+        closeModal={() => setModalOpen(null)}
+      />
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <Autocomplete
@@ -534,9 +570,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               {j === 0 ? (
                                 <>
                                   <TableCell rowSpan={n + 1} align="left">
-                                    <TableRow>
-                                      {activity.unit.unitCode}
-                                    </TableRow>
+                                    {activity.unit.unitCode}
                                     <Button
                                       size="small"
                                       href="#text-buttons"
@@ -586,7 +620,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                               </TableCell>
 
                               <TableCell align="center">
-                                {allocation.isLecturerApproved === null ? (
+                                {allocation.isWorkforceApproved === null ? (
                                   <div
                                     style={{
                                       display: "flex",
@@ -630,7 +664,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                       variant="contained"
                                       onClick={() => setModalOpen(activity.id)}
                                     >
-                                      Allocate
+                                      Assign Staff
                                     </Button>
                                   </TableCell>
                                 ) : (
@@ -693,7 +727,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                           variant="contained"
                           onClick={() => setModalOpen(activity.id)}
                         >
-                          Allocate
+                          Assign Staff
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -735,4 +769,4 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   );
 };
 
-export default LecturingActivity;
+export default AdminUnitActivity;
