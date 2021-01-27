@@ -40,11 +40,13 @@ class RolesService {
     // Only admin can have access to roles in all units
     hasAdminAccess(req, res);
 
-    return await this.repo
+    let roles = await this.repo
       .createQueryBuilder("role")
       .innerJoinAndSelect("role.unit", "unit")
       .innerJoinAndSelect("role.staff", "staff")
       .getMany();
+
+    return roles;
   }
 
   /**

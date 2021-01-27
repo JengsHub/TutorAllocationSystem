@@ -19,7 +19,7 @@ import { Autocomplete } from "@material-ui/lab";
 import React, { useState, useEffect } from "react";
 import { RoleEnum } from "../enums/RoleEnum";
 import baseApi from "../apis/baseApi";
-import { IRole } from "../type";
+import { IRole, IStaff, IUnit } from "../type";
 import { useRef } from "react";
 
 /***
@@ -31,13 +31,12 @@ import { useRef } from "react";
  * - Secure this route only for Admin role
  */
 interface IRow {
-  role: string;
+  title: string;
+  newTitle: string;
   roleId: string;
-  unitCode: string;
+  unit: IUnit;
   unitId: string;
-  givenNames: string;
-  lastName: string;
-  email: string;
+  staff: IStaff;
   id: number;
   isEditMode: boolean;
   staffId: string;
@@ -72,7 +71,7 @@ const CustomTableCell = ({ row, name, onChange }: any) => {
     <TableCell align="left" className={classes.tableCell}>
       {isEditMode ? (
         <Select
-          value={row[name]}
+          value={row.newTitle ? row.newTitle : row.title}
           name={name}
           onChange={(e) => onChange(e, row)}
         >
@@ -80,7 +79,7 @@ const CustomTableCell = ({ row, name, onChange }: any) => {
           <MenuItem value={RoleEnum.TA}>TA</MenuItem>
         </Select>
       ) : (
-        row[name]
+        row.title
       )}
     </TableCell>
   );
@@ -96,8 +95,8 @@ const UnitRoles = () => {
 
   const [unitCodeOption, setUnitCodeOption] = useState<string[]>([]);
   const [yearOption, setYearOption] = useState<string[]>([]);
-  const [selectedPeriod, setSelectedPeriod] = useState<any>();
-  const [selectedUnit, setSelectedUnit] = useState<any>();
+  const [selectedPeriod, setSelectedPeriod] = useState<any>("All");
+  const [selectedUnit, setSelectedUnit] = useState<any>("All");
 
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const initialRender = useRef(true);
@@ -118,7 +117,6 @@ const UnitRoles = () => {
       setUserRoles(res);
       setRolesToDisplay(res);
       setUpAutoComplete(res);
-      fetchStaff();
     });
   }, [hasChanged]);
 
@@ -140,7 +138,7 @@ const UnitRoles = () => {
 
       setRolesToDisplay(tempArray);
     }
-  }, [selectedPeriod, selectedUnit]);
+  }, [userRoles, selectedPeriod, selectedUnit]);
 
   const onToggleEditMode = (id: number) => {
     setRows((state) => {
@@ -165,9 +163,10 @@ const UnitRoles = () => {
 
     const data = rows.find((r) => r.id === id);
     if (data) {
+      console.log(data);
       // TODO: handle status of request to provide feedback to user, especially if update failed
       await baseApi.put(`/roles/unit/${data.unitId}`, {
-        title: data.role,
+        title: data.title,
         staffId: data.staffId,
       });
     }
@@ -206,11 +205,12 @@ const UnitRoles = () => {
   };
 
   const fetchStaff = async () => {
-    // TODO: better way for row id?
+    console.log(userRoles);
     const resJson = rolesToDisplay.map((e: any, index: number) => ({
       ...e,
       id: index,
     }));
+    console.log(resJson);
     setRows(resJson);
   };
 
@@ -330,14 +330,14 @@ const UnitRoles = () => {
                     </IconButton>
                   )}
                 </TableCell>
-                <TableCell>{row.unitCode}</TableCell>
+                <TableCell>{row.unit.unitCode}</TableCell>
                 <TableCell>
-                  {row.givenNames} {row.lastName}
+                  {row.staff.givenNames} {row.staff.lastName}
                 </TableCell>
-                <TableCell>{row.email}</TableCell>
-                {/* <TableCell>{row.role}</TableCell> */}
+                <TableCell>{row.staff.email}</TableCell>
+
                 <CustomTableCell
-                  {...{ row, name: "role", onChange }}
+                  {...{ row, name: "title", onChange: onChange }}
                 ></CustomTableCell>
               </TableRow>
             ))}
