@@ -324,8 +324,8 @@ const AdminUnitActivity: React.FC<ILecturingActivityProps> = ({
           style={{ width: 60 }}
           value={activity.allocationsMaxNum}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setActivities((activities) => {
-              let activity = activities.slice();
+            setActivitiesToDisplay((activitiesToDisplay) => {
+              let activity = activitiesToDisplay.slice();
               let newValue = parseInt(e.target.value);
               if (!isNaN(newValue)) activity[iter].allocationsMaxNum = newValue;
               return activity;
@@ -384,7 +384,13 @@ const AdminUnitActivity: React.FC<ILecturingActivityProps> = ({
       return <CustomStatus value="TA has approved" isGreen isCheck />;
     } // Case when Lect approved but WF has yet to approve
     else if (workforce === null && approval === true && acceptance === null) {
-      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />;
+      return (
+        <CustomStatus
+          value="Waiting for Workforce approval"
+          isBlue
+          isExclamationTriangle
+        />
+      );
     } // Case when Lect approve but workforce rejected
     else if (workforce === false && approval === true && acceptance === null) {
       return <CustomStatus value="Workforce has rejected" isRed isCross />;
