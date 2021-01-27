@@ -33,12 +33,13 @@ class UploadService {
   @POST
   @Path("/tas")
   public async uploadTas(@ContextRequest req: Request) {
+    let user = req.user as Staff;
     const controller = this.factory.getController(
       await (req.user as Staff).getRoleTitle()
     );
     const files = (req.files as unknown) as FileArray;
     const path = (files.tas as UploadedFile).tempFilePath;
-    controller.uploadTas(path);
+    controller.uploadTas(path, user);
   }
 
   /**

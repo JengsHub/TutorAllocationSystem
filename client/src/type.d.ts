@@ -100,6 +100,8 @@ interface IStatusLogWithStaff {
   action: string;
   staff: IStaff;
   staffId: string;
+  targetStaff: IStaff;
+  targetStaffId: string;
   time: string;
 }
 

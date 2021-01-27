@@ -1,6 +1,8 @@
 import { Allocation, Staff } from "~/entity";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
+import { ActionEnums } from "../enums/ActionEnum";
 import { removeKeys, UnauthorisedAccessedError } from "~/helpers";
+import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 
 export class AllocationControllerFactory {
   getController(role: RoleEnum | AppRoleEnum): IAllocationController {
@@ -86,9 +88,16 @@ class LecturerAllocationController implements IAllocationController {
       "Lecturer cannot delete this Allocation: Allocation has already been accepted"
     );
   }
-  createAllocation(user: Staff, newRecord: Allocation) {
+  async createAllocation(user: Staff, newRecord: Allocation) {
     newRecord.isLecturerApproved = true;
     newRecord = removeKeys(newRecord, this.restrictedWriteKeys);
+    let allocation = await Allocation.save(newRecord);
+    createAndSaveStatusLog(
+      allocation["id"],
+      ActionEnums.LECTURER_PROPOSE,
+      user.id,
+      newRecord.staffId
+    );
     return Allocation.save(newRecord);
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
@@ -127,9 +136,16 @@ class AdminAllocationController implements IAllocationController {
   deleteAllocation(user: Staff, recordToDelete: Allocation) {
     return Allocation.delete({ id: recordToDelete.id });
   }
-  createAllocation(user: Staff, newRecord: Allocation) {
+  async createAllocation(user: Staff, newRecord: Allocation) {
     newRecord.isWorkforceApproved = true;
-    return Allocation.save(newRecord);
+    let allocation = await Allocation.save(newRecord);
+    createAndSaveStatusLog(
+      allocation["id"],
+      ActionEnums.WORKFORCE_PROPOSE,
+      user.id,
+      newRecord.staffId
+    );
+    return allocation;
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
     return Allocation.update(

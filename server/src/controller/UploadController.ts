@@ -13,6 +13,7 @@ import ProcessFileService, {
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
 import stripBom from "strip-bom-stream";
 import { DayOfWeek } from "~/enums/DayOfWeek";
+import { Staff } from "~/entity";
 
 export class UploadControllerFactory {
   getController(role: RoleEnum | AppRoleEnum): IUploadController {
@@ -30,13 +31,13 @@ export class UploadControllerFactory {
 }
 
 export interface IUploadController {
-  uploadTas(path: string): any;
+  uploadTas(path: string, user: Staff): any;
   uploadTps(path: string): any;
   uploadAllocate(path: string): any;
 }
 
 class TaUploadController implements IUploadController {
-  uploadTas(path: string) {
+  uploadTas(path: string, user: Staff) {
     return new UnauthorisedAccessedError("TAs cannot upload TAS files");
   }
 
@@ -50,7 +51,7 @@ class TaUploadController implements IUploadController {
 }
 
 class LecturerUploadController implements IUploadController {
-  uploadTas(path: string) {
+  uploadTas(path: string, user: Staff) {
     return new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
   }
 
@@ -72,7 +73,7 @@ class AdminUploadController implements IUploadController {
     },
   };
 
-  uploadTas(path: string) {
+  uploadTas(path: string, user: Staff) {
     var processFileService: ProcessFileService = new ProcessFileService();
     let allRows: TasObject[] = [];
     fs.createReadStream(path)
@@ -87,7 +88,7 @@ class AdminUploadController implements IUploadController {
         console.log("TAS CSV file successfully read");
         // FIXME: process and save all rows to db at once to reduce number of calls to db
         for (let row of allRows) {
-          await processFileService.processTasObject(row);
+          await processFileService.processTasObject(row, user);
         }
         console.log("TAS CSV file successfully processed");
       });

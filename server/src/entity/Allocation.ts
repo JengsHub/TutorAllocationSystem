@@ -67,6 +67,21 @@ export class Allocation extends BaseEntity {
       this.isExpired = true; //isExprid = true
     }
   }
+
+  static async createOrUpdateAllocation(newRecord: Allocation) {
+    let found = await Allocation.createQueryBuilder("allocation")
+      .where("allocation.staffId = :id", { id: newRecord.staffId })
+      .andWhere("allocation.activityId = :activityId", {
+        activityId: newRecord.activityId,
+      })
+      .getOne();
+
+    if (found) {
+      return newRecord;
+    } else {
+      return Allocation.save(newRecord);
+    }
+  }
 }
 
 //Things to consider:
