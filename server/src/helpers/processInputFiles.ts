@@ -8,6 +8,9 @@ import {
 } from "~/entity";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import cleanInputData from "./dataSanitizer";
+import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
+import { ActionEnums } from "../enums/ActionEnum";
+import { StatusLog } from "../entity/StatusLog";
 
 export class ProcessFileService {
   allocateList: any[] = [[]];
@@ -25,7 +28,7 @@ export class ProcessFileService {
     console.log("obtain result: " + this.allocateList.toString());
   };
 
-  processTasObject = async (row: TasObject) => {
+  processTasObject = async (row: TasObject, user: Staff) => {
     let unit_object: Unit;
     let staff_object: Staff;
     let activity_object: Activity;
@@ -91,7 +94,7 @@ export class ProcessFileService {
       throw err;
     }
 
-    let endTime = calculateEndTime(row["startTime"], row["duration"]);
+    let endTime: string = calculateEndTime(row["startTime"], row["duration"]);
     let dayStr: string[] = ["Mon", "Tue", "Wed", "Thu", "Fri"];
     const activity = Activity.create({
       activityCode: row["activityCode"],
@@ -117,9 +120,21 @@ export class ProcessFileService {
       staffId: staff_object.id,
     });
     // console.log(allocation);
+
+    // Initial allocations are by default workforce approved
+    allocation.isWorkforceApproved = true;
+
     try {
-      let allocateRepo = Allocation.getRepository();
-      await allocateRepo.save(allocation);
+      let new_allocation = await Allocation.createOrUpdateAllocation(
+        allocation
+      );
+      if (new_allocation.id) {
+        await StatusLog.createOrIgnoreStatusLog(
+          new_allocation,
+          staff_object.id,
+          user
+        );
+      }
     } catch (err) {
       throw err;
     }
@@ -332,7 +347,7 @@ type RawAllocateObject = {
   student_count: number;
 };
 
-type TasObject = {
+export type TasObject = {
   givenNames: string;
   lastNames: string;
   preferenceScore: string;
@@ -351,7 +366,7 @@ type TasObject = {
   location: string;
 };
 
-type TpsObject = {
+export type TpsObject = {
   aqfTarget: string;
   unitCode: string;
   offeringPeriod: string;
@@ -369,7 +384,7 @@ type TpsObject = {
   maxNumberActivities: string;
 };
 
-type AllocateObject = {
+export type AllocateObject = {
   unitCode: string;
   offeringPeriod: string;
   campus: string;
@@ -384,95 +399,113 @@ type AllocateObject = {
 };
 
 export function mapRawTasFile(rawRow: RawTasObject) {
-  // create the tas object that will be returned
-  const tasObject: TasObject = {
-    givenNames: rawRow["Tutor"].split(" ")[0],
-    lastNames: rawRow["Tutor"].split(" ")[1],
-    preferenceScore: rawRow["Tutor pref"],
-    lecturerScore: rawRow["Lecturer pref"],
-    isHeadTutorCandidate: rawRow["Head tutor"],
-    aqf: rawRow["Tutor AQF"],
-    email: rawRow["Email"],
-    unitCode: rawRow["Subject"],
-    offeringPeriod: rawRow["Subject Code"].slice(11, 13),
-    activityCode: rawRow["Activity Code"],
-    activityGroup: rawRow["Activity Group"],
-    campus: rawRow["Campus"],
-    dayOfWeek: rawRow["Day"],
-    startTime: rawRow["Time"],
-    duration: rawRow["Duration"],
-    location: rawRow["Location"],
-  };
-  return tasObject;
+  try {
+    // create the tas object that will be returned
+    const tasObject: TasObject = {
+      givenNames: rawRow["Tutor"].split(" ")[0],
+      lastNames: rawRow["Tutor"].split(" ")[1],
+      preferenceScore: rawRow["Tutor pref"],
+      lecturerScore: rawRow["Lecturer pref"],
+      isHeadTutorCandidate: rawRow["Head tutor"],
+      aqf: rawRow["Tutor AQF"],
+      email: rawRow["Email"],
+      unitCode: rawRow["Subject"],
+      offeringPeriod: rawRow["Subject Code"].slice(11, 13),
+      activityCode: rawRow["Activity Code"],
+      activityGroup: rawRow["Activity Group"],
+      campus: rawRow["Campus"],
+      dayOfWeek: rawRow["Day"],
+      startTime: rawRow["Time"],
+      duration: rawRow["Duration"],
+      location: rawRow["Location"],
+    };
+    return tasObject;
+  } catch (e) {
+    console.log("Failed to read line");
+    return null;
+  }
 }
 
 export function mapRawTpsFile(rawRow: RawTpsObject) {
-  // create the tas object that will be returned
-  const tpsObject: TpsObject = {
-    aqfTarget: rawRow["unit aqf target"],
-    unitCode: rawRow["unit"].slice(0, 7),
-    offeringPeriod: rawRow["unit"].slice(7),
-    campus: rawRow["campus"],
-    givenNames: rawRow["name"].split(" ")[0],
-    lastNames: rawRow["name"].split(" ")[1],
-    studyAqf: rawRow["tutors studying aqf"],
-    aqf: rawRow["tutors aqf"],
-    email: rawRow["email"],
-    headCandidiate: rawRow["head tutor cand?"],
-    preferenceScore: rawRow["tutors pref"],
-    lecturerScore: rawRow["lec suitability"],
-    availabilities: [
-      {
-        day: DayOfWeek.MONDAY,
-        start: rawRow["M start"],
-        end: rawRow["M end"],
-      },
-      {
-        day: DayOfWeek.TUESDAY,
-        start: rawRow["T start"],
-        end: rawRow["T end"],
-      },
-      {
-        day: DayOfWeek.WEDNESDAY,
-        start: rawRow["W start"],
-        end: rawRow["W end"],
-      },
-      {
-        day: DayOfWeek.THURSDAY,
-        start: rawRow["Th start"],
-        end: rawRow["Th end"],
-      },
-      {
-        day: DayOfWeek.FRIDAY,
-        start: rawRow["F start"],
-        end: rawRow["F end"],
-      },
-    ],
-    maxHours: rawRow["max hr"],
-    maxNumberActivities: rawRow["lecturer_override min classes"],
-  };
-  return tpsObject;
+  try {
+    // create the tas object that will be returned
+    const tpsObject: TpsObject = {
+      aqfTarget: rawRow["unit aqf target"],
+      unitCode: rawRow["unit"].slice(0, 7),
+      offeringPeriod: rawRow["unit"].slice(7),
+      campus: rawRow["campus"],
+      givenNames: rawRow["name"].split(" ")[0],
+      lastNames: rawRow["name"].split(" ")[1],
+      studyAqf: rawRow["tutors studying aqf"],
+      aqf: rawRow["tutors aqf"],
+      email: rawRow["email"],
+      headCandidiate: rawRow["head tutor cand?"],
+      preferenceScore: rawRow["tutors pref"],
+      lecturerScore: rawRow["lec suitability"],
+      availabilities: [
+        {
+          day: DayOfWeek.MONDAY,
+          start: rawRow["M start"],
+          end: rawRow["M end"],
+        },
+        {
+          day: DayOfWeek.TUESDAY,
+          start: rawRow["T start"],
+          end: rawRow["T end"],
+        },
+        {
+          day: DayOfWeek.WEDNESDAY,
+          start: rawRow["W start"],
+          end: rawRow["W end"],
+        },
+        {
+          day: DayOfWeek.THURSDAY,
+          start: rawRow["Th start"],
+          end: rawRow["Th end"],
+        },
+        {
+          day: DayOfWeek.FRIDAY,
+          start: rawRow["F start"],
+          end: rawRow["F end"],
+        },
+      ],
+      maxHours: rawRow["max hr"],
+      maxNumberActivities: rawRow["lecturer_override min classes"],
+    };
+    return tpsObject;
+  } catch (e) {
+    console.log("Failed to read line");
+    return null;
+  }
 }
 
 export function mapRawAllocateFile(rawRow: RawAllocateObject) {
-  // create the tas object that will be returned
-  const allocateObject: AllocateObject = {
-    unitCode: rawRow["subject_code"].slice(0, 7),
-    offeringPeriod: rawRow["subject_code"].slice(11, 13),
-    campus: rawRow["campus"],
-    activityCode: rawRow["activity_code"],
-    activityGroup: rawRow["activity_group_code"],
-    location: rawRow["location"],
-    duration: rawRow["duration"],
-    dayOfWeek: rawRow["day_of_week"],
-    startTime: rawRow["start_time"],
-    staff_in_charge: rawRow["staff"],
-    studentCount: rawRow["student_count"],
-  };
-  return allocateObject;
+  try {
+    // create the tas object that will be returned
+    const allocateObject: AllocateObject = {
+      unitCode: rawRow["subject_code"].slice(0, 7),
+      offeringPeriod: rawRow["subject_code"].slice(11, 13),
+      campus: rawRow["campus"],
+      activityCode: rawRow["activity_code"],
+      activityGroup: rawRow["activity_group_code"],
+      location: rawRow["location"],
+      duration: rawRow["duration"],
+      dayOfWeek: rawRow["day_of_week"],
+      startTime: rawRow["start_time"],
+      staff_in_charge: rawRow["staff"],
+      studentCount: rawRow["student_count"],
+    };
+    return allocateObject;
+  } catch (e) {
+    console.log("Failed to read line");
+    return null;
+  }
 }
 
-function calculateEndTime(startTimeParam: string, durationParam: number) {
+function calculateEndTime(
+  startTimeParam: string,
+  durationParam: number
+): string {
   /**
    * TODO: some recommendations here
    * - can calculate the end time on the database level

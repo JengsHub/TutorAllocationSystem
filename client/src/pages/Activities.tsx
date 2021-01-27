@@ -323,33 +323,67 @@ const Activities = () => {
   const approvalStatus = (
     allocation: myAllocations & { [key: string]: any }
   ) => {
-    if (!allocation.isLecturerApproved) {
-      return (
-        <CustomStatus value="Error With Approval" isRed isExclamationTriangle />
-      );
-    }
-
-    if (allocation.isTaAccepted === null) {
+    if (
+      allocation.isLecturerApproved &&
+      allocation.isWorkforceApproved &&
+      allocation.isTaAccepted === null
+    ) {
       return (
         <CustomStatus
-          value="Waiting for response"
+          value="Waiting for your response"
           isBlue
           isExclamationDiamond
         />
       );
-    } else if (allocation.isTaAccepted === false) {
-      return <CustomStatus value="TA has rejected" isRed isCross />;
-    }
-
-    if (allocation.isWorkforceApproved === true) {
-      return <CustomStatus value="Workforce has approved" isGreen isCheck />;
-    } else if (allocation.isWorkforceApproved === false) {
+    } else if (
+      allocation.isLecturerApproved &&
+      !allocation.isWorkforceApproved
+    ) {
       return <CustomStatus value="Workforce has rejected" isRed isCross />;
+    } else if (
+      !allocation.isLecturerApproved &&
+      allocation.isWorkforceApproved
+    ) {
+      return <CustomStatus value="Lecturer has rejected" isRed isCross />;
+    } else if (
+      allocation.isLecturerApproved &&
+      allocation.isWorkforceApproved &&
+      allocation.isTaAccepted === true
+    ) {
+      return <CustomStatus value="You have approved" isGreen isCheck />;
+    } else if (
+      allocation.isLecturerApproved &&
+      allocation.isWorkforceApproved &&
+      allocation.isTaAccepted === false
+    ) {
+      return <CustomStatus value="You have rejected" isRed isCross />;
     }
 
-    return (
-      <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
-    );
+    // if (!allocation.isLecturerApproved) {
+    //   return (
+    //     <CustomStatus value="Error With Approval" isRed isExclamationTriangle />
+    //   );
+    // }
+
+    // if (allocation.isTaAccepted === null) {
+    //   return (
+    //     <CustomStatus
+    //       value="Waiting for response"
+    //       isBlue
+    //       isExclamationDiamond
+    //     />
+    //   );
+    // } else if (allocation.isTaAccepted === false) {
+    //   return <CustomStatus value="You have rejected" isRed isCross />;
+    // }
+
+    // if (allocation.isWorkforceApproved === true) {
+    //   return <CustomStatus value="Workforce has approved" isGreen isCheck />;
+    // } else if (allocation.isWorkforceApproved === false) {
+    //   return <CustomStatus value="Workforce has rejected" isRed isCross />;
+    // }
+
+    return <CustomStatus value="Error" isRed isCross />;
   };
 
   const StyledTableCell = withStyles(() => ({
@@ -483,6 +517,7 @@ const Activities = () => {
                   </TableCell>
                   <TableCell align="center">
                     {allocation.isLecturerApproved === true &&
+                    allocation.isWorkforceApproved === true &&
                     allocation.isTaAccepted === null ? (
                       <div
                         style={{ display: "flex", justifyContent: "center" }}

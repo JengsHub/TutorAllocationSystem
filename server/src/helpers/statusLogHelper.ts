@@ -5,11 +5,13 @@ import { createCurrentDateAndTime } from "./getDateAndTime";
 export function createAndSaveStatusLog(
   allocationId: string,
   action: ActionEnums,
-  staffId: string
+  staffId: string,
+  targetStaffId: string | null
 ) {
   let statusLogObj = StatusLog.create({
     allocationId: allocationId,
     staffId: staffId,
+    targetStaffId: targetStaffId,
     action: action,
     time: createCurrentDateAndTime(),
   });

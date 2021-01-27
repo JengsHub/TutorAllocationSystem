@@ -16,12 +16,12 @@ import {
 } from "typescript-rest";
 import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
-import { StatusLog } from "~/entity/StatusLog";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 import { emailHelperInstance } from "..";
 import { checkNewAllocation } from "../helpers/checkConstraints";
+import { RoleEnum } from "~/enums/RoleEnum";
 
 class ConstraintError extends Errors.HttpError {
   static statusCode: number = 512;
@@ -182,7 +182,7 @@ class AllocationsService {
    *
    * Role authorisation:
    *  - TA: not allowed
-   *  - Lecturer: can create allocation for unit they're lecturing
+   *  - Lecturer: can create allocation for unit they're lecturing but not isWorkforceApproved attribute
    *  - Admin: can create allocation in any unit
    *
    * @param newRecord allocation data
@@ -215,11 +215,12 @@ class AllocationsService {
 
     let allocation = await controller.createAllocation(me, newRecord);
     console.log(allocation);
-    createAndSaveStatusLog(
-      allocation["id"],
-      ActionEnums.MAKE_OFFER,
-      newRecord.staffId
-    );
+    // createAndSaveStatusLog(
+    //   allocation["id"],
+    //   ActionEnums.LECTURER_PROPOSE,
+    //   me.id,
+    //   newRecord.staffId
+    // );
 
     return allocation;
   }
@@ -266,11 +267,11 @@ class AllocationsService {
       });
 
       // Log the status approval here
-      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id);
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_APPROVE, me.id, staff.id);
     }
     // If approval status is false, create status log
     else {
-      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id);
+      createAndSaveStatusLog(id, ActionEnums.LECTURER_REJECT, me.id, staff.id);
     }
 
     return controller.updateLecturerApproval(me, allocation, value);
@@ -302,7 +303,8 @@ class AllocationsService {
     const me = req.user as Staff;
     const { staff, activity } = allocation;
     const { unit } = activity;
-    const role = await me.getRoleTitle(unit.id);
+    // const role = await me.getRoleTitle(unit.id);
+    let role = RoleEnum.TA;
     const controller = this.factory.getController(role);
 
     // get the person who with lecturer role
@@ -334,10 +336,10 @@ class AllocationsService {
 
     if (value) {
       // if value is true, which means the TA accept, log the acceptance in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_ACCEPT, me.id, null);
     } else {
       // if value is false, which means the TA reject, log the rejection in status log
-      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id);
+      createAndSaveStatusLog(allocation.id, ActionEnums.TA_REJECT, me.id, null);
     }
     return controller.updateTaAcceptance(me, allocation, value);
   }
@@ -367,7 +369,7 @@ class AllocationsService {
     });
 
     const me = req.user as Staff;
-    const { activity } = allocation;
+    const { activity, staff } = allocation;
     const { unit } = activity;
     const role = await me.getRoleTitle(unit.id);
     const controller = this.factory.getController(role);
@@ -378,14 +380,16 @@ class AllocationsService {
       createAndSaveStatusLog(
         allocation.id,
         ActionEnums.WORKFORCE_APPROVE,
-        me.id
+        me.id,
+        staff.id
       );
     } else {
       // if value is false, which means the Workforce reject, log the rejection in status log
       createAndSaveStatusLog(
         allocation.id,
         ActionEnums.WORKFORCE_REJECT,
-        me.id
+        me.id,
+        staff.id
       );
     }
     return controller.updateWorkforceApproval(me, allocation, value);

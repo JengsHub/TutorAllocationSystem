@@ -6,9 +6,9 @@ server/dist
 
 # Environment files
 .env
+.dev.env
+.prod.env
 
 # session files
 server/sessions
 
-# Config
-server/src/config.ts
