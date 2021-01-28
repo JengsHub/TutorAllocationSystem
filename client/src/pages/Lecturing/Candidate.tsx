@@ -20,6 +20,8 @@ import {
   IPreference,
 } from "../../type";
 
+//This is where candidates for activities are created, shown, and handled
+
 interface ICandidateProps {
   activityId: string;
 }

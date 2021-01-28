@@ -13,6 +13,11 @@
 import React, { useEffect, useState } from "react";
 import StatusLogModal from "../StatusLogModal";
 import LecturingActivity from "./LecturingActivity";
+/*
+ * Page: Offering
+ * This is where non-admins see the offerings of units
+ * here they can apply to allocate themselves to an activity in an offering.
+ */
 
 const Lecturing = () => {
   // const [units, setUnits] = useState<IUnit[]>([]);

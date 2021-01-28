@@ -11,6 +11,10 @@ import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { IStaff } from "../../type";
 import StaffModal from "./StaffModal";
+/*
+ * Page: Staff
+ * This is the staff names are visible along with their emails, AQF, and Studying AQF
+ */
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

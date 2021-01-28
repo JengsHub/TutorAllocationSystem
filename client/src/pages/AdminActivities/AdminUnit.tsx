@@ -14,6 +14,11 @@ import React, { useEffect, useState } from "react";
 import StatusLogModal from "../StatusLogModal";
 import AdminUnitActivity from "./AdminUnitActivity";
 
+/*
+ * Page: Activities
+ * This is where admins can view the list of activities and interact with them
+ */
+
 const AdminUnit = () => {
   // const [units, setUnits] = useState<IUnit[]>([]);
   const [statusLogModalOpen, setStatusLogModalOpen] = useState<string | null>(

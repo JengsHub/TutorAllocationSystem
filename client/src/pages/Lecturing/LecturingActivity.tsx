@@ -20,6 +20,8 @@ import CandidatesModal from "./CandidatesModal";
 import "../styles/Grid.css";
 import { IActivity, IAllocationWithStaff } from "../../type";
 
+// here is where the activities for each units are displayed
+
 interface ILecturingActivityProps {
   setStatusLogModalOpen: (activityId: string) => void;
 }

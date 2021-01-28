@@ -15,6 +15,8 @@ import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 import { IActivity, IAllocation, ISwap } from "../../type";
 
+// This is where the feature of making a swap request takes place
+
 interface ICandidateProps {
   allocation: IAllocation;
 }

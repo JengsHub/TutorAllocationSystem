@@ -21,6 +21,10 @@ import { RoleEnum } from "../enums/RoleEnum";
 import baseApi from "../apis/baseApi";
 import { IRole, IStaff, IUnit } from "../type";
 import { useRef } from "react";
+/*
+ * Page: Unit Roles
+ * This is where the roles for each unit are displayed
+ */
 
 /***
  * TODO:

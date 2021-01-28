@@ -4,6 +4,11 @@ import baseApi from "../../apis/baseApi";
 import Swaps from "./Swaps";
 import { IPreference } from "../../type";
 
+/*
+ * Page: Swapping for non admin
+ * This is where non-admins can see their swap request
+ */
+
 const Swapping = () => {
   const [units, setUnits] = useState<IPreference[]>([]);
 

@@ -20,6 +20,8 @@ import "../styles/Grid.css";
 import CandidatesModal from "../Lecturing/CandidatesModal";
 import { IActivity, IAllocationWithStaff } from "../../type";
 
+//This is where the table of units and their activies and status are created, displayed, and become interactable
+
 interface ILecturingActivityProps {
   setStatusLogModalOpen: (activityId: string) => void;
 }

@@ -14,6 +14,11 @@ import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { ISwap } from "../../type";
 
+/*
+ * Page: Manage Swapping for non admin (lecturers)
+ * This is where lectruers can manage the swapping requests done by TA.
+ */
+
 const SwappingLecturer = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
   const [swapsToDisplay, setSwapsToDisplay] = useState<ISwap[]>([]);
