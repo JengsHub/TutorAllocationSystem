@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
     "skipLibCheck": true,
+    "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react"
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

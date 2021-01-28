@@ -10,7 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import { IAllocation, ISwap } from "../../types";
+import { IAllocation, ISwap } from "../../type";
 import SwappingModal from "./SwappingModal";
 
 const Swaps = (props: { [key: string]: any }) => {

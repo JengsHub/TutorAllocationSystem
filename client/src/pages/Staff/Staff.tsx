@@ -9,7 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TextField from "@material-ui/core/TextField";
 import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
-import { IStaff } from "../../types";
+import { IStaff } from "../../type";
 import StaffModal from "./StaffModal";
 
 const useStyles = makeStyles((theme: Theme) =>

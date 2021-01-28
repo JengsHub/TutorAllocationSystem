@@ -3,7 +3,7 @@ import Fade from "@material-ui/core/Fade";
 import Modal from "@material-ui/core/Modal";
 import Paper from "@material-ui/core/Paper";
 import React from "react";
-import { IAllocation } from "../../types";
+import { IAllocation } from "../../type";
 import SwappingActivities from "./SwappingActivities";
 
 interface ICandidatesModal {

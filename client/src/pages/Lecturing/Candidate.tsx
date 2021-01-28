@@ -18,7 +18,7 @@ import {
   IActivity,
   IAllocationWithStaff,
   IPreferences,
-} from "../../types";
+} from "../../type";
 
 interface ICandidateProps {
   activityId: string;

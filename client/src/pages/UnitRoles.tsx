@@ -19,7 +19,7 @@ import { Autocomplete } from "@material-ui/lab";
 import React, { useState, useEffect } from "react";
 import { RoleEnum } from "../enums/RoleEnum";
 import baseApi from "../apis/baseApi";
-import { IRole, IStaff, IUnit } from "../types";
+import { IRole, IStaff, IUnit } from "../type";
 import { useRef } from "react";
 
 /***
