@@ -3,21 +3,24 @@ export const staffpreferenceDef = {
   properties: {
     id: {
       type: "string",
+      format: "uuid",
     },
     preferenceScore: {
-      type: "number",
+      type: "integer",
     },
     lecturerScore: {
-      type: "number",
+      type: "integer",
     },
     isHeadTutorCandidate: {
       type: "boolean",
     },
     staffId: {
       type: "string",
+      format: "uuid",
     },
     unitId: {
       type: "string",
+      format: "uuid",
     },
   },
 };

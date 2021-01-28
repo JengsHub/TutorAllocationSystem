@@ -3,6 +3,7 @@ export const roleDef = {
   properties: {
     id: {
       type: "string",
+      format: "uuid",
     },
     title: {
       type: "string",
@@ -10,9 +11,11 @@ export const roleDef = {
     },
     unitId: {
       type: "string",
+      format: "uuid",
     },
     staffId: {
       type: "string",
+      format: "uuid",
     },
   },
 };

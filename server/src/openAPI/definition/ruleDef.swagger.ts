@@ -3,6 +3,7 @@ export const ruleDef = {
   properties: {
     id: {
       type: "string",
+      format: "uuid",
     },
     ruleName: {
       readOnly: true,
@@ -13,7 +14,7 @@ export const ruleDef = {
       type: "string",
     },
     value: {
-      type: "number",
+      type: "integer",
     },
   },
 };

@@ -3,6 +3,7 @@ export const availabilityDef = {
   properties: {
     id: {
       type: "string",
+      format: "uuid",
     },
     day: {
       type: "string",
@@ -10,21 +11,24 @@ export const availabilityDef = {
     },
     starttime: {
       type: "string",
+      format: "time",
     },
     endTime: {
       type: "string",
+      format: "time",
     },
     year: {
-      type: "number",
+      type: "integer",
     },
     maxHours: {
-      type: "number",
+      type: "integer",
     },
     maxNumberActivities: {
-      type: "number",
+      type: "integer",
     },
     staffId: {
       type: "string",
+      format: "uuid",
     },
   },
 };

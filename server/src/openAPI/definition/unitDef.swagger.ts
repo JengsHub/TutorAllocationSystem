@@ -3,6 +3,7 @@ export const unitDef = {
   properties: {
     id: {
       type: "string",
+      format: "uuid",
     },
     unitCode: {
       type: "string",
@@ -14,10 +15,10 @@ export const unitDef = {
       type: "string",
     },
     year: {
-      type: "number",
+      type: "integer",
     },
     aqfTarget: {
-      type: "number",
+      type: "integer",
     },
   },
 };

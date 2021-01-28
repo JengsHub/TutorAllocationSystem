@@ -18,8 +18,8 @@ import { unitDef } from "./openAPI/definition/unitDef.swagger";
 import { upload } from "./openAPI/upload.swagger";
 import { statusLog } from "./openAPI/statusLog.swagger";
 import { swap } from "./openAPI/swap.swagger";
-import { statusLogDef } from "./openAPI/definition/statusLog.swagger";
-import { swapDef } from "./openAPI/definition/swap.swagger";
+import { statusLogDef } from "./openAPI/definition/statusLogDef.swagger";
+import { swapDef } from "./openAPI/definition/swapDef.swagger";
 
 export const swaggerDocument = {
   swagger: "2.0",

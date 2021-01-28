@@ -3,6 +3,7 @@ export const activityDef = {
   properties: {
     id: {
       type: "string",
+      format: "uuid",
     },
     activityCode: {
       type: "string",
@@ -16,24 +17,29 @@ export const activityDef = {
     location: {
       type: "string",
     },
-    endTime: {
-      type: "string",
-    },
     dayOfWeek: {
       type: "string",
       enum: ["M", "T", "W", "Th", "F"],
     },
     startTime: {
       type: "string",
+      format: "time",
+    },
+    endTime: {
+      type: "string",
+      format: "time",
     },
     unitId: {
       type: "string",
+      format: "uuid",
     },
     studentCount: {
-      type: "number",
+      type: "integer",
+      default: 0,
     },
     allocationMaxNum: {
-      type: "number",
+      type: "integer",
+      default: 1,
     },
   },
 };
