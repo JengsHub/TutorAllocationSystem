@@ -18,6 +18,7 @@ import SwappingWorkforce from "../pages/Swaps/SwappingWorkforce";
 import UnitRoles from "../pages/UnitRoles";
 import Units from "../pages/Units";
 import PrivateRoute from "./PrivateRoute";
+//this file handles the routing to pages feature, handles differently depending on whether the user has admin access or not.
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);
@@ -42,7 +43,7 @@ const Routes = () => {
 
   console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`);
 
-  if (adminAccess) {
+  if (adminAccess) { //check if user has admin access then render:
     return (
       <AuthContext.Provider
         value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
@@ -91,7 +92,7 @@ const Routes = () => {
         </Switch>
       </AuthContext.Provider>
     );
-  } else {
+  } else { //if user does not have admin access, render this instead:
     return (
       <AuthContext.Provider
         value={{ isAuth, setAuth, adminAccess, setAdminAccess }}

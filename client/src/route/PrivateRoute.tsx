@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Route, RouteComponentProps, RouteProps } from "react-router-dom";
+//private rout to prevent users from opening pages an dusing the app if they arent logged in
+
 /**
  * Boolean prop specifying if user is authenticted or not
  */
