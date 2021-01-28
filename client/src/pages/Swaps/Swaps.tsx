@@ -254,15 +254,17 @@ const Swaps = (props: { [key: string]: any }) => {
                         {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
                         {dayConverter(swap.desired.dayOfWeek)}{" "}
                       </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          onClick={() => acceptSwap(swap)}
-                          variant="contained"
-                          color="primary"
-                        >
-                          Accept Swap
-                        </Button>
-                      </TableCell>
+                      {swap.into?.activity ? null : (
+                        <TableCell align="center">
+                          <Button
+                            onClick={() => acceptSwap(swap)}
+                            variant="contained"
+                            color="primary"
+                          >
+                            Accept Swap
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
