@@ -17,7 +17,23 @@ import { CustomButton, CustomStatus } from "../components";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import "../index.css";
 import { myAllocations } from "../types";
-
+/* 
+* Page: Activities Page
+* This page displays 'Activities'
+* Users can use this page to approve and reject allocations
+* It displays activity information such as:
+* - Campus
+* - Activity Group
+* - Activity Code
+* - Location
+* - Day
+* - Start Time
+* - End Time
+* - Student Count
+* - Status
+* - Action
+* - Time Remaining
+*/
 const Activities = () => {
   const [allocations, setAllocations] = useState<
     (myAllocations & { [key: string]: any })[]

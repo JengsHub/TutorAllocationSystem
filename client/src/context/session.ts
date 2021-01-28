@@ -1,6 +1,9 @@
 import React from "react";
 
-// TODO: Better way for global state management?
+/* 
+* Global state management 
+* Allows for authenticated user and admin user
+*/
 const defaultAuthContext: {
   isAuth: boolean;
   setAuth: any;
