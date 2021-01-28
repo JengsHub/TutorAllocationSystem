@@ -1,7 +1,25 @@
 import React, { MouseEvent } from "react";
 import "./CustomButton.scss";
 import classNames from "classnames";
-
+/**
+ * This component specifies a custom button
+ * Button can be configured with various colours using the following props:
+ * isBlue - Blue Button
+ * isGreen - Green Button
+ * isRed - Red Button
+ * isYellow - Yellow Button
+ * isGrey - Grey Button
+ * 
+ * Button can also be configured with various icons using the following props:
+ * isCheck - Check or Tick Icon
+ * isCross - Cross or 'X' Icon
+ * isTrash - Trash or Bin Icon
+ * 
+ * Button can also be configured with various size using the following props:
+ * '' or null - Default Button
+ * isSmall - Small Button
+ * isCompact - Compact or Round Button
+ */
 interface Props {
   value: string;
   type: "submit" | "button" | "reset";
