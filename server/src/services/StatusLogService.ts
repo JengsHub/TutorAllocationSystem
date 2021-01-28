@@ -19,6 +19,7 @@ class StatusLogService {
   public async getStatusLogsWithUsers(@PathParam("allocationId") id: string) {
     let statusLogs = await createQueryBuilder("StatusLog")
       .leftJoinAndSelect("StatusLog.staff", "Staff")
+      .leftJoinAndSelect("StatusLog.targetStaff", "targetStaff")
       .where("StatusLog.allocationId = :allocationId", { allocationId: id })
       .getMany();
     return statusLogs;

@@ -24,6 +24,11 @@ export interface IAvailabilityController {
   createAvailability(newRecord: Availability, staff: Staff, me: Staff): any;
   updateAvailability(changedAvailability: Availability, me: Staff): any;
   deleteAvailability(availabilityId: string, me: Staff): any;
+  getMonToFridayAvailabilityByYear(
+    me: Staff,
+    year: string,
+    staffId: string
+  ): any;
 }
 
 /* TA role authorisation - RESTRICTED ACCESS
@@ -86,6 +91,16 @@ class TaAvailabilityController implements IAvailabilityController {
         "Can't delete availability for staff other than yourself"
       );
     }
+  }
+
+  async getMonToFridayAvailabilityByYear(
+    me: Staff,
+    year: string,
+    staffId: string
+  ) {
+    return new UnauthorisedAccessedError(
+      "TA is unauthorised to get all availability"
+    );
   }
 }
 
@@ -151,6 +166,16 @@ class LecturerAvailabilityController implements IAvailabilityController {
       );
     }
   }
+
+  async getMonToFridayAvailabilityByYear(
+    me: Staff,
+    year: string,
+    staffId: string
+  ) {
+    return new UnauthorisedAccessedError(
+      "Lecturer is unauthorised to get all availability"
+    );
+  }
 }
 
 /* Admin/workforce role authorisation - FULL ACCESS
@@ -187,5 +212,33 @@ class AdminAvailabilityController implements IAvailabilityController {
 
   async deleteAvailability(availabilityId: string, me: Staff) {
     return Availability.delete({ id: availabilityId });
+  }
+  async getMonToFridayAvailabilityByYear(
+    me: Staff,
+    year: string,
+    staffId: string
+  ) {
+    let days = ["M", "T", "W", "Th", "F"];
+    let activities = [];
+
+    //move this method to controller class later
+    for (let i = 0; i < days.length; i++) {
+      let to_return = await Availability.createQueryBuilder("availability")
+        .where("availability.year = :year", { year })
+        .andWhere("availability.day = :day", { day: days[i] })
+        .andWhere("availability.staffId = :staff", { staff: staffId })
+        .getMany();
+
+      activities.push(to_return);
+    }
+
+    let retVal = {
+      M: activities[0],
+      T: activities[1],
+      W: activities[2],
+      Th: activities[3],
+      F: activities[4],
+    };
+    return retVal;
   }
 }

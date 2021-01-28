@@ -12,6 +12,7 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
+import { ISwap } from "../../type";
 
 const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
@@ -42,6 +43,7 @@ const SwappingWorkforce = () => {
         return await res.data;
       } catch (e) {
         console.log("Error fetching swaps");
+        return [];
       }
     };
 

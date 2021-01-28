@@ -3,7 +3,7 @@ import { Route, Switch, useParams } from "react-router-dom";
 import baseApi from "./apis/baseApi";
 import AdminSidebar from "./components/AdminSidebar";
 import Sidebar from "./components/Sidebar";
-import AdminLecturing from "./pages/AdminActivities/AdminLecturing";
+import AdminUnit from "./pages/AdminActivities/AdminUnit";
 // import Activities from "./pages/Activities";
 import Dashboard from "./pages/Dashboard";
 import DataImport from "./pages/DataImport";
@@ -60,7 +60,7 @@ const Routes = () => {
           <PrivateRoute
             isAuthenticated={isAuth}
             path="/activities"
-            component={AdminLecturing}
+            component={AdminUnit}
           />
           <PrivateRoute
             isAuthenticated={isAuth}
