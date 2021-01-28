@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 import { config } from "../config";
-import { AuthContext } from "../session";
+import { AuthContext } from "../context/session";
 
 const Profile = () => {
   const { isAuth } = React.useContext(AuthContext); // TODO: create context hook for updating value

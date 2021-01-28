@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
-import { IAvailability } from "../../type";
+import { IAvailability } from "../../types";
 
 interface IAvailabilitiesProps {
   staffId: string;

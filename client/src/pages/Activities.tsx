@@ -16,7 +16,7 @@ import baseApi from "../apis/baseApi";
 import { CustomButton, CustomStatus } from "../components";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import "../index.css";
-import { myAllocations } from "../type";
+import { myAllocations } from "../types";
 
 const Activities = () => {
   const [allocations, setAllocations] = useState<

@@ -5,7 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 import StickyHeadTable from "../components/StickyHeadTable";
-import { IStatusLogWithStaff } from "../type";
+import { IStatusLogWithStaff } from "../types";
 
 interface IStatusLogModal {
   activityId: string | null;

@@ -12,7 +12,7 @@ import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
-import { ISwap } from "../../type";
+import { ISwap } from "../../types";
 
 const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);

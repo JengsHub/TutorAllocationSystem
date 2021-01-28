@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
-import { IRule } from "../type";
+import { IRule } from "../types";
 
 const Rules = () => {
   const [rules, setRules] = useState<IRule[]>([]);

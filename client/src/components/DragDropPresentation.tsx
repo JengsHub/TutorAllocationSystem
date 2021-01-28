@@ -1,4 +1,5 @@
 import React from "react";
+import { PresentationalProps } from "../types";
 
 const FileUploaderPresentationalComponent: React.FC<PresentationalProps> = (
   props

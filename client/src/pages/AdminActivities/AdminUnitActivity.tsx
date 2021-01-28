@@ -18,7 +18,7 @@ import { CustomButton, CustomStatus } from "../../components";
 import { DayOfWeek } from "../../enums/DayOfWeek";
 import "../styles/Grid.css";
 import CandidatesModal from "../Lecturing/CandidatesModal";
-import { IActivity, IAllocationWithStaff } from "../../type";
+import { IActivity, IAllocationWithStaff } from "../../types";
 
 interface ILecturingActivityProps {
   setStatusLogModalOpen: (activityId: string) => void;

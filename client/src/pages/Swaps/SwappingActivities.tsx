@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import { IActivity, IAllocation } from "../../type";
+import { IActivity, IAllocation, Swap } from "../../types";
 
 interface ICandidateProps {
   allocation: IAllocation;

@@ -2,6 +2,7 @@ import { Button, Grid } from "@material-ui/core";
 import React, { Component } from "react";
 import baseApi from "../apis/baseApi";
 import ReadFileFormat from "../services/ReadFileFormat";
+import { Props, State } from "../types";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 

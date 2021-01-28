@@ -13,7 +13,12 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
-import { IActivity, IAllocationWithStaff, IPreferences } from "../../type";
+import {
+  Allocation,
+  IActivity,
+  IAllocationWithStaff,
+  IPreferences,
+} from "../../types";
 
 interface ICandidateProps {
   activityId: string;
