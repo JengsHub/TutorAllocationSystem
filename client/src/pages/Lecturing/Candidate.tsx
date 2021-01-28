@@ -14,10 +14,10 @@ import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
 import {
-  Allocation,
+  IAllocation,
   IActivity,
   IAllocationWithStaff,
-  IPreferences,
+  IPreference,
 } from "../../type";
 
 interface ICandidateProps {
@@ -26,7 +26,7 @@ interface ICandidateProps {
 
 const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const [candidatesPreference, setCandidatePreference] = useState<
-    IPreferences[]
+    IPreference[]
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
@@ -113,11 +113,11 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
       }
 
       setAllocationLeft(
-        activity.allocationsMaxNum - allocationsNoRejection.length
+        activity?.allocationsMaxNum - allocationsNoRejection.length
       );
       if (
         selecteds.length >
-        activity.allocationsMaxNum - allocationsNoRejection.length
+        activity?.allocationsMaxNum - allocationsNoRejection.length
       ) {
         setOpen(true);
         return;
@@ -125,7 +125,7 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     }
     setOpen(false);
     selecteds.forEach(async (i) => {
-      var allocation: Allocation = {
+      var allocation: Partial<IAllocation> = {
         activityId: activityId,
         staffId: candidatesPreference[i].staffId,
       };

@@ -19,59 +19,13 @@ export type PresentationalProps = {
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
 };
 
-export interface Units {
+export interface IUnit {
+  id: string;
   unitCode: string;
   offeringPeriod: string;
   campus: string;
   year: number;
   aqfTarget: number;
-}
-
-export interface Staff {
-  givenNames: string;
-  lastName: string;
-  aqf: number;
-  studyingAqf: number;
-  email: string;
-}
-
-export interface StaffPreference {
-  preferenceScore: number;
-  lecturerScore: number;
-  isHeadTutorCandidate: boolean;
-  staffId: string;
-  unitId: string;
-}
-
-export interface Availability {
-  day: DayOfWeek;
-  startTime: string;
-  endTime: string;
-  year: number;
-  maxHours: number;
-  maxNumberActivities: number;
-  staffId: string;
-}
-
-export interface Activity {
-  activityCode: string;
-  activityGroup: string;
-  campus: string;
-  location: string;
-  dayOfWeek: DayOfWeek;
-  startTime: string;
-  endTime: string;
-  unitId: string;
-}
-
-export interface Allocation {
-  activityId: string;
-  staffId: string;
-}
-
-export interface Swap {
-  fromAllocationId: string;
-  desiredActivityId: string;
 }
 
 enum DayOfWeek {
@@ -112,12 +66,13 @@ export interface IRole {
   title: RoleEnum;
   unit: IUnit;
   unitId: string;
-  staff: Staff;
+  staff: IStaff;
   staffId: string;
 }
 
-export interface IPreferences {
-  id: string;
+export interface IPreference {
+  id;
+  string;
   isHeadTutorCandidate: true;
   lecturerScore: number;
   preferenceScore: number;
@@ -163,15 +118,6 @@ export interface IAvailability {
   staffId: string;
 }
 
-export interface IUnit {
-  id: string;
-  unitCode: string;
-  offeringPeriod: string;
-  campus: string;
-  year: number;
-  aqfTarget: number;
-}
-
 export interface IRule {
   id: string;
   ruleName: string;
@@ -200,14 +146,4 @@ export interface ISwap {
   from: IAllocation;
   into: IAllocation | null;
   desired: IActivity;
-}
-
-export interface myAllocations {
-  id: string;
-  isLecturerApproved: boolean;
-  isTaAccepted: boolean;
-  isWorkforceApproved: boolean;
-  activityId: string;
-  staffId: string;
-  activity: IActivity;
 }

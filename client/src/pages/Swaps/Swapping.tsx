@@ -2,10 +2,10 @@ import Box from "@material-ui/core/Box";
 import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import Swaps from "./Swaps";
-import { IPreferences } from "../../type";
+import { IPreference } from "../../type";
 
 const Swapping = () => {
-  const [units, setUnits] = useState<IPreferences[]>([]);
+  const [units, setUnits] = useState<IPreference[]>([]);
 
   useEffect(() => {
     // let user: IStaff | undefined;
@@ -36,7 +36,7 @@ const Swapping = () => {
   //     },
   //   });
 
-  function Row(props: { row: IPreferences }) {
+  function Row(props: { row: IPreference }) {
     const { row } = props;
 
     return (
@@ -62,7 +62,7 @@ const Swapping = () => {
     );
   }
 
-  const sortPreferenceScore = (list: IPreferences[], way: String) => {
+  const sortPreferenceScore = (list: IPreference[], way: String) => {
     list.sort((a, b) => {
       if (way === "desc") {
         return b.preferenceScore > a.preferenceScore

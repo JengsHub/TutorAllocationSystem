@@ -3,13 +3,12 @@ import { Route, Switch, useParams } from "react-router-dom";
 import baseApi from "../apis/baseApi";
 import AdminSidebar from "../components/AdminSidebar";
 import Sidebar from "../components/Sidebar";
+import { AuthContext } from "../context/session";
 import AdminUnit from "../pages/AdminActivities/AdminUnit";
-// import Activities from "./pages/Activities";
 import Dashboard from "../pages/Dashboard";
 import DataImport from "../pages/DataImport";
 import Lecturing from "../pages/Lecturing/Lecturing";
 import NotFound from "../pages/NotFound";
-// import Preferences from "./pages/Preferences";
 import Profile from "../pages/Profile";
 import Rules from "../pages/Rules";
 import Staff from "../pages/Staff/Staff";
@@ -19,8 +18,6 @@ import SwappingWorkforce from "../pages/Swaps/SwappingWorkforce";
 import UnitRoles from "../pages/UnitRoles";
 import Units from "../pages/Units";
 import PrivateRoute from "./PrivateRoute";
-// import Candidate from "./pages/Candidate";
-import { AuthContext } from "../context/session";
 
 const Routes = () => {
   const [isAuth, setAuth] = useState(false);

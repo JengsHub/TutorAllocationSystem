@@ -127,12 +127,12 @@ const UnitRoles = () => {
       let tempArray: (IRole & { [key: string]: any })[] = userRoles;
       if (selectedPeriod !== "All") {
         tempArray = tempArray.filter(function (role) {
-          return role.unit.year.toString() === selectedPeriod;
+          return role.unit?.year?.toString() === selectedPeriod;
         });
       }
       if (selectedUnit !== "All") {
         tempArray = tempArray.filter(function (role) {
-          return role.unit.unitCode === selectedUnit;
+          return role.unit?.unitCode === selectedUnit;
         });
       }
 
