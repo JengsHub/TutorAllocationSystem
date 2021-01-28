@@ -25,6 +25,7 @@ export const staffPreference = {
       },
     },
   },
+
   "/staffpreferences/{id}": {
     get: {
       tags: ["Staff Preference"],
@@ -43,6 +44,7 @@ export const staffPreference = {
       },
     },
   },
+  
   "/staffpreferences/mine": {
     get: {
       tags: ["Staff Preference"],

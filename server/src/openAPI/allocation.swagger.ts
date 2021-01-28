@@ -17,6 +17,7 @@ export const allocation = {
       },
     },
   },
+
   "/allocations/mine": {
     get: {
       tags: ["Allocation"],
@@ -27,6 +28,18 @@ export const allocation = {
       },
     },
   },
+
+  "/allocations/unswapped": {
+    get: {
+      tags: ["Allocation"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+
   "/allocations/{id}": {
     get: {
       tags: ["Allocation"],
@@ -45,6 +58,7 @@ export const allocation = {
       },
     },
   },
+
   "/allocations/{id}/lecturer-approval": {
     patch: {
       tags: ["Allocation"],
@@ -55,6 +69,7 @@ export const allocation = {
       },
     },
   },
+
   "/allocations/{id}/workforce-approval": {
     patch: {
       tags: ["Allocation"],
@@ -65,6 +80,7 @@ export const allocation = {
       },
     },
   },
+
   "/allocations/{id}/ta-acceptance": {
     patch: {
       tags: ["Allocation"],

@@ -16,6 +16,10 @@ import { staffpreferenceDef } from "./openAPI/definition/staffPreferenceDef.swag
 import { unit } from "./openAPI/unit.swagger";
 import { unitDef } from "./openAPI/definition/unitDef.swagger";
 import { upload } from "./openAPI/upload.swagger";
+import { statusLog } from "./openAPI/statusLog.swagger";
+import { swap } from "./openAPI/swap.swagger";
+import { statusLogDef } from "./openAPI/definition/statusLog.swagger";
+import { swapDef } from "./openAPI/definition/swap.swagger";
 
 export const swaggerDocument = {
   swagger: "2.0",
@@ -59,6 +63,14 @@ export const swaggerDocument = {
       description: "Information about staff",
     },
     {
+      name: "Status Log",
+      description: "History log for allocations",
+    },
+    {
+      name: "Swap",
+      description: "Allocation swap between TA",
+    },
+    {
       name: "Unit",
       description: "Information about unit",
     },
@@ -70,7 +82,12 @@ export const swaggerDocument = {
   schemes: ["http"],
   paths: {
     "/activities": activity["/activities"],
+    "activities/all-my-lecturing": activity["activities/all-my-lecturing"],
     "/activities/{activityId}": activity["/activities/{activityId}"],
+    "/activities/{activityId}/allocation":
+      activity["/activities/{activityId}/allocation"],
+    "/activities/{activityId}/allocationMaxNum":
+      activity["/activities/{activityId}/allocationsMaxNum"],
     "/activities/{activityId}/candidates":
       activity["/activities/{activityId}/candidates"],
     "/activities/{activityId}/candidates/{sortingCriteria}":
@@ -78,6 +95,7 @@ export const swaggerDocument = {
 
     "/allocations": allocation["/allocations"],
     "/allocations/mine": allocation["/allocations/mine"],
+    "/allocations/unswapped": allocation["/allocations/unswapped"],
     "/allocations/{id}": allocation["/allocations/{id}"],
     "allocations/{id}/lecturer-approval":
       allocation["/allocations/{id}/lecturer-approval"],
@@ -88,6 +106,8 @@ export const swaggerDocument = {
 
     "/availabilities": availability["/availabilities"],
     "/availabilities/{id}": availability["/availabilities/{id}"],
+    "/availabilities/monToFriAvai/{year}":
+      availability["/availabilities/monToFriAvai/{year}"],
 
     "/roles": role["/roles"],
     "/roles/{id}": role["/roles/{id}"],
@@ -103,7 +123,26 @@ export const swaggerDocument = {
     "/staffpreferences/{id}": staffPreference["/staffpreferences/{id}"],
 
     "/staff": staff["/staff"],
+    "/staff/all": staff["/staff/all"],
     "/staff/{id}": staff["/staff/{id}"],
+
+    "/statuslog/": statusLog["/statuslog"],
+    "/statuslog/{allocationId}": statusLog["/statuslog/{allocationId}"],
+    "/statuslog/{allocationId}/staffs":
+      statusLog["/statuslog/{allocationId}/staffs"],
+
+    "/swaps": swap["/swaps"],
+    "/swaps/{id}": swap["/swaps/{id}"],
+    "/swaps/mine/{unitId}": swap["/swaps/mine/{unitId}"],
+    "/swaps/acceptSwap": swap["/swaps/acceptSwap"],
+    "/swaps/rejectSwap/{id}": swap["/swaps/rejectSwap/{id}"],
+    "/swaps/openSwaps/:unitId": swap["/swaps/openSwaps/:unitId"],
+    "/swaps/swappable/{activityId}": swap["/swaps/swappable/{activityId}"],
+    "/swaps/pending/{unitId}": swap["/swaps/pending/{unitId}"],
+    "/swaps/pending-lecturer": swap["/swaps/pending-lecturer"],
+    "/swaps/approveSwapLecturer/{id}": swap["/swaps/approveSwapLecturer/{id}"],
+    "/swaps/approveSwapWorkforce/{id}":
+      swap["/swaps/approveSwapWorkforce/{id}"],
 
     "/units": unit["/units"],
     "/units/{id}": unit["/units/{id}"],
@@ -122,6 +161,8 @@ export const swaggerDocument = {
     Rule: ruleDef,
     Staff: staffDef,
     StaffPreference: staffpreferenceDef,
+    StatusLog: statusLogDef,
+    Swap: swapDef,
     Unit: unitDef,
   },
 };

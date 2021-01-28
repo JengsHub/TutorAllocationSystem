@@ -21,6 +21,7 @@ export const activity = {
         },
       ],
     },
+
     put: {
       tags: ["Activity"],
       responses: {
@@ -29,6 +30,7 @@ export const activity = {
         },
       },
     },
+
     post: {
       tags: ["Activity"],
       responses: {
@@ -38,6 +40,18 @@ export const activity = {
       },
     },
   },
+
+  "activities/all-my-lecturing": {
+    get: {
+      tags: ["Activity"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+
   "/activities/{activityId}": {
     get: {
       tags: ["Activity"],
@@ -69,6 +83,7 @@ export const activity = {
         },
       ],
     },
+
     delete: {
       tags: ["Activity"],
       responses: {
@@ -78,6 +93,29 @@ export const activity = {
       },
     },
   },
+
+  "/activities/{activityId}/allocation": {
+    get: {
+      tags: ["Activity"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+
+  "/activities/{activityId}/allocationsMaxNum": {
+    patch: {
+      tags: ["Activity"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+
   "/activities/{activityId}/candidates": {
     get: {
       tags: ["Activity"],
@@ -88,6 +126,7 @@ export const activity = {
       },
     },
   },
+
   "/activities/{activityId}/candidates/{sortingCriteria}": {
     get: {
       tags: ["Activity"],

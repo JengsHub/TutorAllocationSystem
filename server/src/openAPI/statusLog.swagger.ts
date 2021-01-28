@@ -1,16 +1,7 @@
-export const rule = {
-  "/rules": {
+export const statusLog = {
+  "/statuslog": {
     get: {
-      tags: ["Rule"],
-      responses: {
-        "200": {
-          description: "successful operation",
-        },
-      },
-    },
-
-    put: {
-      tags: ["Rule"],
+      tags: ["Status Log"],
       responses: {
         "200": {
           description: "successful operation",
@@ -19,9 +10,19 @@ export const rule = {
     },
   },
 
-  "/rules/{id}": {
+  "/statuslog/{allocationId}": {
     get: {
-      tags: ["Rule"],
+      tags: ["Status Log"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+  "/statuslog/{allocationId}/staffs": {
+    get: {
+      tags: ["Status Log"],
       responses: {
         "200": {
           description: "successful operation",

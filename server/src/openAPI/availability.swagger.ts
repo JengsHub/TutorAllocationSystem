@@ -25,6 +25,7 @@ export const availability = {
       },
     },
   },
+
   "/availabilities/{id}": {
     get: {
       tags: ["Availability"],
@@ -35,6 +36,17 @@ export const availability = {
       },
     },
     delete: {
+      tags: ["Availability"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+
+  "/availabilities/monToFriAvai/{year}": {
+    get: {
       tags: ["Availability"],
       responses: {
         "200": {

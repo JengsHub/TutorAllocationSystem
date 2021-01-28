@@ -25,6 +25,18 @@ export const staff = {
       },
     },
   },
+
+  "/staff/all": {
+    get: {
+      tags: ["Staff"],
+      responses: {
+        "200": {
+          description: "successful operation",
+        },
+      },
+    },
+  },
+
   "/staff/{id}": {
     get: {
       tags: ["Staff"],

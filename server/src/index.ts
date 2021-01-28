@@ -27,8 +27,12 @@ const initServer = async () => {
 
   const swaggerUi = require("swagger-ui-express");
   console.log(require("./swagger").swaggerDocument.paths);
-  
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(require("./swagger").swaggerDocument));
+
+  app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(require("./swagger").swaggerDocument)
+  );
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {

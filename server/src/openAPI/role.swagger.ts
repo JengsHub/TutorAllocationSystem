@@ -9,6 +9,7 @@ export const role = {
       },
     },
   },
+  
   "/roles/{id}": {
     get: {
       tags: ["Role"],
@@ -19,6 +20,7 @@ export const role = {
       },
     },
   },
+
   "/roles/unit/{unitId}": {
     get: {
       tags: ["Role"],
@@ -45,6 +47,7 @@ export const role = {
       },
     },
   },
+
   "/roles/unit/{unitId}/me": {
     get: {
       tags: ["Role"],
@@ -55,6 +58,7 @@ export const role = {
       },
     },
   },
+  
   "/roles/unit/{unitId}/{roleId}": {
     delete: {
       tags: ["Role"],

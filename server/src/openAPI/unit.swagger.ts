@@ -25,6 +25,7 @@ export const unit = {
       },
     },
   },
+
   "/units/{id}": {
     get: {
       tags: ["Unit"],
@@ -43,6 +44,7 @@ export const unit = {
       },
     },
   },
+
   "/units/{id}/activities": {
     get: {
       tags: ["Unit"],
@@ -53,6 +55,7 @@ export const unit = {
       },
     },
   },
+  
   "/units/byRole/{title}": {
     get: {
       tags: ["Unit"],
