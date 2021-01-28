@@ -12,6 +12,8 @@ import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import baseApi from "../../apis/baseApi";
 import { ISwap, IAllocation } from "../../type";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 const Swaps = (props: { [key: string]: any }) => {
   const [hasChanged, setChanged] = useState<Boolean>(false);
@@ -26,6 +28,9 @@ const Swaps = (props: { [key: string]: any }) => {
     (IAllocation & { [key: string]: any })[]
   >([]);
   const [modalOpen, setModalOpen] = useState<IAllocation | null>(null);
+
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
     setChanged(false);
@@ -143,9 +148,27 @@ const Swaps = (props: { [key: string]: any }) => {
   };
 
   const acceptSwap = async (swap: ISwap) => {
-    await baseApi.post("/swaps/acceptSwap", swap);
-    setChanged(true);
+    const res = await baseApi.post("/swaps/acceptSwap", swap);
+    if (res.statusText === "OK") {
+      setChanged(true);
+      setOpenApproval(true);
+    } else {
+      setOpenError(true);
+      console.error("error updating");
+    }
   };
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+  };
+
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
 
   const StyledTableCell = withStyles(() => ({
     head: {
@@ -336,6 +359,20 @@ const Swaps = (props: { [key: string]: any }) => {
           </>
         )}
       </Box>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have accepted a swap.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
