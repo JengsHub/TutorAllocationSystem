@@ -13,6 +13,9 @@ import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import React from "react";
 import { ActionEnums } from "../enums/ActionEnum";
 
+/**
+ * defines the stles to be used
+ */
 const useStyles = makeStyles({
   root: {
     width: "100%",
@@ -22,6 +25,10 @@ const useStyles = makeStyles({
   },
 });
 
+/**
+ * The sticky head table component
+ * @param input consists of rows and columns, ie input.rows and input.columns
+ */
 export default function StickyHeadTable(input: any) {
   const classes = useStyles();
   const [page, setPage] = React.useState(0);
@@ -30,11 +37,14 @@ export default function StickyHeadTable(input: any) {
     setPage(newPage);
   };
 
-  let rows: any[] = [];
+  let rows: any[] = []; // used to hold all the rows for the sticky head table
+
+  // Create the object to be used for each row based on the input parameter
   for (let i = 0; i < input.rows.length; i++) {
     let row = input.rows[i];
     let statusLogObject;
     if (row.targetStaff == null) {
+      // if the input.row does not have a target staff, set the target to empty string
       statusLogObject = {
         user: row.staff.givenNames + " " + row.staff.lastName,
         action: row.action,
@@ -42,6 +52,7 @@ export default function StickyHeadTable(input: any) {
         time: row.time,
       };
     } else {
+      // if the input.row has a target staff, set the target of the object to the target staff
       statusLogObject = {
         user: row.staff.givenNames + " " + row.staff.lastName,
         action: row.action,
@@ -65,6 +76,7 @@ export default function StickyHeadTable(input: any) {
     setPage(0);
   };
 
+  // customised table cell that is styled and includes icons, used for the cells of the stickyheadtable
   const customTableCell = (row: any) => {
     if (
       row["action"] === ActionEnums.LECTURER_PROPOSE ||
