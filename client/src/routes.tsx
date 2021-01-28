@@ -31,12 +31,13 @@ const Routes = () => {
     // Check if user is logged in every time they change page
     const fetchAuthState = async () => {
       const res = await baseApi.get("/auth/login/success");
-      if (res.status === 401) {
-        setAuth(false);
-      } else {
+      if (res.status === 200) {
         setAuth(true);
         const resData = await res.data;
         setAdminAccess(resData.user.adminAccess);
+      } else {
+        setAuth(false);
+        setAdminAccess(false);
       }
     };
     fetchAuthState();

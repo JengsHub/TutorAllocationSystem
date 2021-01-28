@@ -1,33 +1,24 @@
-// Configure .env file
-import dotenv from "dotenv";
-// const result = dotenv.config();
-
-import express, { Request, Response } from "express";
-import cors from "cors";
 import bodyParser from "body-parser";
-import { Server } from "typescript-rest";
-// Importing all services
-import "./services";
-import { DBConnect, TryDBConnect } from "./helpers";
-import authRoutes from "./services/AuthService";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import express, { Request, Response } from "express";
+import fileUpload from "express-fileupload";
 import session from "express-session";
 import passport from "passport";
-import cookieParser from "cookie-parser";
-import { authCheckMiddleware } from "./helpers/auth";
-import { getConnection } from "typeorm";
-import { Session } from "./entity/Session";
-import { TypeormStore } from "typeorm-store";
-import { NodemailerEmailHelper, SibEmailHelper } from "./email/emailHelper";
-import fileUpload from "express-fileupload";
-import { config } from "./config";
 import { shouldSendSameSiteNone } from "should-send-same-site-none";
+import { getConnection } from "typeorm";
+import { TypeormStore } from "typeorm-store";
+import { Server } from "typescript-rest";
+import { config } from "./config";
+import { NodemailerEmailHelper } from "./email/emailHelper";
+import { Session } from "./entity/Session";
+import { DBConnect, TryDBConnect } from "./helpers";
+import { authCheckMiddleware } from "./helpers/auth";
+import "./services"; // Importing all services
+import authRoutes from "./services/AuthService";
 
 const initServer = async () => {
   const app: express.Application = express();
-
-  // if (result.error) {
-  //   throw result.error;
-  // }
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {
@@ -39,6 +30,7 @@ const initServer = async () => {
 
   await DBConnect();
 
+  // Cookie and session settings
   app.use(shouldSendSameSiteNone);
   app.set("trust proxy", 1); // trust first proxy
   let cookieOptions: session.SessionOptions = {
@@ -50,7 +42,7 @@ const initServer = async () => {
     secret: ["ioq2sdjkabf891234!@#^SDAIOFq239as"],
     cookie: {
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+      // maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
     },
     rolling: true, // automatically set new expiration when user makes request
     resave: true,
@@ -93,14 +85,29 @@ const initServer = async () => {
   // set up routes
   app.use("/auth", authRoutes);
 
-  // Middleware to require authentication for all routes in /units
-  app.use("/units", authCheckMiddleware);
-  app.use("/roles", authCheckMiddleware);
-  // app.use("/upload", authCheckMiddleware, hasAdminAccessMiddleware);
+  // Middleware to require authentication for routes
+  const authenticatedRoutes = [
+    "/activities",
+    "/allocations",
+    "/availabilities",
+    "/roles",
+    "/rules",
+    "/staffpreferences",
+    "/staff",
+    "/statuslog",
+    "/swaps",
+    "/units",
+    "/upload",
+  ];
 
-  // app.use("/activities", authCheckMiddleware);
+  for (const route of authenticatedRoutes) {
+    app.use(route, authCheckMiddleware);
+  }
 
+  // Build routes
   Server.buildServices(app);
+
+  // Health check route for AWS
   app.get("/health", (req, res) => {
     res.status(200).send("Server is running");
   });
