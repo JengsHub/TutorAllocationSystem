@@ -6,8 +6,10 @@ import { Props, State } from "../type";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 
-// npm install -g browserify
-// yarn add csv-parser
+/*
+this file puts together the drag and drop componenet for the TPS Section
+from Component(react), ReadfileFormat, and DragDropPresentation
+*/
 
 class TpsDragDrop extends Component<Props, State> {
   static counter = 0;
@@ -17,6 +19,7 @@ class TpsDragDrop extends Component<Props, State> {
   readonly validTypes: String[];
   csvFile: File = new File(["foo"], "placeholder.txt");
 
+  //Constructor:
   constructor(props: Props) {
     super(props);
     this.state = { dragging: false, file: null };
@@ -25,6 +28,7 @@ class TpsDragDrop extends Component<Props, State> {
 
   dragEventCounter: number = 0;
   dragenterListener = (event: React.DragEvent<HTMLDivElement>) => {
+    // listener for the drag feature to TPS files slot
     this.overrideEventDefaults(event);
     this.dragEventCounter++;
     if (event.dataTransfer.items && event.dataTransfer.items[0]) {
@@ -40,6 +44,7 @@ class TpsDragDrop extends Component<Props, State> {
   };
 
   dragleaveListener = (event: React.DragEvent<HTMLDivElement>) => {
+    // listener for the drag feature interrupt
     this.overrideEventDefaults(event);
     this.dragEventCounter--;
 
@@ -49,6 +54,7 @@ class TpsDragDrop extends Component<Props, State> {
   };
 
   dropListener = (event: React.DragEvent<HTMLDivElement>) => {
+    //drop listener to indicate a file upload to the allocate file slot
     this.overrideEventDefaults(event);
     this.dragEventCounter = 0;
     this.setState({ dragging: false });
@@ -66,6 +72,7 @@ class TpsDragDrop extends Component<Props, State> {
   };
 
   obtainResult = (results: any) => {
+    //move the data of the file to allocateList
     this.allocateList = results.data;
   };
 
@@ -82,6 +89,7 @@ class TpsDragDrop extends Component<Props, State> {
     this.showSuccess();
   };
 
+  //success message:
   showSuccess = () => {
     document.getElementById("TPS_fb")!.style.visibility = "visible";
   };
@@ -100,11 +108,13 @@ class TpsDragDrop extends Component<Props, State> {
     inputElement.value = "";
   };
 
+  //override
   overrideEventDefaults = (event: Event | React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
   };
 
+  //if file changes:
   onFileChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.hideSuccess();
     if (event.target.files && event.target.files[0]) {
@@ -121,12 +131,14 @@ class TpsDragDrop extends Component<Props, State> {
     }
   };
 
+  //if file is clicked:
   onFileClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     const element: HTMLInputElement = event.target as HTMLInputElement;
     element.value = "";
     this.hideSuccess();
   };
 
+  //on ComponentDidMount:
   componentDidMount() {
     window.addEventListener("dragover", (event: Event) => {
       this.overrideEventDefaults(event);
@@ -136,11 +148,13 @@ class TpsDragDrop extends Component<Props, State> {
     });
   }
 
+  //on Componenet willUnmount:
   componentWillUnmount() {
     window.removeEventListener("dragover", this.overrideEventDefaults);
     window.removeEventListener("drop", this.overrideEventDefaults);
   }
 
+  //render the ui components
   render() {
     return (
       <div className="Dragdrop">

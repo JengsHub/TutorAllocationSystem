@@ -13,6 +13,8 @@ import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import React from "react";
 import { ActionEnums } from "../enums/ActionEnum";
 
+//This file handles the implementation of Sticky Head Table
+
 /**
  * defines the stles to be used
  */

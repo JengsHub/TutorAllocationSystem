@@ -6,6 +6,10 @@ import { Props, State } from "../type";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
 
+/*
+this file puts together the drag and drop componenet for the Allocate+ Section
+from Component(react), ReadfileFormat, and DragDropPresentation
+*/
 class AllocateDragDrop extends Component<Props, State> {
   //initialzier to accept file types.
   static counter = 0;
@@ -15,6 +19,7 @@ class AllocateDragDrop extends Component<Props, State> {
   readonly validTypes: String[];
   inputCsvFile: File = new File(["foo"], "placeholder.txt");
 
+  //constructor:
   constructor(props: Props) {
     super(props);
     this.state = { dragging: false, file: null };
@@ -39,6 +44,7 @@ class AllocateDragDrop extends Component<Props, State> {
   };
 
   dragleaveListener = (event: React.DragEvent<HTMLDivElement>) => {
+    // listener for the drag feature interrupt
     this.overrideEventDefaults(event);
     this.dragEventCounter--;
 
@@ -47,8 +53,8 @@ class AllocateDragDrop extends Component<Props, State> {
     }
   };
 
-  //drop listener to indicate a file upload to the allocate file slot
   dropListener = (event: React.DragEvent<HTMLDivElement>) => {
+    //drop listener to indicate a file upload to the allocate file slot
     this.overrideEventDefaults(event);
     this.dragEventCounter = 0;
     this.setState({ dragging: false });
@@ -65,17 +71,18 @@ class AllocateDragDrop extends Component<Props, State> {
     }
   };
 
-  //
   obtainResult = (results: any) => {
-    //move the data od the file to allocateList
+    //move the data of the file to allocateList
     this.allocateList = results.data;
   };
 
   getEndTime = (start: Date, minutes: string) => {
+    //get the time and format it
     return new Date(start.getTime() + Number(minutes) * 60000);
   };
 
   minLeadZeros = (date: Date) => {
+    //format minutes :0N" if N is less than 10
     return (date.getMinutes() < 10 ? "0" : "") + date.getMinutes().toString();
   };
 
@@ -112,11 +119,13 @@ class AllocateDragDrop extends Component<Props, State> {
     inputElement.value = "";
   };
 
+  //override:
   overrideEventDefaults = (event: Event | React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
   };
 
+  //if file changes:
   onFileChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.hideSuccess();
     if (event.target.files && event.target.files[0]) {
@@ -133,12 +142,14 @@ class AllocateDragDrop extends Component<Props, State> {
     }
   };
 
+  //if file is clicked:
   onFileClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     const element: HTMLInputElement = event.target as HTMLInputElement;
     element.value = "";
     this.hideSuccess();
   };
 
+  //on ComponentDidMount:
   componentDidMount() {
     window.addEventListener("dragover", (event: Event) => {
       this.overrideEventDefaults(event);
@@ -148,6 +159,7 @@ class AllocateDragDrop extends Component<Props, State> {
     });
   }
 
+  //on Componenet willUnmount:
   componentWillUnmount() {
     window.removeEventListener("dragover", this.overrideEventDefaults);
     window.removeEventListener("drop", this.overrideEventDefaults);

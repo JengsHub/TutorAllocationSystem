@@ -1,6 +1,7 @@
 import React from "react";
 import { PresentationalProps } from "../type";
 
+//this file handles the drag and drop core implementation for the importing files features
 const FileUploaderPresentationalComponent: React.FC<PresentationalProps> = (
   props
 ) => {
