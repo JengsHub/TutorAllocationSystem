@@ -10,7 +10,7 @@ import { Tooltip } from "@material-ui/core";
  * isRed - Red Button
  * isYellow - Yellow Button
  * isGrey - Grey Button
- * 
+ *
  * Button can also be configured with various icons using the following props:
  * isCheck - Check or Tick Icon
  * isCross - Cross or 'X' Icon
@@ -22,7 +22,7 @@ import { Tooltip } from "@material-ui/core";
  * isExclamationOctagon - Exclamation Icon in a octagon
  * isExclamationSquare - Exclamation Icon in a square
  * isExclamationTriangle - Exclamation Icon in a triangle
- * 
+ *
  * Button can also be configured with various size using the following props:
  * '' or null - Default Button
  * isSmall - Small Button

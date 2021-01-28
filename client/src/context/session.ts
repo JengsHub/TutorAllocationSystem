@@ -1,9 +1,9 @@
 import React from "react";
 
-/* 
-* Global state management 
-* Allows for authenticated user and admin user
-*/
+/*
+ * Global state management
+ * Allows for authenticated user and admin user
+ */
 const defaultAuthContext: {
   isAuth: boolean;
   setAuth: any;
