@@ -55,7 +55,7 @@ export const unit = {
       },
     },
   },
-  
+
   "/units/byRole/{title}": {
     get: {
       tags: ["Unit"],

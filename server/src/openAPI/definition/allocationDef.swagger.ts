@@ -7,7 +7,7 @@ export const allocationDef = {
     activityId: {
       type: "string",
     },
-    staff: {
+    staffId: {
       type: "string",
     },
     isLecturerApproved: {

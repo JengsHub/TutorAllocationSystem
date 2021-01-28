@@ -26,12 +26,14 @@ export const activityDef = {
     startTime: {
       type: "string",
     },
-    duration: {
-      type: "number",
-      default: "0",
-    },
     unitId: {
       type: "string",
+    },
+    studentCount: {
+      type: "number",
+    },
+    allocationMaxNum: {
+      type: "number",
     },
   },
 };

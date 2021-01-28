@@ -44,7 +44,7 @@ export const staffPreference = {
       },
     },
   },
-  
+
   "/staffpreferences/mine": {
     get: {
       tags: ["Staff Preference"],

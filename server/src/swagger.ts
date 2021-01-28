@@ -82,11 +82,11 @@ export const swaggerDocument = {
   schemes: ["http"],
   paths: {
     "/activities": activity["/activities"],
-    "activities/all-my-lecturing": activity["activities/all-my-lecturing"],
+    "/activities/all-my-lecturing": activity["/activities/all-my-lecturing"],
     "/activities/{activityId}": activity["/activities/{activityId}"],
     "/activities/{activityId}/allocation":
       activity["/activities/{activityId}/allocation"],
-    "/activities/{activityId}/allocationMaxNum":
+    "/activities/{activityId}/allocationsMaxNum":
       activity["/activities/{activityId}/allocationsMaxNum"],
     "/activities/{activityId}/candidates":
       activity["/activities/{activityId}/candidates"],
