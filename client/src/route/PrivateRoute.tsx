@@ -1,10 +1,14 @@
 import * as React from "react";
 import { Route, RouteComponentProps, RouteProps } from "react-router-dom";
-
+/**
+ * Boolean prop specifying if user is authenticted or not
+ */
 interface PrivateRouteProps extends RouteProps {
   isAuthenticated: boolean;
 }
-
+/**
+ * Specify app's authenticated and unauthenticated routes
+ */
 export class PrivateRoute extends Route<PrivateRouteProps> {
   // Private route that restricts client-side access to pages
   // https://www.codegrepper.com/code-examples/typescript/react+protected+routes+typescript
