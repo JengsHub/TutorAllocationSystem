@@ -4,6 +4,7 @@ import logo from "../images/logofull.png";
 import AdminSidebarItems from "./AdminSidebarItems";
 import "./styles/Sidebar.css";
 
+//This file puts together the ADMIN sidebar using NavLink, Logo, and the items in AdminSidebarItems, and applies the style
 const AdminSidebar = () => {
   return (
     <>

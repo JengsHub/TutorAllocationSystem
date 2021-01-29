@@ -6,6 +6,8 @@ import React from "react";
 import { IAllocation } from "../../type";
 import SwappingActivities from "./SwappingActivities";
 
+//This is the Modal for SwappingActivities
+
 interface ICandidatesModal {
   allocation: IAllocation | null;
   closeModal: () => void;

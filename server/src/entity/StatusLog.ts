@@ -10,6 +10,9 @@ import { Allocation } from "./Allocation";
 import { ActionEnums } from "../enums/ActionEnum";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
 
+/**
+ * Using TypeOrm entity for StatusLog to store its data
+ */
 @Entity()
 export class StatusLog extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")

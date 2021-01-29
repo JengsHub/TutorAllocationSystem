@@ -13,7 +13,9 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import { IActivity, IAllocation } from "../../type";
+import { IActivity, IAllocation, ISwap } from "../../type";
+
+// This is where the feature of making a swap request takes place
 
 interface ICandidateProps {
   allocation: IAllocation;
@@ -55,7 +57,7 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
 
   const createSwap = async () => {
     if (selectedActivity) {
-      let swap: Swap = {
+      let swap: Partial<ISwap> = {
         fromAllocationId: allocation.id,
         desiredActivityId: selectedActivity.id,
       };

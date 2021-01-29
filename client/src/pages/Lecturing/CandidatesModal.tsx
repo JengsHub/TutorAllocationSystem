@@ -5,6 +5,8 @@ import Paper from "@material-ui/core/Paper";
 import React from "react";
 import Candidate from "./Candidate";
 
+//This is the Modal for Candidate
+
 interface ICandidatesModal {
   activityId: string | null;
   closeModal: () => void;

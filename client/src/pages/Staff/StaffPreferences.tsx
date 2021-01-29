@@ -8,14 +8,16 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
-import { IPreferences } from "../../type";
+import { IPreference } from "../../type";
+
+//this is where the staff preference for each unit is shown and handled 
 
 interface IStaffPreferencesProps {
   staffId: string;
 }
 
 const StaffPreferences: React.FC<IStaffPreferencesProps> = ({ staffId }) => {
-  const [staffPreferences, setStaffPreferences] = useState<IPreferences[]>([]);
+  const [staffPreferences, setStaffPreferences] = useState<IPreference[]>([]);
 
   useEffect(() => {
     if (staffId) {

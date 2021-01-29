@@ -14,6 +14,11 @@ import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
 import { ISwap } from "../../type";
 
+/*
+ * Page: Manage Swapping for admin
+ * This is where admins can manage the swappings requested by TAs
+ */
+
 const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
   const [swapsToDisplay, setSwapsToDisplay] = useState<ISwap[]>([]);

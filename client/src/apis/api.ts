@@ -1,5 +1,6 @@
 import baseApi from "./baseApi";
 
+//this file contains const that gets data from the database to the front-end
 export const getCandidatePreference = async (activityId: string) => {
   const res = await baseApi.get(
     `/activities/${activityId}/candidates/lecturer`

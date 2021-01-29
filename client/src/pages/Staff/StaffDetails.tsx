@@ -7,6 +7,8 @@ import { default as React, useState } from "react";
 import Availabilities from "./Availabilities";
 import StaffPreferences from "./StaffPreferences";
 
+// This is where the avaiabity and preference for each staff is shown 
+
 interface IStaffDetailsProps {
   staffName: string;
   staffId: string;

@@ -12,6 +12,7 @@ interface IStatusLogModal {
   closeModal: () => void;
 }
 
+// The modal for the status log
 const StatusLogModal: React.FC<IStatusLogModal> = ({
   activityId,
   closeModal,
@@ -19,6 +20,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
   const [statusLog, setStatusLog] = useState<Object[]>([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
 
+  // called each time the the useStates are changed or the page is loaded
   useEffect(() => {
     setChanged(false);
     /**
@@ -54,6 +56,7 @@ const StatusLogModal: React.FC<IStatusLogModal> = ({
     });
   }, [activityId, hasChanged]);
 
+  // function that sorts the status log according to the date from latest to oldest
   function sortStatusLogsByDate(statusLogs: Array<IStatusLogWithStaff>) {
     statusLogs = statusLogs.sort(function (
       a: IStatusLogWithStaff,

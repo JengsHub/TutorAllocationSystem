@@ -16,15 +16,13 @@ import baseApi from "../apis/baseApi";
 import { CustomButton, CustomStatus } from "../components";
 import { DayOfWeek } from "../enums/DayOfWeek";
 import "../index.css";
-import { myAllocations } from "../type";
+import { IAllocation } from "../type";
 
 const Activities = () => {
-  const [allocations, setAllocations] = useState<
-    (myAllocations & { [key: string]: any })[]
-  >([]);
+  const [allocations, setAllocations] = useState<IAllocation[]>([]);
 
   const [allocationsToDisplay, setAllocationsToDisplay] = useState<
-    (myAllocations & { [key: string]: any })[]
+    IAllocation[]
   >([]);
   const [hasChanged, setChanged] = useState<Boolean>(false);
   const [openApproval, setOpenApproval] = useState<boolean>(false);
@@ -81,7 +79,7 @@ const Activities = () => {
       initialRender.current = false;
     } else {
       // Handle autocomplete changes
-      let tempArray: (myAllocations & { [key: string]: any })[] = allocations;
+      let tempArray: IAllocation[] = allocations;
       if (selectedYear !== "All") {
         tempArray = tempArray.filter(function (allocation) {
           return allocation.activity.unit.year.toString() === selectedYear;
@@ -121,7 +119,7 @@ const Activities = () => {
     }, 60000);
   }, []);
 
-  function setUpAutoComplete(res: myAllocations & { [key: string]: any }[]) {
+  function setUpAutoComplete(res: IAllocation[]) {
     let uniqueList: string[] = [];
 
     for (let i = 0; i < res.length; i++) {
@@ -254,7 +252,7 @@ const Activities = () => {
       .map((val) => parseInt(val))
       .reduce((val, total) => val * 60 + total);
 
-  const sortDayTime = (list: (myAllocations & { [key: string]: any })[]) => {
+  const sortDayTime = (list: IAllocation[]) => {
     return list.sort((a, b) => {
       if (
         Object.values(DayOfWeek).indexOf(a.activity.dayOfWeek) <
@@ -291,9 +289,7 @@ const Activities = () => {
     }
   };
 
-  const allocationApproved = async (
-    allocation: myAllocations & { [key: string]: any }
-  ) => {
+  const allocationApproved = async (allocation: IAllocation) => {
     const res = await baseApi.patch(
       `/allocations/${allocation.id}/ta-acceptance?value=true`
     );
@@ -306,9 +302,7 @@ const Activities = () => {
     }
   };
 
-  const allocationRejected = async (
-    allocation: myAllocations & { [key: string]: any }
-  ) => {
+  const allocationRejected = async (allocation: IAllocation) => {
     const result = await baseApi.patch(
       `allocations/${allocation.id}/ta-acceptance?value=false`
     );
@@ -321,9 +315,7 @@ const Activities = () => {
     }
   };
 
-  const approvalStatus = (
-    allocation: myAllocations & { [key: string]: any }
-  ) => {
+  const approvalStatus = (allocation: IAllocation) => {
     if (
       allocation.isLecturerApproved &&
       allocation.isWorkforceApproved &&

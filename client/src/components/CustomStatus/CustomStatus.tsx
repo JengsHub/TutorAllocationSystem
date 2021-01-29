@@ -2,7 +2,32 @@ import React from "react";
 import "./CustomStatus.scss";
 import classNames from "classnames";
 import { Tooltip } from "@material-ui/core";
-
+/**
+ * This component specifies a status information strip or status tag
+ * Status can be configured with various colours using the following props:
+ * isBlue - Blue Button
+ * isGreen - Green Button
+ * isRed - Red Button
+ * isYellow - Yellow Button
+ * isGrey - Grey Button
+ *
+ * Button can also be configured with various icons using the following props:
+ * isCheck - Check or Tick Icon
+ * isCross - Cross or 'X' Icon
+ * isTrash - Trash or Bin Icon
+ * isHourglass - Hourglass or History Icon
+ * isClock - Clock or Time Icon
+ * isExclamationCircle - Exclamation Icon in a circle
+ * isExclamationDiamond - Exclamation Icon in a diamond
+ * isExclamationOctagon - Exclamation Icon in a octagon
+ * isExclamationSquare - Exclamation Icon in a square
+ * isExclamationTriangle - Exclamation Icon in a triangle
+ *
+ * Button can also be configured with various size using the following props:
+ * '' or null - Default Button
+ * isSmall - Small Button
+ * isCompact - Compact or Round Button
+ */
 interface Props {
   value: string;
   isBlue?: boolean;

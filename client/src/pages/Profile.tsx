@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 import { config } from "../config";
-import { AuthContext } from "../session";
-
+import { AuthContext } from "../context/session";
+/*
+ * Page: Profile
+ * This is where the login and logout buttosn are located
+ * Users will use this page to login and logout from the application using their google accounts
+ */
 const Profile = () => {
   const { isAuth } = React.useContext(AuthContext); // TODO: create context hook for updating value
   const [user, setUser] = useState({});

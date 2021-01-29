@@ -13,6 +13,11 @@ import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 import { IRule } from "../type";
 
+/*
+ * Page: Rules
+ * This is where the rules and their values are displayed
+ * Users will use this page to view roles and admins can adjust their values.
+ */
 const Rules = () => {
   const [rules, setRules] = useState<IRule[]>([]);
 
