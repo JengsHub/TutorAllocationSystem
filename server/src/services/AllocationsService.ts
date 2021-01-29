@@ -35,15 +35,6 @@ class AllocationsService {
   repo = getRepository(Allocation);
   factory = new AllocationControllerFactory();
 
-  // /**
-  //  * Returns a list of allocations
-  //  * @return Array<Allocation> allocations list
-  //  */
-  // @GET
-  // public getAllAllocations(): Promise<Array<Allocation>> {
-  //   return this.repo.find();
-  // }
-
   /**
    * Get the allocated activities of the current user
    * Option to filter by unit id
@@ -59,8 +50,6 @@ class AllocationsService {
     @ContextResponse res: Response,
     @QueryParam("unitId") unitId: string,
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean
-    // @QueryParam("offeringPeriod") offeringPeriod: string,
-    // @QueryParam("year") year: number
   ) {
     if (!authCheck(req, res)) return;
 
@@ -215,12 +204,6 @@ class AllocationsService {
     );
 
     let allocation = await controller.createAllocation(me, newRecord);
-    // createAndSaveStatusLog(
-    //   allocation["id"],
-    //   ActionEnums.LECTURER_PROPOSE,
-    //   me.id,
-    //   newRecord.staffId
-    // );
 
     return allocation;
   }
@@ -303,7 +286,6 @@ class AllocationsService {
     const me = req.user as Staff;
     const { staff, activity } = allocation;
     const { unit } = activity;
-    // const role = await me.getRoleTitle(unit.id);
     let role = RoleEnum.TA;
     const controller = this.factory.getController(role);
 

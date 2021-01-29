@@ -9,7 +9,6 @@ import {
   PathParam,
   POST,
   PUT,
-  QueryParam,
 } from "typescript-rest";
 import { RoleControllerFactory } from "~/controller/RoleController";
 import { Staff } from "~/entity";

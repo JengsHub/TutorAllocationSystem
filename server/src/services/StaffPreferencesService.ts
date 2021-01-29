@@ -51,10 +51,6 @@ class StaffPreferencesService {
       where: params,
       relations: ["unit"],
     });
-
-    // const me = req.user as Staff;
-    // const controller = this.factory.getController(await me.getRoleTitle());
-    // return controller.getAllStaffPreferences();
   }
 
   /**
@@ -82,16 +78,7 @@ class StaffPreferencesService {
       .orderBy("unit.campus", "ASC")
       .orderBy("unit.unitCode", "ASC")
       .getMany();
-    // const preferences = await this.repo
-    //   .find({
-    //     where: {
-    //       staff: me,
-    //     },
-    //     relations: ["unit"],
-    //   })
-    //   .then((result) => {
-    //     return result;
-    //   });
+
     return preferences;
   }
 

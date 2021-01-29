@@ -48,10 +48,6 @@ class AvailabilitiesService {
       (key) => params[key] === undefined && delete params[key]
     );
     return Availability.find(params);
-
-    // const me = req.user as Staff;
-    // const controller = this.factory.getController(await me.getRoleTitle());
-    // return await controller.getAllAvailabilities();
   }
 
   /**

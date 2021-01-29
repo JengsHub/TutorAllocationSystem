@@ -25,8 +25,6 @@ class ActivitiesService {
   factory = new ActivityControllerFactory();
   repo = getRepository(Activity);
 
-  // TODO:
-
   /**
    * Returns a list of activities
    *
