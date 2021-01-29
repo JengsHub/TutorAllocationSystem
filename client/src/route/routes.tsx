@@ -43,7 +43,8 @@ const Routes = () => {
 
   console.log(`isAuth: ${isAuth}, adminAccess: ${adminAccess}`);
 
-  if (adminAccess) { //check if user has admin access then render:
+  if (adminAccess) {
+    //check if user has admin access then render:
     return (
       <AuthContext.Provider
         value={{ isAuth, setAuth, adminAccess, setAdminAccess }}
@@ -92,7 +93,8 @@ const Routes = () => {
         </Switch>
       </AuthContext.Provider>
     );
-  } else { //if user does not have admin access, render this instead:
+  } else {
+    //if user does not have admin access, render this instead:
     return (
       <AuthContext.Provider
         value={{ isAuth, setAuth, adminAccess, setAdminAccess }}

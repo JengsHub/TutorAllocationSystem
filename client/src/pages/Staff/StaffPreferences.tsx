@@ -10,7 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
 import { IPreference } from "../../type";
 
-//this is where the staff preference for each unit is shown and handled 
+//this is where the staff preference for each unit is shown and handled
 
 interface IStaffPreferencesProps {
   staffId: string;
