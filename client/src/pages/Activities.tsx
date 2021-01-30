@@ -18,9 +18,13 @@ import { DayOfWeek } from "../enums/DayOfWeek";
 import "../index.css";
 import { IAllocation } from "../type";
 
+/**
+ * Activities component: displays the activities for the selected units and allows the TA to perform actions on them
+ */
 const Activities = () => {
   const [allocations, setAllocations] = useState<IAllocation[]>([]);
 
+  // Filtered activities to display
   const [allocationsToDisplay, setAllocationsToDisplay] = useState<
     IAllocation[]
   >([]);
@@ -46,16 +50,8 @@ const Activities = () => {
 
   useEffect(() => {
     setChanged(false);
-    // let params: { [key: string]: any } = {
-    //   ...props,
-    // };
     const getAllocations = async () => {
       try {
-        // let query = Object.keys(params)
-        //   .filter((key) => params[key] !== undefined)
-        //   .map((key) => `${key}=${params[key]}`)
-        //   .join("&");
-
         const res = await baseApi.get("/allocations/mine", {
           params: { isLecturerApproved: true },
         });
@@ -74,6 +70,9 @@ const Activities = () => {
     });
   }, [hasChanged]);
 
+  /**
+   * Filters activities based on selected options and displays them
+   */
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -113,12 +112,19 @@ const Activities = () => {
     allocations,
   ]);
 
+  /**
+   * Updates time every minute to refresh countdown timer
+   */
   useEffect(() => {
     setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
   }, []);
 
+  /**
+   * setUpAutoComplete: finds options to display in Autocomplete boxes based on data
+   * @param res: An array of IActivity instances
+   */
   function setUpAutoComplete(res: IAllocation[]) {
     let uniqueList: string[] = [];
 
@@ -168,6 +174,9 @@ const Activities = () => {
     },
   });
 
+  /**
+   * Returns a table row for when there are no relevant activities to display.
+   */
   function EmptyAllocations() {
     const classes = useRowStyles();
     if (allocations.length === 0) {
@@ -182,14 +191,11 @@ const Activities = () => {
     return <TableRow />;
   }
 
+  /**
+   * getDaysCountdown
+   * @param expiryDate: the date to count down to
+   */
   const getDaysCountDown = (expiryDate: string) => {
-    /*
-    input: Date String
-    output: Time left (number)
-    Desc: find the days or time left between two dates
-    */
-
-    //dates cons
     const expDateFormat = new Date(expiryDate);
     const timeDifference = expDateFormat.getTime() - currentTime.getTime();
     const daysDifference = timeDifference / (1000 * 3600 * 24);
@@ -197,16 +203,6 @@ const Activities = () => {
     //if offer expired.
     if (timeDifference <= 0) {
       return (
-        // <div
-        //   style={{
-        //     margin: 0,
-        //     padding: 5,
-        //     backgroundColor: "#ffe57d",
-        //     fontWeight: "bold",
-        //   }}
-        // >
-        //   Please respond soon or offer may be retracted
-        // </div>
         <CustomStatus
           value="Please respond soon or offer may be retracted"
           isYellow
@@ -233,6 +229,10 @@ const Activities = () => {
     }
   };
 
+  /**
+   * Returns a MuiAlert component.
+   * @param props: props to pass into the MuiAlert component.
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
@@ -289,6 +289,10 @@ const Activities = () => {
     }
   };
 
+  /**
+   * Approves an allocation.
+   * @param allocation: the allocation to approve.
+   */
   const allocationApproved = async (allocation: IAllocation) => {
     const res = await baseApi.patch(
       `/allocations/${allocation.id}/ta-acceptance?value=true`
@@ -302,6 +306,10 @@ const Activities = () => {
     }
   };
 
+  /**
+   * Rejects an allocation.
+   * @param allocation: the allocation to reject.
+   */
   const allocationRejected = async (allocation: IAllocation) => {
     const result = await baseApi.patch(
       `allocations/${allocation.id}/ta-acceptance?value=false`
@@ -352,30 +360,6 @@ const Activities = () => {
       return <CustomStatus value="You have rejected" isRed isCross />;
     }
 
-    // if (!allocation.isLecturerApproved) {
-    //   return (
-    //     <CustomStatus value="Error With Approval" isRed isExclamationTriangle />
-    //   );
-    // }
-
-    // if (allocation.isTaAccepted === null) {
-    //   return (
-    //     <CustomStatus
-    //       value="Waiting for response"
-    //       isBlue
-    //       isExclamationDiamond
-    //     />
-    //   );
-    // } else if (allocation.isTaAccepted === false) {
-    //   return <CustomStatus value="You have rejected" isRed isCross />;
-    // }
-
-    // if (allocation.isWorkforceApproved === true) {
-    //   return <CustomStatus value="Workforce has approved" isGreen isCheck />;
-    // } else if (allocation.isWorkforceApproved === false) {
-    //   return <CustomStatus value="Workforce has rejected" isRed isCross />;
-    // }
-
     return <CustomStatus value="Error" isRed isCross />;
   };
 
@@ -385,8 +369,6 @@ const Activities = () => {
     },
   }))(TableCell);
 
-  //TODO: Autocomplete function that Provides the available campus and unit code for a specific Year and Teaching Period.
-  // Update the table based on the Autocomplete selections.
   return (
     <div>
       <Grid container spacing={3}>

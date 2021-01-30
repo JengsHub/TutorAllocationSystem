@@ -243,11 +243,11 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
+  /**
+   * Rejects an allocation.
+   * @param allocation: the allocation to reject.
+   */
   const allocationRejected = async (allocation: IAllocationWithStaff) => {
-    /**
-     * Rejects an allocation.
-     * @param allocation: the allocation to reject.
-     */
     const result = await baseApi.patch(
       `/allocations/${allocation.id}/lecturer-approval?value=false`
     );
