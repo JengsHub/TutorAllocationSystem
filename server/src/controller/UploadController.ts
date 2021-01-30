@@ -1,5 +1,4 @@
 import csv from "csv-parser";
-import { FileArray, UploadedFile } from "express-fileupload";
 import fs from "fs";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 import ProcessFileService, {
@@ -12,7 +11,6 @@ import ProcessFileService, {
 } from "~/helpers/processInputFiles";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
 import stripBom from "strip-bom-stream";
-import { DayOfWeek } from "~/enums/DayOfWeek";
 import { Staff } from "~/entity";
 
 export class UploadControllerFactory {

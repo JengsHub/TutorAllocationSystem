@@ -157,7 +157,6 @@ export default function StickyHeadTable(input: any) {
         <Table className="grid" stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {/* {columns.map((column:any) => ( */}
               {columns.map((column: any) => (
                 <StyledTableCell
                   key={column.id}
@@ -178,14 +177,6 @@ export default function StickyHeadTable(input: any) {
                     <TableCell> {row["user"]} </TableCell>
                     <TableCell>{customTableCell(row)}</TableCell>
                     <TableCell> {row["time"]} </TableCell>
-                    {/* {columns.map((column: any) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {customTableCell(value)}
-                        </TableCell>
-                      );
-                    })} */}
                   </TableRow>
                 );
               })}

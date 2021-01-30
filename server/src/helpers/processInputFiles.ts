@@ -25,6 +25,11 @@ export class ProcessFileService {
     this.allocateList = results.data;
   };
 
+  /**
+   * Processes the TAS object taken from the upload and inserts it into the database
+   * @param row TAS object obtain from the upload file
+   * @param user current user, to be noted in the status log
+   */
   processTasObject = async (row: TasObject, user: Staff) => {
     let unit_object: Unit;
     let staff_object: Staff;
@@ -41,9 +46,6 @@ export class ProcessFileService {
     unit = cleanInputData(unit);
 
     try {
-      // let unitRepo = Unit.getRepository();
-      // unit_object = await unitRepo.save(unit);
-      // unit_object = await Unit.insertUnitIntoDb(unit);
       unit_object = await Unit.createOrUpdateUnit(unit);
     } catch (err) {
       throw err;
@@ -61,9 +63,6 @@ export class ProcessFileService {
     });
 
     try {
-      // staff_object = await Staff.insertStaffIntoDb(staffDetail);
-      // let staffRepo = Staff.getRepository();
-      // staff_object = await staffRepo.save(staffDetail);
       staff_object = await Staff.createOrUpdateStaff(staffDetail);
     } catch (err) {
       throw err;
@@ -82,8 +81,6 @@ export class ProcessFileService {
     });
 
     try {
-      // let staffPrefRepo = StaffPreference.getRepository();
-      // await staffPrefRepo.save(staffPreference);
       StaffPreference.createOrUpdateStaffPreference(staffPreference);
     } catch (err) {
       throw err;
@@ -103,8 +100,6 @@ export class ProcessFileService {
     });
 
     try {
-      // let activityRepo = Activity.getRepository();
-      // activity_object = await activityRepo.save(activity);
       activity_object = await Activity.createOrUpdateActivity(activity);
     } catch (err) {
       throw err;
@@ -133,6 +128,10 @@ export class ProcessFileService {
     }
   };
 
+  /**
+   * Takes the TpsObject input object, processes it and insert into the database
+   * @param row TpsObject
+   */
   processTpsObject = async (row: TpsObject) => {
     let unit_object: any;
     let staff_object: any;
@@ -147,8 +146,6 @@ export class ProcessFileService {
 
     unit = cleanInputData(unit);
     try {
-      // let unitRepo = Unit.getRepository();
-      // unit_object = await unitRepo.save(unit);
       unit_object = await Unit.createOrUpdateUnit(unit);
     } catch (err) {
       throw err;
@@ -166,7 +163,6 @@ export class ProcessFileService {
     });
 
     try {
-      // let staffRepo = Staff.getRepository();
       staff_object = await Staff.createOrUpdateStaff(staffDetail);
     } catch (err) {
       throw err;
@@ -183,7 +179,6 @@ export class ProcessFileService {
     });
 
     try {
-      // let staffPrefRepo = StaffPreference.getRepository();
       await StaffPreference.createOrUpdateStaffPreference(staffPreference);
     } catch (err) {
       throw err;
@@ -200,6 +195,14 @@ export class ProcessFileService {
     }
   };
 
+  /**
+   * A function that creates an availability and inserts it into the database based on the inputs provided
+   * @param start start time of the availability
+   * @param end end time of the availability
+   * @param dayOfWeek day_of_week enum
+   * @param row TPS object
+   * @param staff_object
+   */
   createAvailabilityAndInsertIntoDB = (
     start: string,
     end: string,
@@ -227,6 +230,10 @@ export class ProcessFileService {
     }
   };
 
+  /**
+   * Processes the AllocateObject and inserts it into the database
+   * @param row the input allocate object
+   */
   processAllocateObject = async (row: AllocateObject) => {
     let unit_object: any;
 
@@ -240,8 +247,6 @@ export class ProcessFileService {
 
     unit = cleanInputData(unit);
     try {
-      // let unitRepo = Unit.getRepository();
-      // unit_object = await unitRepo.save(unit);
       unit_object = await Unit.createOrUpdateUnit(unit);
     } catch (err) {
       throw err;
@@ -261,8 +266,6 @@ export class ProcessFileService {
       studentCount: row["studentCount"],
     });
     try {
-      // let activityRepo = Activity.getRepository();
-      // let activity_object = await activityRepo.save(activity);
       await Activity.createOrUpdateActivity(activity);
     } catch (err) {
       throw err;
@@ -274,6 +277,164 @@ export class ProcessFileService {
       // Then create a new allocation with activity_id and staff_id
     }
   };
+}
+
+/**
+ * Maps the raw tas file to a TasObject that is below. Changes in the csv document can then be changed here
+ * so the system's TasObject always remains the same
+ * @param rawRow raw tas object
+ * Returns TasObject
+ */
+export function mapRawTasFile(rawRow: RawTasObject) {
+  try {
+    // create the tas object that will be returned
+    const tasObject: TasObject = {
+      givenNames: rawRow["Tutor"].split(" ")[0],
+      lastNames: rawRow["Tutor"].split(" ")[1],
+      preferenceScore: rawRow["Tutor pref"],
+      lecturerScore: rawRow["Lecturer pref"],
+      isHeadTutorCandidate: rawRow["Head tutor"],
+      aqf: rawRow["Tutor AQF"],
+      email: rawRow["Email"],
+      unitCode: rawRow["Subject"],
+      offeringPeriod: rawRow["Subject Code"].slice(11, 13),
+      activityCode: rawRow["Activity Code"],
+      activityGroup: rawRow["Activity Group"],
+      campus: rawRow["Campus"],
+      dayOfWeek: rawRow["Day"],
+      startTime: rawRow["Time"],
+      duration: rawRow["Duration"],
+      location: rawRow["Location"],
+    };
+    return tasObject;
+  } catch (e) {
+    console.log("Failed to read line");
+    return null;
+  }
+}
+
+/**
+ * Maps the raw tps file to a TpsObject that is below. Changes in the csv document can then be changed here
+ * so the system's TpsObject always remains the same
+ * @param rawRow raw TpsObject
+ * returns TpsObject
+ */
+export function mapRawTpsFile(rawRow: RawTpsObject) {
+  try {
+    // create the tas object that will be returned
+    const tpsObject: TpsObject = {
+      aqfTarget: rawRow["unit aqf target"],
+      unitCode: rawRow["unit"].slice(0, 7),
+      offeringPeriod: rawRow["unit"].slice(7),
+      campus: rawRow["campus"],
+      givenNames: rawRow["name"].split(" ")[0],
+      lastNames: rawRow["name"].split(" ")[1],
+      studyAqf: rawRow["tutors studying aqf"],
+      aqf: rawRow["tutors aqf"],
+      email: rawRow["email"],
+      headCandidiate: rawRow["head tutor cand?"],
+      preferenceScore: rawRow["tutors pref"],
+      lecturerScore: rawRow["lec suitability"],
+      availabilities: [
+        {
+          day: DayOfWeek.MONDAY,
+          start: rawRow["M start"],
+          end: rawRow["M end"],
+        },
+        {
+          day: DayOfWeek.TUESDAY,
+          start: rawRow["T start"],
+          end: rawRow["T end"],
+        },
+        {
+          day: DayOfWeek.WEDNESDAY,
+          start: rawRow["W start"],
+          end: rawRow["W end"],
+        },
+        {
+          day: DayOfWeek.THURSDAY,
+          start: rawRow["Th start"],
+          end: rawRow["Th end"],
+        },
+        {
+          day: DayOfWeek.FRIDAY,
+          start: rawRow["F start"],
+          end: rawRow["F end"],
+        },
+      ],
+      maxHours: rawRow["max hr"],
+      maxNumberActivities: rawRow["lecturer_override min classes"],
+    };
+    return tpsObject;
+  } catch (e) {
+    console.log("Failed to read line");
+    return null;
+  }
+}
+
+/**
+ * Maps the raw allocate file to a AllocateObject object. Changes in the csv document can then be changed here
+ * so the system's AllocateObject always remains the same
+ * @param rawRow raw Allocate object row
+ * returns AllocateObject
+ */
+export function mapRawAllocateFile(rawRow: RawAllocateObject) {
+  try {
+    // create the tas object that will be returned
+    const allocateObject: AllocateObject = {
+      unitCode: rawRow["subject_code"].slice(0, 7),
+      offeringPeriod: rawRow["subject_code"].slice(11, 13),
+      campus: rawRow["campus"],
+      activityCode: rawRow["activity_code"],
+      activityGroup: rawRow["activity_group_code"],
+      location: rawRow["location"],
+      duration: rawRow["duration"],
+      dayOfWeek: rawRow["day_of_week"],
+      startTime: rawRow["start_time"],
+      staff_in_charge: rawRow["staff"],
+      studentCount: rawRow["student_count"],
+    };
+    return allocateObject;
+  } catch (e) {
+    console.log("Failed to read line");
+    return null;
+  }
+}
+
+/**
+ * Calculates the end time by adding the duration to the start time
+ * @param startTimeParam starting time
+ * @param durationParam duration
+ * Return a string of the end time, HH:MM:SS
+ */
+function calculateEndTime(
+  startTimeParam: string,
+  durationParam: number
+): string {
+  /**
+   * TODO: some recommendations here
+   * - can calculate the end time on the database level
+   * - or if not, should use javascript date libraries to do the calculation
+   */
+  let inputEndMinuteStr;
+  let inputEndHourStr;
+  let durationInHours = Math.floor(durationParam / 60);
+  let durationInMins = durationParam % 60;
+  let inputStartHour = parseInt(startTimeParam.split(":")[0]);
+  let inputStartMinute = parseInt(startTimeParam.split(":")[1]);
+  let inputEndMinute = inputStartMinute + durationInMins;
+  let inputEndHour = inputStartHour + durationInHours;
+  inputEndHourStr = inputEndHour.toString();
+  if (inputEndMinute > 59) {
+    inputEndMinute = inputEndMinute - 60;
+    inputEndHourStr = (inputStartHour + durationInHours + 1).toString();
+  }
+  inputEndMinuteStr = inputEndMinute.toString();
+  if (inputEndMinute < 10) {
+    inputEndMinuteStr = "0" + inputEndMinute.toString();
+  }
+  let inputEndTime = inputEndHourStr + ":" + inputEndMinuteStr + ":00";
+  return inputEndTime;
 }
 
 /**
@@ -385,139 +546,5 @@ export type AllocateObject = {
   staff_in_charge: string;
   studentCount: number;
 };
-
-export function mapRawTasFile(rawRow: RawTasObject) {
-  try {
-    // create the tas object that will be returned
-    const tasObject: TasObject = {
-      givenNames: rawRow["Tutor"].split(" ")[0],
-      lastNames: rawRow["Tutor"].split(" ")[1],
-      preferenceScore: rawRow["Tutor pref"],
-      lecturerScore: rawRow["Lecturer pref"],
-      isHeadTutorCandidate: rawRow["Head tutor"],
-      aqf: rawRow["Tutor AQF"],
-      email: rawRow["Email"],
-      unitCode: rawRow["Subject"],
-      offeringPeriod: rawRow["Subject Code"].slice(11, 13),
-      activityCode: rawRow["Activity Code"],
-      activityGroup: rawRow["Activity Group"],
-      campus: rawRow["Campus"],
-      dayOfWeek: rawRow["Day"],
-      startTime: rawRow["Time"],
-      duration: rawRow["Duration"],
-      location: rawRow["Location"],
-    };
-    return tasObject;
-  } catch (e) {
-    console.log("Failed to read line");
-    return null;
-  }
-}
-
-export function mapRawTpsFile(rawRow: RawTpsObject) {
-  try {
-    // create the tas object that will be returned
-    const tpsObject: TpsObject = {
-      aqfTarget: rawRow["unit aqf target"],
-      unitCode: rawRow["unit"].slice(0, 7),
-      offeringPeriod: rawRow["unit"].slice(7),
-      campus: rawRow["campus"],
-      givenNames: rawRow["name"].split(" ")[0],
-      lastNames: rawRow["name"].split(" ")[1],
-      studyAqf: rawRow["tutors studying aqf"],
-      aqf: rawRow["tutors aqf"],
-      email: rawRow["email"],
-      headCandidiate: rawRow["head tutor cand?"],
-      preferenceScore: rawRow["tutors pref"],
-      lecturerScore: rawRow["lec suitability"],
-      availabilities: [
-        {
-          day: DayOfWeek.MONDAY,
-          start: rawRow["M start"],
-          end: rawRow["M end"],
-        },
-        {
-          day: DayOfWeek.TUESDAY,
-          start: rawRow["T start"],
-          end: rawRow["T end"],
-        },
-        {
-          day: DayOfWeek.WEDNESDAY,
-          start: rawRow["W start"],
-          end: rawRow["W end"],
-        },
-        {
-          day: DayOfWeek.THURSDAY,
-          start: rawRow["Th start"],
-          end: rawRow["Th end"],
-        },
-        {
-          day: DayOfWeek.FRIDAY,
-          start: rawRow["F start"],
-          end: rawRow["F end"],
-        },
-      ],
-      maxHours: rawRow["max hr"],
-      maxNumberActivities: rawRow["lecturer_override min classes"],
-    };
-    return tpsObject;
-  } catch (e) {
-    console.log("Failed to read line");
-    return null;
-  }
-}
-
-export function mapRawAllocateFile(rawRow: RawAllocateObject) {
-  try {
-    // create the tas object that will be returned
-    const allocateObject: AllocateObject = {
-      unitCode: rawRow["subject_code"].slice(0, 7),
-      offeringPeriod: rawRow["subject_code"].slice(11, 13),
-      campus: rawRow["campus"],
-      activityCode: rawRow["activity_code"],
-      activityGroup: rawRow["activity_group_code"],
-      location: rawRow["location"],
-      duration: rawRow["duration"],
-      dayOfWeek: rawRow["day_of_week"],
-      startTime: rawRow["start_time"],
-      staff_in_charge: rawRow["staff"],
-      studentCount: rawRow["student_count"],
-    };
-    return allocateObject;
-  } catch (e) {
-    console.log("Failed to read line");
-    return null;
-  }
-}
-
-function calculateEndTime(
-  startTimeParam: string,
-  durationParam: number
-): string {
-  /**
-   * TODO: some recommendations here
-   * - can calculate the end time on the database level
-   * - or if not, should use javascript date libraries to do the calculation
-   */
-  let inputEndMinuteStr;
-  let inputEndHourStr;
-  let durationInHours = Math.floor(durationParam / 60);
-  let durationInMins = durationParam % 60;
-  let inputStartHour = parseInt(startTimeParam.split(":")[0]);
-  let inputStartMinute = parseInt(startTimeParam.split(":")[1]);
-  let inputEndMinute = inputStartMinute + durationInMins;
-  let inputEndHour = inputStartHour + durationInHours;
-  inputEndHourStr = inputEndHour.toString();
-  if (inputEndMinute > 59) {
-    inputEndMinute = inputEndMinute - 60;
-    inputEndHourStr = (inputStartHour + durationInHours + 1).toString();
-  }
-  inputEndMinuteStr = inputEndMinute.toString();
-  if (inputEndMinute < 10) {
-    inputEndMinuteStr = "0" + inputEndMinute.toString();
-  }
-  let inputEndTime = inputEndHourStr + ":" + inputEndMinuteStr + ":00";
-  return inputEndTime;
-}
 
 export default ProcessFileService;

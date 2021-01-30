@@ -40,15 +40,6 @@ export const authCheckMiddleware = (
   next: NextFunction
 ) => {
   if (!authCheck(req, res)) return;
-  // if (!req.user) {
-  //   req.logout();
-  //   req.session.cookie.expires = new Date(); // delete session cookie
-  //   res.clearCookie("sid");
-  //   return res.status(401).json({
-  //     authenticated: false,
-  //     message: "user has not been authenticated",
-  //   });
-  // }
   next();
 };
 

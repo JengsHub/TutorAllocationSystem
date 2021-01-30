@@ -1,5 +1,4 @@
-import { DeleteResult, UpdateResult } from "typeorm";
-import { Staff, Unit } from "~/entity";
+import { Staff } from "~/entity";
 import { Role } from "~/entity/Role";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
