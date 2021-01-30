@@ -20,20 +20,23 @@ import CandidatesModal from "./CandidatesModal";
 import "../styles/Grid.css";
 import { IActivity, IAllocationWithStaff } from "../../type";
 
-// here is where the activities for each units are displayed
-
+// Props for LecturingActivity component
 interface ILecturingActivityProps {
-  setStatusLogModalOpen: (activityId: string) => void;
+  setStatusLogModalOpen: (activityId: string) => void; // Toggle the modal
 }
 
+/**
+ * LecturingActivity component: displays the activities for the selected units and allows the lecturer to perform actions on them
+ * @prop setStatusLogModalOpen: a function that toggles the modal
+ */
 const LecturingActivity: React.FC<ILecturingActivityProps> = ({
   setStatusLogModalOpen,
 }) => {
-  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [activities, setActivities] = useState<IActivity[]>([]); // Set state containing activities
   const [activitiesToDisplay, setActivitiesToDisplay] = useState<IActivity[]>(
     []
-  );
-  const [hasChanged, setChanged] = useState<Boolean>(false);
+  ); // Filtered activities to display
+  const [hasChanged, setChanged] = useState<Boolean>(false); // State used to determine whether to update filtered activities
   const [openApproval, setOpenApproval] = useState<boolean>(false);
   const [openRejected, setOpenRejected] = useState<boolean>(false);
   const [openError, setOpenError] = useState<boolean>(false);
@@ -54,6 +57,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
 
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
+  /**
+   * Gets all activities for a particular lecturer and updates component state
+   */
   useEffect(() => {
     setChanged(false);
     const getActivities = async () => {
@@ -74,12 +80,18 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     });
   }, [hasChanged]);
 
+  /**
+   * Updates time every minute to refresh countdown timer
+   */
   useEffect(() => {
     setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
   }, []);
 
+  /**
+   * Filters activities based on selected options and displays them
+   */
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -116,6 +128,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     activities,
   ]);
 
+  /**
+   * setUpAutoComplete: finds options to display in Autocomplete boxes based on data
+   * @param res: An array of IActivity instances
+   */
   function setUpAutoComplete(res: IActivity & { [key: string]: any }[]) {
     let uniqueList: string[] = [];
 
@@ -156,14 +172,11 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     uniqueList = [];
   }
 
-  const getDaysCountDown = (expiryDate: string) => {
-    /*
-    input: Date String
-    output: Time left (number)
-    Desc: find the days or time left between two dates
-    */
-
-    //dates cons
+  /**
+   * getDaysCountdown
+   * @param expiryDate: the date to count down to
+   */
+  const getDaysCountdown = (expiryDate: string) => {
     const expDateFormat = new Date(expiryDate);
     const timeDifference = expDateFormat.getTime() - currentTime.getTime();
     const daysDifference = timeDifference / (1000 * 3600 * 24);
@@ -171,17 +184,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     //if offer expired.
     if (timeDifference <= 0) {
       return (
-        // <div
-        //   style={{
-        //     margin: 0,
-        //     padding: 5,
-        //     backgroundColor: "#ffe57d",
-        //     fontWeight: "bold",
-        //   }}
-        // >
-        //   Tutor has not responded
-        // </div>
-
         <CustomStatus
           value="Tutor has not responded"
           isYellow
@@ -208,30 +210,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
-  // const timeReducer = (time: String) =>
-  //   time
-  //     .split(":")
-  //     .map((val) => parseInt(val))
-  //     .reduce((val, total) => val * 60 + total);
-
-  // const sortDayTime = (list: IActivity[]) => {
-  //   return list.sort((a, b) => {
-  //     if (
-  //       Object.values(DayOfWeek).indexOf(a.dayOfWeek) <
-  //       Object.values(DayOfWeek).indexOf(b.dayOfWeek)
-  //     ) {
-  //       return -1;
-  //     } else if (
-  //       Object.values(DayOfWeek).indexOf(a.dayOfWeek) >
-  //       Object.values(DayOfWeek).indexOf(b.dayOfWeek)
-  //     ) {
-  //       return 1;
-  //     } else {
-  //       return timeReducer(a.startTime) - timeReducer(b.startTime);
-  //     }
-  //   });
-  // };
-
+  /**
+   * Returns a MuiAlert component.
+   * @param props: props to pass into the MuiAlert component.
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
@@ -245,6 +227,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     setOpenRejected(false);
   };
 
+  /**
+   * Approves an allocation.
+   * @param allocation: the allocation to approve.
+   */
   const allocationApproved = async (allocation: IAllocationWithStaff) => {
     const result = await baseApi.patch(
       `/allocations/${allocation.id}/lecturer-approval?value=true`
@@ -253,13 +239,15 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       setChanged(true);
       setOpenApproval(true);
     } else {
-      // Untested
       setOpenError(true);
     }
   };
 
   const allocationRejected = async (allocation: IAllocationWithStaff) => {
-    // TODO: Handle approval
+    /**
+     * Rejects an allocation.
+     * @param allocation: the allocation to reject.
+     */
     const result = await baseApi.patch(
       `/allocations/${allocation.id}/lecturer-approval?value=false`
     );
@@ -267,7 +255,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
       setChanged(true);
       setOpenRejected(true);
     } else {
-      // Untested
       setOpenError(true);
     }
   };
@@ -281,6 +268,9 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     },
   });
 
+  /**
+   * Returns a table row for when there are no relevant activities to display.
+   */
   function EmptyAllocations() {
     const classes = useRowStyles();
     if (activities.length === 0) {
@@ -295,6 +285,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     return <TableRow />;
   }
 
+  /**
+   * Converts the DayOfWeek enum to a string
+   * @param day: a DayOfWeek enum
+   */
   const dayConverter = (day: DayOfWeek) => {
     switch (day) {
       case DayOfWeek.MONDAY:
@@ -312,7 +306,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
   };
 
-  // this will determine what to be shown in the status cell of the table.
+  /**
+   * ApprovalCell: returns a component with the relevant info depending on allocation approval status
+   * @param props: a props object containing an IAllocationWithStaff instance
+   */
   function ApprovalCell(props: { allocation: IAllocationWithStaff }) {
     const { allocation } = props;
     const approval = allocation.isLecturerApproved;
@@ -357,34 +354,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     }
 
     return <CustomStatus value="Error" isRed isCross></CustomStatus>;
-
-    // if (approval === null) {
-    //   return (
-    //     <CustomStatus
-    //       value="Waiting for Lecturer"
-    //       isBlue
-    //       isExclamationDiamond
-    //     />
-    //   );
-    // } else if (approval === false) {
-    //   return <CustomStatus value="Lecturer has rejected" isRed isCross />;
-    // }
-
-    // if (acceptance === null) {
-    //   return <CustomStatus value="Waiting for TA response" isBlue isClock />;
-    // } else if (acceptance === false) {
-    //   <CustomStatus value="TA has rejected" isRed isExclamationTriangle />;
-    // }
-
-    // if (workforce === true) {
-    //   return <CustomStatus value="Workforce has approved" isGreen isCheck />;
-    // } else if (workforce === false) {
-    //   return <CustomStatus value="Workforce has rejected" isRed isCross />;
-    // }
-
-    // return (
-    //   <CustomStatus value="Waiting for Workforce approval" isBlue isCheck />
-    // );
   }
 
   const StyledTableCell = withStyles(() => ({
@@ -393,7 +362,10 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     },
   }))(TableCell);
 
-  // this function will check whether curernt allocation of an activity exceed the activity's allocationMaxNum
+  /**
+   * isAllocationsLessThanMax: checks that the current allocations of an activity does not exceed the activity's allocationMaxNum
+   * @param activity: the activity to check
+   */
   function isAllocationsLessThanMax(activity: IActivity) {
     let allocationsNoRejection: IAllocationWithStaff[] = [];
 
@@ -415,11 +387,6 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
     return allocationsNoRejection.length < allocationsMaxNum;
   }
 
-  /*
-  NOTE
-  For the approval tablecell, we could prob display the status e.g. APPROVED/REJECTED is it has been dealt with. 
-  Else, we just provide the buttons for approval/rejection.
-   */
   return (
     <div>
       <CandidatesModal
@@ -617,7 +584,7 @@ const LecturingActivity: React.FC<ILecturingActivityProps> = ({
                                 ) : null}
                               </TableCell>
                               <TableCell align="left">
-                                {getDaysCountDown(allocation.offerExpiryDate)}
+                                {getDaysCountdown(allocation.offerExpiryDate)}
                               </TableCell>
                             </TableRow>
                             {j === n - 1 ? (

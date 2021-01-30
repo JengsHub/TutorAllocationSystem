@@ -11,7 +11,7 @@ this file puts together the drag and drop componenet for the Allocate+ Section
 from Component(react), ReadfileFormat, and DragDropPresentation
 */
 class AllocateDragDrop extends Component<Props, State> {
-  //initialzier to accept file types.
+  //initializer to accept file types.
   static counter = 0;
   fileUploaderInput: HTMLElement | null = null;
   allocateList: any[] = [[]];
@@ -149,7 +149,6 @@ class AllocateDragDrop extends Component<Props, State> {
     this.hideSuccess();
   };
 
-  //on ComponentDidMount:
   componentDidMount() {
     window.addEventListener("dragover", (event: Event) => {
       this.overrideEventDefaults(event);
@@ -159,13 +158,12 @@ class AllocateDragDrop extends Component<Props, State> {
     });
   }
 
-  //on Componenet willUnmount:
   componentWillUnmount() {
     window.removeEventListener("dragover", this.overrideEventDefaults);
     window.removeEventListener("drop", this.overrideEventDefaults);
   }
 
-  //render the ui components:
+  //render the UI components:
   render() {
     return (
       <div className="Dragdrop">

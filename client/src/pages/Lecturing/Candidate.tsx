@@ -22,8 +22,9 @@ import {
 
 //This is where candidates for activities are created, shown, and handled
 
+// Props for Candidate component
 interface ICandidateProps {
-  activityId: string;
+  activityId: string; // ID of activity for which the candidates are considered
 }
 
 const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
@@ -39,6 +40,7 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const [allocationLeft, setAllocationLeft] = useState<number>();
   const history = useHistory();
 
+  // Get activity and preference data on page load
   useEffect(() => {
     if (activityId) {
       getActivity(activityId).then((res) => {
