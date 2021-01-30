@@ -16,7 +16,7 @@ import { ISwap } from "../../type";
 
 /*
  * Page: Manage Swapping for non admin (lecturers)
- * This is where lectruers can manage the swapping requests done by TA.
+ * This is where lecturers can manage the swapping requests done by TA.
  */
 
 const SwappingLecturer = () => {
@@ -40,6 +40,9 @@ const SwappingLecturer = () => {
   const [openError, setOpenError] = useState<boolean>(false);
   const initialRender = useRef(true);
 
+  /**
+   * Gets swaps using API on page load or filter change
+   */
   useEffect(() => {
     setChanged(false);
     const getSwaps = async () => {
@@ -60,6 +63,9 @@ const SwappingLecturer = () => {
     });
   }, [hasChanged]);
 
+  /**
+   * Handles changes in the filter options to display the correct swaps
+   */
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -99,6 +105,10 @@ const SwappingLecturer = () => {
     swaps,
   ]);
 
+  /**
+   * setUpAutoComplete: finds options to display in Autocomplete boxes based on data
+   * @param res: An array of ISwap instances
+   */
   function setUpAutoComplete(res: ISwap[]) {
     let uniqueList: string[] = [];
 
@@ -139,6 +149,10 @@ const SwappingLecturer = () => {
     uniqueList = [];
   }
 
+  /**
+   * Handles accepting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleLecturerAccept = async (swap: ISwap) => {
     let result = await baseApi.patch(`/swaps/approveSwapLecturer/${swap.id}`);
     if (result.statusText === "OK") {
@@ -150,6 +164,10 @@ const SwappingLecturer = () => {
     }
   };
 
+  /**
+   * Handles rejecting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleLecturerReject = async (swap: ISwap) => {
     let result = await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
     if (result.statusText === "OK") {
@@ -167,6 +185,10 @@ const SwappingLecturer = () => {
     },
   }))(TableCell);
 
+  /**
+   * Returns a MuiAlert component
+   * @param props props to pass into the MuiAlert
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
