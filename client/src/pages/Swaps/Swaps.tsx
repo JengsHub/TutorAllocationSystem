@@ -1,12 +1,14 @@
 import { Button, TableContainer } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
 import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
@@ -26,6 +28,9 @@ const Swaps = (props: { [key: string]: any }) => {
     (IAllocation & { [key: string]: any })[]
   >([]);
   const [modalOpen, setModalOpen] = useState<IAllocation | null>(null);
+
+  const [openApproval, setOpenApproval] = useState<boolean>(false);
+  const [openError, setOpenError] = useState<boolean>(false);
 
   useEffect(() => {
     setChanged(false);
@@ -143,9 +148,27 @@ const Swaps = (props: { [key: string]: any }) => {
   };
 
   const acceptSwap = async (swap: ISwap) => {
-    await baseApi.post("/swaps/acceptSwap", swap);
-    setChanged(true);
+    const res = await baseApi.post("/swaps/acceptSwap", swap);
+    if (res.statusText === "OK") {
+      setChanged(true);
+      setOpenApproval(true);
+    } else {
+      setOpenError(true);
+      console.error("error updating");
+    }
   };
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenApproval(false);
+    setOpenError(false);
+  };
+
+  function Alert(props: AlertProps) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
 
   const StyledTableCell = withStyles(() => ({
     head: {
@@ -254,15 +277,17 @@ const Swaps = (props: { [key: string]: any }) => {
                         {swap.desired.activityCode}-{swap.desired.activityGroup}{" "}
                         {dayConverter(swap.desired.dayOfWeek)}{" "}
                       </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          onClick={() => acceptSwap(swap)}
-                          variant="contained"
-                          color="primary"
-                        >
-                          Accept Swap
-                        </Button>
-                      </TableCell>
+                      {swap.into?.activity ? null : (
+                        <TableCell align="center">
+                          <Button
+                            onClick={() => acceptSwap(swap)}
+                            variant="contained"
+                            color="primary"
+                          >
+                            Accept Swap
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -334,6 +359,20 @@ const Swaps = (props: { [key: string]: any }) => {
           </>
         )}
       </Box>
+      <Snackbar
+        open={openApproval}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          You have accepted a swap.
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          Something went wrong. Please try again.
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
