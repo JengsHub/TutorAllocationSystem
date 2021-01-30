@@ -12,6 +12,9 @@ import { IPreference } from "../../type";
 const Swapping = () => {
   const [units, setUnits] = useState<IPreference[]>([]);
 
+  /**
+   * Gets list of units on page load
+   */
   useEffect(() => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
@@ -41,6 +44,10 @@ const Swapping = () => {
   //     },
   //   });
 
+  /**
+   * Returns a component representing a row with unit information
+   * @param props
+   */
   function Row(props: { row: IPreference }) {
     const { row } = props;
 
@@ -67,6 +74,11 @@ const Swapping = () => {
     );
   }
 
+  /**
+   * sortPreferenceScore: sorts a list of IPreference instances by their preference score
+   * @param list List of preferences
+   * @param way a string representing the direction in which to sort
+   */
   const sortPreferenceScore = (list: IPreference[], way: String) => {
     list.sort((a, b) => {
       if (way === "desc") {

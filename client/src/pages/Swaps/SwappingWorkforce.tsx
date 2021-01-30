@@ -40,6 +40,9 @@ const SwappingWorkforce = () => {
   const [openError, setOpenError] = useState<boolean>(false);
   const initialRender = useRef(true);
 
+  /**
+   * Fetch swaps to display on page load or filter option change
+   */
   useEffect(() => {
     setChanged(false);
     const getSwaps = async () => {
@@ -60,6 +63,9 @@ const SwappingWorkforce = () => {
     });
   }, [hasChanged]);
 
+  /**
+   * Handle changes in filter options to display the correct swaps
+   */
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -99,6 +105,10 @@ const SwappingWorkforce = () => {
     swaps,
   ]);
 
+  /**
+   * setUpAutoComplete: finds options to display in Autocomplete boxes based on data
+   * @param res: An array of ISwap instances
+   */
   function setUpAutoComplete(res: ISwap[]) {
     let uniqueList: string[] = [];
 
@@ -139,6 +149,10 @@ const SwappingWorkforce = () => {
     uniqueList = [];
   }
 
+  /**
+   * Handles accepting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleWorkforceAccept = async (swap: ISwap) => {
     let result = await baseApi.patch(`/swaps/approveSwapWorkforce/${swap.id}`);
     if (result.statusText === "OK") {
@@ -150,6 +164,10 @@ const SwappingWorkforce = () => {
     }
   };
 
+  /**
+   * Handles rejecting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleWorkforceReject = async (swap: ISwap) => {
     let result = await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
     if (result.statusText === "OK") {
@@ -161,6 +179,10 @@ const SwappingWorkforce = () => {
     }
   };
 
+  /**
+   * Returns a MuiAlert component
+   * @param props props to pass into the MuiAlert
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }

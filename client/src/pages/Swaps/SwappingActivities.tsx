@@ -21,6 +21,10 @@ interface ICandidateProps {
   allocation: IAllocation;
 }
 
+/**
+ * SwappingActivities: a component for creating allocation swaps
+ * @prop allocation: the allocation to swap
+ */
 const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
   const [swappableActivities, setSwappableActivity] = useState<IActivity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<IActivity>();
@@ -29,6 +33,9 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
 
   const history = useHistory();
 
+  /**
+   * On page load, get swappable activities based on current allocation
+   */
   useEffect(() => {
     const getSwappableActivities = async () => {
       try {
@@ -55,6 +62,9 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     setSelectedActivity(activity);
   };
 
+  /**
+   * Sends an API request to create a swap
+   */
   const createSwap = async () => {
     if (selectedActivity) {
       let swap: Partial<ISwap> = {
@@ -72,6 +82,10 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     }
   };
 
+  /**
+   * Converts a DayOfWeek enum to a string
+   * @param day: the DayOfWeek enum to convert
+   */
   const dayConverter = (day: DayOfWeek) => {
     switch (day) {
       case DayOfWeek.MONDAY:
@@ -89,6 +103,10 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     }
   };
 
+  /**
+   * Returns a MuiAlert component
+   * @param props props to pass into the MuiAlert
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
