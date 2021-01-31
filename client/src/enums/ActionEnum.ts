@@ -1,3 +1,4 @@
+// Enums that are used to relfect on the action of the status logs within the UI
 export enum ActionEnums {
   // MAKE_OFFER = "Lecturer makes an offer to TA",
   LECTURER_APPROVE = "Lecturer approves of offer to",

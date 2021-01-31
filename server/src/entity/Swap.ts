@@ -1,11 +1,11 @@
 import {
   BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  Entity,
-  ManyToOne,
-  Column,
-  JoinColumn,
 } from "typeorm";
 import { Allocation } from ".";
 import { Activity } from "./Activity";

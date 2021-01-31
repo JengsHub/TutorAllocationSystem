@@ -1,19 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete } from "@material-ui/lab";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, Table, TableRow, TextField } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import TableCell from "@material-ui/core/TableCell";
-import { withStyles } from "@material-ui/core/styles";
-import { Table, TableRow } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
+import { Autocomplete } from "@material-ui/lab";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { ISwap } from "../../type";
+
+/*
+ * Page: Manage Swapping for non admin (lecturers)
+ * This is where lecturers can manage the swapping requests done by TA.
+ */
 
 const SwappingLecturer = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
@@ -36,6 +40,9 @@ const SwappingLecturer = () => {
   const [openError, setOpenError] = useState<boolean>(false);
   const initialRender = useRef(true);
 
+  /**
+   * Gets swaps using API on page load or filter change
+   */
   useEffect(() => {
     setChanged(false);
     const getSwaps = async () => {
@@ -53,10 +60,12 @@ const SwappingLecturer = () => {
       setSwapsToDisplay(res);
       // eslint-disable-next-line
       setUpAutoComplete(res);
-      console.log(res);
     });
   }, [hasChanged]);
 
+  /**
+   * Handles changes in the filter options to display the correct swaps
+   */
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -96,6 +105,10 @@ const SwappingLecturer = () => {
     swaps,
   ]);
 
+  /**
+   * setUpAutoComplete: finds options to display in Autocomplete boxes based on data
+   * @param res: An array of ISwap instances
+   */
   function setUpAutoComplete(res: ISwap[]) {
     let uniqueList: string[] = [];
 
@@ -136,6 +149,10 @@ const SwappingLecturer = () => {
     uniqueList = [];
   }
 
+  /**
+   * Handles accepting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleLecturerAccept = async (swap: ISwap) => {
     let result = await baseApi.patch(`/swaps/approveSwapLecturer/${swap.id}`);
     if (result.statusText === "OK") {
@@ -147,6 +164,10 @@ const SwappingLecturer = () => {
     }
   };
 
+  /**
+   * Handles rejecting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleLecturerReject = async (swap: ISwap) => {
     let result = await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
     if (result.statusText === "OK") {
@@ -164,6 +185,10 @@ const SwappingLecturer = () => {
     },
   }))(TableCell);
 
+  /**
+   * Returns a MuiAlert component
+   * @param props props to pass into the MuiAlert
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }

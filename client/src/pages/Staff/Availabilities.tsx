@@ -10,6 +10,8 @@ import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
 import { IAvailability } from "../../type";
 
+//This is where the time of availability for the staff is shown and handled
+
 interface IAvailabilitiesProps {
   staffId: string;
 }

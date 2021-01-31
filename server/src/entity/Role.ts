@@ -4,14 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   Unique,
 } from "typeorm";
-import { RoleEnum } from "../enums/RoleEnum";
 import { Staff } from ".";
+import { RoleEnum } from "../enums/RoleEnum";
 import { Unit } from "./Unit";
 
 @Entity()

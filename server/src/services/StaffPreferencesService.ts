@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { DeleteResult, getRepository, Like } from "typeorm";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
   DELETE,
   GET,
   IgnoreNextMiddlewares,
-  PATCH,
   Path,
   PathParam,
   POST,
@@ -52,10 +51,6 @@ class StaffPreferencesService {
       where: params,
       relations: ["unit"],
     });
-
-    // const me = req.user as Staff;
-    // const controller = this.factory.getController(await me.getRoleTitle());
-    // return controller.getAllStaffPreferences();
   }
 
   /**
@@ -83,17 +78,7 @@ class StaffPreferencesService {
       .orderBy("unit.campus", "ASC")
       .orderBy("unit.unitCode", "ASC")
       .getMany();
-    // console.log(preferences)
-    // const preferences = await this.repo
-    //   .find({
-    //     where: {
-    //       staff: me,
-    //     },
-    //     relations: ["unit"],
-    //   })
-    //   .then((result) => {
-    //     return result;
-    //   });
+
     return preferences;
   }
 

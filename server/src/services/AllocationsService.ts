@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DeleteResult, getManager, getRepository } from "typeorm";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
@@ -14,8 +14,8 @@ import {
   PUT,
   QueryParam,
 } from "typescript-rest";
-import { Activity, Staff, Allocation, Role, Swap } from "~/entity";
 import { AllocationControllerFactory } from "~/controller";
+import { Activity, Allocation, Role, Staff, Swap } from "~/entity";
 import { ActionEnums } from "~/enums/ActionEnum";
 import { authCheck } from "~/helpers/auth";
 import { createAndSaveStatusLog } from "~/helpers/statusLogHelper";
@@ -35,15 +35,6 @@ class AllocationsService {
   repo = getRepository(Allocation);
   factory = new AllocationControllerFactory();
 
-  // /**
-  //  * Returns a list of allocations
-  //  * @return Array<Allocation> allocations list
-  //  */
-  // @GET
-  // public getAllAllocations(): Promise<Array<Allocation>> {
-  //   return this.repo.find();
-  // }
-
   /**
    * Get the allocated activities of the current user
    * Option to filter by unit id
@@ -59,8 +50,6 @@ class AllocationsService {
     @ContextResponse res: Response,
     @QueryParam("unitId") unitId: string,
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean
-    // @QueryParam("offeringPeriod") offeringPeriod: string,
-    // @QueryParam("year") year: number
   ) {
     if (!authCheck(req, res)) return;
 
@@ -76,8 +65,6 @@ class AllocationsService {
        * See: https://github.com/typeorm/typeorm/issues/2707
        */
 
-      console.log(unitId);
-
       allocations = await Allocation.createQueryBuilder("allocation")
         .leftJoinAndSelect("allocation.activity", "activity")
         .innerJoinAndSelect("allocation.staff", "staff")
@@ -87,8 +74,6 @@ class AllocationsService {
           approval: isLecturerApproved,
         })
         .getMany();
-
-      console.log(allocations.length, "Debug");
     } else {
       //get all units
       allocations = await Allocation.createQueryBuilder("allocation")
@@ -101,7 +86,6 @@ class AllocationsService {
         .getMany();
     }
 
-    // console.log(allocations);
     return allocations;
   }
 
@@ -162,7 +146,6 @@ class AllocationsService {
     }
 
     for (let swap of mySwaps) {
-      console.log(swap.from);
       allocations = allocations.filter(
         (alc: Allocation) => alc.id != swap.from.id
       );
@@ -221,13 +204,6 @@ class AllocationsService {
     );
 
     let allocation = await controller.createAllocation(me, newRecord);
-    console.log(allocation);
-    // createAndSaveStatusLog(
-    //   allocation["id"],
-    //   ActionEnums.LECTURER_PROPOSE,
-    //   me.id,
-    //   newRecord.staffId
-    // );
 
     return allocation;
   }
@@ -310,7 +286,6 @@ class AllocationsService {
     const me = req.user as Staff;
     const { staff, activity } = allocation;
     const { unit } = activity;
-    // const role = await me.getRoleTitle(unit.id);
     let role = RoleEnum.TA;
     const controller = this.factory.getController(role);
 

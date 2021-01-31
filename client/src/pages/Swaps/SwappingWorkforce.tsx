@@ -1,19 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Autocomplete } from "@material-ui/lab";
-import { Grid, TextField } from "@material-ui/core";
+import { Grid, Table, TableRow, TextField } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
-import TableCell from "@material-ui/core/TableCell";
-import { withStyles } from "@material-ui/core/styles";
-import { Table, TableRow } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
-import Snackbar from "@material-ui/core/Snackbar";
+import { Autocomplete } from "@material-ui/lab";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import React, { useEffect, useRef, useState } from "react";
 import baseApi from "../../apis/baseApi";
 import { CustomButton, CustomStatus } from "../../components";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import { ISwap } from "../../type";
+
+/*
+ * Page: Manage Swapping for admin
+ * This is where admins can manage the swappings requested by TAs
+ */
 
 const SwappingWorkforce = () => {
   const [swaps, setSwaps] = useState<ISwap[]>([]);
@@ -36,6 +40,9 @@ const SwappingWorkforce = () => {
   const [openError, setOpenError] = useState<boolean>(false);
   const initialRender = useRef(true);
 
+  /**
+   * Fetch swaps to display on page load or filter option change
+   */
   useEffect(() => {
     setChanged(false);
     const getSwaps = async () => {
@@ -53,10 +60,12 @@ const SwappingWorkforce = () => {
       setSwapsToDisplay(res);
       // eslint-disable-next-line
       setUpAutoComplete(res);
-      console.log(res);
     });
   }, [hasChanged]);
 
+  /**
+   * Handle changes in filter options to display the correct swaps
+   */
   useEffect(() => {
     if (initialRender.current) {
       initialRender.current = false;
@@ -96,6 +105,10 @@ const SwappingWorkforce = () => {
     swaps,
   ]);
 
+  /**
+   * setUpAutoComplete: finds options to display in Autocomplete boxes based on data
+   * @param res: An array of ISwap instances
+   */
   function setUpAutoComplete(res: ISwap[]) {
     let uniqueList: string[] = [];
 
@@ -136,6 +149,10 @@ const SwappingWorkforce = () => {
     uniqueList = [];
   }
 
+  /**
+   * Handles accepting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleWorkforceAccept = async (swap: ISwap) => {
     let result = await baseApi.patch(`/swaps/approveSwapWorkforce/${swap.id}`);
     if (result.statusText === "OK") {
@@ -147,6 +164,10 @@ const SwappingWorkforce = () => {
     }
   };
 
+  /**
+   * Handles rejecting swaps via a request
+   * @param swap the swap to accept
+   */
   const handleWorkforceReject = async (swap: ISwap) => {
     let result = await baseApi.delete(`/swaps/rejectSwap/${swap.id}`);
     if (result.statusText === "OK") {
@@ -158,6 +179,10 @@ const SwappingWorkforce = () => {
     }
   };
 
+  /**
+   * Returns a MuiAlert component
+   * @param props props to pass into the MuiAlert
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }

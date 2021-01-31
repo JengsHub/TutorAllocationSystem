@@ -31,6 +31,13 @@ export interface IAvailabilityController {
   ): any;
 }
 
+/* TA role authorisation - RESTRICTED ACCESS
+ * - getAvailability (only for their availabilities)
+ * - createAvailability (only for themselves)
+ * - updateAvailability (only for themselves)
+ * - deleteAvailability (only for themselves)
+ */
+
 class TaAvailabilityController implements IAvailabilityController {
   getAllAvailabilities() {
     return new UnauthorisedAccessedError("TA cannot get all availabilities");
@@ -97,6 +104,14 @@ class TaAvailabilityController implements IAvailabilityController {
   }
 }
 
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - getAllAvailabilities
+ * - getAvailability (only for themselves)
+ * - createAvailability (only for themselves)
+ * - updateAvailability (only for themselves)
+ * - deleteAvailability (only for themselves)
+ */
+
 class LecturerAvailabilityController implements IAvailabilityController {
   getAllAvailabilities() {
     return Availability.find();
@@ -162,6 +177,14 @@ class LecturerAvailabilityController implements IAvailabilityController {
     );
   }
 }
+
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getAllAvailabilities
+ * - getAvailability
+ * - createAvailability
+ * - updateAvailability
+ * - deleteAvailability
+ */
 
 class AdminAvailabilityController implements IAvailabilityController {
   getAllAvailabilities() {

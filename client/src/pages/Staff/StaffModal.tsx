@@ -6,6 +6,8 @@ import React from "react";
 import StaffDetails from "./StaffDetails";
 // import Candidate from "./Candidate";
 
+//this is the Modal for the StaffDetails
+
 interface IStaffModal {
   staffName: string;
   staffId: string | null;

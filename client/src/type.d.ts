@@ -1,5 +1,33 @@
 import { RoleEnum } from "./enums/RoleEnum";
 
+export type State = {
+  dragging: boolean;
+  file: File | null;
+};
+
+export type Props = {};
+
+export type PresentationalProps = {
+  dragging: boolean;
+  file: File | null;
+  onDrag: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragStart: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragEnter: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDragLeave: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDrop: (event: React.DragEvent<HTMLDivElement>) => void;
+};
+
+export interface IUnit {
+  id: string;
+  unitCode: string;
+  offeringPeriod: string;
+  campus: string;
+  year: number;
+  aqfTarget: number;
+}
+
 enum DayOfWeek {
   MONDAY = "M",
   TUESDAY = "T",
@@ -8,7 +36,7 @@ enum DayOfWeek {
   FRIDAY = "F",
 }
 
-interface IActivity {
+export interface IActivity {
   activityCode: string;
   activityGroup: string;
   allocations: IAllocationWithStaff[];
@@ -24,7 +52,7 @@ interface IActivity {
   allocationsMaxNum: number;
 }
 
-interface IStaff {
+export interface IStaff {
   aqf: number;
   email: string;
   givenNames: string;
@@ -33,17 +61,18 @@ interface IStaff {
   studyingAqf: number;
 }
 
-interface IRole {
+export interface IRole {
   id: string;
   title: RoleEnum;
   unit: IUnit;
   unitId: string;
-  staff: Staff;
+  staff: IStaff;
   staffId: string;
 }
 
-interface IPreferences {
-  id: string;
+export interface IPreference {
+  id;
+  string;
   isHeadTutorCandidate: true;
   lecturerScore: number;
   preferenceScore: number;
@@ -53,7 +82,7 @@ interface IPreferences {
   unit: IUnit;
 }
 
-interface IAllocation {
+export interface IAllocation {
   id: string;
   activityId: string;
   activity: IActivity;
@@ -66,7 +95,7 @@ interface IAllocation {
   offerExpiryDate: string;
 }
 
-interface IAllocationWithStaff {
+export interface IAllocationWithStaff {
   id: string;
   activityId: string;
   staffId: string;
@@ -78,7 +107,7 @@ interface IAllocationWithStaff {
   offerExpiryDate: string;
 }
 
-interface IAvailability {
+export interface IAvailability {
   id: string;
   day: DayOfWeek;
   startTime: string;
@@ -89,23 +118,14 @@ interface IAvailability {
   staffId: string;
 }
 
-interface IUnit {
-  id: string;
-  unitCode: string;
-  offeringPeriod: string;
-  campus: string;
-  year: number;
-  aqfTarget: number;
-}
-
-interface IRule {
+export interface IRule {
   id: string;
   ruleName: string;
   ruleDescription: string;
   value: number;
 }
 
-interface IStatusLogWithStaff {
+export interface IStatusLogWithStaff {
   id: string;
   allocation_id: string;
   action: string;
@@ -116,7 +136,7 @@ interface IStatusLogWithStaff {
   time: string;
 }
 
-interface ISwap {
+export interface ISwap {
   lecturerApproved: boolean;
   workforceApproved: boolean;
   id: string;
@@ -126,14 +146,4 @@ interface ISwap {
   from: IAllocation;
   into: IAllocation | null;
   desired: IActivity;
-}
-
-interface myAllocations {
-  id: string;
-  isLecturerApproved: boolean;
-  isTaAccepted: boolean;
-  isWorkforceApproved: boolean;
-  activityId: string;
-  staffId: string;
-  activity: IActivity;
 }

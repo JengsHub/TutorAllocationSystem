@@ -13,7 +13,6 @@ export class Availability extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  // @Column({ type: "enum", enum: DayOfWeek })
   @Column({ type: "varchar" })
   day!: DayOfWeek;
 

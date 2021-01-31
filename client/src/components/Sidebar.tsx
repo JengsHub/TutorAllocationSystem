@@ -4,6 +4,7 @@ import logo from "../images/logofull.png";
 import SidebarItems from "./SidebarItems";
 import "./styles/Sidebar.css";
 
+//This file puts together the NON-ADMIN sidebar using NavLink, Logo, and the items in SidebarItems, and applies the style
 const Sidebar = () => {
   return (
     <>

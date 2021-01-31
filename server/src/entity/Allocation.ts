@@ -1,11 +1,11 @@
 import {
+  AfterLoad,
   BaseEntity,
+  Column,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  Column,
   OneToMany,
-  AfterLoad,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { addDays } from "~/helpers";
 import { Activity } from "./Activity";
@@ -14,13 +14,6 @@ import { StatusLog } from "./StatusLog";
 
 @Entity()
 export class Allocation extends BaseEntity {
-  // getDefaultDate(daysToAdd: number = 0) {
-  //   let d = new Date();
-  //   let newDate = new Date(d.setTime(d.getTime() + daysToAdd * 86400000));
-  //   newDate.setTime(newDate.getTime() + 12 * 1000 * 60 * 60);
-  //   return newDate;
-  // }
-
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 

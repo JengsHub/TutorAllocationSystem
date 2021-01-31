@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from "react";
 import Box from "@material-ui/core/Box";
-import Swaps from "./Swaps";
+import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
-import { IPreferences } from "../../type";
+import Swaps from "./Swaps";
+import { IPreference } from "../../type";
+
+/*
+ * Page: Swapping for non admin
+ * This is where non-admins can see their swap request
+ */
 
 const Swapping = () => {
-  const [units, setUnits] = useState<IPreferences[]>([]);
+  const [units, setUnits] = useState<IPreference[]>([]);
 
+  /**
+   * Gets list of units on page load
+   */
   useEffect(() => {
     // let user: IStaff | undefined;
     const getUnits = async () => {
@@ -20,7 +28,6 @@ const Swapping = () => {
     };
 
     getUnits().then((res) => {
-      // console.log(res);
       sortPreferenceScore(res, "desc");
       setUnits(res || []);
     });
@@ -37,7 +44,11 @@ const Swapping = () => {
   //     },
   //   });
 
-  function Row(props: { row: IPreferences }) {
+  /**
+   * Returns a component representing a row with unit information
+   * @param props
+   */
+  function Row(props: { row: IPreference }) {
     const { row } = props;
 
     return (
@@ -63,8 +74,12 @@ const Swapping = () => {
     );
   }
 
-  const sortPreferenceScore = (list: IPreferences[], way: String) => {
-    console.log(list);
+  /**
+   * sortPreferenceScore: sorts a list of IPreference instances by their preference score
+   * @param list List of preferences
+   * @param way a string representing the direction in which to sort
+   */
+  const sortPreferenceScore = (list: IPreference[], way: String) => {
     list.sort((a, b) => {
       if (way === "desc") {
         return b.preferenceScore > a.preferenceScore

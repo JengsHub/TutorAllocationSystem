@@ -31,6 +31,10 @@ export interface IActivityController {
   deleteActivity(activityId: string): any;
 }
 
+/* TA role authorisation - RESTRICTED ACCESS
+ * - getActivity
+ */
+
 class TaActivityController implements IActivityController {
   getAllActivities() {
     return new UnauthorisedAccessedError("TA cannot get all activities");
@@ -63,6 +67,16 @@ class TaActivityController implements IActivityController {
     return new UnauthorisedAccessedError("TA cannot delete activities");
   }
 }
+
+/* Lecturer role authorisation - FULL ACCESS
+ * - getAllActivities
+ * - getActivity
+ * - getActivityForCandidates
+ * - getActivityForSortedCandidates
+ * - createActivity
+ * - updateActivity
+ * - deleteActivity
+ */
 
 class LecturerActivityController implements IActivityController {
   getAllActivities() {
@@ -133,6 +147,15 @@ class LecturerActivityController implements IActivityController {
   }
 }
 
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getAllActivities
+ * - getActivity
+ * - getActivityForCandidates
+ * - getActivityForSortedCandidates
+ * - createActivity
+ * - updateActivity
+ * - deleteActivity
+ */
 class AdminActivityController implements IActivityController {
   getAllActivities() {
     return Activity.find({

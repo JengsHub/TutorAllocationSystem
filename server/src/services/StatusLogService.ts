@@ -14,6 +14,10 @@ class StatusLogService {
     return await this.repo.find();
   }
 
+  /**
+   * Get the status logs of an allocation with the staff and target staff objects attached to it
+   * @param id id of the allocation
+   */
   @GET
   @Path(":allocationId/staffs")
   public async getStatusLogsWithUsers(@PathParam("allocationId") id: string) {
@@ -32,9 +36,7 @@ class StatusLogService {
   @GET
   @Path(":allocationId")
   public async getStatusLogs(@PathParam("allocationId") id: string) {
-    console.log(id);
     let statusLog = await this.repo.find({ allocationId: id });
-    console.log(statusLog);
     return statusLog;
   }
 }

@@ -1,13 +1,10 @@
+import { NextFunction, Request, Response } from "express";
 import passport from "passport";
 import { Strategy } from "passport-google-oauth20";
 import { getRepository } from "typeorm";
-import { Staff } from "~/entity";
-import { Request, Response, NextFunction } from "express";
-import { emailHelperInstance } from "..";
 import { config } from "~/config";
+import { Staff } from "~/entity";
 
-console.log(process.env.NODE_ENV);
-console.log(config);
 console.log("----Setting up Passport and Strategy----");
 
 // @ts-ignore
@@ -43,15 +40,6 @@ export const authCheckMiddleware = (
   next: NextFunction
 ) => {
   if (!authCheck(req, res)) return;
-  // if (!req.user) {
-  //   req.logout();
-  //   req.session.cookie.expires = new Date(); // delete session cookie
-  //   res.clearCookie("sid");
-  //   return res.status(401).json({
-  //     authenticated: false,
-  //     message: "user has not been authenticated",
-  //   });
-  // }
   next();
 };
 
