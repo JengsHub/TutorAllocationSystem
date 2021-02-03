@@ -2,7 +2,6 @@ import csv from "csv-parser";
 import { Request } from "express";
 import { FileArray, UploadedFile } from "express-fileupload";
 import { ContextRequest, Path, POST } from "typescript-rest";
-import csv from "csv-parser";
 import { UploadControllerFactory } from "~/controller/UploadController";
 import { Staff } from "~/entity";
 
