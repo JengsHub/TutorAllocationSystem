@@ -1,27 +1,35 @@
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { getActivity, getCandidatePreference } from "../../apis/api";
 import baseApi from "../../apis/baseApi";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
-import { IPreferences, IActivity, IAllocationWithStaff } from "../../type";
+import {
+  IAllocation,
+  IActivity,
+  IAllocationWithStaff,
+  IPreference,
+} from "../../type";
 
+//This is where candidates for activities are created, shown, and handled
+
+// Props for Candidate component
 interface ICandidateProps {
-  activityId: string;
+  activityId: string; // ID of activity for which the candidates are considered
 }
 
 const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const [candidatesPreference, setCandidatePreference] = useState<
-    IPreferences[]
+    IPreference[]
   >([]);
   const [activity, setActivity] = useState<IActivity>();
   const [selecteds, setSelected] = useState<number[]>([]);
@@ -32,15 +40,13 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   const [allocationLeft, setAllocationLeft] = useState<number>();
   const history = useHistory();
 
+  // Get activity and preference data on page load
   useEffect(() => {
     if (activityId) {
       getActivity(activityId).then((res) => {
-        // console.log(res);
         setActivity(res);
       });
-      console.log(activityId);
       getCandidatePreference(activityId).then((res) => {
-        // console.log(res);
         setCandidatePreference(res);
       });
     } else {
@@ -92,10 +98,8 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
   // this function will be call when the button 'Request Offer' is clicked
   // this function will look for candidate that meet the constraint rules from database
   const makeOffers = () => {
-    //console.log(selecteds);
     // is selected more than maxnumberallocation
     if (activity) {
-      console.log("got activity");
       let allocationsNoRejection: IAllocationWithStaff[] = [];
 
       let numOfAllocations = activity.allocations.length;
@@ -113,11 +117,11 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
       }
 
       setAllocationLeft(
-        activity.allocationsMaxNum - allocationsNoRejection.length
+        activity?.allocationsMaxNum - allocationsNoRejection.length
       );
       if (
         selecteds.length >
-        activity.allocationsMaxNum - allocationsNoRejection.length
+        activity?.allocationsMaxNum - allocationsNoRejection.length
       ) {
         setOpen(true);
         return;
@@ -125,8 +129,7 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
     }
     setOpen(false);
     selecteds.forEach(async (i) => {
-      //console.log(candidatesPreference[i]);
-      var allocation: Allocation = {
+      var allocation: Partial<IAllocation> = {
         activityId: activityId,
         staffId: candidatesPreference[i].staffId,
       };
@@ -141,7 +144,6 @@ const Candidate: React.FC<ICandidateProps> = ({ activityId }) => {
         }
 
         getCandidatePreference(activityId).then((res) => {
-          // console.log(res);
           setCandidatePreference(res);
         });
       } catch (err) {

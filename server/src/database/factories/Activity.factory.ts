@@ -1,7 +1,7 @@
 import * as Faker from "faker";
 import { define } from "typeorm-seeding";
-import { DayOfWeek } from "../../enums/DayOfWeek";
 import { Activity, Unit } from "../../entity";
+import { DayOfWeek } from "../../enums/DayOfWeek";
 
 define(Activity, (faker: typeof Faker) => {
   const activity = new Activity();

@@ -1,24 +1,30 @@
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import { withStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import baseApi from "../../apis/baseApi";
 import { DayOfWeek } from "../../enums/DayOfWeek";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
-import { withStyles } from "@material-ui/core/styles";
-import { IAllocation, IActivity } from "../../type";
+import { IActivity, IAllocation, ISwap } from "../../type";
+
+// This is where the feature of making a swap request takes place
 
 interface ICandidateProps {
   allocation: IAllocation;
 }
 
+/**
+ * SwappingActivities: a component for creating allocation swaps
+ * @prop allocation: the allocation to swap
+ */
 const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
   const [swappableActivities, setSwappableActivity] = useState<IActivity[]>([]);
   const [selectedActivity, setSelectedActivity] = useState<IActivity>();
@@ -27,6 +33,9 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
 
   const history = useHistory();
 
+  /**
+   * On page load, get swappable activities based on current allocation
+   */
   useEffect(() => {
     const getSwappableActivities = async () => {
       try {
@@ -43,7 +52,6 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     if (allocation) {
       getSwappableActivities().then((res) => {
         setSwappableActivity(res);
-        // console.log(res);
       });
     } else {
       history.push("/404");
@@ -54,9 +62,12 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     setSelectedActivity(activity);
   };
 
+  /**
+   * Sends an API request to create a swap
+   */
   const createSwap = async () => {
     if (selectedActivity) {
-      let swap: Swap = {
+      let swap: Partial<ISwap> = {
         fromAllocationId: allocation.id,
         desiredActivityId: selectedActivity.id,
       };
@@ -71,6 +82,10 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     }
   };
 
+  /**
+   * Converts a DayOfWeek enum to a string
+   * @param day: the DayOfWeek enum to convert
+   */
   const dayConverter = (day: DayOfWeek) => {
     switch (day) {
       case DayOfWeek.MONDAY:
@@ -88,6 +103,10 @@ const SwappingActivities: React.FC<ICandidateProps> = ({ allocation }) => {
     }
   };
 
+  /**
+   * Returns a MuiAlert component
+   * @param props props to pass into the MuiAlert
+   */
   function Alert(props: AlertProps) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }

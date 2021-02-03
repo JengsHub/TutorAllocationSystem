@@ -14,18 +14,22 @@ class ReadFileFormat {
     ];
   }
 
+  //getters
   getFormats(): String[] {
     return this.formats;
   }
 
+  //search aray and return index
   findIndex(item: string) {
     return this.formats.indexOf(item);
   }
 
+  //add file fomrats to the list
   addFileFormat(item: string) {
     this.formats.push(item);
   }
 
+  //remove file formats from the list
   removeFileFormat(index: number) {
     this.formats.splice(index, 1);
   }

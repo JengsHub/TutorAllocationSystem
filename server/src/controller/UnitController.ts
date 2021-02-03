@@ -25,6 +25,9 @@ export interface IUnitController {
   deleteUnit(id: string): any;
 }
 
+/* TA role authorisation - RESTRICTED ACCESS
+ * - getUnitActivities
+ */
 class TaUnitController implements IUnitController {
   async getUnitActivities(unit: Unit) {
     let activities = await getRepository(Activity).find({
@@ -53,6 +56,10 @@ class TaUnitController implements IUnitController {
   }
 }
 
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - getUnitActivities
+ * - updateUnit
+ */
 class LecturerUnitController implements IUnitController {
   async getUnitActivities(unit: Unit) {
     let activities = await getRepository(Activity).find({
@@ -85,6 +92,12 @@ class LecturerUnitController implements IUnitController {
   }
 }
 
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getUnitActivities
+ * - createUnit
+ * - updateUnit
+ * - deleteUnit
+ */
 class AdminUnitController implements IUnitController {
   async getUnitActivities(unit: Unit) {
     let activities = await getRepository(Activity).find({

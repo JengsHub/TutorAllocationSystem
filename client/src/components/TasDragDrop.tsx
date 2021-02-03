@@ -2,9 +2,13 @@ import { Button, Grid } from "@material-ui/core";
 import React, { Component } from "react";
 import baseApi from "../apis/baseApi";
 import ReadFileFormat from "../services/ReadFileFormat";
+import { Props, State } from "../type";
 import FileUploaderPresentationalComponent from "./DragDropPresentation";
 import "./styles/DragDrop.css";
-
+/*
+this file puts together the drag and drop componenet for the TAS Section
+from Component(react), ReadfileFormat, and DragDropPresentation
+*/
 class TasDragDrop extends Component<Props, State> {
   static counter = 0;
   fileUploaderInput: HTMLElement | null = null;
@@ -13,6 +17,7 @@ class TasDragDrop extends Component<Props, State> {
   readonly validTypes: String[];
   csvFile: File = new File(["foo"], "placeholder.txt");
 
+  //constructor:
   constructor(props: Props) {
     super(props);
     this.state = { dragging: false, file: null };
@@ -21,6 +26,7 @@ class TasDragDrop extends Component<Props, State> {
 
   dragEventCounter: number = 0;
   dragenterListener = (event: React.DragEvent<HTMLDivElement>) => {
+    // listener for the drag feature to TAS files slot
     this.overrideEventDefaults(event);
     this.dragEventCounter++;
     if (event.dataTransfer.items && event.dataTransfer.items[0]) {
@@ -36,6 +42,7 @@ class TasDragDrop extends Component<Props, State> {
   };
 
   dragleaveListener = (event: React.DragEvent<HTMLDivElement>) => {
+    // listener for the drag feature interrupt
     this.overrideEventDefaults(event);
     this.dragEventCounter--;
 
@@ -45,6 +52,7 @@ class TasDragDrop extends Component<Props, State> {
   };
 
   dropListener = (event: React.DragEvent<HTMLDivElement>) => {
+    //drop listener to indicate a file upload to the allocate file slot
     this.overrideEventDefaults(event);
     this.dragEventCounter = 0;
     this.setState({ dragging: false });
@@ -62,11 +70,12 @@ class TasDragDrop extends Component<Props, State> {
   };
 
   obtainResult = (results: any) => {
+    //move the data of the file to allocateList
     this.allocateList = results.data;
-    console.log("obtain result: " + this.allocateList.toString());
   };
 
   getEndTime = (start: Date, minutes: string) => {
+    //get the time and format it
     return new Date(start.getTime() + Number(minutes) * 60000);
   };
 
@@ -75,7 +84,6 @@ class TasDragDrop extends Component<Props, State> {
     try {
       const formData = new FormData();
       formData.append("tas", this.csvFile);
-      console.log(this.csvFile);
       baseApi.post("/upload/tas", formData);
     } catch (err) {
       throw err;
@@ -84,14 +92,17 @@ class TasDragDrop extends Component<Props, State> {
     this.showSuccess();
   };
 
+  //success message
   showSuccess = () => {
     document.getElementById("TAS_fb")!.style.visibility = "visible";
   };
 
+  //hide the success message
   hideSuccess = () => {
     document.getElementById("TAS_fb")!.style.visibility = "hidden";
   };
 
+  //clearing
   clearField = () => {
     this.hideSuccess();
     this.setState({ file: null });
@@ -102,11 +113,13 @@ class TasDragDrop extends Component<Props, State> {
     inputElement.value = "";
   };
 
+  //override
   overrideEventDefaults = (event: Event | React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
   };
 
+  //if file changes:
   onFileChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.hideSuccess();
     if (event.target.files && event.target.files[0]) {
@@ -123,12 +136,14 @@ class TasDragDrop extends Component<Props, State> {
     }
   };
 
+  //if file is clicked:
   onFileClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     const element: HTMLInputElement = event.target as HTMLInputElement;
     element.value = "";
     this.hideSuccess();
   };
 
+  //on ComponentDidMount:
   componentDidMount() {
     window.addEventListener("dragover", (event: Event) => {
       this.overrideEventDefaults(event);
@@ -138,11 +153,13 @@ class TasDragDrop extends Component<Props, State> {
     });
   }
 
+  //on Componenet willUnmount:
   componentWillUnmount() {
     window.removeEventListener("dragover", this.overrideEventDefaults);
     window.removeEventListener("drop", this.overrideEventDefaults);
   }
 
+  //render the ui components
   render() {
     return (
       <div className="Dragdrop">

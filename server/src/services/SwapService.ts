@@ -5,18 +5,17 @@ import {
   ContextResponse,
   DELETE,
   GET,
+  IgnoreNextMiddlewares,
+  PATCH,
   Path,
   PathParam,
-  IgnoreNextMiddlewares,
   POST,
   PUT,
-  PATCH,
 } from "typescript-rest";
-import { Activity, Allocation, Staff, Unit, Swap, Role } from "~/entity";
-import { checkSwapAllocation } from "../helpers/checkConstraints";
+import { Activity, Allocation, Role, Staff, Swap, Unit } from "~/entity";
 import { authCheck } from "~/helpers/auth";
 import { emailHelperInstance } from "..";
-import { toNamespacedPath } from "path";
+import { checkSwapAllocation } from "../helpers/checkConstraints";
 
 // TODO: implement swap controller for Lecturer Only and Workforce Only end points
 // Approving and Pending should be Lec only
@@ -127,9 +126,6 @@ class SwapsService {
       return eligable;
     });
 
-    // console.log("Mine", alternateActivities);
-    // console.log("Alts", myActivities);
-
     return alternateActivities;
   }
 
@@ -166,17 +162,13 @@ class SwapsService {
       .andWhere("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
 
-    // console.log(unitSwaps);
-
     let myActivities = await getRepository(Activity)
       .createQueryBuilder("activity")
       .leftJoin("activity.allocations", "allocation")
       .where("allocation.staffId = :staffId", { staffId: me.id })
       .getMany();
-    // console.log(myActivities);
 
     let myUnitActivities = myActivities.filter((act) => act.unitId == unitId);
-    // console.log(myUnitActivities);
 
     let eligableSwaps = unitSwaps.filter((swap) => {
       if (myUnitActivities.includes(swap.desired)) return false;
@@ -184,7 +176,6 @@ class SwapsService {
       return checkSwapAllocation(me, myActivities, swap.from.activity);
       // return true;
     });
-    // console.log(eligableSwaps);
     return eligableSwaps;
   }
 
@@ -217,8 +208,6 @@ class SwapsService {
       .where("from.staffId = :staffId", { staffId: me.id })
       .andWhere("activity.unitId = :unitId", { unitId: unitId })
       .getMany();
-
-    console.log(mySwaps);
 
     return mySwaps;
   }
@@ -315,8 +304,6 @@ class SwapsService {
         activity: existingSwap.desired,
       },
     });
-
-    console.log(newInto);
 
     if (!newInto) return;
 

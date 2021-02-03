@@ -25,6 +25,12 @@ export interface IStaffController {
   deleteStaff(id: string, me: Staff): any;
 }
 
+/* TA role authorisation - RESTRICTED ACCESS
+ * - getStaff
+ * - updateStaff (only themselves)
+ * - deleteStaff (only themselves)
+ */
+
 class TaStaffController implements IStaffController {
   getAllStaff() {
     return new UnauthorisedAccessedError("TA cannot get all staff");
@@ -65,6 +71,12 @@ class TaStaffController implements IStaffController {
   }
 }
 
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - getStaff
+ * - updateStaff (only themselves)
+ * - deleteStaff (only themselves)
+ */
+
 class LecturerStaffController implements IStaffController {
   getAllStaff() {
     return new UnauthorisedAccessedError("Lecturer cannot get all staff");
@@ -104,6 +116,14 @@ class LecturerStaffController implements IStaffController {
     }
   }
 }
+
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getAllStaff
+ * - getStaff
+ * - createStaff
+ * - updateStaff
+ * - deleteStaff
+ */
 
 class AdminStaffController implements IStaffController {
   getAllStaff() {

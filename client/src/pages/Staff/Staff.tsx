@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import Paper from "@material-ui/core/Paper";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -6,11 +6,15 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
+import React, { useEffect, useState } from "react";
 import baseApi from "../../apis/baseApi";
-import StaffModal from "./StaffModal";
 import { IStaff } from "../../type";
+import StaffModal from "./StaffModal";
+/*
+ * Page: Staff
+ * This is the staff names are visible along with their emails, AQF, and Studying AQF
+ */
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

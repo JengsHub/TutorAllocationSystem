@@ -1,3 +1,4 @@
+//The items/links in a non-admin the sidebar
 const SidebarItems = [
   {
     name: "Home",

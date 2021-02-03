@@ -1,3 +1,4 @@
+//The items/links in an admin the sidebar
 const AdminSidebarItems = [
   {
     name: "Home",

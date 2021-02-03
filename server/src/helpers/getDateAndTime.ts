@@ -11,6 +11,9 @@ export function createCurrentDate() {
   return dateDay + "/" + month + "/" + year;
 }
 
+/**
+ * Returns the current data and time back in string format: "DD/MM/YYYY 24:00:00"
+ */
 export function createCurrentDateAndTime() {
   let dateObject = new Date();
   let hour = (dateObject.getHours() < 10 ? "0" : "") + dateObject.getHours();

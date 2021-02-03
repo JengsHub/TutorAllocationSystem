@@ -1,9 +1,8 @@
-import passport from "passport";
 import { Router } from "express";
+import passport from "passport";
+import { config } from "~/config";
 import { Staff } from "~/entity";
 import { authCheckMiddleware } from "~/helpers/auth";
-import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
-import { config } from "~/config";
 
 const CLIENT_HOME_PAGE_URL = config.CLIENT_URL;
 

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { makeStyles, Theme } from "@material-ui/core/styles";
-import StaffPreferences from "./StaffPreferences";
-import Availabilities from "./Availabilities";
 import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+import { default as React, useState } from "react";
+import Availabilities from "./Availabilities";
+import StaffPreferences from "./StaffPreferences";
+
+// This is where the avaiabity and preference for each staff is shown
 
 interface IStaffDetailsProps {
   staffName: string;

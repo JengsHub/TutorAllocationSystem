@@ -1,12 +1,5 @@
-import {
-  Activity,
-  Staff,
-  Rule,
-  Availability,
-  Allocation,
-  Unit,
-} from "~/entity";
-import { getRepository, Repository, In } from "typeorm";
+import { getRepository, Repository } from "typeorm";
+import { Activity, Allocation, Availability, Rule, Staff } from "~/entity";
 import { RuleEnum } from "../enums/RuleEnum";
 
 /**
@@ -110,13 +103,6 @@ export const checkAllocation = async (
     await rules.findOneOrFail({ ruleName: RuleEnum.MAX_CONSEC_HRS })
   ).value;
 
-  // console.log(dayHours, weekHours, activitiesInUnit, totalActivities);
-  // console.log(
-  //   maxHoursPerDayRule,
-  //   maxHoursPerWeekRule,
-  //   maxActivitiesPerUnitRule,
-  //   maxTotalActivitiesRule
-  // );
   // TODO: Specific error message for each constraint violated
   if (
     dayHours > maxHoursPerDayRule ||

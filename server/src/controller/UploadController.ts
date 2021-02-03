@@ -1,5 +1,4 @@
 import csv from "csv-parser";
-import { FileArray, UploadedFile } from "express-fileupload";
 import fs from "fs";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 import ProcessFileService, {
@@ -12,7 +11,6 @@ import ProcessFileService, {
 } from "~/helpers/processInputFiles";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
 import stripBom from "strip-bom-stream";
-import { DayOfWeek } from "~/enums/DayOfWeek";
 import { Staff } from "~/entity";
 
 export class UploadControllerFactory {
@@ -36,6 +34,8 @@ export interface IUploadController {
   uploadAllocate(path: string): any;
 }
 
+/* TA role authorisation - NO ACCESS
+ */
 class TaUploadController implements IUploadController {
   uploadTas(path: string, user: Staff) {
     return new UnauthorisedAccessedError("TAs cannot upload TAS files");
@@ -50,6 +50,8 @@ class TaUploadController implements IUploadController {
   }
 }
 
+/* Lecturer role authorisation - NO ACCESS
+ */
 class LecturerUploadController implements IUploadController {
   uploadTas(path: string, user: Staff) {
     return new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
@@ -65,6 +67,12 @@ class LecturerUploadController implements IUploadController {
     );
   }
 }
+
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - uploadTas
+ * - uploadTps
+ * - uploadAllocate
+ */
 
 class AdminUploadController implements IUploadController {
   csvParseOptions: csv.Options = {

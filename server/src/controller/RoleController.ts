@@ -1,5 +1,4 @@
-import { DeleteResult, UpdateResult } from "typeorm";
-import { Staff, Unit } from "~/entity";
+import { Staff } from "~/entity";
 import { Role } from "~/entity/Role";
 import { AppRoleEnum, RoleEnum } from "~/enums/RoleEnum";
 import { UnauthorisedAccessedError } from "~/helpers/shortcuts";
@@ -26,6 +25,9 @@ export interface IRoleController {
   updateRole(user: Staff, unitId: string, changedRecord: Role): any;
 }
 
+/* TA role authorisation - NO ACCESS
+ */
+
 class TaRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
     return new UnauthorisedAccessedError("TA cannot delete role");
@@ -41,17 +43,19 @@ class TaRoleController implements IRoleController {
   }
 }
 
+/* Lecturer role authorisation - RESTRICTED ACCESS
+ * - updateRole (for units they are lecturing)
+ */
+
 class LecturerRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
     return Role.delete({ id: roleId });
   }
   async updateRole(user: Staff, unitId: string, changedRecord: Role) {
-    console.log(changedRecord);
     let roleToUpdate = await Role.findOneOrFail({
       staffId: changedRecord.staffId,
       unitId: unitId,
     });
-    console.log(roleToUpdate);
     return Role.update({ id: roleToUpdate.id }, changedRecord);
   }
   createRole(user: Staff, unitId: string, newRecord: Role) {
@@ -62,17 +66,22 @@ class LecturerRoleController implements IRoleController {
   }
 }
 
+/* Admin/workforce role authorisation - FULL ACCESS
+ * - getRolesByUnit
+ * - createRole
+ * - deleteRole
+ * - updateRole
+ */
+
 class AdminRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
     return Role.delete({ id: roleId });
   }
   async updateRole(user: Staff, unitId: string, changedRecord: Role) {
-    console.log(changedRecord);
     let roleToUpdate = await Role.findOneOrFail({
       staffId: changedRecord.staffId,
       unitId: unitId,
     });
-    console.log(roleToUpdate);
     return Role.update({ id: roleToUpdate.id }, changedRecord);
   }
   createRole(user: Staff, unitId: string, newRecord: Role) {

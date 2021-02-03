@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import {
+  Button,
   Paper,
   Table,
   TableBody,
@@ -8,11 +8,16 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Button,
 } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import baseApi from "../apis/baseApi";
 import { IRule } from "../type";
 
+/*
+ * Page: Rules
+ * This is where the rules and their values are displayed
+ * Users will use this page to view roles and admins can adjust their values.
+ */
 const Rules = () => {
   const [rules, setRules] = useState<IRule[]>([]);
 
@@ -33,7 +38,6 @@ const Rules = () => {
 
   useEffect(() => {
     getRules().then((res) => {
-      // console.log(res);
       setRules(res);
     });
   }, []);

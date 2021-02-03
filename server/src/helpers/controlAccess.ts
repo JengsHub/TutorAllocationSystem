@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-import { NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { Staff } from "~/entity";
 import { AppRoleEnum } from "~/enums/RoleEnum";
 

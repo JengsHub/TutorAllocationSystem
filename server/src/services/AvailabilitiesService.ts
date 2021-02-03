@@ -1,12 +1,11 @@
-import { DeleteResult, getRepository } from "typeorm";
 import { Request, Response } from "express";
+import { DeleteResult, getRepository } from "typeorm";
 import {
   ContextRequest,
   ContextResponse,
   DELETE,
   GET,
   IgnoreNextMiddlewares,
-  PATCH,
   Path,
   PathParam,
   POST,
@@ -15,8 +14,8 @@ import {
 } from "typescript-rest";
 import { AvailabilityControllerFactory } from "~/controller";
 import { Staff } from "~/entity";
-import { Availability } from "../entity/Availability";
 import { hasAdminAccess } from "~/helpers/controlAccess";
+import { Availability } from "../entity/Availability";
 
 @Path("/availabilities")
 class AvailabilitiesService {
@@ -49,10 +48,6 @@ class AvailabilitiesService {
       (key) => params[key] === undefined && delete params[key]
     );
     return Availability.find(params);
-
-    // const me = req.user as Staff;
-    // const controller = this.factory.getController(await me.getRoleTitle());
-    // return await controller.getAllAvailabilities();
   }
 
   /**
