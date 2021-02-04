@@ -51,8 +51,7 @@ class UnitsService {
   public async getUnits(
     @QueryParam("unitCode") unitCode: string,
     @QueryParam("offeringPeriod") offeringPeriod: string,
-    @QueryParam("year") year: number,
-    @QueryParam("unassigned") unassigned: boolean
+    @QueryParam("year") year: number
   ) {
     let params: { [key: string]: any } = {
       unitCode,

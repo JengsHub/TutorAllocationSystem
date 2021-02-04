@@ -21,7 +21,6 @@ const initServer = async () => {
   const app: express.Application = express();
 
   const swaggerUi = require("swagger-ui-express");
-  console.log(require("./swagger").swaggerDocument.paths);
 
   app.use(
     "/api-docs",

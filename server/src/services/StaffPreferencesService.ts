@@ -155,7 +155,7 @@ class StaffPreferencesService {
   }
 
   /**
-   * Deletes an staffPreference
+   * Deletes a staffPreference
    *
    * Role authorisation:
    *  - TA: can only delete preferences for themselves
