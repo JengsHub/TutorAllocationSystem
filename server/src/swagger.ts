@@ -165,4 +165,11 @@ export const swaggerDocument = {
     Swap: swapDef,
     Unit: unitDef,
   },
+  securitySchemes: {
+    cookieAuth: {
+      type: "apiKey",
+      in: "cookie",
+      name: "sid",
+    },
+  },
 };

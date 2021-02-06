@@ -16,17 +16,13 @@ import { DBConnect, TryDBConnect } from "./helpers";
 import { authCheckMiddleware } from "./helpers/auth";
 import "./services"; // Importing all services
 import authRoutes from "./services/AuthService";
+import { swaggerDocument } from "./swagger";
+import swaggerUi from "swagger-ui-express";
 
 const initServer = async () => {
   const app: express.Application = express();
 
-  const swaggerUi = require("swagger-ui-express");
-
-  app.use(
-    "/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(require("./swagger").swaggerDocument)
-  );
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {
