@@ -17,6 +17,7 @@ import {
 import { ActivityControllerFactory } from "~/controller";
 import { Allocation, Role, Staff, StaffPreference, Unit } from "~/entity";
 import { resError } from "~/helpers";
+import { hasAdminAccess } from "~/helpers/controlAccess";
 import { Activity } from "../entity/Activity";
 import { checkNewAllocation } from "../helpers/checkConstraints";
 
@@ -37,7 +38,8 @@ class ActivitiesService {
    */
   @GET
   public async getAllActivities(
-    @ContextRequest req: Request
+    @ContextRequest req: Request,
+    @ContextResponse res: Response
   ): Promise<Array<Activity>> {
     /**
      * Note on relations option in find
@@ -45,6 +47,7 @@ class ActivitiesService {
      * so we need to specifiy the relations in find* methods
      * - To also load nested relation, i.e relations: ["allocations", "allocations.staff"]
      */
+    hasAdminAccess(req, res);
     return this.repo.find({
       relations: ["allocations", "allocations.staff", "unit"], // TODO: think about which relations should be fetch to avoid performance issue
     });
@@ -74,23 +77,27 @@ class ActivitiesService {
 
     return activities;
   }
-  /**
-   * Returns an allocation based on the activity id given
-   * @param id acitivity id
-   */
-  @GET
-  @Path(":activityId/allocation")
-  public async getAllocations(@PathParam("activityId") id: string) {
-    let allocation: Allocation[];
-    try {
-      allocation = await Allocation.find({ activityId: id });
-    } catch (e) {
-      return resError(
-        "Query to find allocations failed - this is probably because the uuid syntax is wrong"
-      );
-    }
-    return allocation;
-  }
+  // /**
+  //  * Returns an allocation based on the activity id given
+  //  * @param id acitivity id
+  //  */
+  // @GET
+  // @Path(":activityId/allocation")
+  // public async getAllocations(
+  //   @PathParam("activityId") id: string,
+  //   @ContextRequest req: Request
+  // ) {
+
+  //   let allocation: Allocation[];
+  //   try {
+  //     allocation = await Allocation.find({ activityId: id });
+  //   } catch (e) {
+  //     return resError(
+  //       "Query to find allocations failed - this is probably because the uuid syntax is wrong"
+  //     );
+  //   }
+  //   return allocation;
+  // }
 
   /**
    * Returns an activity
@@ -192,7 +199,6 @@ class ActivitiesService {
    * @param sortingCriteria the criteria to sort the candidate pool by ("staff" or "lecturer")
    * @return StaffPreference[] sorted list of staff preferences that are potential candidates for an activity
    */
-  // TODO: assert return value as Promise<StaffPreference[]> here
   @GET
   @Path(":activityId/candidates/:sortingCriteria")
   public async getSortedCandidates(

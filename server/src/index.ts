@@ -18,11 +18,18 @@ import "./services"; // Importing all services
 import authRoutes from "./services/AuthService";
 import { swaggerDocument } from "./swagger";
 import swaggerUi from "swagger-ui-express";
+import fs from "fs";
 
 const initServer = async () => {
   const app: express.Application = express();
 
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+  fs.writeFile("swaggerDoc.json", JSON.stringify(swaggerDocument), (e) => {
+    if (e) {
+      console.log(e);
+    }
+  });
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {
