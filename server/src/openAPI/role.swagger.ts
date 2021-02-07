@@ -1,3 +1,7 @@
+import {
+  notAuth401Res,
+  unauthorisedAccessed403Res,
+} from "./definition/messageDef.swagger";
 import { roleDef } from "./definition/roleDef.swagger";
 import { staffDef } from "./definition/staffDef.swagger";
 import { unitDef } from "./definition/unitDef.swagger";
@@ -7,6 +11,7 @@ export const role = {
     get: {
       tags: ["Role"],
       summary: "Get all roles",
+      description: "Require Admin access",
       operationId: "getRoles",
       produces: ["application/json"],
       responses: {
@@ -24,6 +29,7 @@ export const role = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -39,6 +45,7 @@ export const role = {
           description: "successful operation",
           schema: roleDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -47,6 +54,13 @@ export const role = {
     get: {
       tags: ["Role"],
       summary: "Gets a unit's roles",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: allowed for units they are lecturing in
+      - Admin: allowed
+      `,
       operationId: "getRolesByUnit",
       produces: ["application/json"],
       parameters: [
@@ -66,6 +80,8 @@ export const role = {
             items: roleDef,
           },
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
 
@@ -73,6 +89,13 @@ export const role = {
       tags: ["Role"],
       summary: "Creates a role record for the unit",
       operationId: "createRole",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: allowed for units they are lecturing in
+      - Admin: allowed
+      `,
       consumes: ["application.json"],
       produces: ["application/json"],
       parameters: [
@@ -96,12 +119,21 @@ export const role = {
           description: "successful operation",
           schema: roleDef,
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
 
     put: {
       tags: ["Role"],
       summary: "Updates a role record for the unit",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: allowed for units they are lecturing in
+      - Admin: allowed      
+      `,
       operationId: "updateRole",
       consumes: ["application.json"],
       produces: ["application/json"],
@@ -126,6 +158,8 @@ export const role = {
           description: "successful operation",
           schema: roleDef,
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
   },
@@ -150,6 +184,7 @@ export const role = {
           description: "successful operation",
           schema: roleDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -158,6 +193,13 @@ export const role = {
     delete: {
       tags: ["Role"],
       summary: "Deletes a role",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: allowed for units they are lecturing in
+      - Admin: allowed
+      `,
       operationId: "deleteRole",
       produces: ["application/json"],
       parameters: [
@@ -181,6 +223,8 @@ export const role = {
           description: "successful operation",
           schema: roleDef,
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
   },
