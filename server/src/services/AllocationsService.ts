@@ -51,8 +51,6 @@ class AllocationsService {
     @QueryParam("unitId") unitId: string,
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean
   ) {
-    if (!authCheck(req, res)) return;
-
     const me = req.user as Staff;
     let allocations: Allocation[];
 
@@ -99,8 +97,6 @@ class AllocationsService {
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean,
     @QueryParam("isWorkforceApproved") isWorkforceApproved: boolean
   ) {
-    if (!authCheck(req, res)) return;
-
     const me = req.user as Staff;
     let allocations: Allocation[];
     let mySwaps: Swap[];

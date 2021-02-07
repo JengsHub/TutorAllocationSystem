@@ -35,7 +35,7 @@ export interface IAllocationController {
 
 class TaAllocationController implements IAllocationController {
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "TA cannot Workforce approve an Allocation"
     );
   }
@@ -43,16 +43,16 @@ class TaAllocationController implements IAllocationController {
     if (user.id === recordToDelete.staffId && recordToDelete.isTaAccepted) {
       return Allocation.delete({ id: recordToDelete.id });
     }
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "TA user cannot delete this Allocation"
     );
   }
   createAllocation(user: Staff, newRecord: Allocation) {
-    return new UnauthorisedAccessedError("TA cannot create an Allocation");
+    throw new UnauthorisedAccessedError("TA cannot create an Allocation");
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
     if (record.staffId !== user.id) {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Cannot accept an Allocation that is not assigned to the user"
       );
     }
@@ -67,10 +67,10 @@ class TaAllocationController implements IAllocationController {
     );
   }
   updateLecturerApproval(user: Staff, record: Allocation, value: boolean) {
-    return new UnauthorisedAccessedError("TA cannot approve an Allocation");
+    throw new UnauthorisedAccessedError("TA cannot approve an Allocation");
   }
   updateAllocation(user: Staff, changedRecord: Allocation) {
-    return new UnauthorisedAccessedError("TA cannot update allocation");
+    throw new UnauthorisedAccessedError("TA cannot update allocation");
   }
 }
 
@@ -88,7 +88,7 @@ class LecturerAllocationController implements IAllocationController {
   ];
 
   updateWorkforceApproval(user: Staff, record: Allocation, value: boolean) {
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "Lecturer cannot Workforce approve an Allocation"
     );
   }
@@ -96,7 +96,7 @@ class LecturerAllocationController implements IAllocationController {
     if (!recordToDelete.isTaAccepted) {
       return Allocation.delete({ id: recordToDelete.id });
     }
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "Lecturer cannot delete this Allocation: Allocation has already been accepted"
     );
   }
@@ -114,7 +114,7 @@ class LecturerAllocationController implements IAllocationController {
   }
   updateTaAcceptance(user: Staff, record: Allocation, value: boolean) {
     if (record.staffId !== user.id) {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Cannot approve an Allocation that is not assigned to the user"
       );
     }

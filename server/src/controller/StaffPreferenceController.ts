@@ -43,7 +43,7 @@ export interface IStaffPreferenceController {
 
 class TaStaffPreferenceController implements IStaffPreferenceController {
   getAllStaffPreferences() {
-    return new UnauthorisedAccessedError("TA cannot get all staff preferences");
+    throw new UnauthorisedAccessedError("TA cannot get all staff preferences");
   }
 
   getStaffPreference(id: string) {
@@ -74,7 +74,7 @@ class TaStaffPreferenceController implements IStaffPreferenceController {
 
       return StaffPreference.save(StaffPreference.create(newRecord));
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't create preference for staff other than yourself"
       );
     }
@@ -91,7 +91,7 @@ class TaStaffPreferenceController implements IStaffPreferenceController {
       staffPreferenceToUpdate = changedStaffPreference;
       return StaffPreference.save(staffPreferenceToUpdate);
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't update preference for staff other than yourself"
       );
     }
@@ -104,7 +104,7 @@ class TaStaffPreferenceController implements IStaffPreferenceController {
     if (me == preference.staff) {
       return StaffPreference.delete({ id });
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't delete preference for staff other than yourself"
       );
     }
@@ -119,7 +119,7 @@ class TaStaffPreferenceController implements IStaffPreferenceController {
  */
 class LecturerStaffPreferenceController implements IStaffPreferenceController {
   getAllStaffPreferences() {
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "Lecturers cannot get all staff preferences"
     );
   }
@@ -152,7 +152,7 @@ class LecturerStaffPreferenceController implements IStaffPreferenceController {
 
       return StaffPreference.save(StaffPreference.create(newRecord));
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't create preference for staff other than yourself"
       );
     }
@@ -169,7 +169,7 @@ class LecturerStaffPreferenceController implements IStaffPreferenceController {
       staffPreferenceToUpdate = changedStaffPreference;
       return StaffPreference.save(staffPreferenceToUpdate);
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't update preference for staff other than yourself"
       );
     }
@@ -182,7 +182,7 @@ class LecturerStaffPreferenceController implements IStaffPreferenceController {
     if (me == preference.staff) {
       return StaffPreference.delete({ id });
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't delete preference for staff other than yourself"
       );
     }

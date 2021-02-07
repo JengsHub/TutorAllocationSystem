@@ -12,7 +12,7 @@ export const resError = (message: string) => ({
 export class UnauthorisedAccessedError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "UnauthorisedRoleError";
+    this.name = "UnauthorisedAccessedError";
     this.stack = (<any>new Error()).stack;
   }
 }

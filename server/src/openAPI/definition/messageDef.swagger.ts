@@ -37,3 +37,21 @@ export const notAuth401Res = {
     },
   },
 };
+
+export const unauthorisedAccessed403Res = {
+  "403": {
+    description: "User role doesn't have authorisation for the operation",
+    schema: {
+      type: "object",
+      properties: {
+        error: {
+          type: "string",
+          example: "UnauthorisedAccessedError",
+        },
+        message: {
+          type: "string",
+        },
+      },
+    },
+  },
+};

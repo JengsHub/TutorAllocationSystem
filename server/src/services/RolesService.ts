@@ -36,7 +36,7 @@ class RolesService {
     @ContextResponse res: Response
   ) {
     // Only admin can have access to roles in all units
-    hasAdminAccess(req, res);
+    if (!hasAdminAccess(req, res)) return;
 
     let roles = await this.repo
       .createQueryBuilder("role")

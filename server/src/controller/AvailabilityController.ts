@@ -40,7 +40,7 @@ export interface IAvailabilityController {
 
 class TaAvailabilityController implements IAvailabilityController {
   getAllAvailabilities() {
-    return new UnauthorisedAccessedError("TA cannot get all availabilities");
+    throw new UnauthorisedAccessedError("TA cannot get all availabilities");
   }
 
   async getAvailability(availabilityId: string, me: Staff) {
@@ -50,7 +50,7 @@ class TaAvailabilityController implements IAvailabilityController {
     if (me == availability.staff) {
       return availability;
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't get availability for staff other than yourself"
       );
     }
@@ -61,7 +61,7 @@ class TaAvailabilityController implements IAvailabilityController {
       newRecord.staff = staff;
       return Availability.save(Availability.create(newRecord));
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't create availability for staff other than yourself"
       );
     }
@@ -75,7 +75,7 @@ class TaAvailabilityController implements IAvailabilityController {
       availabilityToUpdate = changedAvailability;
       return Availability.save(availabilityToUpdate);
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't update availability for staff other than yourself"
       );
     }
@@ -87,7 +87,7 @@ class TaAvailabilityController implements IAvailabilityController {
     if (me == staff) {
       return Availability.delete({ id: availabilityId });
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't delete availability for staff other than yourself"
       );
     }
@@ -98,7 +98,7 @@ class TaAvailabilityController implements IAvailabilityController {
     year: string,
     staffId: string
   ) {
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "TA is unauthorised to get all availability"
     );
   }
@@ -124,7 +124,7 @@ class LecturerAvailabilityController implements IAvailabilityController {
     if (me == availability.staff) {
       return availability;
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't get availability for staff other than yourself"
       );
     }
@@ -135,7 +135,7 @@ class LecturerAvailabilityController implements IAvailabilityController {
       newRecord.staff = staff;
       return Availability.save(Availability.create(newRecord));
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't create availability for staff other than yourself"
       );
     }
@@ -149,7 +149,7 @@ class LecturerAvailabilityController implements IAvailabilityController {
       availabilityToUpdate = changedAvailability;
       return Availability.save(availabilityToUpdate);
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't update availability for staff other than yourself"
       );
     }
@@ -161,7 +161,7 @@ class LecturerAvailabilityController implements IAvailabilityController {
     if (me == staff) {
       return Availability.delete({ id: availabilityId });
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't delete availability for staff other than yourself"
       );
     }
@@ -172,7 +172,7 @@ class LecturerAvailabilityController implements IAvailabilityController {
     year: string,
     staffId: string
   ) {
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "Lecturer is unauthorised to get all availability"
     );
   }

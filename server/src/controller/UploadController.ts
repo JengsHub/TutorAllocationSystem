@@ -38,15 +38,15 @@ export interface IUploadController {
  */
 class TaUploadController implements IUploadController {
   uploadTas(path: string, user: Staff) {
-    return new UnauthorisedAccessedError("TAs cannot upload TAS files");
+    throw new UnauthorisedAccessedError("TAs cannot upload TAS files");
   }
 
   uploadTps(path: string) {
-    return new UnauthorisedAccessedError("TAs cannot upload TPS files");
+    throw new UnauthorisedAccessedError("TAs cannot upload TPS files");
   }
 
   uploadAllocate(path: string) {
-    return new UnauthorisedAccessedError("TAs cannot upload Allocate+ files");
+    throw new UnauthorisedAccessedError("TAs cannot upload Allocate+ files");
   }
 }
 
@@ -54,15 +54,15 @@ class TaUploadController implements IUploadController {
  */
 class LecturerUploadController implements IUploadController {
   uploadTas(path: string, user: Staff) {
-    return new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
+    throw new UnauthorisedAccessedError("Lecturers cannot upload TAS files");
   }
 
   uploadTps(path: string) {
-    return new UnauthorisedAccessedError("Lecturers cannot upload TPS files");
+    throw new UnauthorisedAccessedError("Lecturers cannot upload TPS files");
   }
 
   uploadAllocate(path: string) {
-    return new UnauthorisedAccessedError(
+    throw new UnauthorisedAccessedError(
       "Lecturers cannot upload Allocate+ files"
     );
   }
