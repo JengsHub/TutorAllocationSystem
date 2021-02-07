@@ -1,10 +1,21 @@
 import { availabilityDef } from "./definition/availabilityDef.swagger";
+import {
+  notAuth401Res,
+  unauthorisedAccessed403Res,
+} from "./definition/messageDef.swagger";
 
 export const availability = {
   "/availabilities": {
     get: {
       tags: ["Availability"],
       summary: "Returns a list of availabilities",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: not allowed
+      - Admin: can get all availabilities for all staff
+      `,
       operationId: "getAllAvailabilities",
       produces: ["application/json"],
       parameters: [
@@ -24,12 +35,21 @@ export const availability = {
             items: availabilityDef,
           },
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
 
     post: {
       tags: ["Availability"],
       summary: "Creates an availability",
+      description: `
+      
+      Role authorisation:
+      - TA: only allowed to create their own availabilities
+      - Lecturer: only allowed to create their own availabilities
+      - Admin: can create any availability for any staff
+      `,
       operationId: "createAvailability",
       consumes: ["application.json"],
       produces: ["application/json"],
@@ -47,12 +67,21 @@ export const availability = {
           description: "successful operation",
           schema: availabilityDef,
         },
+        ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
 
     put: {
       tags: ["Availability"],
       summary: "Updates an availability",
+      description: `
+      
+      Role authorisation:
+      - TA: only allowed to update their own availabilities
+      - Lecturer: only allowed to update their own availabilities
+      - Admin: can update any availability
+      `,
       operationId: "updateAvailability",
       consumes: ["application.json"],
       produces: ["application/json"],
@@ -70,6 +99,8 @@ export const availability = {
           description: "successful operation",
           schema: availabilityDef,
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
   },
@@ -78,6 +109,13 @@ export const availability = {
     get: {
       tags: ["Availability"],
       summary: "Returns an availability",
+      description: `
+      
+      Role authorisation:
+      - TA: can get availability only for themselves
+      - Lecturer: can get availability only for themselves
+      - Admin: can get any availability for any staff
+      `,
       operationId: "getAvailability",
       produces: ["application/json"],
       parameters: [
@@ -94,12 +132,21 @@ export const availability = {
           description: "successful operation",
           schema: availabilityDef,
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
 
     delete: {
       tags: ["Availability"],
       summary: "Deletes an availability",
+      description: `
+      
+      Role authorisation:
+      - TA: only allowed to delete their own availabilities
+      - Lecturer: only allowed to delete their own availabilities
+      - Admin: can delete any availability
+      `,
       operationId: "deleteAvailability",
       produces: ["application/json"],
       parameters: [
@@ -116,6 +163,8 @@ export const availability = {
           description: "successful operation",
           schema: availabilityDef,
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
   },
