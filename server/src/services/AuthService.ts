@@ -42,7 +42,7 @@ router.get("/login/success", authCheckMiddleware, async (req, res) => {
       email,
       adminAccess: user.isAdmin(),
     },
-    cookies: req.cookies,
+    // cookies: req.cookies,
   });
 });
 
@@ -57,6 +57,7 @@ router.get("/login/failed", (req, res) => {
 // callback route for google to redirect to
 router.get(
   "/google/redirect",
+  // TODO: client supplies redirect URL instead
   passport.authenticate("google", {
     failureRedirect: "/login/failed",
     successRedirect: CLIENT_HOME_PAGE_URL,

@@ -1,5 +1,6 @@
 import { activity } from "./openAPI/activity.swagger";
 import { allocation } from "./openAPI/allocation.swagger";
+import { auth } from "./openAPI/auth.swagger";
 import { availability } from "./openAPI/availability.swagger";
 import { activityDef } from "./openAPI/definition/activityDef.swagger";
 import { allocationDef } from "./openAPI/definition/allocationDef.swagger";
@@ -83,6 +84,7 @@ export const swaggerDocument = {
     ...activity,
     ...allocation,
     ...availability,
+    ...auth,
     ...role,
     ...rule,
     ...staffPreference,
