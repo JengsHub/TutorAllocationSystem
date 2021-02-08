@@ -15,7 +15,6 @@ export const swapDef = {
     intoAllocationId: {
       type: "string",
       format: "uuid",
-      nullable: true,
     },
     lecturerApproved: {
       type: "boolean",
@@ -26,7 +25,6 @@ export const swapDef = {
     desiredId: {
       type: "string",
       format: "uuid",
-      nullable: true,
     },
   },
 };

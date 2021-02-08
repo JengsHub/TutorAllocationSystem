@@ -20,17 +20,14 @@ export const allocationDef = {
     isLecturerApproved: {
       type: "boolean",
       default: null,
-      nullable: true,
     },
     isTaAccepted: {
       type: "boolean",
       default: null,
-      nullable: true,
     },
     isWorkforceApproved: {
       type: "boolean",
       default: null,
-      nullable: true,
     },
   },
 };

@@ -7,19 +7,15 @@ export const staffDef = {
     },
     givenNames: {
       type: "string",
-      nullable: true,
     },
     lastName: {
       type: "string",
-      nullable: true,
     },
     aqf: {
       type: "integer",
-      nullable: true,
     },
     studyingAqf: {
       type: "integer",
-      nullable: true,
     },
     email: {
       uniqueItems: true,
@@ -28,7 +24,6 @@ export const staffDef = {
     },
     googleId: {
       type: "string",
-      nullable: true,
     },
     appRole: {
       type: "string",

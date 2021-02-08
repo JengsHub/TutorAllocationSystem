@@ -16,7 +16,6 @@ export const statusLogDef = {
     targetStaffId: {
       type: "string",
       format: "uuid",
-      nullable: true,
     },
     action: {
       type: "string",
