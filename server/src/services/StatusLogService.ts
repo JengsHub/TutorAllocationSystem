@@ -2,6 +2,8 @@ import { createQueryBuilder, getRepository } from "typeorm";
 import { GET, Path, PathParam } from "typescript-rest";
 import { StatusLog } from "~/entity/StatusLog";
 
+//TODO: use factory/controller pattern for role access
+
 @Path("/statuslog")
 class StatusLogService {
   repo = getRepository(StatusLog);
