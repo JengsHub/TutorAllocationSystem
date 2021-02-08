@@ -23,18 +23,6 @@ class UnitsService {
   factory = new UnitControllerFactory();
 
   /**
-   * @swagger
-   *
-   * /units:
-   *   get:
-   *     summary: get all units
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         schema:
-   *           type: object
-   *           $ref: '#/definitions/Unit'
    * Returns units matching certain criteria (unit code, in the offering period and year specified)
    *
    * Role authorisation:
