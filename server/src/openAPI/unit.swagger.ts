@@ -1,12 +1,20 @@
 import { activityDef } from "./definition/activityDef.swagger";
 import { allocationDef } from "./definition/allocationDef.swagger";
+import { unauthorisedAccessed403Res } from "./definition/messageDef.swagger";
 import { unitDef } from "./definition/unitDef.swagger";
 
 export const unit = {
   "/units": {
     get: {
       tags: ["Unit"],
-      summary: "get all units",
+      summary: "Returns units matching query",
+      description: `
+      
+        Role authorisation:
+        - TA: allowed
+        - Lecturer: allowed
+        - Admin: allowed
+        `,
       operationId: "getUnits",
       produces: ["application/json"],
       parameters: [
@@ -46,6 +54,13 @@ export const unit = {
     post: {
       tags: ["Unit"],
       summary: "Creates a unit",
+      description: `
+      
+        Role authorisation:
+        - TA: not allowed
+        - Lecturer: not allowed
+        - Admin: allowed
+        `,
       operationId: "createUnit",
       consumes: ["application.json"],
       produces: ["application/json"],
@@ -63,12 +78,20 @@ export const unit = {
           description: "successful operation",
           schema: unitDef,
         },
+        ...unauthorisedAccessed403Res,
       },
     },
 
     patch: {
       tags: ["Unit"],
       summary: "Updates a unit",
+      description: `
+      
+        Role authorisation:
+        - TA: not allowed
+        - Lecturer: allowed
+        - Admin: allowed
+        `,
       operationId: "updateUnit",
       consumes: ["application.json"],
       produces: ["application/json"],
@@ -86,6 +109,7 @@ export const unit = {
           description: "successful operation",
           schema: unitDef,
         },
+        ...unauthorisedAccessed403Res,
       },
     },
   },
@@ -94,6 +118,13 @@ export const unit = {
     get: {
       tags: ["Unit"],
       summary: "Returns a unit",
+      description: `
+      
+        Role authorisation:
+        - TA: allowed
+        - Lecturer: allowed
+        - Admin: allowed
+        `,
       operationId: "getUnitById",
       produces: ["application/json"],
       parameters: [
@@ -116,6 +147,13 @@ export const unit = {
     delete: {
       tags: ["Unit"],
       summary: "Deletes a unit",
+      description: `
+      
+        Role authorisation:
+        - TA: not allowed
+        - Lecturer: not allowed
+        - Admin: allowed
+        `,
       operationId: "deleteUnit",
       produces: ["application/json"],
       parameters: [
@@ -132,6 +170,7 @@ export const unit = {
           description: "successful operation",
           schema: unitDef,
         },
+        ...unauthorisedAccessed403Res,
       },
     },
   },
@@ -140,6 +179,13 @@ export const unit = {
     get: {
       tags: ["Unit"],
       summary: "Get the activities of a unit",
+      description: `
+      
+        Role authorisation:
+        - TA: allowed
+        - Lecturer: allowed
+        - Admin: allowed
+        `,
       operationId: "getUnitActivities",
       produces: ["application/json"],
       parameters: [
@@ -177,6 +223,13 @@ export const unit = {
       tags: ["Unit"],
       summary:
         "Returns the calling user's units depending on the role specified",
+      description: `
+      
+        Role authorisation:
+        - TA: allowed
+        - Lecturer: allowed
+        - Admin: allowed
+        `,
       operationId: "getMyUnitsByRole",
       produces: ["application/json"],
       parameters: [
