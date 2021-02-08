@@ -1,3 +1,7 @@
+import {
+  notAuth401Res,
+  unauthorisedAccessed403Res,
+} from "./definition/messageDef.swagger";
 import { ruleDef } from "./definition/ruleDef.swagger";
 
 export const rule = {
@@ -5,6 +9,13 @@ export const rule = {
     get: {
       tags: ["Rule"],
       summary: "Returns a list of the global rules",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: not allowed
+      - Admin: allowed
+      `,
       operationId: "getAllRules",
       produces: ["application/json"],
       responses: {
@@ -15,12 +26,21 @@ export const rule = {
             items: ruleDef,
           },
         },
+        ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
 
     put: {
       tags: ["Rule"],
       summary: "Updates a global rule",
+      description: `
+
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: not allowed
+      - Admin: allowed   
+      `,
       operationId: "updateRules",
       consumes: ["application.json"],
       produces: ["application/json"],
@@ -44,6 +64,8 @@ export const rule = {
             items: ruleDef,
           },
         },
+        ...notAuth401Res,
+        ...unauthorisedAccessed403Res,
       },
     },
   },
@@ -52,6 +74,13 @@ export const rule = {
     get: {
       tags: ["Rule"],
       summary: "Returns a rule",
+      description: `
+      
+      Role authorisation:
+      - TA: not allowed
+      - Lecturer: not allowed
+      - Admin: allowed
+      `,
       operationId: "getRule",
       produces: ["application/json"],
       parameters: [
@@ -68,6 +97,8 @@ export const rule = {
           description: "successful operation",
           schema: ruleDef,
         },
+        ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
