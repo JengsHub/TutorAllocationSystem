@@ -1,25 +1,25 @@
-import { activity } from "./openAPI/activity.swagger";
-import { allocation } from "./openAPI/allocation.swagger";
-import { auth } from "./openAPI/auth.swagger";
-import { availability } from "./openAPI/availability.swagger";
-import { activityDef } from "./openAPI/definition/activityDef.swagger";
-import { allocationDef } from "./openAPI/definition/allocationDef.swagger";
-import { availabilityDef } from "./openAPI/definition/availabilityDef.swagger";
-import { roleDef } from "./openAPI/definition/roleDef.swagger";
-import { ruleDef } from "./openAPI/definition/ruleDef.swagger";
-import { staffDef } from "./openAPI/definition/staffDef.swagger";
-import { staffpreferenceDef } from "./openAPI/definition/staffPreferenceDef.swagger";
-import { statusLogDef } from "./openAPI/definition/statusLogDef.swagger";
-import { swapDef } from "./openAPI/definition/swapDef.swagger";
-import { unitDef } from "./openAPI/definition/unitDef.swagger";
-import { role } from "./openAPI/role.swagger";
-import { rule } from "./openAPI/rule.swagger";
-import { staff } from "./openAPI/staff.swagger";
-import { staffPreference } from "./openAPI/staffPreference.swagger";
-import { statusLog } from "./openAPI/statusLog.swagger";
-import { swap } from "./openAPI/swap.swagger";
-import { unit } from "./openAPI/unit.swagger";
-import { upload } from "./openAPI/upload.swagger";
+import { activity } from "./activity.swagger";
+import { allocation } from "./allocation.swagger";
+import { auth } from "./auth.swagger";
+import { availability } from "./availability.swagger";
+import { activityDef } from "./definition/activityDef.swagger";
+import { allocationDef } from "./definition/allocationDef.swagger";
+import { availabilityDef } from "./definition/availabilityDef.swagger";
+import { roleDef } from "./definition/roleDef.swagger";
+import { ruleDef } from "./definition/ruleDef.swagger";
+import { staffDef } from "./definition/staffDef.swagger";
+import { staffpreferenceDef } from "./definition/staffPreferenceDef.swagger";
+import { statusLogDef } from "./definition/statusLogDef.swagger";
+import { swapDef } from "./definition/swapDef.swagger";
+import { unitDef } from "./definition/unitDef.swagger";
+import { role } from "./role.swagger";
+import { rule } from "./rule.swagger";
+import { staff } from "./staff.swagger";
+import { staffPreference } from "./staffPreference.swagger";
+import { statusLog } from "./statusLog.swagger";
+import { swap } from "./swap.swagger";
+import { unit } from "./unit.swagger";
+import { upload } from "./upload.swagger";
 
 export const swaggerDocument = {
   swagger: "2.0",

@@ -16,7 +16,7 @@ import { DBConnect, TryDBConnect, UnauthorisedAccessedError } from "./helpers";
 import { authCheckMiddleware } from "./helpers/auth";
 import "./services"; // Importing all services
 import authRoutes from "./services/AuthService";
-import { swaggerDocument } from "./swagger";
+import { swaggerDocument } from "./openAPI/index.swagger";
 import swaggerUi from "swagger-ui-express";
 import fs from "fs";
 
@@ -25,11 +25,11 @@ const initServer = async () => {
 
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-  fs.writeFile("swaggerDoc.json", JSON.stringify(swaggerDocument), (e) => {
-    if (e) {
-      console.log(e);
-    }
-  });
+  // fs.writeFile("swaggerDoc.json", JSON.stringify(swaggerDocument), (e) => {
+  //   if (e) {
+  //     console.log(e);
+  //   }
+  // });
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {
