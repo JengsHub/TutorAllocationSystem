@@ -298,7 +298,7 @@ export const swap = {
     },
   },
 
-  "/swaps/openSwaps/:unitId": {
+  "/swaps/openSwaps/{unitId}": {
     get: {
       tags: ["Swap"],
       summary:
