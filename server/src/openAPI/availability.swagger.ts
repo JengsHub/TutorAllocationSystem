@@ -221,6 +221,7 @@ export const availability = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },

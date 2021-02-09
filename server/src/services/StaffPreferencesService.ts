@@ -39,7 +39,6 @@ class StaffPreferencesService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ): Promise<Array<StaffPreference>> {
-    //TODO: move this to controller
     hasAdminAccess(req, res);
     let params: { [key: string]: any } = {
       staffId,

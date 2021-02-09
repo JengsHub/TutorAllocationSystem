@@ -1,6 +1,9 @@
 import { activityDef } from "./definition/activityDef.swagger";
 import { allocationDef } from "./definition/allocationDef.swagger";
-import { unauthorisedAccessed403Res } from "./definition/messageDef.swagger";
+import {
+  notAuth401Res,
+  unauthorisedAccessed403Res,
+} from "./definition/messageDef.swagger";
 import { unitDef } from "./definition/unitDef.swagger";
 
 export const unit = {
@@ -48,6 +51,7 @@ export const unit = {
             items: unitDef,
           },
         },
+        ...notAuth401Res,
       },
     },
 
@@ -79,6 +83,7 @@ export const unit = {
           schema: unitDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
 
@@ -110,6 +115,7 @@ export const unit = {
           schema: unitDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -141,6 +147,7 @@ export const unit = {
           description: "successful operation",
           schema: unitDef,
         },
+        ...notAuth401Res,
       },
     },
 
@@ -171,6 +178,7 @@ export const unit = {
           schema: unitDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -214,6 +222,7 @@ export const unit = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -258,6 +267,7 @@ export const unit = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },

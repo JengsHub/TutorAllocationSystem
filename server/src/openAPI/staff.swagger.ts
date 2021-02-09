@@ -1,4 +1,7 @@
-import { unauthorisedAccessed403Res } from "./definition/messageDef.swagger";
+import {
+  notAuth401Res,
+  unauthorisedAccessed403Res,
+} from "./definition/messageDef.swagger";
 import { staffDef } from "./definition/staffDef.swagger";
 
 export const staff = {
@@ -39,6 +42,7 @@ export const staff = {
             items: staffDef,
           },
         },
+        ...notAuth401Res,
       },
     },
 
@@ -70,6 +74,7 @@ export const staff = {
           schema: staffDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
 
@@ -101,6 +106,7 @@ export const staff = {
           schema: staffDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -127,6 +133,7 @@ export const staff = {
           },
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -158,6 +165,7 @@ export const staff = {
           description: "successful operation",
           schema: staffDef,
         },
+        ...notAuth401Res,
       },
     },
 
@@ -188,6 +196,7 @@ export const staff = {
           schema: staffDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },

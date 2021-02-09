@@ -1,3 +1,4 @@
+import { notAuth401Res } from "./definition/messageDef.swagger";
 import { staffDef } from "./definition/staffDef.swagger";
 import { statusLogDef } from "./definition/statusLogDef.swagger";
 
@@ -16,6 +17,7 @@ export const statusLog = {
             items: statusLogDef,
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -43,6 +45,7 @@ export const statusLog = {
             items: statusLogDef,
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -78,6 +81,7 @@ export const statusLog = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },

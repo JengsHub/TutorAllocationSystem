@@ -1,4 +1,7 @@
-import { unauthorisedAccessed403Res } from "./definition/messageDef.swagger";
+import {
+  notAuth401Res,
+  unauthorisedAccessed403Res,
+} from "./definition/messageDef.swagger";
 
 export const upload = {
   "/upload/tas": {
@@ -29,6 +32,7 @@ export const upload = {
           description: "successful operation",
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -61,6 +65,7 @@ export const upload = {
           description: "successful operation",
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -94,6 +99,7 @@ export const upload = {
           description: "successful operation",
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },

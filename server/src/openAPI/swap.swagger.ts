@@ -1,5 +1,6 @@
 import { activityDef } from "./definition/activityDef.swagger";
 import { allocationDef } from "./definition/allocationDef.swagger";
+import { notAuth401Res } from "./definition/messageDef.swagger";
 import { staffDef } from "./definition/staffDef.swagger";
 import { swapDef } from "./definition/swapDef.swagger";
 import { unitDef } from "./definition/unitDef.swagger";
@@ -31,6 +32,7 @@ export const swap = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
 
@@ -54,6 +56,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
 
@@ -77,6 +80,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -101,6 +105,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
 
@@ -123,6 +128,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -149,6 +155,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -180,6 +187,7 @@ export const swap = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -219,6 +227,7 @@ export const swap = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -258,6 +267,7 @@ export const swap = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -283,6 +293,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -322,6 +333,7 @@ export const swap = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -350,6 +362,7 @@ export const swap = {
             items: activityDef,
           },
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -376,6 +389,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
   },
@@ -401,6 +415,7 @@ export const swap = {
           description: "successful operation",
           schema: swapDef,
         },
+        ...notAuth401Res,
       },
     },
   },

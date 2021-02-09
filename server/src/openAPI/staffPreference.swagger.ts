@@ -1,4 +1,5 @@
 import {
+  noAdminAccess401Res,
   notAuth401Res,
   unauthorisedAccessed403Res,
 } from "./definition/messageDef.swagger";
@@ -43,7 +44,8 @@ export const staffPreference = {
             },
           },
         },
-        ...unauthorisedAccessed403Res,
+        ...noAdminAccess401Res,
+        ...notAuth401Res,
       },
     },
 
@@ -75,6 +77,7 @@ export const staffPreference = {
           schema: staffpreferenceDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
 
@@ -106,6 +109,7 @@ export const staffPreference = {
           schema: staffpreferenceDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
@@ -144,6 +148,7 @@ export const staffPreference = {
             },
           },
         },
+        ...notAuth401Res,
       },
     },
 
@@ -174,6 +179,7 @@ export const staffPreference = {
           schema: staffpreferenceDef,
         },
         ...unauthorisedAccessed403Res,
+        ...notAuth401Res,
       },
     },
   },
