@@ -16,5 +16,6 @@ export const hasAdminAccess = (req: Request, res: Response) => {
       admin: false,
       message: "user does not have admin privilege",
     });
+    return false;
   }
 };

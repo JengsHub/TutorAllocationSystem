@@ -51,8 +51,6 @@ class AllocationsService {
     @QueryParam("unitId") unitId: string,
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean
   ) {
-    if (!authCheck(req, res)) return;
-
     const me = req.user as Staff;
     let allocations: Allocation[];
 
@@ -99,8 +97,6 @@ class AllocationsService {
     @QueryParam("isLecturerApproved") isLecturerApproved: boolean,
     @QueryParam("isWorkforceApproved") isWorkforceApproved: boolean
   ) {
-    if (!authCheck(req, res)) return;
-
     const me = req.user as Staff;
     let allocations: Allocation[];
     let mySwaps: Swap[];
@@ -154,18 +150,18 @@ class AllocationsService {
     return allocations;
   }
 
-  /**
-   * Returns an allocation
-   * @param unitCode unit code for the allocation
-   * @param offeringPeriod offering period for the unit in allocation
-   * @return Allocation single allocation
-   */
-  // TODO: assert return value as Promise<Allocation> here
-  @GET
-  @Path(":id")
-  public getAllocation(@PathParam("id") id: string) {
-    return this.repo.findOne({ id });
-  }
+  // /**
+  //  * Returns an allocation
+  //  * @param unitCode unit code for the allocation
+  //  * @param offeringPeriod offering period for the unit in allocation
+  //  * @return Allocation single allocation
+  //  */
+  // // TODO: assert return value as Promise<Allocation> here
+  // @GET
+  // @Path(":id")
+  // public getAllocation(@PathParam("id") id: string) {
+  //   return this.repo.findOne({ id });
+  // }
 
   /**
    * Creates an allocation

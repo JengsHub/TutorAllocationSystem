@@ -28,15 +28,15 @@ export interface IRuleController {
 
 class TaRuleController implements IRuleController {
   getAllRules() {
-    return new UnauthorisedAccessedError("TAs cannot get all rules");
+    throw new UnauthorisedAccessedError("TAs cannot get all rules");
   }
 
   getRule(id: string) {
-    return new UnauthorisedAccessedError("TAs cannot get rules");
+    throw new UnauthorisedAccessedError("TAs cannot get rules");
   }
 
   async updateRules(changedRules: Rule[]) {
-    return new UnauthorisedAccessedError("TAs cannot update rules");
+    throw new UnauthorisedAccessedError("TAs cannot update rules");
   }
 }
 
@@ -45,15 +45,15 @@ class TaRuleController implements IRuleController {
 
 class LecturerRuleController implements IRuleController {
   getAllRules() {
-    return new UnauthorisedAccessedError("Lecturers cannot get all rules");
+    throw new UnauthorisedAccessedError("Lecturers cannot get all rules");
   }
 
   getRule(id: string) {
-    return new UnauthorisedAccessedError("Lecturers cannot get rules");
+    throw new UnauthorisedAccessedError("Lecturers cannot get rules");
   }
 
   async updateRules(changedRules: Rule[]) {
-    return new UnauthorisedAccessedError("Lecturers cannot update rules");
+    throw new UnauthorisedAccessedError("Lecturers cannot update rules");
   }
 }
 

@@ -37,7 +37,7 @@ export interface IActivityController {
 
 class TaActivityController implements IActivityController {
   getAllActivities() {
-    return new UnauthorisedAccessedError("TA cannot get all activities");
+    throw new UnauthorisedAccessedError("TA cannot get all activities");
   }
 
   getActivity(activityId: string) {
@@ -48,23 +48,23 @@ class TaActivityController implements IActivityController {
   }
 
   getActivityForCandidates(activityId: string) {
-    return new UnauthorisedAccessedError("TA cannot get activity candidates");
+    throw new UnauthorisedAccessedError("TA cannot get activity candidates");
   }
 
   getActivityForSortedCandidates(activityId: string, sortingCriteria: string) {
-    return new UnauthorisedAccessedError("TA cannot get sorted candidates");
+    throw new UnauthorisedAccessedError("TA cannot get sorted candidates");
   }
 
   async createActivity(newRecord: Activity, unit: Unit) {
-    return new UnauthorisedAccessedError("TA cannot create activities");
+    throw new UnauthorisedAccessedError("TA cannot create activities");
   }
 
   async updateActivity(changedActivity: Activity) {
-    return new UnauthorisedAccessedError("TA cannot update activities");
+    throw new UnauthorisedAccessedError("TA cannot update activities");
   }
 
   deleteActivity(activityId: string) {
-    return new UnauthorisedAccessedError("TA cannot delete activities");
+    throw new UnauthorisedAccessedError("TA cannot delete activities");
   }
 }
 
@@ -80,7 +80,7 @@ class TaActivityController implements IActivityController {
 
 class LecturerActivityController implements IActivityController {
   getAllActivities() {
-    return new UnauthorisedAccessedError("Lecturers cannot get all activities");
+    throw new UnauthorisedAccessedError("Lecturers cannot get all activities");
   }
 
   getActivity(activityId: string) {

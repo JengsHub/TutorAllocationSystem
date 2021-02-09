@@ -33,7 +33,7 @@ export interface IStaffController {
 
 class TaStaffController implements IStaffController {
   getAllStaff() {
-    return new UnauthorisedAccessedError("TA cannot get all staff");
+    throw new UnauthorisedAccessedError("TA cannot get all staff");
   }
 
   getStaff(id: string) {
@@ -41,7 +41,7 @@ class TaStaffController implements IStaffController {
   }
 
   async createStaff(newRecord: Staff) {
-    return new UnauthorisedAccessedError("TA cannot create staff");
+    throw new UnauthorisedAccessedError("TA cannot create staff");
   }
 
   async updateStaff(changedStaff: Staff, me: Staff) {
@@ -52,7 +52,7 @@ class TaStaffController implements IStaffController {
       staffToUpdate = changedStaff;
       return Staff.save(staffToUpdate);
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't update staff other than yourself"
       );
     }
@@ -64,7 +64,7 @@ class TaStaffController implements IStaffController {
         id: id,
       });
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't delete staff other than yourself"
       );
     }
@@ -79,7 +79,7 @@ class TaStaffController implements IStaffController {
 
 class LecturerStaffController implements IStaffController {
   getAllStaff() {
-    return new UnauthorisedAccessedError("Lecturer cannot get all staff");
+    throw new UnauthorisedAccessedError("Lecturer cannot get all staff");
   }
 
   getStaff(id: string) {
@@ -87,7 +87,7 @@ class LecturerStaffController implements IStaffController {
   }
 
   async createStaff(newRecord: Staff) {
-    return new UnauthorisedAccessedError("Lecturer cannot create staff");
+    throw new UnauthorisedAccessedError("Lecturer cannot create staff");
   }
 
   async updateStaff(changedStaff: Staff, me: Staff) {
@@ -98,7 +98,7 @@ class LecturerStaffController implements IStaffController {
       staffToUpdate = changedStaff;
       return Staff.save(staffToUpdate);
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't update staff other than yourself"
       );
     }
@@ -110,7 +110,7 @@ class LecturerStaffController implements IStaffController {
         id: id,
       });
     } else {
-      return new UnauthorisedAccessedError(
+      throw new UnauthorisedAccessedError(
         "Can't delete staff other than yourself"
       );
     }

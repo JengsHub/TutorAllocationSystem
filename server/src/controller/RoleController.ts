@@ -30,16 +30,16 @@ export interface IRoleController {
 
 class TaRoleController implements IRoleController {
   deleteRole(user: Staff, unitId: string, roleId: string) {
-    return new UnauthorisedAccessedError("TA cannot delete role");
+    throw new UnauthorisedAccessedError("TA cannot delete role");
   }
   updateRole(user: Staff, unitId: string, changedRecord: Role) {
-    return new UnauthorisedAccessedError("TA cannot update role");
+    throw new UnauthorisedAccessedError("TA cannot update role");
   }
   createRole(user: Staff, unitId: string, newRecord: Role) {
-    return new UnauthorisedAccessedError("TA cannot create role");
+    throw new UnauthorisedAccessedError("TA cannot create role");
   }
   getRolesByUnit(user: Staff, unitId: string) {
-    return new UnauthorisedAccessedError("TA cannot get roles by unit");
+    throw new UnauthorisedAccessedError("TA cannot get roles by unit");
   }
 }
 

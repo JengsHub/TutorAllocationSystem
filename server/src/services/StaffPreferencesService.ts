@@ -39,7 +39,6 @@ class StaffPreferencesService {
     @ContextRequest req: Request,
     @ContextResponse res: Response
   ): Promise<Array<StaffPreference>> {
-    //TODO: move this to controller
     hasAdminAccess(req, res);
     let params: { [key: string]: any } = {
       staffId,
@@ -155,7 +154,7 @@ class StaffPreferencesService {
   }
 
   /**
-   * Deletes an staffPreference
+   * Deletes a staffPreference
    *
    * Role authorisation:
    *  - TA: can only delete preferences for themselves

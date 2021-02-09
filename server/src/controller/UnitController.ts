@@ -44,15 +44,15 @@ class TaUnitController implements IUnitController {
   }
 
   async createUnit(newRecord: Unit) {
-    return new UnauthorisedAccessedError("TA cannot create a unit");
+    throw new UnauthorisedAccessedError("TA cannot create a unit");
   }
 
   async updateUnit(changedUnit: Unit) {
-    return new UnauthorisedAccessedError("TA cannot update a unit");
+    throw new UnauthorisedAccessedError("TA cannot update a unit");
   }
 
   deleteUnit(id: string) {
-    return new UnauthorisedAccessedError("TA cannot delete a unit");
+    throw new UnauthorisedAccessedError("TA cannot delete a unit");
   }
 }
 
@@ -76,7 +76,7 @@ class LecturerUnitController implements IUnitController {
   }
 
   async createUnit(newRecord: Unit) {
-    return new UnauthorisedAccessedError("Lecturers cannot create a unit");
+    throw new UnauthorisedAccessedError("Lecturers cannot create a unit");
   }
 
   async updateUnit(changedUnit: Unit) {
@@ -88,7 +88,7 @@ class LecturerUnitController implements IUnitController {
   }
 
   deleteUnit(id: string) {
-    return new UnauthorisedAccessedError("Lecturers cannot delete a unit");
+    throw new UnauthorisedAccessedError("Lecturers cannot delete a unit");
   }
 }
 

@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import fileUpload from "express-fileupload";
 import session from "express-session";
 import passport from "passport";
@@ -12,13 +12,24 @@ import { Server } from "typescript-rest";
 import { config } from "./config";
 import { NodemailerEmailHelper } from "./email/emailHelper";
 import { Session } from "./entity/Session";
-import { DBConnect, TryDBConnect } from "./helpers";
+import { DBConnect, TryDBConnect, UnauthorisedAccessedError } from "./helpers";
 import { authCheckMiddleware } from "./helpers/auth";
 import "./services"; // Importing all services
 import authRoutes from "./services/AuthService";
+import { swaggerDocument } from "./openAPI/index.swagger";
+import swaggerUi from "swagger-ui-express";
+import fs from "fs";
 
 const initServer = async () => {
   const app: express.Application = express();
+
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+  // fs.writeFile("swaggerDoc.json", JSON.stringify(swaggerDocument), (e) => {
+  //   if (e) {
+  //     console.log(e);
+  //   }
+  // });
 
   app.use(async (req: Request, res: Response, next) => {
     await TryDBConnect(() => {
@@ -110,6 +121,15 @@ const initServer = async () => {
   // Health check route for AWS
   app.get("/health", (req, res) => {
     res.status(200).send("Server is running");
+  });
+
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.log(err);
+    if (err instanceof UnauthorisedAccessedError) {
+      res.status(403).send({ error: err.name, message: err.message });
+    } else {
+      next(err);
+    }
   });
 
   // Just checking if given PORT variable is an integer or not
